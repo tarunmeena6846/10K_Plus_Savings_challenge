@@ -11,18 +11,6 @@ app.use(cors());
 
 const secretKey = "mysecretkey";
 let currentUserId;
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  purchasedCourse: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
-});
-
-const expensesSchema = new mongoose.Schema({
-  total: Number,
-  month: String,
-  year: Number,
-  //   date: { type: Date, default: Date.now },
-});
 
 const monthlyDataSchema = new mongoose.Schema({
   userId: {
@@ -40,8 +28,7 @@ const adminSchema = new mongoose.Schema({
   username: String,
   password: String,
 });
-const user = mongoose.model("user", userSchema);
-const Expense = mongoose.model("Expense", expensesSchema);
+
 const admin = mongoose.model("admin", adminSchema);
 const MonthlyData = mongoose.model("MonthlyData", monthlyDataSchema);
 
@@ -274,7 +261,7 @@ app.post("/admin/save-expense", detokenizeAdmin, async (req, res) => {
           //   console.log("Total Income:", totalIncome);
           console.log("Total Expenses:", totalExpenses);
           res.status(201).json({
-            sucess: true,
+            success: true,
             message: "Expense saved successfully",
             totalExpenses: totalExpenses,
           });
@@ -287,11 +274,11 @@ app.post("/admin/save-expense", detokenizeAdmin, async (req, res) => {
       });
     // res
     //   .status(201)
-    //   .json({ sucess: true, message: "Expense saved successfully" });
+    //   .json({ success: true, message: "Expense saved successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      sucess: false,
+      success: false,
       message: "Internal Server Error",
       error: error.message,
     });
@@ -362,7 +349,7 @@ app.post("/admin/save-income", detokenizeAdmin, async (req, res) => {
           console.log("Total Income:", totalIncome);
           //   console.log("Total Expenses:", totalExpenses);
           res.status(201).json({
-            sucess: true,
+            success: true,
             message: "Income saved successfully",
             totalIncome: totalIncome,
           });
@@ -375,11 +362,11 @@ app.post("/admin/save-income", detokenizeAdmin, async (req, res) => {
       });
     // res
     //   .status(201)
-    //   .json({ sucess: true, message: "Income saved successfully" });
+    //   .json({ success: true, message: "Income saved successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      sucess: false,
+      success: false,
       message: "Internal Server Error",
       error: error.message,
     });
@@ -469,16 +456,6 @@ app.post("/admin/reset-monthly-income", async (req, res) => {
       // existingData.totalExpenses = 0;
       await existingData.save();
     }
-    // } else {
-    //   // Create new data if not exists and reset to 0
-    //   await MonthlyData.create({
-    //     userId: req.user.id, // Assuming you have user authentication middleware
-    //     month,
-    //     year,
-    //     totalIncome: 0,
-    //     totalExpenses: 0,
-    //   });
-    // }
 
     res.status(200).json({
       success: true,
@@ -511,17 +488,6 @@ app.post("/admin/reset-monthly-expenses", async (req, res) => {
       existingData.totalExpenses = 0;
       await existingData.save();
     }
-    // } else {
-    //   // Create new data if not exists and reset to 0
-    //   await MonthlyData.create({
-    //     userId: req.user.id, // Assuming you have user authentication middleware
-    //     month,
-    //     year,
-    //     totalIncome: 0,
-    //     totalExpenses: 0,
-    //   });
-    // }
-
     res.status(200).json({
       success: true,
       message: "Monthly data reset successfully",

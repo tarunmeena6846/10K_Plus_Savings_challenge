@@ -52,8 +52,9 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
               ctx.font = fontSize + "em sans-serif";
               ctx.textBaseline = "middle";
               ctx.fillStyle = "#000";
-
               const text = `${savingPercentage.toFixed(2)}% Monthly Saving `;
+              ctx.font = `bold ${height / 500}em sans-serif`;
+
               const textX = Math.round(
                 (width - ctx.measureText(text).width) / 2
               );

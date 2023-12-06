@@ -150,7 +150,7 @@ function MonthlyExpenses() {
           console.log("tarun", responseData.totalExpenses);
 
           // setCourses(data);
-          if (responseData.sucess == true) {
+          if (responseData.success == true) {
             // Clear items array after saving
             setItems([]);
             navigate("/dashboard");
@@ -187,10 +187,10 @@ function MonthlyExpenses() {
         minHeight: "100vh",
       }}
     >
-      <h1 style={{ alignSelf: "center" }}>Monthly Expense Tracker</h1>
+      <Typography variant="h3">Monthly Expenses Tracker</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Card>
+          <Card style={{ border: "4px solid #37474F", height: "60vh" }}>
             <CardContent>
               {/* <h1>Monthly Income Tracker</h1> */}
               <div>
@@ -275,13 +275,13 @@ function MonthlyExpenses() {
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Card>
+          <Card style={{ border: "4px solid #37474F", minHeight: "60vh" }}>
             <CardContent>
               <div>
                 <h2>Income Items:</h2>
                 <List>
                   {items.map((item, index) => (
-                    <ListItem key={index}>
+                    <ListItem key={index} style={{ color: "purple" }}>
                       <ListItemText primary={`${item.item}: $${item.amount}`} />
                     </ListItem>
                   ))}

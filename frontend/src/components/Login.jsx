@@ -30,7 +30,7 @@ function Login() {
           window.location = "/dashboard";
 
           console.log(data.token);
-          console.log("Login sucessfully", data);
+          console.log("Login successfully", data);
         });
       })
       .catch((error) => {

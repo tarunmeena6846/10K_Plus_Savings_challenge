@@ -15,7 +15,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Grid } from "@mui/material";
-
+import { Typography } from "@mui/material";
 const months = [
   "January",
   "February",
@@ -80,7 +80,7 @@ function MonthlyIncome() {
             console.log("tarun", responseData);
             console.log("tarun", responseData.totalIncome);
 
-            if (responseData.sucess) {
+            if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
               window.location = "/dashboard";
@@ -117,7 +117,7 @@ function MonthlyIncome() {
           resp.json().then((responseData) => {
             console.log("tarun", responseData);
 
-            if (responseData.sucess) {
+            if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
               window.location = "/dashboard";
@@ -150,11 +150,10 @@ function MonthlyIncome() {
         minHeight: "100vh",
       }}
     >
-
-      <h1 style={{ alignSelf: "center" }}>Monthly Income Tracker</h1>
+      <Typography variant="h3">Monthly Income Tracker</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Card>
+          <Card style={{ border: "4px solid #37474F", height: "60vh" }}>
             <CardContent>
               {/* <h1>Monthly Income Tracker</h1> */}
               <div>
@@ -239,13 +238,13 @@ function MonthlyIncome() {
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Card>
+          <Card style={{ border: "4px solid #37474F", minHeight: "60vh" }}>
             <CardContent>
               <div>
                 <h2>Income Items:</h2>
                 <List>
                   {items.map((item, index) => (
-                    <ListItem key={index}>
+                    <ListItem key={index} style={{ color: "purple" }}>
                       <ListItemText primary={`${item.item}: $${item.amount}`} />
                     </ListItem>
                   ))}

@@ -28,7 +28,6 @@ function Appbar() {
   const [yearlyExpense, setYearlyExpense] = useRecoilState(yearlyExpenseState);
 
   useEffect(() => {
-    // setTimeout(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       // Make an API call to check the user's login status
@@ -75,33 +74,7 @@ function Appbar() {
     } else {
       setCurrentUserState({ isLoading: false }); // Set isLoading to false once the request is complete
     }
-    // }, 200);
   }, []);
-
-  // const fetchMonthlyData = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token"); // Get the token from your authentication process
-  //     const response = await fetch("http://localhost:3000/admin/monthly-data", {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       console.log("Monthly Data:", data.data);
-  //       // Process the data as needed in your frontend
-  //     } else {
-  //       console.error("Failed to fetch monthly data");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching monthly data:", error);
-  //   }
-  // };
-
-  // // Call the function when needed
-  // fetchMonthlyData();
 
   return (
     <AppBar position="static" elevation={0} style={{ background: "#f0f0f0" }}>
@@ -145,9 +118,6 @@ function Appbar() {
             >
               Login
             </Button>
-            {/* <Button color="inherit" component={Link} to="/register">
-              Register
-            </Button> */}
           </div>
         )}
       </Toolbar>

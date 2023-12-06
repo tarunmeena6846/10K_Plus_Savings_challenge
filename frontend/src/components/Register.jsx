@@ -31,7 +31,7 @@ function Register() {
         resp.json().then((data) => {
           console.log("before router");
           navigate("/dashboard");
-          console.log("email registered sucessfully", data);
+          console.log("email registered successfully", data);
           localStorage.setItem("token", data.token);
         });
       })

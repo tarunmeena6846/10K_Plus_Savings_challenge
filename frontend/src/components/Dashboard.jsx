@@ -62,7 +62,7 @@ function Dashboard() {
         textAlign: "center",
       }}
     >
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h3" gutterBottom>
         Welcome to Your Financial Dashboard
       </Typography>
       <Typography variant="body1" paragraph>
@@ -73,7 +73,7 @@ function Dashboard() {
       <Grid container spacing={2} justifyContent="center">
         {/* Monthly Chart */}
         <Grid item xs={12} sm={12} md={4} lg={6}>
-          <Card style={{ background: "#FFD700", height: "51vh" }}>
+          <Card style={{ background: "", height: "51vh" }}>
             <MonthlyChart
               monthlyIncome={monthlyIncome}
               monthlyExpenses={monthlyExpense}
@@ -97,14 +97,13 @@ function Dashboard() {
               style={{
                 height: "15vh",
                 cursor: "pointer",
-                background: "#49D8CF",
+                // background: "rgb(255, 99, 132)",
+                background: "#58D68D",
                 color: "white",
               }}
             >
               <Typography variant="h6">Monthly Income</Typography>
-              <Typography variant="body1">
-                ${monthlyIncome.toFixed(2)}
-              </Typography>
+              <Typography variant="h4">${monthlyIncome.toFixed(2)}</Typography>
             </Card>
           </Grid>
           <Grid item md={4}>
@@ -114,19 +113,21 @@ function Dashboard() {
                 // height: "100px",
                 height: "15vh",
                 cursor: "pointer",
-                background: "#49D8CF",
+                // background: "rgb(54, 162, 235)",
+                background: "#fba447",
+                color: "white",
               }}
             >
               <Typography variant="h6">Monthly Expenses</Typography>
-              <Typography variant="body1">
-                ${monthlyExpense.toFixed(2)}
-              </Typography>
+              <Typography variant="h4">${monthlyExpense.toFixed(2)}</Typography>
             </Card>
           </Grid>
           <Grid item md={4}>
-            <Card style={{ height: "15vh", background: "#49D8CF" }}>
-              <Typography variant="h6">Savings</Typography>
-              <Typography variant="body1">
+            <Card
+              style={{ height: "15vh", background: "#f6600a", color: "white" }}
+            >
+              <Typography variant="h6">Monthly Saving</Typography>
+              <Typography variant="h4">
                 ${monthlyIncome - monthlyExpense.toFixed(2)}
               </Typography>
             </Card>
@@ -144,27 +145,39 @@ function Dashboard() {
           // lg={6}
           justifyContent="space-between"
         >
-          <Grid item md={4} sm={12}>
-            <Card style={{ height: "100px", background: "#49D8CF" }}>
+          <Grid item md={3} sm={12} xs={12}>
+            <Card
+              style={{ height: "100px", background: "#7D3C98", color: "white" }}
+            >
               <Typography variant="h6">Yearly Income</Typography>
-              <Typography variant="body1">
-                ${yearlyIncome.toFixed(2)}
-              </Typography>
+              <Typography variant="h4">${yearlyIncome.toFixed(2)}</Typography>
             </Card>
           </Grid>
-          <Grid item md={4} sm={12}>
-            <Card style={{ height: "100px", background: "#49D8CF" }}>
+          <Grid item md={3} sm={12} xs={12}>
+            <Card
+              style={{ height: "100px", background: "#3498DB", color: "white" }}
+            >
               <Typography variant="h6">Yearly Expenses</Typography>
-              <Typography variant="body1">
-                ${yearlyExpense.toFixed(2)}
+              <Typography variant="h4">${yearlyExpense.toFixed(2)}</Typography>
+            </Card>
+          </Grid>
+          <Grid item md={3} sm={12} xs={12}>
+            <Card
+              style={{ height: "100px", background: "#D35400", color: "white" }}
+            >
+              <Typography variant="h6">Actual Yearly Savings</Typography>
+              <Typography variant="h4">
+                ${yearlyIncome - yearlyExpense.toFixed(2)}
               </Typography>
             </Card>
           </Grid>
-          <Grid item md={4} sm={12}>
-            <Card style={{ height: "100px", background: "#49D8CF" }}>
-              <Typography variant="h6">Yearly Savings</Typography>
-              <Typography variant="body1">
-                ${yearlyIncome - yearlyExpense.toFixed(2)}
+          <Grid item md={3} sm={12} xs={12}>
+            <Card
+              style={{ height: "100px", background: "#E74C3C", color: "white" }}
+            >
+              <Typography variant="h6">Projected Yearly Savings</Typography>
+              <Typography variant="h4">
+                ${(monthlyIncome - monthlyExpense.toFixed(2)) * 12}
               </Typography>
             </Card>
           </Grid>

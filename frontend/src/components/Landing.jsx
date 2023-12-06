@@ -19,7 +19,7 @@ const LandingPage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "16px",
+          // marginTop: "1px",
         }}
         spacing={4}
       >

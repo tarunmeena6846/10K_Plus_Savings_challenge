@@ -2,7 +2,7 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart } from "chart.js/auto";
-
+import { Card, Typography } from "@mui/material";
 const MonthlyBarGraph = ({ monthlyData }) => {
   console.log(monthlyData);
   // Extract data for the chart
@@ -45,9 +45,11 @@ const MonthlyBarGraph = ({ monthlyData }) => {
   };
 
   return (
-    <div>
-      <h2>Monthwise Income and Expenses</h2>
-      <Bar data={data} options={options} />
+    <div style={{ padding: 10 }}>
+      <Card>
+        <Typography variant="h4">Monthwise Income and Expenses</Typography>
+        <Bar data={data} options={options} />
+      </Card>
     </div>
   );
 };
