@@ -3,12 +3,15 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Card, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { userState } from "./store/atoms/user";
+import { useRecoilState } from "recoil";
 
 /// File is incomplete. You need to add input boxes to take input for users to login.
 function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const navigate = useNavigate();
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
   console.log("tarun", email);
   console.log(password);
@@ -27,6 +30,10 @@ function Login() {
         resp.json().then((data) => {
           console.log(data);
           localStorage.setItem("token", data.token);
+          setCurrentUserState({
+            userEmail: email,
+            isLoading: false,
+          });
           window.location = "/dashboard";
 
           console.log(data.token);

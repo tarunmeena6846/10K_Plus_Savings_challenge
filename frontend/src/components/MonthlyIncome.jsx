@@ -16,7 +16,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Grid } from "@mui/material";
 import { Typography } from "@mui/material";
-const months = [
+export const months = [
   "January",
   "February",
   "March",
@@ -41,6 +41,7 @@ function MonthlyIncome() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const navigate = useNavigate();
   const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
+
   console.log(new Date().getMonth());
 
   const handleAddItem = () => {
@@ -83,6 +84,7 @@ function MonthlyIncome() {
             if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
+              // setMonthlyIncome(responseData.totalIncome);
               window.location = "/dashboard";
             } else {
               console.error("Error saving Income:", responseData.error);
@@ -151,6 +153,13 @@ function MonthlyIncome() {
       }}
     >
       <Typography variant="h3">Monthly Income Tracker</Typography>
+       <div style={{ marginTop: 16 }}>
+        <Typography variant="body1" paragraph>
+          Welcome to the Monthly Income Tracker. Here, you can manage your income
+          for different months. Use the options below to add or delete income for
+          the selected month and year.
+        </Typography>
+        </div>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Card style={{ border: "4px solid #37474F", height: "60vh" }}>

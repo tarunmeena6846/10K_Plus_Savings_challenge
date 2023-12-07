@@ -387,7 +387,7 @@ app.get("/admin/monthly-data", detokenizeAdmin, async (req, res) => {
     // Create a map for easy access to existing data
     const existingDataMap = {};
     existingMonthlyData.forEach((data) => {
-      console.log("tarun data at each", data);
+      // console.log("tarun data at each", data);
       existingDataMap[data.month] = data;
     });
 

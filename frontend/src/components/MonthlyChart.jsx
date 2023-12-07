@@ -1,6 +1,7 @@
 // MonthlyChart.js
 import React, { useEffect, useRef } from "react";
 import { Chart, DoughnutController, ArcElement, Legend, Title } from "chart.js";
+import { months } from "./MonthlyIncome";
 
 const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
   const chartRef = useRef(null);
@@ -48,16 +49,17 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
               );
 
               ctx.restore();
-              const fontSize = (height / 500).toFixed(2);
-              ctx.font = fontSize + "em sans-serif";
+              const fontSize = height / 500;
+              const font = `bold ${fontSize}em sans-serif`; // Make the text bold
+              ctx.font = font;
               ctx.textBaseline = "middle";
               ctx.fillStyle = "#000";
-              const text = `${savingPercentage.toFixed(2)}% Monthly Saving `;
-              ctx.font = `bold ${height / 500}em sans-serif`;
+              const monthAbbreviation = new Date().toLocaleString("en-US", {
+                month: "short",
+              });
+              const text = `${savingPercentage}% Savings in ${monthAbbreviation}`;
 
-              const textX = Math.round(
-                (width - ctx.measureText(text).width) / 2
-              );
+              const textX = width / 2 - ctx.measureText(text).width / 2;
               const textY = height / 2;
 
               ctx.fillText(text, textX, textY);

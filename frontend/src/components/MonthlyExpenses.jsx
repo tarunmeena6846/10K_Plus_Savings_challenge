@@ -153,7 +153,7 @@ function MonthlyExpenses() {
           if (responseData.success == true) {
             // Clear items array after saving
             setItems([]);
-            navigate("/dashboard");
+            window.location = "/dashboard";
             // console.log(total);
             setMonthlyExpense(responseData.totalExpenses);
             // localStorage.setItem(
@@ -187,7 +187,14 @@ function MonthlyExpenses() {
         minHeight: "100vh",
       }}
     >
-      <Typography variant="h3">Monthly Expenses Tracker</Typography>
+      <Typography variant="h3">Monthly Expense Tracker</Typography>
+      <div style={{ marginTop: 16 }}>
+        <Typography variant="body1" paragraph>
+          Welcome to the Monthly Expenses Tracker. Here, you can manage your
+          expenses for different months. Use the options below to add or delete
+          expenses for the selected month and year.
+        </Typography>
+      </div>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Card style={{ border: "4px solid #37474F", height: "60vh" }}>
@@ -278,7 +285,7 @@ function MonthlyExpenses() {
           <Card style={{ border: "4px solid #37474F", minHeight: "60vh" }}>
             <CardContent>
               <div>
-                <h2>Income Items:</h2>
+                <Typography variant="h4">Expense Items:</Typography>
                 <List>
                   {items.map((item, index) => (
                     <ListItem key={index} style={{ color: "purple" }}>

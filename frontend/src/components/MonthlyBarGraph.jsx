@@ -7,14 +7,16 @@ const MonthlyBarGraph = ({ monthlyData }) => {
   console.log(monthlyData);
   // Extract data for the chart
   const months = monthlyData.map((data) => data.month);
-  const incomes = monthlyData.map((data) => data.totalIncome);
+  const incomes = monthlyData.map(
+    (data) => data.totalIncome - data.totalExpenses
+  );
   const expenses = monthlyData.map((data) => data.totalExpenses);
   console.log(months, incomes, expenses);
   const data = {
     labels: months,
     datasets: [
       {
-        label: "Income",
+        label: "Savings",
         backgroundColor: "rgb(255, 99, 132)",
         // borderColor: "rgba(75,192,192,1)",
         borderWidth: 1,
