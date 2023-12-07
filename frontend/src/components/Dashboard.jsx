@@ -54,14 +54,19 @@ function Dashboard() {
     };
 
     fetchData();
-  }, []); // Run this effect only once when the component mounts
+  }, [setCurrentUserState]); // Run this effect only once when the component mounts
 
   useEffect(() => {
     // Check if the necessary data is available before navigating
     if (currentUserState.userEmail && !currentUserState.isLoading) {
       navigate("/dashboard");
     }
-  }, [currentUserState.userEmail, currentUserState.isLoading, navigate]);
+  }, [
+    currentUserState.userEmail,
+    currentUserState.isLoading,
+    navigate,
+    setCurrentUserState,
+  ]);
 
   return (
     <div

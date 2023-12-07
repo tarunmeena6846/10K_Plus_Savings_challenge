@@ -103,7 +103,8 @@ function MonthlyExpenses() {
             if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
-              window.location = "/dashboard";
+              navigate("/dashboard");
+              //              history.go(0);
             } else {
               console.error(
                 "Error resetting monthly data:",
@@ -156,9 +157,9 @@ function MonthlyExpenses() {
           if (responseData.success == true) {
             // Clear items array after saving
             setItems([]);
-            window.location = "/dashboard";
-            // console.log(total);
             setMonthlyExpense(responseData.totalExpenses);
+            navigate("/dashboard");
+            // console.log(total);
             // localStorage.setItem(
             //   "monthlyExpense",
             //   JSON.stringify(responseData.totalExpenses)

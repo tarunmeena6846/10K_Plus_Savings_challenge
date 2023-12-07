@@ -38,7 +38,9 @@ function Register() {
             userEmail: email,
             isLoading: false,
           });
-          window.location = "/dashboard";
+          // setCurrentUserState({ userEmail: email, isLoading: false });
+          navigate("/dashboard");
+          // history.go(0);
           console.log("email registered successfully", data);
           localStorage.setItem("token", data.token);
         });

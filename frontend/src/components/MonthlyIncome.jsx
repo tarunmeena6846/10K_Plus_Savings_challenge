@@ -84,8 +84,9 @@ function MonthlyIncome() {
             if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
-              // setMonthlyIncome(responseData.totalIncome);
-              window.location = "/dashboard";
+              setMonthlyIncome(responseData.totalIncome);
+              navigate("/dashboard");
+              //              history.go(0);
             } else {
               console.error("Error saving Income:", responseData.error);
             }
@@ -125,7 +126,8 @@ function MonthlyIncome() {
             if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
-              window.location = "/dashboard";
+              navigate("/dashboard");
+              //              history.go(0);
             } else {
               console.error(
                 "Error resetting monthly data:",

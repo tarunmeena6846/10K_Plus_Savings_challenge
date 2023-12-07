@@ -55,7 +55,7 @@ function Appbar() {
     } else {
       setCurrentUserState({ userEmail: null, isLoading: false });
     }
-  }, [setCurrentUserState]);
+  }, [setCurrentUserState, setMonthlyIncome, setMonthlyExpense, navigate]);
   console.log("tarun at appbar", currentUserState.userEmail);
   return (
     <AppBar position="static" elevation={0} style={{ background: "#f0f0f0" }}>

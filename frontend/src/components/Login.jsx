@@ -34,7 +34,7 @@ function Login() {
             userEmail: email,
             isLoading: false,
           });
-          window.location = "/dashboard";
+          navigate("/dashboard");
 
           console.log(data.token);
           console.log("Login successfully", data);
