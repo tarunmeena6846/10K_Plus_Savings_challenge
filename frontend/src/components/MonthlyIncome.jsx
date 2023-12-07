@@ -61,7 +61,7 @@ function MonthlyIncome() {
         total += parseInt(item.amount);
       });
 
-      await fetch("http://localhost:3000/admin/save-income", {
+      await fetch("https://wealthx10k.onrender.com/admin/save-income", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,17 +101,20 @@ function MonthlyIncome() {
 
   const handleResetMonthlyData = async () => {
     try {
-      await fetch("http://localhost:3000/admin/reset-monthly-income", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          month: selectedMonth,
-          year: selectedYear,
-        }),
-      })
+      await fetch(
+        "https://wealthx10k.onrender.com/admin/reset-monthly-income",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            month: selectedMonth,
+            year: selectedYear,
+          }),
+        }
+      )
         .then((resp) => {
           if (!resp.ok) {
             throw new Error("Network response is not ok");
@@ -153,13 +156,13 @@ function MonthlyIncome() {
       }}
     >
       <Typography variant="h3">Monthly Income Tracker</Typography>
-       <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 16 }}>
         <Typography variant="body1" paragraph>
-          Welcome to the Monthly Income Tracker. Here, you can manage your income
-          for different months. Use the options below to add or delete income for
-          the selected month and year.
+          Welcome to the Monthly Income Tracker. Here, you can manage your
+          income for different months. Use the options below to add or delete
+          income for the selected month and year.
         </Typography>
-        </div>
+      </div>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Card style={{ border: "4px solid #37474F", height: "60vh" }}>

@@ -29,7 +29,7 @@ function Appbar() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      fetch("http://localhost:3000/admin/me", {
+      fetch("https://wealthx10k.onrender.com/admin/me", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

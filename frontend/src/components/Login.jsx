@@ -19,7 +19,7 @@ function Login() {
     const headers = new Headers();
     headers.append("Username", email);
     headers.append("Password", password);
-    fetch("http://localhost:3000/admin/login", {
+    fetch("https://wealthx10k.onrender.com/admin/login", {
       method: "POST",
       headers: headers,
     })

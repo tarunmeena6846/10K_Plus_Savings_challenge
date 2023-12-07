@@ -79,17 +79,20 @@ function MonthlyExpenses() {
 
   const handleResetMonthlyData = async () => {
     try {
-      await fetch("http://localhost:3000/admin/reset-monthly-expenses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          month: selectedMonth,
-          year: selectedYear,
-        }),
-      })
+      await fetch(
+        "https://wealthx10k.onrender.com/admin/reset-monthly-expenses",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            month: selectedMonth,
+            year: selectedYear,
+          }),
+        }
+      )
         .then((resp) => {
           if (!resp.ok) {
             throw new Error("Network response is not ok");
@@ -129,7 +132,7 @@ function MonthlyExpenses() {
       total += parseInt(item.amount);
     });
     console.log("tarun total is ", total);
-    await fetch("http://localhost:3000/admin/save-expense", {
+    await fetch("https://wealthx10k.onrender.com/admin/save-expense", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

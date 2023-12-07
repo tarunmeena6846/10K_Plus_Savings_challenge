@@ -30,7 +30,7 @@ function Dashboard() {
       try {
         const token = localStorage.getItem("token"); // Get the token from your authentication process
         const response = await fetch(
-          "http://localhost:3000/admin/monthly-data",
+          "https://wealthx10k.onrender.com/admin/monthly-data",
           {
             method: "GET",
             headers: {
@@ -207,25 +207,6 @@ function Dashboard() {
                   </Typography>
                 </Card>
               </Grid>
-              {/* <Grid item md={3} sm={12} xs={12}>
-                <Card
-                  style={{
-                    height: "100px",
-                    background: "#E74C3C",
-                    color: "white",
-                  }}
-                >
-                  <Typography variant="h6">Projected Yearly Savings</Typography>
-                  <Typography variant="h4">
-                    $
-                    {(monthlyIncome - monthlyExpense) *
-                      (12 - new Date().getMonth()) +
-                      (yearlyIncome -
-                        yearlyExpense -
-                        (monthlyIncome - monthlyExpense))}
-                  </Typography>
-                </Card>
-              </Grid> */}
             </Grid>
             <Grid item md={10} xs={12} lg={10} sm={10}>
               <MonthlyBarGraph monthlyData={monthlyData} />
@@ -233,7 +214,7 @@ function Dashboard() {
           </Grid>
         </div>
       ) : (
-        navigate("/")
+        <div></div>
       )}
     </div>
   );

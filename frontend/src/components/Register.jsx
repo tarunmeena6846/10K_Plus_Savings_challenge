@@ -4,16 +4,20 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Card, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { userState } from "./store/atoms/user";
+import { useRecoilState } from "recoil";
 /// File is incomplete. You need to add input boxes to take input for users to register.
 function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+
   console.log("tarun", email);
   const navigate = useNavigate();
 
   console.log(password);
   const handleRegister = () => {
-    fetch("http://localhost:3000/admin/signup", {
+    fetch("https://wealthx10k.onrender.com/admin/signup", {
       method: "POST",
       body: JSON.stringify({
         username: email,
@@ -30,7 +34,11 @@ function Register() {
 
         resp.json().then((data) => {
           console.log("before router");
-          navigate("/dashboard");
+          setCurrentUserState({
+            userEmail: email,
+            isLoading: false,
+          });
+          window.location = "/dashboard";
           console.log("email registered successfully", data);
           localStorage.setItem("token", data.token);
         });
