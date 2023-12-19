@@ -17,7 +17,7 @@ function Register() {
 
   console.log(password);
   const handleRegister = () => {
-    fetch("http://localhost:3000/admin/signup", {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/admin/signup`, {
       method: "POST",
       body: JSON.stringify({
         username: email,

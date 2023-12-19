@@ -26,17 +26,14 @@ import { months, years } from "./MonthlyIncome";
 import { dateState } from "./store/atoms/date";
 import Clock from "./Clock";
 import SettingsIcon from "@mui/icons-material/Settings";
-
 function Dashboard() {
   const navigate = useNavigate();
-
-  // Assuming these are your Recoil state variables
   const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
   const [monthlyExpense, setMonthlyExpense] =
     useRecoilState(monthlyExpenseState);
   const [yearlyIncome, setYearlyIncome] = useState(0);
   const [yearlyExpense, setYearlyExpense] = useState(0);
-  const [monthlyData, setMonthlyData] = useState([]);
+  const [monthIncExpInfo, setMonthIncExpInfo] = useState([]); // holds the monthly income and expense info along with the items
   const [yearlyData, setYearlyData] = useState([]);
   const [monthlyItems, setMonthlyItems] = useState([]);
 
@@ -51,7 +48,13 @@ function Dashboard() {
     projectedAnnualExpense: 0,
   });
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
-
+  const handleReset = () => {
+    setCurrentUserState({
+      userEmail: currentUserState.userEmail,
+      isLoading: currentUserState.isLoading,
+      imageUrl: "",
+    });
+  };
   const handleOpenSettingsDialog = () => {
     setSettingsDialogOpen(true);
   };
@@ -59,42 +62,37 @@ function Dashboard() {
   const handleCloseSettingsDialog = () => {
     setSettingsDialogOpen(false);
   };
-  const handleSaveSettingsDialog = () => {
-    fetch("http://localhost:3000/admin/change-user_details", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        username: currentUserState.userEmail,
-        newPassword: userDetails.newPassword,
-        imageUrl: currentUserState.imageUrl,
-      }),
-    })
-      .then((resp) => {
-        if (!resp.ok) {
-          throw new Error("Network response is not ok");
-          setCurrentUserState({
-            userEmail: null,
-            isLoading: false,
-            imageUrl: "",
-          });
+  console.log("process", import.meta.env.VITE_SERVER_URL);
+
+  const handleSaveSettingsDialog = async () => {
+    try {
+      const resp = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/admin/change-user_details`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            username: currentUserState.userEmail,
+            newPassword: userDetails.newPassword,
+            imageUrl: currentUserState.imageUrl,
+          }),
         }
-        resp.json().then((data) => {
-          console.log(data);
-          setSettingsDialogOpen(false);
-        });
-      })
-      .catch((error) => {
-        alert("Error Changing email");
-        console.error("Error signing in email");
-        setCurrentUserState({
-          userEmail: null,
-          isLoading: false,
-          imageUrl: "",
-        });
-      });
+      );
+
+      if (!resp.ok) {
+        throw new Error("Network response is not ok");
+      }
+      const data = await resp.json();
+
+      console.log(data);
+      setSettingsDialogOpen(false);
+    } catch (error) {
+      alert("Error Changing email");
+      console.error("Error signing in email");
+    }
   };
 
   const handleImageChange = (imageUrl) => {
@@ -112,7 +110,9 @@ function Dashboard() {
         console.log("selectedDate", selectedDate);
         const token = localStorage.getItem("token"); // Get the token from your authentication process
         const response = await fetch(
-          `http://localhost:3000/admin/get-list/${selectedDate.year}/${selectedDate.month}`,
+          `${import.meta.env.VITE_SERVER_URL}/admin/get-list/${
+            selectedDate.year
+          }/${selectedDate.month}`,
           {
             method: "GET",
             headers: {
@@ -123,28 +123,11 @@ function Dashboard() {
         if (response.ok) {
           const data = await response.json();
           console.log("Monthly Data:", data);
-
-          console.log("Monthly Data:", data.items);
-          setMonthlyData(data.items);
+          setMonthIncExpInfo(data.items);
           setMonthlyIncome(data.totalIncome);
           setMonthlyExpense(data.totalExpenses);
-          console.log("tarun selectedDate", selectedDate);
-          console.log(
-            "tarun useeffecte inside 1 before",
-            monthlyData,
-            monthlyIncome,
-            monthlyExpense
-          );
+
           if (selectedDate.month === "January") {
-            // projectedMonthlyData = monthlyData;
-            // projectedAnnualSaving = (monthlyIncome - monthlyExpense) * 12;
-            // projectedAnnualExpense = monthlyExpense * 12;
-            console.log(
-              "tarun useeffecte inside 1",
-              monthlyData,
-              monthlyIncome,
-              monthlyExpense
-            );
             setProjectedData((prevData) => ({
               ...prevData,
               projectedMonthlyData: data.items,
@@ -158,23 +141,13 @@ function Dashboard() {
           console.error("Failed to fetch monthly data");
           setMonthlyIncome(0);
           setMonthlyExpense(0);
-          setMonthlyData([]);
-          setCurrentUserState({
-            userEmail: null,
-            isLoading: false,
-            imageUrl: "",
-          });
+          setMonthIncExpInfo([]);
         }
       } catch (error) {
         console.error("Error fetching monthly data:", error);
         setMonthlyIncome(0);
         setMonthlyExpense(0);
-        setMonthlyData([]);
-        setCurrentUserState({
-          userEmail: null,
-          isLoading: false,
-          imageUrl: "",
-        });
+        setMonthIncExpInfo([]);
       }
     };
 
@@ -186,22 +159,18 @@ function Dashboard() {
     currentUserState.isLoading,
     navigate,
     setCurrentUserState,
-    // setProjectedData,
     setMonthlyIncome,
-    // setCurrentUserState,
-    // setMonthlyExpense,
-    // setMonthlyData,
   ]); // Run this effect only once when the component mounts
 
   useEffect(() => {
     // Fetch monthly data from the backend
-    console.log("tarun useeffect 2", selectedDate);
-
     const fetchYearlyData = async () => {
       try {
         const token = localStorage.getItem("token"); // Get the token from your authentication process
         const response = await fetch(
-          `http://localhost:3000/admin/get-yearly-list/${selectedDate.year}`,
+          `${import.meta.env.VITE_SERVER_URL}/admin/get-yearly-list/${
+            selectedDate.year
+          }`,
           {
             method: "GET",
             headers: {
@@ -216,14 +185,6 @@ function Dashboard() {
           setYearlyIncome(data.yearlyIncome);
           setYearlyExpense(data.yearlyExpense);
           setMonthlyItems(data.items);
-          console.log(yearlyExpense, yearlyIncome);
-          console.log("tarun", selectedDate);
-          console.log(
-            "tarun useeffecte inside 2 before",
-            monthlyData,
-            monthlyIncome,
-            monthlyExpense
-          );
         } else {
           console.error("Failed to fetch yearly data");
           setCurrentUserState({
@@ -319,7 +280,6 @@ function Dashboard() {
           style={{
             background: "#ffccfb",
             borderRadius: "20px",
-            // minHeight: "100px",
           }}
         >
           <CardContent>
@@ -338,7 +298,6 @@ function Dashboard() {
           style={{
             background: "#b2ecff",
             borderRadius: "20px",
-            // minHeight: "100px",
           }}
         >
           <CardContent>
@@ -376,24 +335,14 @@ function Dashboard() {
         <Card
           style={{ background: "", minHeight: "400px", borderRadius: "20px" }}
         >
-          <MonthlyBarGraph
-            // style={{ minHeight: "10px" }}
-            monthlyData={monthlyItems}
-            // width="0%" // Adjust the width as needed
-          />
+          <MonthlyBarGraph monthlyData={monthlyItems} />
         </Card>
       </div>
       <div class="grid-item item12">
         <Card
           style={{
-            // height: "15vh",
             minHeight: "400px",
             borderRadius: "20px", // width: "500px",
-            // cursor: "pointer",
-            // background: "rgb(255, 99, 132)",
-            // background: "#58D68D",
-            // background: "#ceffb1",
-
             color: "black",
           }}
         >
@@ -420,7 +369,6 @@ function Dashboard() {
 
             <FormControl variant="outlined" style={{ padding: "10px" }}>
               <InputLabel>Select Year</InputLabel>
-              {/* {selectedDate.year} */}
               <Select
                 value={selectedDate.year}
                 onChange={(e) =>
@@ -447,7 +395,6 @@ function Dashboard() {
           <div style={{ padding: "20px" }}>
             <Button
               style={{
-                // variant="outlined"
                 color: "black",
               }}
               size="large"
@@ -474,17 +421,17 @@ function Dashboard() {
               <UserAvatar
                 userEmail="user@example.com"
                 size={50}
-                onImageChange={handleImageChange}
+                // onImageChange={handleImageChange}
               />
               <br />
+              <Button style={{ textTransform: "none" }} onClick={handleReset}>
+                Reset Image
+              </Button>
               <Typography variant="h6">
                 Hello {currentUserState.userEmail}
               </Typography>
               <br />
               <TextField
-                // onChange={(e) => {
-                //   setEmail(e.target.value);
-                // }}
                 label="Email"
                 variant="outlined"
                 type={"email"}
@@ -496,7 +443,6 @@ function Dashboard() {
               <TextField
                 onChange={(e) => {
                   setUserDetails({
-                    // imageUrl: userDetails.imageUrl,
                     newPassword: e.target.value,
                   });
                 }}
@@ -527,14 +473,9 @@ function Dashboard() {
       </div>
       <div class="grid-item item8">
         <Card
-          // onClick={() => navigate("/monthlyIncome")}
           style={{
-            // height: "15vh",
             minHeight: "400px",
             borderRadius: "20px", // width: "500px",
-            // cursor: "pointer",
-            // background: "rgb(255, 99, 132)",
-            // background: "#58D68D",
             color: "black",
           }}
         >
@@ -543,7 +484,6 @@ function Dashboard() {
           </Typography>
           <Button
             style={{
-              // width: "400px",
               minWidth: "300px",
               color: " green",
               border: "2px dotted green",
@@ -558,9 +498,9 @@ function Dashboard() {
           </Button>
           {/* Render the updated items */}
 
-          {monthlyData.length > 0 ? (
+          {monthIncExpInfo.length > 0 ? (
             <div style={{ textAlign: "start", padding: "10px" }}>
-              {monthlyData
+              {monthIncExpInfo
                 .filter((item) => item.type === "income")
                 .map((item, index) => (
                   <div
@@ -569,7 +509,6 @@ function Dashboard() {
                       backgroundColor: "#b6ff8b",
                       padding: "8px",
                       margin: "10px",
-                      // width: "100%", // Occupy the full width
                       borderRadius: "10px",
                       display: "flex",
                       justifyContent: "space-between", // Space content horizontally
@@ -587,7 +526,6 @@ function Dashboard() {
                 ))}
             </div>
           ) : null}
-          {/* <Typography variant="h4">${monthlyIncome}</Typography> */}
         </Card>
       </div>
       <div
@@ -610,9 +548,7 @@ function Dashboard() {
           </Typography>
           <Button
             style={{
-              // width: "400px",
               minWidth: "300px",
-
               color: " #f377e7",
               border: "2px dotted #f377e7",
               borderRadius: "20px",
@@ -621,15 +557,14 @@ function Dashboard() {
             }}
             variant="outlined"
             onClick={() => navigate("/expenses")}
-            // onClick={handleOpen}
           >
             + Add Expenses
           </Button>
           {/* Render the updated items */}
 
-          {monthlyData.length > 0 ? (
+          {monthIncExpInfo.length > 0 ? (
             <div style={{ textAlign: "start", padding: "10px" }}>
-              {monthlyData
+              {monthIncExpInfo
                 .filter((item) => item.type === "expense")
                 .map((item, index) => (
                   <div
@@ -639,7 +574,6 @@ function Dashboard() {
 
                       padding: "8px",
                       margin: "10px",
-                      // width: "100%", // Occupy the full width
                       borderRadius: "10px",
                       display: "flex",
                       justifyContent: "space-between", // Space content horizontally
@@ -657,7 +591,6 @@ function Dashboard() {
                 ))}
             </div>
           ) : null}
-          {/* <Typography variant="h4">${monthlyExpense}</Typography> */}
         </Card>
       </div>
       <div
@@ -669,17 +602,14 @@ function Dashboard() {
         }}
       >
         <Card
-          // onClick={() => navigate("/expenses")}
           style={{
             minHeight: "385px",
             borderTopRightRadius: "20px",
             borderTopLeftRadius: "20px",
             color: "black",
             position: "relative",
-            // zIndex: 2, // Ensure it's above the second card
           }}
         >
-          {/*TODO remove this number*/}
           <Typography style={{ margin: "20px" }} variant="h6">
             Projected Annual Expense
           </Typography>
@@ -697,7 +627,6 @@ function Dashboard() {
 
                       padding: "8px",
                       margin: "10px",
-                      // width: "100%", // Occupy the full width
                       borderRadius: "10px",
                       display: "flex",
                       justifyContent: "space-between", // Space content horizontally
@@ -707,7 +636,7 @@ function Dashboard() {
                     <span style={{ flex: 1 }}>{item.name}</span>
                     <span>
                       $
-                      {item.amount.toLocaleString("en-US", {
+                      {(item.amount * 12).toLocaleString("en-US", {
                         maximumFractionDigits: 2,
                       })}
                     </span>
@@ -716,11 +645,8 @@ function Dashboard() {
             </div>
           ) : null}
         </Card>
-        {/* with items ${(monthlyIncome - monthlyExpense) * 12} */}
-        {/* </Typography> */}
         <div
           style={{
-            // position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -739,13 +665,7 @@ function Dashboard() {
             <div
               style={{
                 fontWeight: "bold",
-                // marginTop: "310px",
                 background: "#b3ecff",
-
-                // borderBottomLeftRadius: "20px", // Add border only on top
-                // borderBottomRightRadius: "20px",
-                // borderRadius: "20px",
-                // borderRadius: "20px",
               }}
             >
               Total Expense: $
@@ -765,22 +685,18 @@ function Dashboard() {
         }}
       >
         <Card
-          // onClick={() => navigate("/expenses")}
           style={{
             minHeight: "385px",
             borderTopRightRadius: "20px",
             borderTopLeftRadius: "20px",
             color: "black",
             position: "relative",
-            // zIndex: 2, // Ensure it's above the second card
           }}
         >
-          {/*TODO remove this number*/}
           <Typography style={{ margin: "20px" }} variant="h6">
             Annual Expense
           </Typography>
-          {/* <Typography variant="h4"> */}
-          {/* {yearlyExpense} */}
+
           {yearlyData.length > 0 ? (
             <div style={{ textAlign: "start", padding: "10px" }}>
               {yearlyData.map((item, index) => (
@@ -791,7 +707,6 @@ function Dashboard() {
 
                     padding: "8px",
                     margin: "10px",
-                    // width: "100%", // Occupy the full width
                     borderRadius: "10px",
                     display: "flex",
                     justifyContent: "space-between", // Space content horizontally
@@ -801,7 +716,7 @@ function Dashboard() {
                   <span style={{ flex: 1 }}>{item.name}</span>
                   <span>
                     $
-                    {item.amount.toLocaleString("en-US", {
+                    {(item.amount * 12).toLocaleString("en-US", {
                       maximumFractionDigits: 2,
                     })}
                   </span>
@@ -812,7 +727,6 @@ function Dashboard() {
         </Card>
         <div
           style={{
-            // position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -832,12 +746,6 @@ function Dashboard() {
             <div
               style={{
                 fontWeight: "bold",
-                // marginTop: "310px",
-
-                // borderBottomLeftRadius: "20px", // Add border only on top
-                // borderBottomRightRadius: "20px",
-                // borderRadius: "20px",
-                // borderRadius: "20px",
               }}
             >
               Total Expense: ${" "}

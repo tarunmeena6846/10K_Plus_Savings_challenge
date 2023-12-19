@@ -23,16 +23,18 @@ import {
   yearlyIncomeState,
 } from "./components/store/atoms/total";
 import MenuIcon from "@mui/icons-material/Menu";
+import { dateState } from "./components/store/atoms/date";
 
 function Appbar() {
   const navigate = useNavigate();
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useRecoilState(dateState);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      fetch("http://localhost:3000/admin/me", {
+      fetch(`${import.meta.env.VITE_SERVER_URL}/admin/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -170,8 +172,9 @@ function Appbar() {
                   isLoading: false,
                   imageUrl: currentUserState.imageUrl,
                 });
-                navigate("/");
                 setDrawerOpen(false);
+                setSelectedDate({ year: selectedDate.year, month: "January" });
+                navigate("/");
               }}
             >
               <ListItemText primary="Logout" />

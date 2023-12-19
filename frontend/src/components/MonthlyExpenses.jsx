@@ -81,17 +81,20 @@ function MonthlyExpenses() {
 
   const handleResetMonthlyData = async () => {
     try {
-      await fetch("http://localhost:3000/admin/reset-monthly-expenses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          month: selectedDate.month,
-          year: selectedDate.year,
-        }),
-      })
+      await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/admin/reset-monthly-expenses`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            month: selectedDate.month,
+            year: selectedDate.year,
+          }),
+        }
+      )
         .then((resp) => {
           if (!resp.ok) {
             throw new Error("Network response is not ok");
@@ -134,7 +137,7 @@ function MonthlyExpenses() {
     console.log(items);
 
     console.log("tarun total is ", total);
-    await fetch("http://localhost:3000/admin/save-item", {
+    await fetch(`${import.meta.env.VITE_SERVER_URL}/admin/save-item`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -17,7 +17,7 @@ function Login() {
   console.log(password);
   const handleReset = () => {
     setResetRequested(true);
-    fetch("http://localhost:3000/admin/reset-password", {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/admin/reset-password`, {
       method: "POST",
       body: JSON.stringify({
         username: email,
@@ -54,7 +54,7 @@ function Login() {
     const headers = new Headers();
     headers.append("Username", email);
     headers.append("Password", password);
-    fetch("http://localhost:3000/admin/login", {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/admin/login`, {
       method: "POST",
       headers: headers,
     })
@@ -125,7 +125,6 @@ function Login() {
               </Button>
             </Card>
           </div>
-        
 
           {/* <div style={{ display: "flex", justifyContent: "center" }}>
             <Typography>

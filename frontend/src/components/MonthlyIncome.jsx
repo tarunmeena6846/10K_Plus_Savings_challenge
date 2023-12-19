@@ -7,10 +7,6 @@ import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
@@ -19,6 +15,7 @@ import { Typography } from "@mui/material";
 import { itemsState } from "./store/atoms/incomeItems";
 import { dateState } from "./store/atoms/date";
 import { userState } from "./store/atoms/user";
+
 export const months = [
   "January",
   "February",
@@ -39,6 +36,7 @@ function MonthlyIncome() {
   const [items, setItems] = useState([]);
   // const [incomeItems, setIncomeItems] = useRecoilState(itemsState);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
+  // const apiUrl = process.env.REACT_APP_BASE_URL;
 
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
@@ -88,7 +86,7 @@ function MonthlyIncome() {
         total += parseInt(item.amount);
       });
       console.log(items);
-      await fetch("http://localhost:3000/admin/save-item", {
+      await fetch(`${import.meta.env.VITE_SERVER_URL}/admin/save-item`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -148,17 +146,20 @@ function MonthlyIncome() {
 
   const handleResetMonthlyData = async () => {
     try {
-      await fetch("http://localhost:3000/admin/reset-monthly-income", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          month: selectedDate.month,
-          year: selectedDate.year,
-        }),
-      })
+      await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/admin/reset-monthly-income`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            month: selectedDate.month,
+            year: selectedDate.year,
+          }),
+        }
+      )
         .then((resp) => {
           if (!resp.ok) {
             throw new Error("Network response is not ok");

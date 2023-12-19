@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import { userState } from "./store/atoms/user";
 import { useRecoilState } from "recoil";
 
-const UserAvatar = ({ userEmail, size = 40, onImageChange }) => {
+const UserAvatar = ({ userEmail, size = 40}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
