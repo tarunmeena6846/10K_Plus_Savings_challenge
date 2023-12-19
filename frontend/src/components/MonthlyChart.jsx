@@ -27,7 +27,7 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
             {
               label: "Monthly Income and Expenses",
               data: [monthlyIncome, monthlyExpenses],
-              backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
+              backgroundColor: ["#76d6f3", "#f377e7"],
               hoverOffset: 4,
             },
           ],
@@ -41,6 +41,7 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
             beforeDraw: (chart) => {
               const width = chart.width;
               const height = chart.height;
+              console.log(width, height, "tarun height");
               const ctx = chart.ctx;
 
               const total = monthlyIncome + monthlyExpenses;
@@ -54,10 +55,8 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
               ctx.font = font;
               ctx.textBaseline = "middle";
               ctx.fillStyle = "#000";
-              const monthAbbreviation = new Date().toLocaleString("en-US", {
-                month: "short",
-              });
-              const text = `${savingPercentage}% Savings in ${monthAbbreviation}`;
+
+              const text = `${savingPercentage}% Savings`;
 
               const textX = width / 2 - ctx.measureText(text).width / 2;
               const textY = height / 2;
@@ -85,10 +84,10 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100%",
+        height: "400px",
       }}
     >
-      <canvas ref={chartRef} width="500" height="200"></canvas>
+      <canvas ref={chartRef}></canvas>
     </div>
   );
 };

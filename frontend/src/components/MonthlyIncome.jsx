@@ -16,6 +16,8 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Grid } from "@mui/material";
 import { Typography } from "@mui/material";
+import { itemsState } from "./store/atoms/incomeItems";
+import { dateState } from "./store/atoms/date";
 export const months = [
   "January",
   "February",
@@ -30,14 +32,16 @@ export const months = [
   "November",
   "December",
 ];
+export const years = Array.from({ length: 9 }, (_, index) => 2022 + index);
 
 function MonthlyIncome() {
   const [items, setItems] = useState([]);
+  // const [incomeItems, setIncomeItems] = useRecoilState(itemsState);
+  const [selectedDate, setSelectedDate] = useRecoilState(dateState);
+
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState(
-    months[new Date().getMonth()]
-  );
+  // const [selectedMonth, setSelectedMonth] = useState("selectedDate");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const navigate = useNavigate();
   const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
@@ -47,7 +51,28 @@ function MonthlyIncome() {
   const handleAddItem = () => {
     if (itemName && itemAmount) {
       if (items.findIndex((item) => item.name === itemName) === -1) {
-        setItems([...items, { item: itemName, amount: itemAmount }]);
+        setItems([
+          ...items,
+          { name: itemName, amount: parseFloat(itemAmount), type: "income" },
+        ]);
+        // setIncomeItems((prevItems) => [
+        //   ...prevItems,
+        //   { name: itemName, amount: itemAmount, type: "income" },
+        // ]);
+        setItemName("");
+        setItemAmount("");
+      } else {
+        const updatedItems = items.map((item) =>
+          item.name === itemName
+            ? {
+                ...item,
+                amount: item.amount + parseFloat(itemAmount),
+                type: "income",
+              }
+            : item
+        );
+
+        setItems(updatedItems);
         setItemName("");
         setItemAmount("");
       }
@@ -60,8 +85,8 @@ function MonthlyIncome() {
       items.forEach((item) => {
         total += parseInt(item.amount);
       });
-
-      await fetch("https://wealthx10k.onrender.com/admin/save-income", {
+      console.log(items);
+      await fetch("http://localhost:3000/admin/save-item", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,8 +94,10 @@ function MonthlyIncome() {
         },
         body: JSON.stringify({
           total,
-          month: selectedMonth,
-          year: selectedYear,
+          type: "income",
+          month: selectedDate.month,
+          year: selectedDate.year,
+          items: items,
         }),
       })
         .then((resp) => {
@@ -79,7 +106,7 @@ function MonthlyIncome() {
           }
           resp.json().then((responseData) => {
             console.log("tarun", responseData);
-            console.log("tarun", responseData.totalIncome);
+            // console.log("tarun", responseData.totalIncome);
 
             if (responseData.success) {
               console.log("tarun inside success");
@@ -102,20 +129,17 @@ function MonthlyIncome() {
 
   const handleResetMonthlyData = async () => {
     try {
-      await fetch(
-        "https://wealthx10k.onrender.com/admin/reset-monthly-income",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            month: selectedMonth,
-            year: selectedYear,
-          }),
-        }
-      )
+      await fetch("http://localhost:3000/admin/reset-monthly-income", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          month: selectedDate.month,
+          year: selectedDate.year,
+        }),
+      })
         .then((resp) => {
           if (!resp.ok) {
             throw new Error("Network response is not ok");
@@ -144,8 +168,6 @@ function MonthlyIncome() {
     }
   };
 
-  const years = Array.from({ length: 9 }, (_, index) => 2022 + index);
-
   return (
     <div
       style={{
@@ -153,7 +175,7 @@ function MonthlyIncome() {
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
-        backgroundColor: "#F0F0F0",
+        // backgroundColor: "#F0F0F0",
         minHeight: "100vh",
       }}
     >
@@ -192,7 +214,7 @@ function MonthlyIncome() {
                 />
                 <br />
                 <br />
-                <FormControl variant="outlined">
+                {/* <FormControl variant="outlined">
                   <InputLabel>Select Month</InputLabel>
                   <Select
                     value={selectedMonth}
@@ -219,7 +241,7 @@ function MonthlyIncome() {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
                 <br />
                 <br />
                 <Button
@@ -259,7 +281,7 @@ function MonthlyIncome() {
                 <List>
                   {items.map((item, index) => (
                     <ListItem key={index} style={{ color: "purple" }}>
-                      <ListItemText primary={`${item.item}: $${item.amount}`} />
+                      <ListItemText primary={`${item.name}: $${item.amount}`} />
                     </ListItem>
                   ))}
                 </List>

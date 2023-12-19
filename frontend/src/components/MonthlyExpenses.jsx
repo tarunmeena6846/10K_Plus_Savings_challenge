@@ -8,7 +8,6 @@ import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Grid, TextField } from "@mui/material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { monthlyExpenseState } from "./store/atoms/total";
 import { useRecoilState } from "recoil";
@@ -23,20 +22,8 @@ import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+import { dateState } from "./store/atoms/date";
+
 /// This is the landing page. You need to add a link to the login page here.
 /// Maybe also check from the backend if the user is already logged in and then show them a logout button
 /// Logging a user out is as simple as deleting the token from the local storage.
@@ -44,10 +31,12 @@ function MonthlyExpenses() {
   const [items, setItems] = useState([]);
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState(
-    months[new Date().getMonth()]
-  );
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedDate, setSelectedDate] = useRecoilState(dateState);
+
+  // const [selectedMonth, setSelectedMonth] = useState(
+  //   months[new Date().getMonth()]
+  // );
+  // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const navigate = useNavigate();
   // const [totalExpenses, setTotalExpenses] = useRecoilState(totalState);
@@ -63,36 +52,44 @@ function MonthlyExpenses() {
       //   setItems([...items, { item: itemName, amount: itemAmount }]);
       // }
       if (items.findIndex((item) => item.name === itemName) === -1) {
-        setItems([...items, { item: itemName, amount: itemAmount }]);
+        setItems([
+          ...items,
+          { name: itemName, amount: parseFloat(itemAmount), type: "expense" },
+        ]);
 
+        setItemName("");
+        setItemAmount("");
+      } else {
+        const updatedItems = items.map((item) =>
+          item.name === itemName
+            ? {
+                ...item,
+                amount: item.amount + parseFloat(itemAmount),
+                type: "expense",
+              }
+            : item
+        );
+
+        setItems(updatedItems);
         setItemName("");
         setItemAmount("");
       }
     }
-    // console.log(itemName);
-    // const indexOfBanana = itemArray.findIndex((item) => item.name === itemName);
-
-    // if (indexOfBanana === -1) {
-    //   itemArray.push({ name: itemName, amount: itemAmount });
-    // }
   };
 
   const handleResetMonthlyData = async () => {
     try {
-      await fetch(
-        "https://wealthx10k.onrender.com/admin/reset-monthly-expenses",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            month: selectedMonth,
-            year: selectedYear,
-          }),
-        }
-      )
+      await fetch("http://localhost:3000/admin/reset-monthly-expenses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          month: selectedDate.month,
+          year: selectedDate.year,
+        }),
+      })
         .then((resp) => {
           if (!resp.ok) {
             throw new Error("Network response is not ok");
@@ -132,8 +129,10 @@ function MonthlyExpenses() {
       console.log(item.amount);
       total += parseInt(item.amount);
     });
+    console.log(items);
+
     console.log("tarun total is ", total);
-    await fetch("https://wealthx10k.onrender.com/admin/save-expense", {
+    await fetch("http://localhost:3000/admin/save-item", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -141,8 +140,10 @@ function MonthlyExpenses() {
       },
       body: JSON.stringify({
         total,
-        month: selectedMonth,
-        year: selectedYear,
+        type: "expense",
+        month: selectedDate.month,
+        year: selectedDate.year,
+        items,
       }),
     })
       .then((resp) => {
@@ -187,7 +188,7 @@ function MonthlyExpenses() {
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
-        backgroundColor: "#F0F0F0",
+        // backgroundColor: "#F0F0F0",
         minHeight: "100vh",
       }}
     >
@@ -226,7 +227,7 @@ function MonthlyExpenses() {
                 />
                 <br />
                 <br />
-                <FormControl variant="outlined">
+                {/* <FormControl variant="outlined">
                   <InputLabel>Select Month</InputLabel>
                   <Select
                     value={selectedMonth}
@@ -253,7 +254,7 @@ function MonthlyExpenses() {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
                 <br />
                 <br />
                 <Button
@@ -293,7 +294,7 @@ function MonthlyExpenses() {
                 <List>
                   {items.map((item, index) => (
                     <ListItem key={index} style={{ color: "purple" }}>
-                      <ListItemText primary={`${item.item}: $${item.amount}`} />
+                      <ListItemText primary={`${item.name}: $${item.amount}`} />
                     </ListItem>
                   ))}
                 </List>

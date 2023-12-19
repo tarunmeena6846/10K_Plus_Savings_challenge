@@ -10,5 +10,6 @@ export const userState = atom({
   default: {
     isLoading: true,
     userEmail: null,
+    imageUrl: "",
   },
 });

@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 const LandingPage = () => {
   const navigate = useNavigate();
   return (
-    <div style={{ textAlign: "center", paddingTop: "0px" }}>
-      <header style={{ marginBottom: "16px" }}>
+    <div
+      style={{ textAlign: "center", paddingTop: "0px", background: "white" }}
+    >
+      <header style={{ marginBottom: "16px", background: "white" }}>
         <Typography variant="h1">WealthX10K</Typography>
         <Typography variant="subtitle1">
           Navigate Your Financial Journey, Multiply Your Wealth, Embrace

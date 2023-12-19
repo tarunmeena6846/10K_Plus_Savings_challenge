@@ -17,7 +17,7 @@ function Register() {
 
   console.log(password);
   const handleRegister = () => {
-    fetch("https://wealthx10k.onrender.com/admin/signup", {
+    fetch("http://localhost:3000/admin/signup", {
       method: "POST",
       body: JSON.stringify({
         username: email,
@@ -37,6 +37,7 @@ function Register() {
           setCurrentUserState({
             userEmail: email,
             isLoading: false,
+            imageUrl: currentUserState.imageUrl,
           });
           // setCurrentUserState({ userEmail: email, isLoading: false });
           navigate("/dashboard");
