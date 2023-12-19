@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Card,
   Typography,
-  Grid,
-  Box,
-  Paper,
   CardContent,
   Button,
   Dialog,
@@ -12,37 +9,24 @@ import {
   DialogContent,
   TextField,
   Avatar,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  monthlyExpenseState,
-  monthlyIncomeState,
-  yearlyExpenseState,
-  yearlyIncomeState,
-} from "./store/atoms/total";
+import { useRecoilState } from "recoil";
+import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
 import MonthlyChart from "./MonthlyChart";
-import Login from "./Login";
 import MonthlyBarGraph from "./MonthlyBarGraph";
 import { userState } from "./store/atoms/user";
 import UserAvatar from "./UserAvatar"; // Adjust the path based on your project structure
-import { itemsState } from "./store/atoms/incomeItems";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import CardActions from "@mui/material/CardActions";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { months, years } from "./MonthlyIncome";
 import { dateState } from "./store/atoms/date";
 import Clock from "./Clock";
-import {
-  // Button,
-  // Dialog,
-  // DialogTitle,
-  // DialogContent,
-  DialogActions,
-} from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
+
 function Dashboard() {
   const navigate = useNavigate();
 
@@ -60,11 +44,6 @@ function Dashboard() {
   const [userDetails, setUserDetails] = useState({
     newPassword: "",
   });
-  // const updatedItems = useRecoilValue(itemsState);
-  // const [selectedMonth, setSelectedMonth] = useState(
-  //   months[new Date().getMonth()]
-  // );
-  // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [projectedData, setProjectedData] = useState({
     projectedMonthlyData: [],
@@ -96,30 +75,34 @@ function Dashboard() {
       .then((resp) => {
         if (!resp.ok) {
           throw new Error("Network response is not ok");
+          setCurrentUserState({
+            userEmail: null,
+            isLoading: false,
+            imageUrl: "",
+          });
         }
         resp.json().then((data) => {
           console.log(data);
           setSettingsDialogOpen(false);
-          // localStorage.setItem("token", data.token);
         });
       })
       .catch((error) => {
         alert("Error Changing email");
-        // alert("Invalid Username or Password");
         console.error("Error signing in email");
+        setCurrentUserState({
+          userEmail: null,
+          isLoading: false,
+          imageUrl: "",
+        });
       });
   };
 
   const handleImageChange = (imageUrl) => {
-    console.log("New image URL:", imageUrl);
     setUserDetails({
-      // imageUrl: imageUrl,
       newPassword: userDetails.newPassword,
     });
-    // Save the image URL to the database or perform other actions
   };
-  // const ActualYearlySavings = 0;
-  // console.log("tarun updated items ", updatedItems);
+
   useEffect(() => {
     console.log("tarun useeffect 1", selectedDate);
 
@@ -176,12 +159,22 @@ function Dashboard() {
           setMonthlyIncome(0);
           setMonthlyExpense(0);
           setMonthlyData([]);
+          setCurrentUserState({
+            userEmail: null,
+            isLoading: false,
+            imageUrl: "",
+          });
         }
       } catch (error) {
         console.error("Error fetching monthly data:", error);
         setMonthlyIncome(0);
         setMonthlyExpense(0);
         setMonthlyData([]);
+        setCurrentUserState({
+          userEmail: null,
+          isLoading: false,
+          imageUrl: "",
+        });
       }
     };
 
@@ -189,8 +182,13 @@ function Dashboard() {
   }, [
     selectedDate.month,
     selectedDate.year,
+    currentUserState.userEmail,
+    currentUserState.isLoading,
+    navigate,
+    setCurrentUserState,
     // setProjectedData,
-    // setMonthlyIncome,
+    setMonthlyIncome,
+    // setCurrentUserState,
     // setMonthlyExpense,
     // setMonthlyData,
   ]); // Run this effect only once when the component mounts
@@ -228,19 +226,41 @@ function Dashboard() {
           );
         } else {
           console.error("Failed to fetch yearly data");
+          setCurrentUserState({
+            userEmail: null,
+            isLoading: false,
+            imageUrl: "",
+          });
         }
       } catch (error) {
         console.error("Error fetching yearly data:", error);
+        setCurrentUserState({
+          userEmail: null,
+          isLoading: false,
+          imageUrl: "",
+        });
       }
     };
 
     fetchYearlyData();
-  }, [selectedDate]); // Run this effect only once when the component mounts
+  }, [selectedDate, setMonthlyIncome, setCurrentUserState]); // Run this effect only once when the component mounts
 
   useEffect(() => {
     // Check if the necessary data is available before navigating
     if (currentUserState.userEmail && !currentUserState.isLoading) {
       navigate("/dashboard");
+    }
+  }, [
+    currentUserState.userEmail,
+    currentUserState.isLoading,
+    navigate,
+    setCurrentUserState,
+  ]);
+
+  useEffect(() => {
+    // Check if the necessary data is available before navigating
+    if (currentUserState.userEmail === null && !currentUserState.isLoading) {
+      navigate("/");
     }
   }, [
     currentUserState.userEmail,

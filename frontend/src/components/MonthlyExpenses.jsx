@@ -23,6 +23,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import { dateState } from "./store/atoms/date";
+import { userState } from "./store/atoms/user";
 
 /// This is the landing page. You need to add a link to the login page here.
 /// Maybe also check from the backend if the user is already logged in and then show them a logout button
@@ -32,6 +33,7 @@ function MonthlyExpenses() {
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
   // const [selectedMonth, setSelectedMonth] = useState(
   //   months[new Date().getMonth()]
@@ -158,8 +160,13 @@ function MonthlyExpenses() {
           if (responseData.success == true) {
             // Clear items array after saving
             setItems([]);
-            setMonthlyExpense(responseData.totalExpenses);
+            // setMonthlyExpense(responseData.totalExpenses);
             navigate("/dashboard");
+            setCurrentUserState({
+              userEmail: currentUserState.userEmail,
+              isLoading: false,
+              imageUrl: currentUserState.imageUrl,
+            });
             // console.log(total);
             // localStorage.setItem(
             //   "monthlyExpense",
@@ -169,15 +176,35 @@ function MonthlyExpenses() {
             console.log("tarun after setting the items to null");
             // itemArray.clear();
           } else {
+            setCurrentUserState({
+              userEmail: null,
+              isLoading: false,
+              imageUrl: "",
+            });
             console.error("Error saving expense:", responseData.error);
           }
         });
       })
       .catch((error) => {
+        setCurrentUserState({
+          userEmail: null,
+          isLoading: false,
+          imageUrl: "",
+        });
         console.error("Error signing in email");
       });
   };
-
+  useEffect(() => {
+    // Check if the necessary data is available before navigating
+    if (currentUserState.userEmail === null && !currentUserState.isLoading) {
+      navigate("/");
+    }
+  }, [
+    currentUserState.userEmail,
+    currentUserState.isLoading,
+    navigate,
+    setCurrentUserState,
+  ]);
   // Array of months and years
   const years = Array.from({ length: 9 }, (_, index) => 2022 + index);
 

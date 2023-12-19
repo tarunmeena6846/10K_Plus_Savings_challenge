@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { monthlyIncomeState } from "./store/atoms/total";
@@ -18,6 +18,7 @@ import { Grid } from "@mui/material";
 import { Typography } from "@mui/material";
 import { itemsState } from "./store/atoms/incomeItems";
 import { dateState } from "./store/atoms/date";
+import { userState } from "./store/atoms/user";
 export const months = [
   "January",
   "February",
@@ -45,6 +46,7 @@ function MonthlyIncome() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const navigate = useNavigate();
   const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
   console.log(new Date().getMonth());
 
@@ -111,7 +113,12 @@ function MonthlyIncome() {
             if (responseData.success) {
               console.log("tarun inside success");
               setItems([]);
-              setMonthlyIncome(responseData.totalIncome);
+              setCurrentUserState({
+                userEmail: currentUserState.userEmail,
+                isLoading: false,
+                imageUrl: currentUserState.imageUrl,
+              });
+              // setMonthlyIncome(responseData.totalIncome);
               navigate("/dashboard");
               //              history.go(0);
             } else {
@@ -121,9 +128,21 @@ function MonthlyIncome() {
         })
         .catch((error) => {
           console.error("Error signing in email");
+          setCurrentUserState({
+            userEmail: null,
+            isLoading: false,
+            imageUrl: "",
+          });
+          navigate("/dashboard");
         });
     } catch (error) {
+      setCurrentUserState({
+        userEmail: null,
+        isLoading: false,
+        imageUrl: "",
+      });
       console.error("Error saving income:", error.message);
+      navigate("/dashboard");
     }
   };
 
@@ -167,7 +186,17 @@ function MonthlyIncome() {
       console.error("Error resetting monthly data:", error.message);
     }
   };
-
+  useEffect(() => {
+    // Check if the necessary data is available before navigating
+    if (currentUserState.userEmail === null && !currentUserState.isLoading) {
+      navigate("/");
+    }
+  }, [
+    currentUserState.userEmail,
+    currentUserState.isLoading,
+    navigate,
+    setCurrentUserState,
+  ]);
   return (
     <div
       style={{

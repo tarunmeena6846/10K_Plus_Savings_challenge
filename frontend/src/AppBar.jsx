@@ -27,11 +27,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 function Appbar() {
   const navigate = useNavigate();
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  // const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
-  // const [monthlyExpense, setMonthlyExpense] =
-  // useRecoilState(monthlyExpenseState);
-  // const [yearlyIncome, setYearlyIncome] = useRecoilState(yearlyIncomeState);
-  // const [yearlyExpense, setYearlyExpense] = useRecoilState(yearlyExpenseState);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
