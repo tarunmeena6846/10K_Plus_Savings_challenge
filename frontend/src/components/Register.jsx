@@ -67,7 +67,7 @@ function Register() {
             onChange={(e) => {
               setEmail(e.target.value);
             }}
-            label="Email"
+            label="Email or Username"
             variant="outlined"
             type={"email"}
             fullWidth

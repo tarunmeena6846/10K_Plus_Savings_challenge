@@ -21,7 +21,6 @@ function Login() {
       method: "POST",
       body: JSON.stringify({
         username: email,
-        // password: password,
       }),
       headers: {
         "content-Type": "application/json",
@@ -100,7 +99,7 @@ function Login() {
             <Card variant="outlined" style={{ width: 400, padding: 20 }}>
               <TextField
                 onChange={(e) => setEmail(e.target.value)}
-                label="Email"
+                label="Email or Username"
                 variant="outlined"
                 type="email"
                 fullWidth
@@ -125,15 +124,6 @@ function Login() {
               </Button>
             </Card>
           </div>
-
-          {/* <div style={{ display: "flex", justifyContent: "center" }}>
-            <Typography>
-              Forgot Password?{" "}
-              <Button style={{ textTransform: "none" }} onClick={handleReset}>
-                Reset Password
-              </Button>
-            </Typography>
-          </div> */}
         </>
       ) : (
         <div>
@@ -160,11 +150,7 @@ function Login() {
               <br />
               <br></br>
 
-              <Button
-                variant="contained"
-                color="primary"
-                // onClick={handleRegister}
-              >
+              <Button variant="contained" color="primary">
                 Reset
               </Button>
             </Card>

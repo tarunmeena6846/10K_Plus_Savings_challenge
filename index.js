@@ -3,16 +3,17 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const moment = require("moment"); // Import the moment library
+const dotenv = require("dotenv");
 
 const app = express();
-
-// app.use(express.json());
+dotenv.config();
 app.use(cors());
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-const secretKey = "mysecretkey";
+const secretKey = process.env.JWT_SCERET;
+// console.log("tarun secretkey", secretKey);
 let currentUserId;
 
 const monthlyDataSchema = new mongoose.Schema({
@@ -44,19 +45,13 @@ const admin = mongoose.model("admin", adminSchema);
 const MonthlyData = mongoose.model("MonthlyData", monthlyDataSchema);
 
 mongoose
-  .connect(
-    "mongodb+srv://tarunmeena6846:Tuesday6%5E@cluster0.f6tatpb.mongodb.net/",
-    { dbName: "savingApp" }
-  )
+  .connect(process.env.MONGODB_URL, { dbName: "savingApp" })
   .then(() => {
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
   });
-
-// const db = client.db("savingApp");
-// const expensesCollection = db.collection("expenses");
 
 function detokenizeAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -120,79 +115,6 @@ app.get("/admin/me", detokenizeAdmin, async (req, res) => {
     } else {
       res.status(401).send("unauthorised");
     }
-    // const currentDate = new Date();
-    // // Get total monthly data
-    // MonthlyData.aggregate([
-    //   {
-    //     $match: {
-    //       userId: currentUserId,
-    //       month: currentDate.toLocaleString("en-US", { month: "long" }),
-    //       year: currentDate.getFullYear(),
-    //     },
-    //   },
-    //   {
-    //     $group: {
-    //       _id: null,
-    //       totalIncome: { $sum: "$totalIncome" },
-    //       totalExpenses: { $sum: "$totalExpenses" },
-    //     },
-    //   },
-    // ])
-    //   .exec()
-    //   .then((monthlyResult) => {
-    //     // Get total yearly data
-    //     MonthlyData.aggregate([
-    //       {
-    //         $match: {
-    //           userId: currentUserId,
-    //           year: currentDate.getFullYear(),
-    //         },
-    //       },
-    //       {
-    //         $group: {
-    //           _id: null,
-    //           totalYearlyIncome: { $sum: "$totalIncome" },
-    //           totalYearlyExpenses: { $sum: "$totalExpenses" },
-    //         },
-    //       },
-    //     ])
-    //       .exec()
-    //       .then((yearlyResult) => {
-    //         const {
-    //           totalIncome: monthlyTotalIncome,
-    //           totalExpenses: monthlyTotalExpenses,
-    //         } =
-    //           monthlyResult.length > 0
-    //             ? monthlyResult[0]
-    //             : { totalIncome: 0, totalExpenses: 0 };
-    //         const { totalYearlyIncome, totalYearlyExpenses } =
-    //           yearlyResult.length > 0
-    //             ? yearlyResult[0]
-    //             : { totalYearlyIncome: 0, totalYearlyExpenses: 0 };
-    //         const yearlySaving = totalYearlyIncome - totalYearlyExpenses;
-    //         res.status(201).json({
-    //           username: req.user.username,
-    //           message: "Data retrieved successfully",
-    //           monthlyData: {
-    //             totalIncome: monthlyTotalIncome,
-    //             totalExpenses: monthlyTotalExpenses,
-    //           },
-    //           yearlyData: {
-    //             totalYearlyIncome,
-    //             totalYearlyExpenses,
-    //             yearlySaving,
-    //           },
-    //         });
-    //       })
-    //       .catch((err) => {
-    //         console.error("Error fetching yearly data:", err);
-    //         res.status(500).json({ message: "Internal Server Error" });
-    //       });
-    // })
-    // .catch((err) => {
-    //   console.error("Error fetching monthly data:", err);
-    //   res.status(500).json({ message: "Internal Server Error" });
-    // });
   } else {
     res.status(401).send("Unauthorised");
   }
@@ -245,248 +167,6 @@ app.post("/admin/change-user_details", detokenizeAdmin, async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
-app.post("/admin/save-expense", detokenizeAdmin, async (req, res) => {
-  try {
-    const { total, month, year } = req.body;
-    console.log("tarun items are ", total, month, year);
-    // const currentDate = new Date();
-    const DatePresent = await MonthlyData.findOne({
-      userId: currentUserId,
-      // month: currentDate.toLocaleString("en-US", { month: "long" }),
-      // year: currentDate.getFullYear(),
-      month: month,
-      //   year: currentDate.getFullYear(),
-      year: year,
-    });
-    console.log("tarun", DatePresent);
-    console.log("tarun ", currentUserId);
-    if (DatePresent) {
-      await MonthlyData.updateOne(
-        {
-          userId: currentUserId,
-          year: year,
-          month: month,
-          // year: currentDate.getFullYear(),
-          // month: currentDate.toLocaleString("en-US", { month: "long" }),
-        },
-        { $inc: { totalExpenses: total } }
-      );
-    } else {
-      const newExpense = new MonthlyData({
-        userId: currentUserId,
-        totalExpenses: total,
-        year: year,
-        month: month,
-        // month: currentDate.toLocaleString("en-US", { month: "long" }),
-        // year: currentDate.getFullYear(),
-      });
-      await newExpense.save();
-    }
-    //todo remove this
-    MonthlyData.aggregate([
-      {
-        $match: {
-          userId: currentUserId,
-          year: year,
-          month: month,
-          // year: currentDate.getFullYear(),
-          // month: currentDate.toLocaleString("en-US", { month: "long" }),
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          // totalIncome: { $sum: '$totalIncome' },
-          totalExpenses: { $sum: "$totalExpenses" },
-        },
-      },
-    ])
-      .exec()
-      .then((result) => {
-        if (result.length > 0) {
-          const { totalExpenses } = result[0];
-          //   console.log("Total Income:", totalIncome);
-          console.log("Total Expenses:", totalExpenses);
-          res.status(201).json({
-            success: true,
-            message: "Expense saved successfully",
-            totalExpenses: totalExpenses,
-          });
-        } else {
-          console.log("No data found for the user.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    // res
-    //   .status(201)
-    //   .json({ success: true, message: "Expense saved successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
-  }
-});
-app.post("/admin/save-income", detokenizeAdmin, async (req, res) => {
-  try {
-    const { total, month, year } = req.body;
-    console.log("tarun items are ", total, month, year);
-    const currentDate = new Date();
-    const DatePresent = await MonthlyData.findOne({
-      userId: currentUserId,
-      //   month: currentDate.toLocaleString("en-US", { month: "long" }),
-      month: month,
-      //   year: currentDate.getFullYear(),
-      year: year,
-    });
-    console.log("tarun", DatePresent);
-    console.log("tarun ", currentUserId);
-    if (DatePresent) {
-      await MonthlyData.updateOne(
-        {
-          userId: currentUserId,
-          //   year: currentDate.getFullYear(),
-          //   month: currentDate.toLocaleString("en-US", { month: "long" }),
-          month: month,
-          //   year: currentDate.getFullYear(),
-          year: year,
-        },
-        { $inc: { totalIncome: total } }
-      );
-    } else {
-      const newIncome = new MonthlyData({
-        userId: currentUserId,
-        totalIncome: total,
-        // month: currentDate.toLocaleString("en-US", { month: "long" }),
-        // year: currentDate.getFullYear(),
-        month: month,
-        //   year: currentDate.getFullYear(),
-        year: year,
-      });
-      await newIncome.save();
-    }
-    //TODO remove this
-    MonthlyData.aggregate([
-      {
-        $match: {
-          userId: currentUserId,
-          //   year: currentDate.getFullYear(),
-          //   month: currentDate.toLocaleString("en-US", { month: "long" }),
-          month: month,
-          //   year: currentDate.getFullYear(),
-          year: year,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          totalIncome: { $sum: "$totalIncome" },
-          // totalExpenses: { $sum: "$totalExpenses" },
-        },
-      },
-    ])
-      .exec()
-      .then((result) => {
-        if (result.length > 0) {
-          const { totalIncome } = result[0];
-          console.log("Total Income:", totalIncome);
-          //   console.log("Total Expenses:", totalExpenses);
-          res.status(201).json({
-            success: true,
-            message: "Income saved successfully",
-            totalIncome: totalIncome,
-          });
-        } else {
-          console.log("No data found for the user.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    // res
-    //   .status(201)
-    //   .json({ success: true, message: "Income saved successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
-  }
-});
-
-app.get("/admin/monthly-data", detokenizeAdmin, async (req, res) => {
-  try {
-    const currentYear = new Date().getFullYear();
-    // const currentUserId = req.userId; // Assuming you have the userId in the req object
-
-    // Fetch existing monthly data
-    const existingMonthlyData = await MonthlyData.find({
-      userId: currentUserId,
-      year: currentYear,
-    });
-    console.log("tarun existing monthlydatat", existingMonthlyData);
-    // Create a map for easy access to existing data
-    const existingDataMap = {};
-    existingMonthlyData.forEach((data) => {
-      // console.log("tarun data at each", data);
-      existingDataMap[data.month] = data;
-    });
-
-    // Create an array to store the final monthly data
-    const monthlyData = [];
-
-    // Iterate over all months and either fetch existing data or insert new data
-    for (let month = 1; month <= 12; month++) {
-      const fullMonthName = moment()
-        .month(month - 1)
-        .format("MMMM"); // Get full month name
-
-      const existingData = existingDataMap[fullMonthName];
-
-      if (existingData) {
-        // If data exists for the month, add it to the final array
-        monthlyData.push(existingData);
-      } else {
-        // If data doesn't exist, insert a new record with values set to 0
-        const newRecord = {
-          userId: currentUserId,
-          year: currentYear,
-          month: fullMonthName,
-          totalIncome: 0,
-          totalExpenses: 0,
-          // Add other fields as needed
-        };
-
-        // Insert the new record
-        const insertedData = await MonthlyData.create(newRecord);
-
-        // Add the inserted data to the final array
-        monthlyData.push(insertedData);
-      }
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Monthly data for the current year retrieved successfully",
-      data: monthlyData,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
-  }
-});
-
 app.post("/admin/reset-monthly-income", async (req, res) => {
   try {
     const { month, year } = req.body;
@@ -655,60 +335,6 @@ app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
     });
   }
 });
-// Express Route for retrieving common income items for a specified year
-// app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
-//   try {
-//     const { year } = req.params;
-//     console.log("tarun year is", year);
-
-//     // Retrieve income items for the specified year
-//     const monthlyItems = await MonthlyData.find({
-//       userId: currentUserId,
-//       year,
-//     });
-
-//     if (!monthlyItems || monthlyItems.length === 0) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "No income items found for the specified year.",
-//       });
-//     }
-
-//     // Aggregate and filter common items
-//     const commonItems = monthlyItems.reduce((accumulator, monthlyItem) => {
-//       monthlyItem.items.forEach((item) => {
-//         if (item.type === "expense") {
-//           const existingItem = accumulator.find(
-//             (commonItem) => commonItem.name === item.name
-//           );
-
-//           if (existingItem) {
-//             existingItem.amount += item.amount;
-//           } else {
-//             accumulator.push({ name: item.name, amount: item.amount });
-//           }
-//         }
-//       });
-
-//       return accumulator;
-//     }, []);
-
-//     res.status(200).json({
-//       success: true,
-//       items: commonItems,
-//       // totalIncome: incomeItems.totalIncome,
-//       // totalExpenses: incomeItems.totalExpenses,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Internal Server Error",
-//       error: error.message,
-//     });
-//   }
-// });
-
 // Express Route for retrieving income and expense items for each month in a specified year
 app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
   try {
@@ -769,26 +395,6 @@ app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
           }
         }
       });
-      //   if (item.type === "income") {
-      //     monthlyDataMap[monthKey].income += item.amount;
-      //   } else if (item.type === "expense") {
-      //     monthlyDataMap[monthKey].expenses += item.amount;
-
-      //     // Check if the item is already in commonItems
-      //     const existingItem = monthlyDataMap[monthKey].commonItems.find(
-      //       (commonItem) => commonItem.name === item.name
-      //     );
-
-      //     if (existingItem) {
-      //       existingItem.amount += item.amount;
-      //     } else {
-      //       // If not present, add it to commonItems
-      //       monthlyDataMap[monthKey].commonItems.push({
-      //         name: item.name,
-      //         amount: item.amount,
-      //       });
-      //     }
-      //   }
     });
 
     // Convert the mapping to an array

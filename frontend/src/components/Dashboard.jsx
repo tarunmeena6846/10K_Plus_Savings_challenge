@@ -332,9 +332,7 @@ function Dashboard() {
         </Card>
       </div>
       <div class="grid-item item6">
-        <Card
-          style={{ background: "", minHeight: "400px", borderRadius: "20px" }}
-        >
+        <Card style={{ minHeight: "400px", borderRadius: "20px" }}>
           <MonthlyBarGraph monthlyData={monthlyItems} />
         </Card>
       </div>
