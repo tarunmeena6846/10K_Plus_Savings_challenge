@@ -13,7 +13,6 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 const secretKey = process.env.JWT_SCERET;
-// console.log("tarun secretkey", secretKey);
 let currentUserId;
 
 const monthlyDataSchema = new mongoose.Schema({
@@ -55,14 +54,14 @@ mongoose
 
 function detokenizeAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
-  console.log("auth header ", authHeader);
-  console.log(authHeader);
+  // console.log("auth header ", authHeader);
+  // console.log(authHeader);
   if (authHeader) {
     const token = authHeader.split(" ")[1];
     let user = jwt.verify(token, secretKey);
 
     if (user.role === "admin") {
-      console.log("tarun at detoken" + user.username);
+      console.log(" username after detoken" + user.username);
       req.user = user;
       next();
     } else {
@@ -76,7 +75,7 @@ app.post("/admin/signup", async (req, res) => {
     username: req.body.username,
     password: req.body.password,
   });
-  console.log("tarun" + bIsAdminPresent);
+  console.log("bIsAdminPresent" + bIsAdminPresent);
   if (!bIsAdminPresent) {
     const obj = { username: req.body.username, password: req.body.password };
     console.log(obj);
@@ -101,12 +100,11 @@ app.post("/admin/signup", async (req, res) => {
 
 app.get("/admin/me", detokenizeAdmin, async (req, res) => {
   // const currentDate = new Date();
-  console.log("tarun at me route", req.user.username, " ", currentUserId);
   if (req.user.username) {
     const bIsAdminPresent = await admin.findOne({
       username: req.user.username,
     });
-    console.log("tarun bisadminpresent", bIsAdminPresent);
+    console.log(" bIsAdminPresent at /me route", bIsAdminPresent);
     if (bIsAdminPresent) {
       res.status(200).send({
         userEmail: bIsAdminPresent.username,
@@ -177,7 +175,6 @@ app.post("/admin/reset-monthly-income", async (req, res) => {
       month,
       year,
     });
-    console.log("tarun existing data ", existingData);
     if (existingData) {
       existingData.items = existingData.items.filter(
         (item) => item.type !== "income"
@@ -215,8 +212,11 @@ app.post("/admin/reset-monthly-expenses", async (req, res) => {
       month,
       year,
     });
-    console.log("tarun existing data at expense ", existingData);
     if (existingData) {
+      console.log(
+        "Inside existing data present at reset expense",
+        existingData
+      );
       existingData.items = existingData.items.filter(
         (item) => item.type !== "expense"
       );
@@ -247,14 +247,13 @@ app.post("/admin/reset-monthly-expenses", async (req, res) => {
 app.post("/admin/save-item", detokenizeAdmin, async (req, res) => {
   try {
     const { total, month, year, items, type } = req.body;
-    console.log("tarun items are ", items, total);
+    console.log("Items at save items ", items);
     // Check if a document with the given month and year already exists
     const existingData = await MonthlyData.findOne({
       userId: currentUserId,
       month,
       year,
     });
-    console.log("tarun existing data ", existingData);
     if (existingData) {
       // Document exists, update the items arra
       items.forEach((item) => {
@@ -305,14 +304,12 @@ app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
   try {
     const { month, year } = req.params;
     // const currentUserId = req.decoded.userId;
-    console.log("tarun month and year are ", month, year);
     // Retrieve income items for the specified month and year
     const incomeItems = await MonthlyData.findOne({
       userId: currentUserId,
       month,
       year,
     });
-    console.log("tarun incomeItems", incomeItems);
     if (!incomeItems) {
       return res.status(404).json({
         success: false,
@@ -339,7 +336,6 @@ app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
 app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
   try {
     const { year } = req.params;
-    console.log("tarun year is", year);
 
     // Retrieve income and expense items for the specified year
     const monthlyItems = await MonthlyData.find({

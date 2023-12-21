@@ -1,14 +1,13 @@
 // MonthlyBarGraph.js
 import React from "react";
 import { Bar } from "react-chartjs-2";
-import { Card } from "@mui/material";
-
 const MonthlyBarGraph = ({ monthlyData }) => {
   console.log(monthlyData);
   // Extract data for the chart
   const months = monthlyData.map((data) => data.month);
   const incomes = monthlyData.map((data) => data.income - data.expenses);
   const expenses = monthlyData.map((data) => data.expenses);
+  console.log(months, incomes, expenses);
   const data = {
     labels: months,
     datasets: [
@@ -23,6 +22,7 @@ const MonthlyBarGraph = ({ monthlyData }) => {
       {
         label: "Expenses",
         backgroundColor: "#f377e7",
+        // borderColor: "rgba(255,99,132,1)",
         borderWidth: 5,
         borderColor: "white",
         borderRadius: 20, // Add borderRadius for Savings dataset
@@ -44,13 +44,14 @@ const MonthlyBarGraph = ({ monthlyData }) => {
         display: true,
       },
     },
+    elements: {},
   };
 
   return (
-    <div>
-      <Card style={{ minHeight: "400px" }}>
-        <Bar data={data} options={options} />
-      </Card>
+    <div style={{ padding: 10, minHeight: 400 }}>
+      {/* <Card> */}
+      <Bar data={data} options={options} />
+      {/* </Card> */}
     </div>
   );
 };
