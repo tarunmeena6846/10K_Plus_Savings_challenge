@@ -48,7 +48,6 @@ function MonthlyExpenses() {
   // const itemArray = [];
 
   const handleAddItem = () => {
-    // console.log("tarun at items", items);
     if (itemName && itemAmount) {
       // if (!items.some((existingItem) => existingItem.item === itemName)) {
       //   setItems([...items, { item: itemName, amount: itemAmount }]);
@@ -100,10 +99,8 @@ function MonthlyExpenses() {
             throw new Error("Network response is not ok");
           }
           resp.json().then((responseData) => {
-            console.log("tarun", responseData);
 
             if (responseData.success) {
-              console.log("tarun inside success");
               setItems([]);
               navigate("/dashboard");
               //              history.go(0);
@@ -123,9 +120,7 @@ function MonthlyExpenses() {
     }
   };
 
-  // console.log("tarun utems ", items);
   const handleSaveExpense = async () => {
-    console.log("tarun at handlesaveexpses");
     // try {
     let total = 0;
 
@@ -136,7 +131,6 @@ function MonthlyExpenses() {
     });
     console.log(items);
 
-    console.log("tarun total is ", total);
     await fetch(`${import.meta.env.VITE_SERVER_URL}/admin/save-item`, {
       method: "POST",
       headers: {
@@ -156,8 +150,7 @@ function MonthlyExpenses() {
           throw new Error("Network response is not ok");
         }
         resp.json().then((responseData) => {
-          console.log("tarun", responseData);
-          console.log("tarun", responseData.totalExpenses);
+          console.log("response data at monthlyexpense", responseData);
 
           // setCourses(data);
           if (responseData.success == true) {
@@ -170,14 +163,6 @@ function MonthlyExpenses() {
               isLoading: false,
               imageUrl: currentUserState.imageUrl,
             });
-            // console.log(total);
-            // localStorage.setItem(
-            //   "monthlyExpense",
-            //   JSON.stringify(responseData.totalExpenses)
-            // );
-
-            console.log("tarun after setting the items to null");
-            // itemArray.clear();
           } else {
             setCurrentUserState({
               userEmail: null,

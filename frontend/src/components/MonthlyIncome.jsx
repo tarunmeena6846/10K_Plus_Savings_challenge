@@ -105,11 +105,12 @@ function MonthlyIncome() {
             throw new Error("Network response is not ok");
           }
           resp.json().then((responseData) => {
-            console.log("tarun", responseData);
-            // console.log("tarun", responseData.totalIncome);
+            console.log(
+              "response data at save item monthly income",
+              responseData
+            );
 
             if (responseData.success) {
-              console.log("tarun inside success");
               setItems([]);
               setCurrentUserState({
                 userEmail: currentUserState.userEmail,
@@ -165,10 +166,9 @@ function MonthlyIncome() {
             throw new Error("Network response is not ok");
           }
           resp.json().then((responseData) => {
-            console.log("tarun", responseData);
+            console.log("response data at monthly income", responseData);
 
             if (responseData.success) {
-              console.log("tarun inside success");
               setItems([]);
               navigate("/dashboard");
               //              history.go(0);

@@ -43,14 +43,8 @@ function Appbar() {
       })
         .then((resp) => resp.json())
         .then((data) => {
-          console.log("tarun data is ", data);
+          console.log(" data after me route", data);
           if (data && data.userEmail) {
-            console.log("tarun data ", data);
-            // setMonthlyIncome(data.monthlyData.totalIncome);
-            // setMonthlyExpense(data.monthlyData.totalExpenses);
-            // setYearlyIncome(data.yearlyData.totalYearlyIncome);
-            // setYearlyExpense(data.yearlyData.totalYearlyExpenses);
-            console.log(" imageUrl", data.imageUrl);
             setCurrentUserState({
               userEmail: data.userEmail,
               isLoading: false,
@@ -76,7 +70,6 @@ function Appbar() {
       setCurrentUserState({ userEmail: null, isLoading: false, imageUrl: "" });
     }
   }, [setCurrentUserState, navigate]);
-  console.log("tarun at appbar", currentUserState);
   return (
     <div>
       <AppBar
@@ -117,21 +110,6 @@ function Appbar() {
           {currentUserState.isLoading ? (
             <CircularProgress color="inherit" />
           ) : currentUserState.userEmail ? (
-            // <div style={{ marginLeft: "auto" }}>
-            //   <Typography style={{ color: "black" }}>
-            //     {currentUserState.userEmail}
-            //     <Button
-            //       color="inherit"
-            //       style={{ textTransform: "none" }}
-            //       onClick={() => {
-            //         localStorage.removeItem("token");
-            //         setCurrentUserState({ userEmail: null });
-            //         navigate("/");
-            //       }}
-            //     >
-            //       Logout
-            //     </Button>
-            //   </Typography>
             <div></div>
           ) : (
             // <div></div>

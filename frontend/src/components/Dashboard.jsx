@@ -102,8 +102,6 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    console.log("tarun useeffect 1", selectedDate);
-
     // Fetch monthly data from the backend
     const fetchData = async () => {
       try {
@@ -136,6 +134,13 @@ function Dashboard() {
               projectedAnnualExpense: data.totalExpenses * 12,
             }));
           }
+          console.log("projected data ", projectedData);
+          // // setProjectedData({
+          // //   // ...prevData,
+          // //   projectedMonthlyData: projectedData.projectedMonthlyData,
+          // //   projectedAnnualSaving: projectedData.projectedAnnualSaving,
+          // //   projectedAnnualExpense: projectedData.projectedAnnualExpense,
+          // });
           // Process the data as needed in your frontend
         } else {
           console.error("Failed to fetch monthly data");
@@ -222,7 +227,14 @@ function Dashboard() {
   ]);
   return (
     <div class="grid-container" style={{ margin: "20px" }}>
-      <div class="grid-item item1">
+      <div
+        class="grid-item item1"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
         {/* <UserAvatar userEmail={currentUserState.userEmail} size={50} /> */}
         <label htmlFor="avatar-upload">
           <Avatar
@@ -237,8 +249,17 @@ function Dashboard() {
             }}
           />
         </label>
-        <Typography variant="h5">Welcome Back</Typography>
-        <Typography variant="h2">{currentUserState.userEmail}</Typography>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            paddingLeft: "70px",
+          }}
+        >
+          <Typography variant="h5">Welcome Back</Typography>
+          <Typography variant="h4">{currentUserState.userEmail}</Typography>
+        </div>
       </div>
       <div class="grid-item item2 " style={{ marginTop: "0px" }}>
         <Card style={{ borderRadius: "20px", background: "#e3c0ff" }}>

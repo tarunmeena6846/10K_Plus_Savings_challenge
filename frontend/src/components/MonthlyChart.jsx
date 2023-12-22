@@ -41,7 +41,6 @@ const MonthlyChart = ({ monthlyIncome, monthlyExpenses }) => {
             beforeDraw: (chart) => {
               const width = chart.width;
               const height = chart.height;
-              console.log(width, height, "tarun height");
               const ctx = chart.ctx;
 
               const total = monthlyIncome + monthlyExpenses;

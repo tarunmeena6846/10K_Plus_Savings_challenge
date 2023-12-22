@@ -11,13 +11,17 @@ app.use(cors());
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+// app.use(express.static(path.join(__dirname, "frontend")));
 
+// app.get("/*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
+// });
 const secretKey = process.env.JWT_SCERET;
 let currentUserId;
 
 const monthlyDataSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "admin",
     required: true,
   },
@@ -35,7 +39,11 @@ const monthlyDataSchema = new mongoose.Schema({
 });
 
 const adminSchema = new mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   password: String,
   imageUrl: String, // New field for image URL
 });
@@ -63,6 +71,7 @@ function detokenizeAdmin(req, res, next) {
     if (user.role === "admin") {
       console.log(" username after detoken" + user.username);
       req.user = user;
+      currentUserId = user.username;
       next();
     } else {
       res.status(403).send("Unauthorised");
@@ -82,7 +91,7 @@ app.post("/admin/signup", async (req, res) => {
     const newAdmin = new admin(obj);
     newAdmin.save();
     console.log(newAdmin._id);
-    currentUserId = newAdmin._id;
+    currentUserId = newAdmin.username;
     console.log(newAdmin);
     let token = jwt.sign(
       {
@@ -125,7 +134,7 @@ app.post("/admin/login", async (req, res) => {
   });
 
   if (bIsAdminPresent) {
-    currentUserId = bIsAdminPresent._id;
+    currentUserId = bIsAdminPresent.username;
     const token = jwt.sign(
       { username: req.headers.username, role: "admin" },
       secretKey,
@@ -165,9 +174,11 @@ app.post("/admin/change-user_details", detokenizeAdmin, async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-app.post("/admin/reset-monthly-income", async (req, res) => {
+app.post("/admin/reset-monthly-income", detokenizeAdmin, async (req, res) => {
   try {
     const { month, year } = req.body;
+    // currentUserId = req.user._id;
+    console.log("req.user.username at 2", req.user.username, currentUserId);
 
     // Check if data already exists for the given month and year
     const existingData = await MonthlyData.findOne({
@@ -202,9 +213,11 @@ app.post("/admin/reset-monthly-income", async (req, res) => {
   }
 });
 
-app.post("/admin/reset-monthly-expenses", async (req, res) => {
+app.post("/admin/reset-monthly-expenses", detokenizeAdmin, async (req, res) => {
   try {
     const { month, year } = req.body;
+    // currentUserId = req.user._id;
+    console.log("req.user.username at 3", req.user.username, currentUserId);
 
     // Check if data already exists for the given month and year
     const existingData = await MonthlyData.findOne({
@@ -248,6 +261,9 @@ app.post("/admin/save-item", detokenizeAdmin, async (req, res) => {
   try {
     const { total, month, year, items, type } = req.body;
     console.log("Items at save items ", items);
+    // currentUserId = req.user._id;
+    console.log("req.user.username at 3", req.user.username, currentUserId);
+
     // Check if a document with the given month and year already exists
     const existingData = await MonthlyData.findOne({
       userId: currentUserId,
@@ -303,6 +319,8 @@ app.post("/admin/save-item", detokenizeAdmin, async (req, res) => {
 app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
   try {
     const { month, year } = req.params;
+    console.log("req.user.username at 1", req.user.username, currentUserId);
+    // currentUserId = req.user._id;
     // const currentUserId = req.decoded.userId;
     // Retrieve income items for the specified month and year
     const incomeItems = await MonthlyData.findOne({
@@ -336,7 +354,7 @@ app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
 app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
   try {
     const { year } = req.params;
-
+    console.log("req.user.username at 5", req.user.username, currentUserId);
     // Retrieve income and expense items for the specified year
     const monthlyItems = await MonthlyData.find({
       userId: currentUserId,

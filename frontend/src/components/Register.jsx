@@ -12,7 +12,6 @@ function Register() {
   const [password, setPassword] = React.useState("");
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
-  console.log("tarun", email);
   const navigate = useNavigate();
 
   console.log(password);
@@ -67,7 +66,8 @@ function Register() {
             onChange={(e) => {
               setEmail(e.target.value);
             }}
-            label="Email or Username"
+            label="Username/Phone Number"
+            inputProps={{ maxLength: 15 }}
             variant="outlined"
             type={"email"}
             fullWidth
