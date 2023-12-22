@@ -62,7 +62,7 @@ function Dashboard() {
   const handleCloseSettingsDialog = () => {
     setSettingsDialogOpen(false);
   };
-  console.log("process", import.meta.env.VITE_SERVER_URL);
+  // console.log("process", import.meta.env.VITE_SERVER_URL);
 
   const handleSaveSettingsDialog = async () => {
     try {
@@ -166,7 +166,8 @@ function Dashboard() {
     // Fetch monthly data from the backend
     const fetchYearlyData = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from your authentication process
+        const token = localStorage.getItem("token");
+        console.log(selectedDate.year); // Get the token from your authentication process
         const response = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/admin/get-yearly-list/${
             selectedDate.year
@@ -187,19 +188,9 @@ function Dashboard() {
           setMonthlyItems(data.items);
         } else {
           console.error("Failed to fetch yearly data");
-          setCurrentUserState({
-            userEmail: null,
-            isLoading: false,
-            imageUrl: "",
-          });
         }
       } catch (error) {
         console.error("Error fetching yearly data:", error);
-        setCurrentUserState({
-          userEmail: null,
-          isLoading: false,
-          imageUrl: "",
-        });
       }
     };
 
