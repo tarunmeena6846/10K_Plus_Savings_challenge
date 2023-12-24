@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { monthlyIncomeState } from "./store/atoms/total";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import List from "@mui/material/List";
@@ -12,7 +11,6 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Grid } from "@mui/material";
 import { Typography } from "@mui/material";
-import { itemsState } from "./store/atoms/incomeItems";
 import { dateState } from "./store/atoms/date";
 import { userState } from "./store/atoms/user";
 
@@ -34,13 +32,10 @@ export const years = Array.from({ length: 9 }, (_, index) => 2022 + index);
 
 function MonthlyIncome() {
   const [items, setItems] = useState([]);
-  // const [incomeItems, setIncomeItems] = useRecoilState(itemsState);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-  // const apiUrl = process.env.REACT_APP_BASE_URL;
 
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
-  // const [selectedMonth, setSelectedMonth] = useState("selectedDate");
   const navigate = useNavigate();
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
@@ -53,10 +48,6 @@ function MonthlyIncome() {
           ...items,
           { name: itemName, amount: parseFloat(itemAmount), type: "income" },
         ]);
-        // setIncomeItems((prevItems) => [
-        //   ...prevItems,
-        //   { name: itemName, amount: itemAmount, type: "income" },
-        // ]);
         setItemName("");
         setItemAmount("");
       } else {
@@ -115,9 +106,7 @@ function MonthlyIncome() {
                 isLoading: false,
                 imageUrl: currentUserState.imageUrl,
               });
-              // setMonthlyIncome(responseData.totalIncome);
               navigate("/dashboard");
-              //              history.go(0);
             } else {
               console.error("Error saving Income:", responseData.error);
             }
@@ -169,7 +158,6 @@ function MonthlyIncome() {
             if (responseData.success) {
               setItems([]);
               navigate("/dashboard");
-              //              history.go(0);
             } else {
               console.error(
                 "Error resetting monthly data:",
@@ -186,7 +174,6 @@ function MonthlyIncome() {
     }
   };
   useEffect(() => {
-    // Check if the necessary data is available before navigating
     if (currentUserState.userEmail === null && !currentUserState.isLoading) {
       navigate("/");
     }
@@ -203,7 +190,6 @@ function MonthlyIncome() {
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
-        // backgroundColor: "#F0F0F0",
         minHeight: "100vh",
       }}
     >
@@ -219,7 +205,6 @@ function MonthlyIncome() {
         <Grid item xs={12} md={6}>
           <Card style={{ border: "4px solid #37474F", height: "60vh" }}>
             <CardContent>
-              {/* <h1>Monthly Income Tracker</h1> */}
               <div>
                 <TextField
                   label="Item"
@@ -242,34 +227,7 @@ function MonthlyIncome() {
                 />
                 <br />
                 <br />
-                {/* <FormControl variant="outlined">
-                  <InputLabel>Select Month</InputLabel>
-                  <Select
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    label="Select Month"
-                  >
-                    {months.map((month) => (
-                      <MenuItem key={month} value={month}>
-                        {month}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl variant="outlined">
-                  <InputLabel>Select Year</InputLabel>
-                  <Select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    label="Select Year"
-                  >
-                    {years.map((year) => (
-                      <MenuItem key={year} value={year}>
-                        {year}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl> */}
+
                 <br />
                 <br />
                 <Button

@@ -42,11 +42,7 @@ function Dashboard() {
     newPassword: "",
   });
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-  // const [projectedDataRef.current, setprojectedDataRef.current] = useState({
-  //   projectedMonthlyData: [],
-  //   projectedAnnualSaving: 0,
-  //   projectedAnnualExpense: 0,
-  // });
+
   const projectedDataRef = useRef({
     projectedMonthlyData: [],
     projectedAnnualSaving: 0,
@@ -130,29 +126,11 @@ function Dashboard() {
           setMonthIncExpInfo(data.items);
           setMonthlyIncome(data.totalIncome);
           setMonthlyExpense(data.totalExpenses);
-
-          if (selectedDate.month === "January") {
-            console.log("tarun insdie month jan");
-            // projectedDataRef.current = {
-            //   projectedMonthlyData: data.items,
-            //   projectedAnnualSaving:
-            //     (data.totalIncome - data.totalExpenses) * 12,
-            //   projectedAnnualExpense: data.totalExpenses * 12,
-            // };
-          }
-          console.log("projected data ", projectedDataRef);
         } else {
           console.error("Failed to fetch monthly data");
           setMonthlyIncome(0);
           setMonthlyExpense(0);
           setMonthIncExpInfo([]);
-          // projectedDataRef.current = {
-          //   projectedMonthlyData: projectedDataRef.current.projectedMonthlyData,
-          //   projectedAnnualSaving:
-          //     projectedDataRef.current.projectedAnnualSaving,
-          //   projectedAnnualExpense:
-          //     projectedDataRef.current.projectedAnnualExpense,
-          // };
         }
       } catch (error) {
         console.error("Error fetching monthly data:", error);
@@ -206,9 +184,27 @@ function Dashboard() {
           };
         } else {
           console.error("Failed to fetch yearly data");
+          setYearlyData([]);
+          projectedDataRef.current = {
+            projectedMonthlyData: 0,
+            projectedAnnualSaving: 0,
+            projectedAnnualExpense: 0,
+          };
+          setYearlyIncome(0);
+          setYearlyExpense(0);
+          setMonthlyItems([]);
         }
       } catch (error) {
         console.error("Error fetching yearly data:", error);
+        setYearlyData([]);
+        projectedDataRef.current = {
+          projectedMonthlyData: 0,
+          projectedAnnualSaving: 0,
+          projectedAnnualExpense: 0,
+        };
+        setYearlyIncome(0);
+        setYearlyExpense(0);
+        setMonthlyItems([]);
       }
     };
 
@@ -238,17 +234,6 @@ function Dashboard() {
     navigate,
     setCurrentUserState,
   ]);
-
-  // const { current: projectedData } = projectedDataRef;
-  // // Accessing values from projectedData
-  // const projectedMonthlyData = projectedData.projectedMonthlyData;
-  // const projectedAnnualSaving = projectedData.projectedAnnualSaving;
-  // const projectedAnnualExpense = projectedData.projectedAnnualExpense;
-
-  // // You can use these values as needed in your component
-  // console.log("Projected Monthly Data:", projectedMonthlyData);
-  // console.log("Projected Annual Saving:", projectedAnnualSaving);
-  // console.log("Projected Annual Expense:", projectedAnnualExpense);
   return (
     <div class="grid-container" style={{ margin: "20px" }}>
       <div
@@ -266,8 +251,6 @@ function Dashboard() {
             src={currentUserState.imageUrl}
             style={{
               position: "absolute",
-              // top: 0,
-              // left: 0,
               width: "90px",
               height: "90px",
             }}
@@ -385,7 +368,15 @@ function Dashboard() {
         >
           <div style={{ margin: "20px" }}>
             <FormControl variant="outlined" style={{ padding: "10px" }}>
-              <InputLabel>Select Month</InputLabel>
+              <InputLabel
+                style={{
+                  color: selectedDate.month === "January" ? "red" : "inherit",
+                }}
+              >
+                {selectedDate.month === "January"
+                  ? "Projected Month"
+                  : "Select Month"}
+              </InputLabel>
               <Select
                 value={selectedDate.month}
                 onChange={(e) =>
@@ -395,6 +386,9 @@ function Dashboard() {
                   })
                 }
                 label="Select Month"
+                style={{
+                  color: selectedDate.month === "January" ? "red" : "inherit",
+                }}
               >
                 {months.map((month) => (
                   <MenuItem key={month} value={month}>
@@ -571,12 +565,8 @@ function Dashboard() {
       >
         <Card
           style={{
-            // height: "100px",
             minHeight: "400px",
             borderRadius: "20px",
-            // cursor: "pointer",
-            // background: "rgb(54, 162, 235)",
-            // background: "#fba447",
             color: "black",
           }}
         >
