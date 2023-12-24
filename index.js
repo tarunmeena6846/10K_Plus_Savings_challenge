@@ -370,6 +370,7 @@ app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
     const commonItems = [];
     let yearlyIncome = 0,
       yearlyExpense = 0;
+    let janExpenseItems = [];
     // Create a mapping for each month and initialize with zero values
     const monthlyDataMap = {
       January: { income: 0, expenses: 0 },
@@ -393,6 +394,20 @@ app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
       yearlyIncome += monthlyItem.totalIncome;
       yearlyExpense += monthlyItem.totalExpenses;
       monthlyDataMap[monthKey].expenses += monthlyItem.totalExpenses;
+      console.log(
+        "month is ",
+        monthlyItem.month,
+        monthlyItem.items.type,
+        monthlyItem.items
+      );
+      if (monthlyItem.month === "January") {
+        console.log("month is item", monthlyItem.items);
+        janExpenseItems = monthlyItem.items.filter(
+          (item) => item.type === "expense"
+        );
+
+        console.log("janexpenseitems", janExpenseItems);
+      }
       monthlyItem.items.forEach((item) => {
         if (item.type === "expense") {
           // Check if the item is already in commonItems
@@ -426,9 +441,12 @@ app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
       commonItems: commonItems,
       yearlyIncome: yearlyIncome,
       yearlyExpense: yearlyExpense,
+      janItems: janExpenseItems,
     });
+    janItems = [];
   } catch (error) {
     console.error(error);
+    janItems = [];
     res.status(500).json({
       success: false,
       message: "Internal Server Error",

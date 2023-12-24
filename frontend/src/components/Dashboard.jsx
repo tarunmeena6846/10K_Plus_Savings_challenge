@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Card,
   Typography,
@@ -42,11 +42,17 @@ function Dashboard() {
     newPassword: "",
   });
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-  const [projectedData, setProjectedData] = useState({
+  // const [projectedDataRef.current, setprojectedDataRef.current] = useState({
+  //   projectedMonthlyData: [],
+  //   projectedAnnualSaving: 0,
+  //   projectedAnnualExpense: 0,
+  // });
+  const projectedDataRef = useRef({
     projectedMonthlyData: [],
     projectedAnnualSaving: 0,
     projectedAnnualExpense: 0,
   });
+
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const handleReset = () => {
     setCurrentUserState({
@@ -126,27 +132,27 @@ function Dashboard() {
           setMonthlyExpense(data.totalExpenses);
 
           if (selectedDate.month === "January") {
-            setProjectedData((prevData) => ({
-              ...prevData,
-              projectedMonthlyData: data.items,
-              projectedAnnualSaving:
-                (data.totalIncome - data.totalExpenses) * 12,
-              projectedAnnualExpense: data.totalExpenses * 12,
-            }));
+            console.log("tarun insdie month jan");
+            // projectedDataRef.current = {
+            //   projectedMonthlyData: data.items,
+            //   projectedAnnualSaving:
+            //     (data.totalIncome - data.totalExpenses) * 12,
+            //   projectedAnnualExpense: data.totalExpenses * 12,
+            // };
           }
-          console.log("projected data ", projectedData);
-          // // setProjectedData({
-          // //   // ...prevData,
-          // //   projectedMonthlyData: projectedData.projectedMonthlyData,
-          // //   projectedAnnualSaving: projectedData.projectedAnnualSaving,
-          // //   projectedAnnualExpense: projectedData.projectedAnnualExpense,
-          // });
-          // Process the data as needed in your frontend
+          console.log("projected data ", projectedDataRef);
         } else {
           console.error("Failed to fetch monthly data");
           setMonthlyIncome(0);
           setMonthlyExpense(0);
           setMonthIncExpInfo([]);
+          // projectedDataRef.current = {
+          //   projectedMonthlyData: projectedDataRef.current.projectedMonthlyData,
+          //   projectedAnnualSaving:
+          //     projectedDataRef.current.projectedAnnualSaving,
+          //   projectedAnnualExpense:
+          //     projectedDataRef.current.projectedAnnualExpense,
+          // };
         }
       } catch (error) {
         console.error("Error fetching monthly data:", error);
@@ -162,7 +168,7 @@ function Dashboard() {
     selectedDate.year,
     currentUserState.userEmail,
     currentUserState.isLoading,
-    navigate,
+    // navigate,
     setCurrentUserState,
     setMonthlyIncome,
   ]); // Run this effect only once when the component mounts
@@ -191,6 +197,13 @@ function Dashboard() {
           setYearlyIncome(data.yearlyIncome);
           setYearlyExpense(data.yearlyExpense);
           setMonthlyItems(data.items);
+
+          projectedDataRef.current = {
+            projectedMonthlyData: data.janItems,
+            projectedAnnualSaving:
+              (data.items[0].income - data.items[0].expenses) * 12,
+            projectedAnnualExpense: data.items[0].expenses * 12,
+          };
         } else {
           console.error("Failed to fetch yearly data");
         }
@@ -225,6 +238,17 @@ function Dashboard() {
     navigate,
     setCurrentUserState,
   ]);
+
+  // const { current: projectedData } = projectedDataRef;
+  // // Accessing values from projectedData
+  // const projectedMonthlyData = projectedData.projectedMonthlyData;
+  // const projectedAnnualSaving = projectedData.projectedAnnualSaving;
+  // const projectedAnnualExpense = projectedData.projectedAnnualExpense;
+
+  // // You can use these values as needed in your component
+  // console.log("Projected Monthly Data:", projectedMonthlyData);
+  // console.log("Projected Annual Saving:", projectedAnnualSaving);
+  // console.log("Projected Annual Expense:", projectedAnnualExpense);
   return (
     <div class="grid-container" style={{ margin: "20px" }}>
       <div
@@ -267,9 +291,12 @@ function Dashboard() {
             <Typography variant="body1"> Projected Annual Savings </Typography>
             <Typography variant="h4">
               $
-              {projectedData.projectedAnnualSaving.toLocaleString("en-US", {
-                maximumFractionDigits: 2,
-              })}
+              {projectedDataRef.current.projectedAnnualSaving.toLocaleString(
+                "en-US",
+                {
+                  maximumFractionDigits: 2,
+                }
+              )}
             </Typography>
           </CardContent>
         </Card>
@@ -624,10 +651,10 @@ function Dashboard() {
             Projected Annual Expense
           </Typography>
 
-          {projectedData.projectedMonthlyData &&
-          projectedData.projectedMonthlyData.length > 0 ? (
+          {projectedDataRef.current.projectedMonthlyData &&
+          projectedDataRef.current.projectedMonthlyData.length > 0 ? (
             <div style={{ textAlign: "start", padding: "10px" }}>
-              {projectedData.projectedMonthlyData
+              {projectedDataRef.current.projectedMonthlyData
                 .filter((item) => item.type === "expense")
                 .map((item, index) => (
                   <div
@@ -679,9 +706,12 @@ function Dashboard() {
               }}
             >
               Total Expense: $
-              {projectedData.projectedAnnualExpense.toLocaleString("en-US", {
-                maximumFractionDigits: 2,
-              })}
+              {projectedDataRef.current.projectedAnnualExpense.toLocaleString(
+                "en-US",
+                {
+                  maximumFractionDigits: 2,
+                }
+              )}
             </div>
           </Card>
         </div>

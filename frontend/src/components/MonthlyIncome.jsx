@@ -41,9 +41,7 @@ function MonthlyIncome() {
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
   // const [selectedMonth, setSelectedMonth] = useState("selectedDate");
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const navigate = useNavigate();
-  const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
   console.log(new Date().getMonth());
