@@ -11,11 +11,7 @@ app.use(cors());
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-// app.use(express.static(path.join(__dirname, "frontend")));
 
-// app.get("/*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
-// });
 const secretKey = process.env.JWT_SCERET;
 let currentUserId;
 
@@ -217,8 +213,6 @@ app.post("/admin/reset-monthly-expenses", detokenizeAdmin, async (req, res) => {
   try {
     const { month, year } = req.body;
     // currentUserId = req.user._id;
-    console.log("req.user.username at 3", req.user.username, currentUserId);
-
     // Check if data already exists for the given month and year
     const existingData = await MonthlyData.findOne({
       userId: currentUserId, // Assuming you have user authentication middleware
@@ -262,8 +256,6 @@ app.post("/admin/save-item", detokenizeAdmin, async (req, res) => {
     const { total, month, year, items, type } = req.body;
     console.log("Items at save items ", items);
     // currentUserId = req.user._id;
-    console.log("req.user.username at 3", req.user.username, currentUserId);
-
     // Check if a document with the given month and year already exists
     const existingData = await MonthlyData.findOne({
       userId: currentUserId,
@@ -319,10 +311,7 @@ app.post("/admin/save-item", detokenizeAdmin, async (req, res) => {
 app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
   try {
     const { month, year } = req.params;
-    console.log("req.user.username at 1", req.user.username, currentUserId);
-    // currentUserId = req.user._id;
-    // const currentUserId = req.decoded.userId;
-    // Retrieve income items for the specified month and year
+
     const incomeItems = await MonthlyData.findOne({
       userId: currentUserId,
       month,
@@ -354,7 +343,6 @@ app.get("/admin/get-list/:year/:month", detokenizeAdmin, async (req, res) => {
 app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
   try {
     const { year } = req.params;
-    console.log("req.user.username at 5", req.user.username, currentUserId);
     // Retrieve income and expense items for the specified year
     const monthlyItems = await MonthlyData.find({
       userId: currentUserId,
@@ -394,19 +382,11 @@ app.get("/admin/get-yearly-list/:year", detokenizeAdmin, async (req, res) => {
       yearlyIncome += monthlyItem.totalIncome;
       yearlyExpense += monthlyItem.totalExpenses;
       monthlyDataMap[monthKey].expenses += monthlyItem.totalExpenses;
-      console.log(
-        "month is ",
-        monthlyItem.month,
-        monthlyItem.items.type,
-        monthlyItem.items
-      );
+
       if (monthlyItem.month === "January") {
-        console.log("month is item", monthlyItem.items);
         janExpenseItems = monthlyItem.items.filter(
           (item) => item.type === "expense"
         );
-
-        console.log("janexpenseitems", janExpenseItems);
       }
       monthlyItem.items.forEach((item) => {
         if (item.type === "expense") {
