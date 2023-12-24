@@ -515,7 +515,7 @@ function Dashboard() {
           </Typography>
           <Button
             style={{
-              minWidth: "300px",
+              minWidth: "100px",
               color: " green",
               border: "2px dotted green",
               borderRadius: "20px",

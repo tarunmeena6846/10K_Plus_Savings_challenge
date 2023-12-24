@@ -1,23 +1,12 @@
-// import { CardHeader, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Grid, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { monthlyExpenseState } from "./store/atoms/total";
 import { useRecoilState } from "recoil";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import CardActions from "@mui/material/CardActions";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -35,23 +24,10 @@ function MonthlyExpenses() {
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
-  // const [selectedMonth, setSelectedMonth] = useState(
-  //   months[new Date().getMonth()]
-  // );
-  // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
   const navigate = useNavigate();
-  // const [totalExpenses, setTotalExpenses] = useRecoilState(totalState);
-  const [monthlyExpense, setMonthlyExpense] =
-    useRecoilState(monthlyExpenseState);
-
-  // const itemArray = [];
 
   const handleAddItem = () => {
     if (itemName && itemAmount) {
-      // if (!items.some((existingItem) => existingItem.item === itemName)) {
-      //   setItems([...items, { item: itemName, amount: itemAmount }]);
-      // }
       if (items.findIndex((item) => item.name === itemName) === -1) {
         setItems([
           ...items,
@@ -99,7 +75,6 @@ function MonthlyExpenses() {
             throw new Error("Network response is not ok");
           }
           resp.json().then((responseData) => {
-
             if (responseData.success) {
               setItems([]);
               navigate("/dashboard");
@@ -217,7 +192,7 @@ function MonthlyExpenses() {
       </div>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Card style={{ border: "4px solid #37474F", height: "60vh" }}>
+          <Card style={{ border: "4px solid #37474F", minHeight: "400px" }}>
             <CardContent>
               {/* <h1>Monthly Income Tracker</h1> */}
               <div>
@@ -242,34 +217,6 @@ function MonthlyExpenses() {
                 />
                 <br />
                 <br />
-                {/* <FormControl variant="outlined">
-                  <InputLabel>Select Month</InputLabel>
-                  <Select
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    label="Select Month"
-                  >
-                    {months.map((month) => (
-                      <MenuItem key={month} value={month}>
-                        {month}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl variant="outlined">
-                  <InputLabel>Select Year</InputLabel>
-                  <Select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    label="Select Year"
-                  >
-                    {years.map((year) => (
-                      <MenuItem key={year} value={year}>
-                        {year}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl> */}
                 <br />
                 <br />
                 <Button
@@ -302,7 +249,7 @@ function MonthlyExpenses() {
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Card style={{ border: "4px solid #37474F", minHeight: "60vh" }}>
+          <Card style={{ border: "4px solid #37474F", minHeight: "400px" }}>
             <CardContent>
               <div>
                 <Typography variant="h4">Expense Items:</Typography>

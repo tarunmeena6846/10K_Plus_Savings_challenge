@@ -2,11 +2,8 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const moment = require("moment"); // Import the moment library
-const dotenv = require("dotenv");
 
 const app = express();
-dotenv.config();
 app.use(cors());
 
 app.use(express.json({ limit: "50mb" }));

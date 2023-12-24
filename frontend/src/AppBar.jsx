@@ -16,12 +16,6 @@ import {
 import { Link } from "react-router-dom";
 import { userState } from "./components/store/atoms/user";
 import { useRecoilState } from "recoil";
-import {
-  monthlyExpenseState,
-  monthlyIncomeState,
-  yearlyExpenseState,
-  yearlyIncomeState,
-} from "./components/store/atoms/total";
 import MenuIcon from "@mui/icons-material/Menu";
 import { dateState } from "./components/store/atoms/date";
 

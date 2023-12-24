@@ -203,7 +203,7 @@ function MonthlyIncome() {
       </div>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Card style={{ border: "4px solid #37474F", height: "60vh" }}>
+          <Card style={{ border: "4px solid #37474F", minHeight: "400px" }}>
             <CardContent>
               <div>
                 <TextField
@@ -260,7 +260,7 @@ function MonthlyIncome() {
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Card style={{ border: "4px solid #37474F", minHeight: "60vh" }}>
+          <Card style={{ border: "4px solid #37474F", minHeight: "400px" }}>
             <CardContent>
               <div>
                 <h2>Income Items:</h2>
