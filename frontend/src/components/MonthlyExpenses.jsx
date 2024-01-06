@@ -169,7 +169,6 @@ function MonthlyExpenses() {
     setCurrentUserState,
   ]);
   // Array of months and years
-  const years = Array.from({ length: 9 }, (_, index) => 2022 + index);
 
   return (
     <div

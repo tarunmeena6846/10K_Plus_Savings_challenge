@@ -35,14 +35,15 @@ function Dashboard() {
   const [yearlyExpense, setYearlyExpense] = useState(0);
   const [monthIncExpInfo, setMonthIncExpInfo] = useState([]); // holds the monthly income and expense info along with the items
   const [yearlyData, setYearlyData] = useState([]);
-  const [monthlyItems, setMonthlyItems] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [isMonthlyDataReady, setIsMonthlyDataReady] = useState(false);
 
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [userDetails, setUserDetails] = useState({
     newPassword: "",
   });
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-
+  const [projectedUserData, setProjectedUserData] = useState(0);
   const projectedDataRef = useRef({
     projectedMonthlyData: [],
     projectedAnnualSaving: 0,
@@ -50,6 +51,7 @@ function Dashboard() {
   });
 
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
+  const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const handleReset = () => {
     setCurrentUserState({
       userEmail: currentUserState.userEmail,
@@ -64,8 +66,138 @@ function Dashboard() {
   const handleCloseSettingsDialog = () => {
     setSettingsDialogOpen(false);
   };
-  // console.log("process", import.meta.env.VITE_SERVER_URL);
 
+  const handleOpenIncomeDialog = () => {
+    setIncomeDialogOpen(true);
+  };
+
+  const handleCloseIncomeDialog = () => {
+    setIncomeDialogOpen(false);
+  };
+  console.log("selectedDate at dashboard", selectedDate);
+
+  // console.log("process", import.meta.env.VITE_SERVER_URL);
+  const handleSaveIncome = async () => {
+    console.log("save income is called", monthlyIncome, monthlyExpense);
+
+    try {
+      // let total = 0;
+      // items.forEach((item) => {
+      //   total += parseInt(item.amount);
+      // });
+      // console.log(items);
+      await fetch(`${import.meta.env.VITE_SERVER_URL}/admin/save-item`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          // total,
+          // type: "income",
+          monthlyExpense: monthlyExpense,
+          monthlyIncome: monthlyIncome,
+          year: selectedDate.year,
+          // items: items,
+          month: selectedDate.month,
+        }),
+      })
+        .then((resp) => {
+          if (!resp.ok) {
+            throw new Error("Network response is not ok");
+          }
+          resp.json().then((responseData) => {
+            console.log(
+              "response data at save item monthly income",
+              responseData
+            );
+
+            if (responseData.success) {
+              // setItems([]);
+              setCurrentUserState({
+                userEmail: currentUserState.userEmail,
+                isLoading: false,
+                imageUrl: currentUserState.imageUrl,
+              });
+              setIncomeDialogOpen(false);
+              fetchData();
+            } else {
+              console.error("Error saving Income:", responseData.error);
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error signing in email");
+          setIncomeDialogOpen(false);
+          navigate("/login");
+        });
+    } catch (error) {
+      // setCurrentUserState({
+      //   userEmail: null,
+      //   isLoading: false,
+      //   imageUrl: "",
+      // });
+      setIncomeDialogOpen(false);
+      console.error("Error saving income:", error.message);
+      navigate("/dashboard");
+    }
+  };
+  const handleResetIncomeDialog = async () => {
+    try {
+      await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/admin/reset-monthly-data`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            month: selectedDate.month,
+            year: selectedDate.year,
+          }),
+        }
+      )
+        .then((resp) => {
+          if (!resp.ok) {
+            throw new Error("Network response is not ok");
+          }
+          resp.json().then((responseData) => {
+            if (responseData.success) {
+              if (responseData.deleted) {
+                // setMonthlyIncome(0);
+                // setMonthlyExpense(0);
+                setIncomeDialogOpen(false);
+                fetchData();
+              } else {
+                setIncomeDialogOpen(false);
+
+                alert("No data for the given Month and Year");
+              }
+              // setItems([]);
+              // navigate("/dashboard");
+              //              history.go(0);
+            } else {
+              setIncomeDialogOpen(false);
+
+              console.error(
+                "Error resetting monthly data:",
+                responseData.error
+              );
+              navigate("/login");
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error resetting monthly data:", error.message);
+          setIncomeDialogOpen(false);
+        });
+    } catch (error) {
+      console.error("Error resetting monthly data:", error.message);
+      setIncomeDialogOpen(false);
+    }
+    console.log("reset called");
+  };
   const handleSaveSettingsDialog = async () => {
     try {
       const resp = await fetch(
@@ -93,123 +225,198 @@ function Dashboard() {
       setSettingsDialogOpen(false);
     } catch (error) {
       alert("Error Changing email");
+      setSettingsDialogOpen(false);
+      navigate("/login");
       console.error("Error signing in email");
     }
   };
+  // Fetch monthly data from the backend
+  const fetchData = async () => {
+    try {
+      console.log("selectedDate", selectedDate);
+      const token = localStorage.getItem("token"); // Get the token from your authentication process
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/admin/get-list/${
+          selectedDate.year
+        }/${selectedDate.month}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("Monthly data", data);
+      if (data.success) {
+        setMonthlyIncome(0);
+        setMonthlyExpense(0);
+        console.log("inside");
+        setYearlyExpense(data.yearlyEntry.totalExpenses);
+        setYearlyIncome(data.yearlyEntry.totalIncome);
+        setProjectedUserData(data.yearlyEntry.projectedYearlySavings);
+        console.log("yearly entry:", data.yearlyEntry.monthlyData);
 
-  const handleImageChange = (imageUrl) => {
-    setUserDetails({
-      newPassword: userDetails.newPassword,
-    });
+        const allMonthsData = months.map((month) => {
+          console.log("month", month);
+          const existingEntry = data.yearlyEntry.monthlyData.find(
+            (entry) => entry.month === month
+          );
+
+          if (existingEntry) {
+            const actualSavings =
+              existingEntry.monthlyIncome - existingEntry.monthlyExpenses;
+            return {
+              month,
+              actualSavings,
+              projectedSaving: data.yearlyEntry.projectedYearlySavings,
+            };
+          } else {
+            return {
+              month,
+              actualSavings: 0,
+              projectedSaving: data.yearlyEntry.projectedYearlySavings,
+            };
+          }
+        });
+
+        console.log("allmonthdata", allMonthsData);
+        setMonthlyData(allMonthsData);
+
+        if (data.monthlyEntry) {
+          setMonthlyIncome(data.monthlyEntry.monthlyIncome);
+          setMonthlyExpense(data.monthlyEntry.monthlyExpenses);
+        }
+        // return <MonthlyBarGraph allMonthsData={allMonthsData} />;
+        setIsMonthlyDataReady(true); // Set the flag to true when data is ready
+        if (data.yearlyEntry.projectedYearlySavings === 0) {
+          navigate("/projecteddashboard");
+        }
+        // setMonthIncExpInfo(data.items);
+      } else {
+        console.error("Failed to fetch monthly data");
+        setMonthlyIncome(0);
+        console.log("data", data);
+        setProjectedUserData(0);
+
+        setMonthlyExpense(0);
+        setMonthIncExpInfo([]);
+        setYearlyExpense(0);
+        setYearlyIncome(0);
+        navigate("/projecteddashboard");
+      }
+
+      // console.log("monthlyData", monthlyData);
+    } catch (error) {
+      console.error("Error fetching monthly data:", error);
+      setMonthlyIncome(0);
+      setMonthlyExpense(0);
+      setMonthIncExpInfo([]);
+      setYearlyExpense(0);
+      setYearlyIncome(0);
+    }
   };
 
   useEffect(() => {
-    // Fetch monthly data from the backend
-    const fetchData = async () => {
-      try {
-        console.log("selectedDate", selectedDate);
-        const token = localStorage.getItem("token"); // Get the token from your authentication process
-        const response = await fetch(
-          `${import.meta.env.VITE_SERVER_URL}/admin/get-list/${
-            selectedDate.year
-          }/${selectedDate.month}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Monthly Data:", data);
-          setMonthIncExpInfo(data.items);
-          setMonthlyIncome(data.totalIncome);
-          setMonthlyExpense(data.totalExpenses);
-        } else {
-          console.error("Failed to fetch monthly data");
-          setMonthlyIncome(0);
-          setMonthlyExpense(0);
-          setMonthIncExpInfo([]);
-        }
-      } catch (error) {
-        console.error("Error fetching monthly data:", error);
-        setMonthlyIncome(0);
-        setMonthlyExpense(0);
-        setMonthIncExpInfo([]);
-      }
-    };
+    // // Fetch monthly data from the backend
+    // const fetchData = async () => {
+    //   try {
+    //     console.log("selectedDate", selectedDate);
+    //     const token = localStorage.getItem("token"); // Get the token from your authentication process
+    //     const response = await fetch(
+    //       `${import.meta.env.VITE_SERVER_URL}/admin/get-list/${
+    //         selectedDate.year
+    //       }/${selectedDate.month}`,
+    //       {
+    //         method: "GET",
+    //         headers: {
+    //           Authorization: `Bearer ${token}`,
+    //         },
+    //       }
+    //     );
+    //     const data = await response.json();
+    //     console.log("Monthly data", data);
+    //     if (data.success) {
+    //       setMonthlyIncome(0);
+    //       setMonthlyExpense(0);
+    //       console.log("inside");
+    //       setYearlyExpense(data.yearlyEntry.totalExpenses);
+    //       setYearlyIncome(data.yearlyEntry.totalIncome);
+    //       setProjectedUserData(data.yearlyEntry.projectedYearlySavings);
+    //       console.log("yearly entry:", data.yearlyEntry.monthlyData);
+
+    //       const allMonthsData = months.map((month) => {
+    //         console.log("month", month);
+    //         const existingEntry = data.yearlyEntry.monthlyData.find(
+    //           (entry) => entry.month === month
+    //         );
+
+    //         if (existingEntry) {
+    //           const actualSavings =
+    //             existingEntry.monthlyIncome - existingEntry.monthlyExpenses;
+    //           return {
+    //             month,
+    //             actualSavings,
+    //             projectedSaving: data.yearlyEntry.projectedYearlySavings,
+    //           };
+    //         } else {
+    //           return {
+    //             month,
+    //             actualSavings: 0,
+    //             projectedSaving: data.yearlyEntry.projectedYearlySavings,
+    //           };
+    //         }
+    //       });
+
+    //       console.log("allmonthdata", allMonthsData);
+    //       setMonthlyData(allMonthsData);
+
+    //       if (data.monthlyEntry) {
+    //         setMonthlyIncome(data.monthlyEntry.monthlyIncome);
+    //         setMonthlyExpense(data.monthlyEntry.monthlyExpenses);
+    //       }
+    //       // return <MonthlyBarGraph allMonthsData={allMonthsData} />;
+    //       setIsMonthlyDataReady(true); // Set the flag to true when data is ready
+    //       if (data.yearlyEntry.projectedYearlySavings === 0) {
+    //         navigate("/projecteddashboard");
+    //       }
+    //       // setMonthIncExpInfo(data.items);
+    //     } else {
+    //       console.error("Failed to fetch monthly data");
+    //       setMonthlyIncome(0);
+    //       console.log("data", data);
+    //       setProjectedUserData(0);
+
+    //       setMonthlyExpense(0);
+    //       setMonthIncExpInfo([]);
+    //       setYearlyExpense(0);
+    //       setYearlyIncome(0);
+    //       navigate("/projecteddashboard");
+    //     }
+
+    //     // console.log("monthlyData", monthlyData);
+    //   } catch (error) {
+    //     console.error("Error fetching monthly data:", error);
+    //     setMonthlyIncome(0);
+    //     setMonthlyExpense(0);
+    //     setMonthIncExpInfo([]);
+    //     setYearlyExpense(0);
+    //     setYearlyIncome(0);
+    //   }
+    // };
 
     fetchData();
   }, [
     selectedDate.month,
     selectedDate.year,
-    currentUserState.userEmail,
-    currentUserState.isLoading,
+    // currentUserState.userEmail,
+    // currentUserState.isLoading,
     // navigate,
     setCurrentUserState,
-    setMonthlyIncome,
+    // setMonthlyIncome,
+    // setMonthlyExpense,
+    // setIncomeDialogOpen,
   ]); // Run this effect only once when the component mounts
-
-  useEffect(() => {
-    // Fetch monthly data from the backend
-    const fetchYearlyData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        console.log(selectedDate.year); // Get the token from your authentication process
-        const response = await fetch(
-          `${import.meta.env.VITE_SERVER_URL}/admin/get-yearly-list/${
-            selectedDate.year
-          }`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Yearly Data:", data);
-          setYearlyData(data.commonItems);
-          setYearlyIncome(data.yearlyIncome);
-          setYearlyExpense(data.yearlyExpense);
-          setMonthlyItems(data.items);
-
-          projectedDataRef.current = {
-            projectedMonthlyData: data.janItems,
-            projectedAnnualSaving:
-              (data.items[0].income - data.items[0].expenses) * 12,
-            projectedAnnualExpense: data.items[0].expenses * 12,
-          };
-        } else {
-          console.error("Failed to fetch yearly data");
-          setYearlyData([]);
-          projectedDataRef.current = {
-            projectedMonthlyData: 0,
-            projectedAnnualSaving: 0,
-            projectedAnnualExpense: 0,
-          };
-          setYearlyIncome(0);
-          setYearlyExpense(0);
-          setMonthlyItems([]);
-        }
-      } catch (error) {
-        console.error("Error fetching yearly data:", error);
-        setYearlyData([]);
-        projectedDataRef.current = {
-          projectedMonthlyData: 0,
-          projectedAnnualSaving: 0,
-          projectedAnnualExpense: 0,
-        };
-        setYearlyIncome(0);
-        setYearlyExpense(0);
-        setMonthlyItems([]);
-      }
-    };
-
-    fetchYearlyData();
-  }, [selectedDate, setMonthlyIncome, setCurrentUserState]); // Run this effect only once when the component mounts
 
   useEffect(() => {
     // Check if the necessary data is available before navigating
@@ -226,7 +433,7 @@ function Dashboard() {
   useEffect(() => {
     // Check if the necessary data is available before navigating
     if (currentUserState.userEmail === null && !currentUserState.isLoading) {
-      navigate("/");
+      navigate("/login");
     }
   }, [
     currentUserState.userEmail,
@@ -234,6 +441,37 @@ function Dashboard() {
     navigate,
     setCurrentUserState,
   ]);
+
+  // useEffect(() => {
+  //   console.log(
+  //     "selectedDate default",
+  //     new Date().getFullYear(),
+  //     selectedDate.year
+  //   );
+  //   if (
+  //     selectedDate.year &&
+  //     selectedDate.year !== new Date().getFullYear() // Replace YOUR_DEFAULT_YEAR with the default year value
+  //   ) {
+  //     navigate("/projecteddashboard");
+  //     // setSelectedDate({
+  //     //   year: selectedDate.year,
+  //     //   month: selectedDate.month,
+  //     // });
+  //   }
+  //   // Check if the necessary data is available before navigating
+  //   // if (currentUserState.userEmail === null && !currentUserState.isLoading) {
+  //   // navigate("/projecteddashboard");
+  //   // handleYearChange();
+
+  //   // }
+  // }, [
+  //   selectedDate.year,
+  //   // currentUserState.userEmail,
+  //   // currentUserState.isLoading,
+  //   // navigate,
+  //   // setCurrentUserState,
+  // ]);
+  // console.log("monthlyData", monthlyData);
   return (
     <div class="grid-container" style={{ margin: "20px" }}>
       <div
@@ -272,14 +510,12 @@ function Dashboard() {
         <Card style={{ borderRadius: "20px", background: "#e3c0ff" }}>
           <CardContent>
             <Typography variant="body1"> Projected Annual Savings </Typography>
+
             <Typography variant="h4">
               $
-              {projectedDataRef.current.projectedAnnualSaving.toLocaleString(
-                "en-US",
-                {
-                  maximumFractionDigits: 2,
-                }
-              )}
+              {(projectedUserData * 12).toLocaleString("en-US", {
+                maximumFractionDigits: 2,
+              })}
             </Typography>
           </CardContent>
         </Card>
@@ -305,10 +541,10 @@ function Dashboard() {
           }}
         >
           <CardContent>
-            <Typography variant="body1"> Monthly Income </Typography>
+            <Typography variant="body1"> Projected Monthly Savings </Typography>
             <Typography variant="h4">
               $
-              {monthlyIncome.toLocaleString("en-US", {
+              {projectedUserData.toLocaleString("en-US", {
                 maximumFractionDigits: 2,
               })}
             </Typography>
@@ -323,10 +559,10 @@ function Dashboard() {
           }}
         >
           <CardContent>
-            <Typography variant="body1"> Monthly Expenses</Typography>
+            <Typography variant="body1"> Actual Monthly Savings</Typography>
             <Typography variant="h4">
               $
-              {monthlyExpense.toLocaleString("en-US", {
+              {(monthlyIncome - monthlyExpense).toLocaleString("en-US", {
                 maximumFractionDigits: 2,
               })}
             </Typography>
@@ -334,7 +570,7 @@ function Dashboard() {
         </Card>
       </div>
       <div class="grid-item item5">
-        <Card
+        {/* <Card
           style={{
             background: "#ceffb1",
             borderRadius: "20px",
@@ -351,11 +587,11 @@ function Dashboard() {
               })}
             </Typography>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
       <div class="grid-item item6">
         <Card style={{ minHeight: "400px", borderRadius: "20px" }}>
-          <MonthlyBarGraph monthlyData={monthlyItems} />
+          {isMonthlyDataReady && <MonthlyBarGraph monthlyData={monthlyData} />}
         </Card>
       </div>
       <div class="grid-item item12">
@@ -368,15 +604,7 @@ function Dashboard() {
         >
           <div style={{ margin: "20px" }}>
             <FormControl variant="outlined" style={{ padding: "10px" }}>
-              <InputLabel
-                style={{
-                  color: selectedDate.month === "January" ? "red" : "inherit",
-                }}
-              >
-                {selectedDate.month === "January"
-                  ? "Projected Month"
-                  : "Select Month"}
-              </InputLabel>
+              <InputLabel>Select Month</InputLabel>
               <Select
                 value={selectedDate.month}
                 onChange={(e) =>
@@ -386,9 +614,6 @@ function Dashboard() {
                   })
                 }
                 label="Select Month"
-                style={{
-                  color: selectedDate.month === "January" ? "red" : "inherit",
-                }}
               >
                 {months.map((month) => (
                   <MenuItem key={month} value={month}>
@@ -510,9 +735,89 @@ function Dashboard() {
             color: "black",
           }}
         >
-          <Typography style={{ margin: "20px" }} variant="h6">
-            Monthly Income
-          </Typography>
+          {/* Render the updated items */}
+          <Dialog
+            open={incomeDialogOpen}
+            onClose={handleCloseIncomeDialog}
+            aria-labelledby="income-dialog-title"
+          >
+            <DialogTitle id="income-dialog-title"></DialogTitle>
+            <DialogContent>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                {/* <UserAvatar
+                  userEmail="user@example.com"
+                  size={50}
+                  // onImageChange={handleImageChange}
+                />
+                <br />
+                <Button style={{ textTransform: "none" }} onClick={handleReset}>
+                  Reset Image
+                </Button>
+                <Typography variant="h6">
+                  Hello {currentUserState.userEmail}
+                </Typography>
+                <br /> */}
+                <TextField
+                  label="Monthly Income"
+                  variant="outlined"
+                  type="Number"
+                  fullWidth
+                  value={monthlyIncome}
+                  onChange={(e) => {
+                    setMonthlyIncome(
+                      e.target.value
+                      // // (prevMonthlyIncome) =>
+                      //   prevMonthlyIncome + parseInt(e.target.value)
+                    );
+                  }}
+                />
+                <br />
+                <br />
+                <TextField
+                  onChange={(e) => {
+                    setMonthlyExpense(
+                      // (prevMonthlyExpense) =>
+                      // prevMonthlyExpense + parseInt(e.target.value)
+                      e.target.value
+                    );
+                  }}
+                  label="Monthly Expense"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  value={monthlyExpense}
+                />
+                <br />
+                <br />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleSaveIncome}>Save</Button>
+            </DialogActions>
+            <DialogActions>
+              <Button onClick={handleResetIncomeDialog}>Reset</Button>
+            </DialogActions>
+            <DialogActions>
+              <Button onClick={handleCloseIncomeDialog}>Close</Button>
+            </DialogActions>
+          </Dialog>
+          <div>
+            <Typography variant="h4" style={{ paddingTop: "20px" }}>
+              Monthy Income
+            </Typography>
+            <Typography variant="h5">{`$${monthlyIncome}`}</Typography>
+            <Typography variant="h4" style={{ paddingTop: "50px" }}>
+              Monthly Expenses
+            </Typography>
+            <Typography variant="h5">{`$${monthlyExpense}`}</Typography>
+          </div>
+
           <Button
             style={{
               minWidth: "100px",
@@ -523,43 +828,29 @@ function Dashboard() {
               textTransform: "none",
             }}
             variant="outlined"
-            onClick={() => navigate("/monthlyIncome")}
+            onClick={handleOpenIncomeDialog}
           >
-            + Add Income
+            + Income & Expense
           </Button>
-          {/* Render the updated items */}
-
-          {monthIncExpInfo.length > 0 ? (
-            <div style={{ textAlign: "start", padding: "10px" }}>
-              {monthIncExpInfo
-                .filter((item) => item.type === "income")
-                .map((item, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      backgroundColor: "#b6ff8b",
-                      padding: "8px",
-                      margin: "10px",
-                      borderRadius: "10px",
-                      display: "flex",
-                      justifyContent: "space-between", // Space content horizontally
-                      alignItems: "center",
-                    }}
-                  >
-                    <span style={{ flex: 1 }}>{item.name}</span>
-                    <span>
-                      $
-                      {item.amount.toLocaleString("en-US", {
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          ) : null}
+          <Button
+            style={{
+              minWidth: "100px",
+              color: " green",
+              border: "2px dotted green",
+              borderRadius: "20px",
+              margin: "10px",
+              textTransform: "none",
+            }}
+            variant="outlined"
+            onClick={() => {
+              navigate("/projecteddashboard");
+            }}
+          >
+            Update Projected Savings
+          </Button>
         </Card>
       </div>
-      <div
+      {/* <div
         class="grid-item item9"
         style={{ display: "flex", flexDirection: "column" }}
       >
@@ -587,7 +878,6 @@ function Dashboard() {
           >
             + Add Expenses
           </Button>
-          {/* Render the updated items */}
 
           {monthIncExpInfo.length > 0 ? (
             <div style={{ textAlign: "start", padding: "10px" }}>
@@ -619,8 +909,8 @@ function Dashboard() {
             </div>
           ) : null}
         </Card>
-      </div>
-      <div
+      </div> */}
+      {/* <div
         class="grid-item item10"
         style={{
           display: "flex",
@@ -705,8 +995,8 @@ function Dashboard() {
             </div>
           </Card>
         </div>
-      </div>
-      <div
+      </div> */}
+      {/* <div
         class="grid-item item11"
         style={{
           display: "flex",
@@ -785,7 +1075,7 @@ function Dashboard() {
             </div>
           </Card>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

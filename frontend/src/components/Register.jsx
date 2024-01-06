@@ -38,11 +38,11 @@ function Register() {
             isLoading: false,
             imageUrl: currentUserState.imageUrl,
           });
+          localStorage.setItem("token", data.token);
           // setCurrentUserState({ userEmail: email, isLoading: false });
-          navigate("/dashboard");
+          navigate("/projecteddashboard");
           // history.go(0);
           console.log("email registered successfully", data);
-          localStorage.setItem("token", data.token);
         });
       })
       .catch((error) => {

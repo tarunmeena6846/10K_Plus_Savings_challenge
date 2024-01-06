@@ -2,16 +2,19 @@
 import React from "react";
 import {
   Chart as ChartJS,
+  BarController,
   CategoryScale,
   LinearScale,
-  BarElement,
   Title,
   Tooltip,
   Legend,
+  BarElement,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { months } from "./MonthlyIncome";
 
 ChartJS.register(
+  BarController,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -21,20 +24,22 @@ ChartJS.register(
 );
 
 const MonthlyBarGraph = ({ monthlyData }) => {
+  console.log("monthlyData at graph", monthlyData);
+  // if (monthlyData.length <= 0) return;
   const options = {
     plugins: {
       title: {
         display: true,
-        text: "Monthwise Savings and Expenses",
+        text: "Projected Savings Vs Actual Savings",
       },
     },
     responsive: true,
     scales: {
       x: {
-        stacked: true,
+        stacked: false, // Disable stacking for grouped bars
       },
       y: {
-        stacked: true,
+        stacked: false,
       },
     },
   };
@@ -43,24 +48,21 @@ const MonthlyBarGraph = ({ monthlyData }) => {
     labels: monthlyData.map((data) => data.month),
     datasets: [
       {
-        label: "Savings",
+        label: "Projected Saving",
         backgroundColor: "#76d6f3",
-        borderWidth: 5,
-        borderColor: "white", // Border color for Savings dataset
-        data: monthlyData.map((data) => data.income - data.expenses),
-        borderRadius: 20, // Add borderRadius for Savings dataset
+        // borderColor: "white",
+        data: monthlyData.map((data) => data.projectedSaving),
+        // borderRadius: 10,
       },
       {
-        label: "Expenses",
+        label: "Actual Saving",
         backgroundColor: "#f377e7",
-        // borderColor: "rgba(255,99,132,1)",
-        borderWidth: 5,
-        borderColor: "white",
-        borderRadius: 20, // Add borderRadius for Savings dataset
-        data: monthlyData.map((data) => data.expenses),
+        // borderColor: "white",
+        data: monthlyData.map((data) => data.actualSavings),
       },
     ],
   };
+
   return <Bar options={options} data={data} />;
 };
 

@@ -63,7 +63,7 @@ function Appbar() {
     } else {
       setCurrentUserState({ userEmail: null, isLoading: false, imageUrl: "" });
     }
-  }, [setCurrentUserState, navigate]);
+  }, [setCurrentUserState, navigate, setSelectedDate]);
   return (
     <div>
       <AppBar
@@ -85,9 +85,16 @@ function Appbar() {
           {currentUserState.userEmail ? (
             <Typography
               variant="h6"
-              component={Link}
-              to="/dashboard"
+              // component={Link}
+              // to="/dashboard"
               sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
+              onClick={() => {
+                setSelectedDate({
+                  year: new Date().getFullYear(),
+                  month: selectedDate.month,
+                });
+                navigate("/dashboard");
+              }}
             >
               WealthX10K
             </Typography>
@@ -145,7 +152,10 @@ function Appbar() {
                   imageUrl: currentUserState.imageUrl,
                 });
                 setDrawerOpen(false);
-                setSelectedDate({ year: selectedDate.year, month: "January" });
+                setSelectedDate({
+                  year: selectedDate.year,
+                  month: new Date().toLocaleString("en-US", { month: "long" }),
+                });
                 navigate("/");
               }}
             >

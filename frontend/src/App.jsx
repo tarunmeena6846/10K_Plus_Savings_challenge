@@ -7,6 +7,7 @@ import Dashboard from "./components/Dashboard";
 import MonthlyExpenses from "./components/MonthlyExpenses";
 import Appbar from "./AppBar";
 import { RecoilRoot } from "recoil";
+import ProjectedDashboard from "./components/ProjectedDashboard";
 
 // import User from "./components/AdminCourses";
 // import { AppBar } from "@mui/material";
@@ -16,7 +17,6 @@ import { RecoilRoot } from "recoil";
 // based on the route.
 // You can also try going to /random and see what happens (a route that doesnt exist)
 function App() {
-
   return (
     <RecoilRoot>
       <Router>
@@ -28,6 +28,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expenses" element={<MonthlyExpenses />} />
           <Route path="/monthlyIncome" element={<MonthlyIncome />} />
+          <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
 
           {/*
 

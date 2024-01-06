@@ -5,6 +5,6 @@ export const dateState = atom({
   default: {
     year: new Date().getFullYear(),
     // month: new Date().toLocaleString("en-US", { month: "long" }),
-    month: "January",
+    month: new Date().toLocaleString("en-US", { month: "long" }),
   },
 });
