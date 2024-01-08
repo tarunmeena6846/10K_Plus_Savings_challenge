@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   AppBar,
   Button,
@@ -9,14 +9,15 @@ import {
   IconButton,
   Drawer,
   List,
-  ListItem,
   ListItemText,
   ListItemButton,
+  Modal,
+  Box,
+  Avatar,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { userState } from "./components/store/atoms/user";
-import { useRecoilState } from "recoil";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useRecoilState } from "recoil";
+import { userState } from "./components/store/atoms/user";
 import { dateState } from "./components/store/atoms/date";
 
 function Appbar() {
@@ -24,6 +25,7 @@ function Appbar() {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -64,6 +66,33 @@ function Appbar() {
       setCurrentUserState({ userEmail: null, isLoading: false, imageUrl: "" });
     }
   }, [setCurrentUserState, navigate, setSelectedDate]);
+
+  const handleLogout = () => {
+    setLogoutModalOpen(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    setLogoutModalOpen(false);
+    // Perform any additional actions here
+    // ...
+    // For now, let's just logout
+    localStorage.removeItem("token");
+    setCurrentUserState({
+      userEmail: null,
+      isLoading: false,
+      imageUrl: currentUserState.imageUrl,
+    });
+    setSelectedDate({
+      year: selectedDate.year,
+      month: new Date().toLocaleString("en-US", { month: "long" }),
+    });
+    navigate("/");
+  };
+
+  const handleLogoutCancel = () => {
+    setLogoutModalOpen(false);
+  };
+
   return (
     <div>
       <AppBar
@@ -128,7 +157,7 @@ function Appbar() {
             edge="start"
             color="black"
             aria-label="menu"
-            onClick={() => setDrawerOpen(true)}
+            onClick={handleLogout}
           >
             <MenuIcon />
           </IconButton>
@@ -136,36 +165,43 @@ function Appbar() {
       </AppBar>
       {/* Drawer for menu options */}
       {currentUserState.userEmail ? (
-        <Drawer
-          anchor="right"
-          style={{}}
-          open={isDrawerOpen}
-          onClose={() => setDrawerOpen(false)}
-        >
-          <List>
-            <ListItemButton
-              onClick={() => {
-                localStorage.removeItem("token");
-                setCurrentUserState({
-                  userEmail: null,
-                  isLoading: false,
-                  imageUrl: currentUserState.imageUrl,
-                });
-                setDrawerOpen(false);
-                setSelectedDate({
-                  year: selectedDate.year,
-                  month: new Date().toLocaleString("en-US", { month: "long" }),
-                });
-                navigate("/");
+        <div>
+          {/* Logout modal */}
+          <Modal
+            open={isLogoutModalOpen}
+            onClose={handleLogoutCancel}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                bgcolor: "background.paper",
+                p: 4,
+                borderRadius: "10px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              <ListItemText primary="Logout" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemText primary={currentUserState.userEmail} />
-            </ListItemButton>
-          </List>
-        </Drawer>
+              <Avatar
+                alt="Edit Avatar"
+                src={currentUserState.imageUrl}
+                style={{
+                  width: "90px",
+                  height: "90px",
+                  marginBottom: "16px", // Add margin to separate Avatar and buttons
+                }}
+              />
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <Button onClick={handleLogoutConfirm}>Logout</Button>
+                <Button onClick={handleLogoutCancel}>Cancel</Button>
+              </Box>
+            </Box>
+          </Modal>
+        </div>
       ) : (
         <div></div>
       )}

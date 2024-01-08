@@ -82,6 +82,8 @@ function detokenizeAdmin(req, res, next) {
 }
 // Admin routes
 app.post("/admin/signup", async (req, res) => {
+  if (req.body.username) {
+  }
   const bIsAdminPresent = await admin.findOne({
     username: req.body.username,
     password: req.body.password,
@@ -103,9 +105,13 @@ app.post("/admin/signup", async (req, res) => {
       secretKey,
       { expiresIn: "1h" }
     );
-    res.status(200).json({ content: "Admin created successfully", token });
+    res
+      .status(200)
+      .json({ content: "Admin created successfully", token, success: true });
   } else {
-    res.status(401).send("Admin already registered");
+    res
+      .status(200)
+      .send({ content: "Admin already registered", success: false });
   }
 });
 
@@ -142,9 +148,11 @@ app.post("/admin/login", async (req, res) => {
       secretKey,
       { expiresIn: "1h" }
     );
-    res.status(200).send({ content: "Login successfully", token });
+    res
+      .status(200)
+      .send({ content: "Login successfully", token, success: true });
   } else {
-    res.status(401).send("unauthorised");
+    res.status(401).send({ message: "unauthorised", success: false });
   }
 });
 
@@ -163,17 +171,19 @@ app.post("/admin/change-user_details", detokenizeAdmin, async (req, res) => {
       bIsAdminPresent.password = newPassword;
     }
 
-    if (imageUrl) {
-      bIsAdminPresent.imageUrl = imageUrl;
-    }
+    // if (imageUrl) {
+    bIsAdminPresent.imageUrl = imageUrl;
+    // }
     // Save the updated admin
     await bIsAdminPresent.save();
     return res
       .status(200)
-      .json({ message: "User Deatils changed successfully" });
+      .json({ message: "User Deatils changed successfully", success: true });
   } catch (error) {
     console.error("Error changing details:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ error: "Internal server error", success: false });
   }
 });
 app.post("/admin/reset-monthly-data", detokenizeAdmin, async (req, res) => {

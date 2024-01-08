@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -11,11 +11,18 @@ function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  const [registrationError, setRegistrationError] = useState(null);
 
   const navigate = useNavigate();
 
   console.log(password);
   const handleRegister = () => {
+    if (!email || !password) {
+      // Display an error message or prevent the registration process
+      console.error("Email and password are required");
+      alert("Email and Password are Required");
+      return;
+    }
     fetch(`${import.meta.env.VITE_SERVER_URL}/admin/signup`, {
       method: "POST",
       body: JSON.stringify({
@@ -32,21 +39,28 @@ function Register() {
         }
 
         resp.json().then((data) => {
-          console.log("before router");
-          setCurrentUserState({
-            userEmail: email,
-            isLoading: false,
-            imageUrl: currentUserState.imageUrl,
-          });
-          localStorage.setItem("token", data.token);
-          // setCurrentUserState({ userEmail: email, isLoading: false });
-          navigate("/projecteddashboard");
-          // history.go(0);
-          console.log("email registered successfully", data);
+          console.log("before router", data);
+          if (data.success) {
+            setCurrentUserState({
+              userEmail: email,
+              isLoading: false,
+              imageUrl: currentUserState.imageUrl,
+            });
+            localStorage.setItem("token", data.token);
+            // setCurrentUserState({ userEmail: email, isLoading: false });
+            navigate("/projecteddashboard");
+            // history.go(0);
+            console.log("email registered successfully", data);
+          } else {
+            setRegistrationError(
+              "Username already exists. Please choose another."
+            );
+          }
         });
       })
       .catch((error) => {
-        console.error("Error registering email");
+        console.error("Error registering email", error);
+        setRegistrationError("Error registering email");
       });
   };
   return (
@@ -65,12 +79,14 @@ function Register() {
           <TextField
             onChange={(e) => {
               setEmail(e.target.value);
+              setRegistrationError(null); // Reset registration error when user starts typing again
             }}
             label="Username/Phone Number"
             inputProps={{ maxLength: 15 }}
             variant="outlined"
             type={"email"}
             fullWidth
+            required={true}
           />
           <br />
           <br />
@@ -82,9 +98,15 @@ function Register() {
             variant="outlined"
             type={"password"}
             fullWidth
+            required={true}
           />
           <br />
           <br></br>
+          {registrationError && (
+            <Typography variant="body2" color="error">
+              {registrationError}
+            </Typography>
+          )}
           <Button variant="contained" color="primary" onClick={handleRegister}>
             Signup
           </Button>

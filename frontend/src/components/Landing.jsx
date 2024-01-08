@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Typography, Button } from "@mui/material";
+import { Grid, Typography, Button, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -8,7 +8,15 @@ const LandingPage = () => {
       style={{ textAlign: "center", paddingTop: "0px", background: "white" }}
     >
       <header style={{ marginBottom: "16px", background: "white" }}>
-        <Typography variant="h1">WealthX10K</Typography>
+        <span
+          style={{
+            textShadow: "2px 2px 2px black", // Border color for "Here"
+            color: "black",
+            // Optional: Add padding for spacing
+          }}
+        >
+          <Typography variant="h1">WealthX10K</Typography>
+        </span>
         <Typography variant="subtitle1">
           Navigate Your Financial Journey, Multiply Your Wealth, Embrace
           WealthX10K
@@ -28,8 +36,18 @@ const LandingPage = () => {
         <Grid item xs={12} md={6}>
           <div style={{ maxWidth: "600px", marginRight: "16px" }}>
             <Typography variant="h2">
-              Your Savings Journey Begins Here
+              Your Savings Journey Begins{" "}
+              <span
+                style={{
+                  textShadow: "2px 2px 2px black", // Border color for "Here"
+                  color: "black",
+                  // Optional: Add padding for spacing
+                }}
+              >
+                Here
+              </span>
             </Typography>
+
             <Typography paragraph>
               Start saving with WealthX10K and achieve your financial goals
               effortlessly. Take control of your finances and ride the wave to

@@ -69,6 +69,10 @@ const SavingsCard = () => {
       });
   };
   const handleSave = async (value) => {
+    if (isNaN(value) || value === 0) {
+      alert("Please enter valid numeric values for income and expense.");
+      return;
+    }
     console.log("value", value);
     if (cardType === "income") {
       setIncome(Number(value));
@@ -82,19 +86,20 @@ const SavingsCard = () => {
   };
 
   return (
-    <div>
+    <>
       {cardType === "income" && (
-        <Card
+        <div
           className={`transition-card visible ${cardType}`}
           variant="outlined"
           style={{
-            width: 400,
-            minHeight: "350px",
+            // width: 400,
+            // minHeight: "350px",
             padding: 20,
             borderRadius: "20px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
+            // display: "flex",
+            // flexDirection: "column",
+            // justifyContent: "space-between",
+            background: "white",
           }}
         >
           <div
@@ -125,30 +130,39 @@ const SavingsCard = () => {
               Save
             </Button>
           </div>
-        </Card>
+        </div>
       )}
 
       {cardType === "expense" && (
-        <Card
+        <div
           className={`transition-card visible ${cardType}`}
           variant="outlined"
           style={{
-            width: 400,
-            minHeight: "350px",
+            // width: 400,
+            // minHeight: "350px",
             padding: 20,
             borderRadius: "20px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
+            background: "white",
+            // display: "flex",
+            // flexDirection: "column",
+            // justifyContent: "space-between",
           }}
         >
-          <Typography variant="h4">Monthly Expense</Typography>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "15px",
+            }}
+          >
+            <Typography variant="h4">Monthly Expense</Typography>
+          </div>
           <TextField
             onChange={(e) => setExpense(e.target.value)}
             variant="outlined"
             fullWidth
-            // multiline // Add this line to allow multiline input
-            // rows={6} // Adjust the number of rows as needed
+            multiline // Add this line to allow multiline input
+            rows={6} // Adjust the number of rows as needed
             label="Enter Expense"
             InputLabelProps={{ shrink: true }}
             style={{ marginTop: "5px" }}
@@ -163,22 +177,23 @@ const SavingsCard = () => {
               Save
             </Button>
           </div>
-        </Card>
+        </div>
       )}
 
       {cardType === "savings" && (
-        <Card
+        <div
           className={`transition-card visible ${cardType}`}
           variant="outlined"
           style={{
-            width: 400,
-            minHeight: "350px",
+            // width: 400,
+            // minHeight: "350px",
             padding: 20,
             borderRadius: "20px",
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
+            // marginTop: "20px",
+            // display: "flex",
+            // flexDirection: "column",
+            background: "white",
+            // justifyContent: "space-between",
           }}
         >
           <div>
@@ -186,7 +201,9 @@ const SavingsCard = () => {
               Projected Savings
             </Typography>
             <Typography variant="h5">{`$${savings * 12}`}</Typography>
-            <Typography variant="h4" style={{ paddingTop: "100px" }}>
+          </div>
+          <div>
+            <Typography variant="h4" style={{ paddingTop: "70px" }}>
               Monthly Savings
             </Typography>
             <Typography variant="h5">{`$${savings}`}</Typography>
@@ -200,9 +217,9 @@ const SavingsCard = () => {
               Continue
             </Button>
           </div>
-        </Card>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

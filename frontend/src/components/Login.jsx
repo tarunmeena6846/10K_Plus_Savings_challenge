@@ -15,6 +15,12 @@ function Login() {
   const [resetRequested, setResetRequested] = useState(false);
   console.log(password);
   const handleRegister = () => {
+    if (!email || !password) {
+      // Display an error message or prevent the registration process
+      console.error("Email and password are required");
+      alert("Email and Password are Required");
+      return;
+    }
     const headers = new Headers();
     headers.append("Username", email);
     headers.append("Password", password);
@@ -85,6 +91,10 @@ function Login() {
             </Button>
           </Card>
         </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          New user? <a href="/register"> Register</a>
+        </div>
+        {/* </div> */}
       </>
     </div>
   );

@@ -7,22 +7,15 @@ function ProjectedDashboard() {
   return (
     <>
       <div class="grid-container" style={{ margin: "20px" }}>
-        <div
-          class="grid-item item-projected-dashboard3"
-          //   style={{
-          //     display: "flex",
-          //     flexDirection: "column",
-          //     justifyContent: "center",
-          //   }}
-        >
-          <div>
-            <img
-              src="https://i.ibb.co/f2hX8rh/5240-removebg-preview-1.jpg"
-              alt="Subject"
-              border="0"
-              style={{ height: "400px", width: "500px" }}
-            ></img>
-          </div>
+        <div class="grid-item item-projected-dashboard3">
+          {/* <div> */}
+          <img
+            src="https://i.ibb.co/f2hX8rh/5240-removebg-preview-1.jpg"
+            alt="Subject"
+            border="0"
+            // style={{ height: "400px", width: "500px" }}
+          ></img>
+          {/* </div> */}
         </div>
 
         <div

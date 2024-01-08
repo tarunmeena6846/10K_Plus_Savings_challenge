@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { months } from "./MonthlyIncome";
+import { Typography } from "@mui/material";
 
 ChartJS.register(
   BarController,
@@ -31,6 +32,10 @@ const MonthlyBarGraph = ({ monthlyData }) => {
       title: {
         display: true,
         text: "Projected Savings Vs Actual Savings",
+        padding: {
+          top: 10,
+          // bottom: 50, // Adjust the top padding for the title
+        },
       },
     },
     responsive: true,
@@ -63,7 +68,18 @@ const MonthlyBarGraph = ({ monthlyData }) => {
     ],
   };
 
-  return <Bar options={options} data={data} />;
+  return (
+    <div style={{ height: "300px" }}>
+      {/* <div style={{ paddingTop: "20px" }}> */}
+      {/* <Typography variant="subheading2"> */}
+      {/* Projected Savings Vs Actual Savings */}
+      {/* </Typography> */}
+      {/* </div> */}
+      {/* <div style={{ marginTop: "100px" }}> */}
+      <Bar options={options} data={data} />
+      {/* </div> */}
+    </div>
+  );
 };
 
 export default MonthlyBarGraph;
