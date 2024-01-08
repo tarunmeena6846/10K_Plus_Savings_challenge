@@ -61,6 +61,7 @@ function Appbar() {
             isLoading: false,
             imageUrl: "",
           });
+          setLogoutModalOpen(false);
         });
     } else {
       setCurrentUserState({ userEmail: null, isLoading: false, imageUrl: "" });

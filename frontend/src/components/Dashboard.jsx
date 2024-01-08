@@ -282,7 +282,6 @@ function Dashboard() {
         setProjectedUserData(0);
 
         setMonthlyExpense(0);
-        setMonthIncExpInfo([]);
         setYearlyExpense(0);
         setYearlyIncome(0);
         navigate("/projecteddashboard");
@@ -293,7 +292,6 @@ function Dashboard() {
       console.error("Error fetching monthly data:", error);
       setMonthlyIncome(0);
       setMonthlyExpense(0);
-      setMonthIncExpInfo([]);
       setYearlyExpense(0);
       setYearlyIncome(0);
     }
