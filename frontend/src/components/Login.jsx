@@ -24,7 +24,7 @@ function Login() {
     const headers = new Headers();
     headers.append("Username", email);
     headers.append("Password", password);
-    fetch(`${import.meta.env.VITE_SERVER_URL}/admin/login`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/auth/login`, {
       method: "POST",
       headers: headers,
     })

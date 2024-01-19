@@ -78,7 +78,7 @@ function Dashboard() {
     console.log("save income is called", monthlyIncome, monthlyExpense);
 
     try {
-      await fetch(`${import.meta.env.VITE_SERVER_URL}/admin/save-item`, {
+      await fetch(`${import.meta.env.VITE_SERVER_URL}/data/save-item`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +129,7 @@ function Dashboard() {
   const handleResetIncomeDialog = async () => {
     try {
       await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/admin/reset-monthly-data`,
+        `${import.meta.env.VITE_SERVER_URL}/data/reset-monthly-data`,
         {
           method: "POST",
           headers: {
@@ -181,7 +181,7 @@ function Dashboard() {
     console.log("image link", currentUserState.imageUrl);
     try {
       const resp = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/admin/change-user_details`,
+        `${import.meta.env.VITE_SERVER_URL}/auth/change-user_details`,
         {
           method: "POST",
           headers: {
@@ -218,7 +218,7 @@ function Dashboard() {
       console.log("selectedDate", selectedDate);
       const token = localStorage.getItem("token"); // Get the token from your authentication process
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/admin/get-list/${
+        `${import.meta.env.VITE_SERVER_URL}/data/get-list/${
           selectedDate.year
         }/${selectedDate.month}`,
         {

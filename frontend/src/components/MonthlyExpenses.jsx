@@ -57,7 +57,7 @@ function MonthlyExpenses() {
   const handleResetMonthlyData = async () => {
     try {
       await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/admin/reset-monthly-expenses`,
+        `${import.meta.env.VITE_SERVER_URL}/reset-monthly-expenses`,
         {
           method: "POST",
           headers: {
@@ -106,7 +106,7 @@ function MonthlyExpenses() {
     });
     console.log(items);
 
-    await fetch(`${import.meta.env.VITE_SERVER_URL}/admin/save-item`, {
+    await fetch(`${import.meta.env.VITE_SERVER_URL}/save-item`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

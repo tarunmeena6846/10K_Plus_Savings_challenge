@@ -15,7 +15,7 @@ function Register() {
 
   const navigate = useNavigate();
 
-  console.log(password);
+  // console.log(password);
   const handleRegister = () => {
     if (!email || !password) {
       // Display an error message or prevent the registration process
@@ -23,7 +23,7 @@ function Register() {
       alert("Email and Password are Required");
       return;
     }
-    fetch(`${import.meta.env.VITE_SERVER_URL}/admin/signup`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/auth/signup`, {
       method: "POST",
       body: JSON.stringify({
         username: email,

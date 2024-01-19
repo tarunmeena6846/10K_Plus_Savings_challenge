@@ -18,7 +18,7 @@ const SavingsCard = () => {
 
   const handleContinue = async () => {
     await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/admin/update-projected-savings`,
+      `${import.meta.env.VITE_SERVER_URL}/data/update-projected-savings`,
       {
         method: "POST",
         headers: {

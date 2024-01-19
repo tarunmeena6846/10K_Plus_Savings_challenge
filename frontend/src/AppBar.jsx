@@ -30,7 +30,7 @@ function Appbar() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      fetch(`${import.meta.env.VITE_SERVER_URL}/admin/me`, {
+      fetch(`${import.meta.env.VITE_SERVER_URL}/auth/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
