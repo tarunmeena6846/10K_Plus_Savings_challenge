@@ -13,7 +13,10 @@ import {
 import { Bar } from "react-chartjs-2";
 import { months } from "./MonthlyIncome";
 import { Typography } from "@mui/material";
-
+import { MonthlyDataItem } from "./Dashboard";
+interface MonthlyBarGraphProps {
+  monthlyData: MonthlyDataItem[];
+}
 ChartJS.register(
   BarController,
   CategoryScale,
@@ -24,7 +27,7 @@ ChartJS.register(
   Legend
 );
 
-const MonthlyBarGraph = ({ monthlyData }) => {
+const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
   console.log("monthlyData at graph", monthlyData);
   // if (monthlyData.length <= 0) return;
   const options = {

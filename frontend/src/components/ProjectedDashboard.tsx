@@ -6,20 +6,20 @@ import SavingsCard from "./SavingsCard";
 function ProjectedDashboard() {
   return (
     <>
-      <div class="grid-container" style={{ margin: "20px" }}>
-        <div class="grid-item item-projected-dashboard3">
+      <div className="grid-container" style={{ margin: "20px" }}>
+        <div className="grid-item item-projected-dashboard3">
           {/* <div> */}
           <img
             src="https://i.ibb.co/f2hX8rh/5240-removebg-preview-1.jpg"
             alt="Subject"
-            border="0"
-            // style={{ height: "400px", width: "500px" }}
+            // border="0"
+            // style={{ border: "1px solid black" }}
           ></img>
           {/* </div> */}
         </div>
 
         <div
-          class="grid-item item-projected-dashboard2"
+          className="grid-item item-projected-dashboard2"
           //   style={{
           //     display: "flex",
           //     flexDirection: "column",

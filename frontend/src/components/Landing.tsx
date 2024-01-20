@@ -7,7 +7,7 @@ const LandingPage = () => {
     <div
       style={{ textAlign: "center", paddingTop: "0px", background: "white" }}
     >
-      <header style={{ marginBottom: "16px", background: "white" }}>
+      {/* <header style={{ marginBottom: "16px", background: "white" }}>
         <span
           style={{
             textShadow: "2px 2px 2px black", // Border color for "Here"
@@ -21,7 +21,7 @@ const LandingPage = () => {
           Navigate Your Financial Journey, Multiply Your Wealth, Embrace
           WealthX10K
         </Typography>
-      </header>
+      </header> */}
 
       <Grid
         container

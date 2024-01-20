@@ -3,33 +3,38 @@ import Avatar from "@mui/material/Avatar";
 import { userState } from "./store/atoms/user";
 import { useRecoilState } from "recoil";
 
-const UserAvatar = ({ userEmail, size = 40 }) => {
+const UserAvatar = ({ size = 40 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const fileInputRef = useRef(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const imageUrl = reader.result;
+        const imageUrl = reader.result as string;
         setCurrentUserState({
           userEmail: currentUserState.userEmail,
           isLoading: currentUserState.isLoading,
-          imageUrl: imageUrl,
+          imageUrl: imageUrl as string,
         });
         setIsEditing(false); // Reset isEditing after handling image change
         // Clear the file input value to allow selecting the same file again
-        fileInputRef.current.value = "";
+        if (fileInputRef.current) {
+          (fileInputRef.current as HTMLInputElement).value = "";
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleClick = () => {
+    if (fileInputRef.current) {
+      (fileInputRef.current as HTMLInputElement).click();
+    }
     // Trigger the click event on the file input when the avatar is clicked
-    fileInputRef.current.click();
+    // fileInputRef.current.click();
   };
 
   useEffect(() => {

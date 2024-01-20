@@ -36,7 +36,7 @@ function Login() {
           console.log(data);
           localStorage.setItem("token", data.token);
           setCurrentUserState({
-            userEmail: email,
+            userEmail: email as string,
             isLoading: false,
             imageUrl: currentUserState.imageUrl,
           });

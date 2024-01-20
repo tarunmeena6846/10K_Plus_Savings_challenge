@@ -13,7 +13,7 @@ const Clock = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const formatTime = (time) => {
+  const formatTime = (time: Date) => {
     return time.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
@@ -21,8 +21,8 @@ const Clock = () => {
     });
   };
 
-  const formatDate = (date) => {
-    const options = {
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
       weekday: "short",
       year: "numeric",
       month: "short",
@@ -36,7 +36,7 @@ const Clock = () => {
       <Typography variant="h4" gutterBottom>
         {formatTime(currentDateTime)}
       </Typography>
-      <Typography variant="body" gutterBottom>
+      <Typography variant="body1" gutterBottom>
         {formatDate(currentDateTime)}
       </Typography>
     </div>

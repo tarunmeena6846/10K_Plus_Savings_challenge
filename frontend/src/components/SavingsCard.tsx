@@ -68,7 +68,7 @@ const SavingsCard = () => {
         console.error("Error saving projected data");
       });
   };
-  const handleSave = async (value) => {
+  const handleSave = async (value: number) => {
     if (isNaN(value) || value === 0) {
       alert("Please enter valid numeric values for income and expense.");
       return;
@@ -90,7 +90,7 @@ const SavingsCard = () => {
       {cardType === "income" && (
         <div
           className={`transition-card visible ${cardType}`}
-          variant="outlined"
+          // variant="outlined"
           style={{
             // width: 400,
             // minHeight: "350px",
@@ -112,7 +112,17 @@ const SavingsCard = () => {
             <Typography variant="h4">Monthly Income</Typography>
           </div>
           <TextField
-            onChange={(e) => setIncome(e.target.value)}
+            // onChange={(e) => setIncome(e.target.value)}
+            onChange={(e) => {
+              // Parse the input value to a number
+              const inputValue = parseFloat(e.target.value);
+              // Check if the parsed value is a valid number
+              if (!isNaN(inputValue)) {
+                setIncome(inputValue);
+              } else {
+                alert("Invalid Input");
+              }
+            }}
             variant="outlined"
             fullWidth
             multiline
@@ -136,7 +146,7 @@ const SavingsCard = () => {
       {cardType === "expense" && (
         <div
           className={`transition-card visible ${cardType}`}
-          variant="outlined"
+          // variant="outlined"
           style={{
             // width: 400,
             // minHeight: "350px",
@@ -158,7 +168,17 @@ const SavingsCard = () => {
             <Typography variant="h4">Monthly Expense</Typography>
           </div>
           <TextField
-            onChange={(e) => setExpense(e.target.value)}
+            // onChange={(e) => setExpense(e.target.value)}
+            onChange={(e) => {
+              // Parse the input value to a number
+              const inputValue = parseFloat(e.target.value);
+              // Check if the parsed value is a valid number
+              if (!isNaN(inputValue)) {
+                setExpense(inputValue);
+              } else {
+                alert("Invalid Input");
+              }
+            }}
             variant="outlined"
             fullWidth
             multiline // Add this line to allow multiline input
@@ -183,7 +203,7 @@ const SavingsCard = () => {
       {cardType === "savings" && (
         <div
           className={`transition-card visible ${cardType}`}
-          variant="outlined"
+          // variant="outlined"
           style={{
             // width: 400,
             // minHeight: "350px",

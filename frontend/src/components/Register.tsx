@@ -11,7 +11,7 @@ function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  const [registrationError, setRegistrationError] = useState(null);
+  const [registrationError, setRegistrationError] = useState("");
 
   const navigate = useNavigate();
 
@@ -79,7 +79,7 @@ function Register() {
           <TextField
             onChange={(e) => {
               setEmail(e.target.value);
-              setRegistrationError(null); // Reset registration error when user starts typing again
+              setRegistrationError(""); // Reset registration error when user starts typing again
             }}
             label="Username/Phone Number"
             inputProps={{ maxLength: 15 }}

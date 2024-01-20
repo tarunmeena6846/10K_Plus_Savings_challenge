@@ -48,7 +48,7 @@ function Appbar() {
             });
           } else {
             setCurrentUserState({
-              userEmail: null,
+              userEmail: "",
               isLoading: false,
               imageUrl: "",
             });
@@ -57,14 +57,14 @@ function Appbar() {
         .catch((error) => {
           console.error("Error while logging in", error);
           setCurrentUserState({
-            userEmail: null,
+            userEmail: "",
             isLoading: false,
             imageUrl: "",
           });
           setLogoutModalOpen(false);
         });
     } else {
-      setCurrentUserState({ userEmail: null, isLoading: false, imageUrl: "" });
+      setCurrentUserState({ userEmail: "", isLoading: false, imageUrl: "" });
     }
   }, [setCurrentUserState, navigate, setSelectedDate]);
 
@@ -79,7 +79,7 @@ function Appbar() {
     // For now, let's just logout
     localStorage.removeItem("token");
     setCurrentUserState({
-      userEmail: null,
+      userEmail: "",
       isLoading: false,
       imageUrl: currentUserState.imageUrl,
     });
@@ -156,7 +156,7 @@ function Appbar() {
           )}
           <IconButton
             edge="start"
-            color="black"
+            // color="black"
             aria-label="menu"
             onClick={handleLogout}
           >

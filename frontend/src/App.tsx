@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Landing from "./components/Landing";
-import MonthlyIncome from "./components/MonthlyIncome";
+// import MonthlyIncome from "./components/MonthlyIncome";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import MonthlyExpenses from "./components/MonthlyExpenses";
+// import MonthlyExpenses from "./components/MonthlyExpenses";
 import Appbar from "./AppBar";
 import { RecoilRoot } from "recoil";
 import ProjectedDashboard from "./components/ProjectedDashboard";
@@ -26,8 +26,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/expenses" element={<MonthlyExpenses />} />
-          <Route path="/monthlyIncome" element={<MonthlyIncome />} />
+          {/* <Route path="/expenses" element={<MonthlyExpenses />} /> */}
+          {/* <Route path="/monthlyIncome" element={<MonthlyIncome />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
 
           {/*

@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
-import MonthlyChart from "./MonthlyChart";
+// import MonthlyChart from "./MonthlyChart";
 import MonthlyBarGraph from "./MonthlyBarGraph";
 import { userState } from "./store/atoms/user";
 import UserAvatar from "./UserAvatar"; // Adjust the path based on your project structure
@@ -26,6 +26,12 @@ import { months, years } from "./MonthlyIncome";
 import { dateState } from "./store/atoms/date";
 import Clock from "./Clock";
 import SettingsIcon from "@mui/icons-material/Settings";
+export interface MonthlyDataItem {
+  month: string;
+  actualSavings: number;
+  projectedSaving: number; // Replace 'any' with the actual type
+}
+
 function Dashboard() {
   const navigate = useNavigate();
   const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
@@ -34,7 +40,7 @@ function Dashboard() {
   const [yearlyIncome, setYearlyIncome] = useState(0);
   const [yearlyExpense, setYearlyExpense] = useState(0);
 
-  const [monthlyData, setMonthlyData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState<MonthlyDataItem[]>([]);
   const [isMonthlyDataReady, setIsMonthlyDataReady] = useState(false);
 
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
@@ -71,10 +77,10 @@ function Dashboard() {
   console.log("selectedDate at dashboard", selectedDate);
 
   const handleSaveIncome = async () => {
-    if (monthlyIncome === "" || monthlyExpense === "") {
-      alert("Invalid Income or Expenses");
-      return;
-    }
+    // if (monthlyIncome === 0 || monthlyExpense === 0) {
+    //   alert("Invalid Income or Expenses");
+    //   return;
+    // }
     console.log("save income is called", monthlyIncome, monthlyExpense);
 
     try {
@@ -120,7 +126,7 @@ function Dashboard() {
           setIncomeDialogOpen(false);
           navigate("/login");
         });
-    } catch (error) {
+    } catch (error: any) {
       setIncomeDialogOpen(false);
       console.error("Error saving income:", error.message);
       navigate("/dashboard");
@@ -171,7 +177,7 @@ function Dashboard() {
           console.error("Error resetting monthly data:", error.message);
           setIncomeDialogOpen(false);
         });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error resetting monthly data:", error.message);
       setIncomeDialogOpen(false);
     }
@@ -242,7 +248,7 @@ function Dashboard() {
         const allMonthsData = months.map((month) => {
           console.log("month", month);
           const existingEntry = data.yearlyEntry.monthlyData.find(
-            (entry) => entry.month === month
+            (entry: { month: String }) => entry.month === month
           );
 
           if (existingEntry) {
@@ -325,9 +331,9 @@ function Dashboard() {
     setCurrentUserState,
   ]);
   return (
-    <div class="grid-container" style={{ margin: "20px" }}>
+    <div className="grid-container" style={{ margin: "20px" }}>
       <div
-        class="grid-item item1"
+        className="grid-item item1"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -370,7 +376,7 @@ function Dashboard() {
         </div>
       </div>
       <div
-        class="grid-item item2 "
+        className="grid-item item2 "
         style={{
           borderRadius: "20px",
           background: "#e3c0ff",
@@ -395,7 +401,7 @@ function Dashboard() {
         </Typography>
       </div>
       <div
-        class="grid-item item13 "
+        className="grid-item item13 "
         style={{
           marginTop: "0px",
           background: "#b2ecff",
@@ -419,7 +425,7 @@ function Dashboard() {
         </Typography>
       </div>
       <div
-        class="grid-item item3"
+        className="grid-item item3"
         style={{
           background: "#ffccfb",
           borderRadius: "20px",
@@ -442,7 +448,7 @@ function Dashboard() {
         </Typography>
       </div>
       <div
-        class="grid-item item4"
+        className="grid-item item4"
         style={{
           background: "#b2ecff",
           borderRadius: "20px",
@@ -476,7 +482,7 @@ function Dashboard() {
         {/* </Card> */}
       </div>
       <div
-        class="grid-item item12"
+        className="grid-item item12"
         style={{
           borderRadius: "20px", // width: "500px",
           background: "white",
@@ -509,7 +515,7 @@ function Dashboard() {
               value={selectedDate.year}
               onChange={(e) =>
                 setSelectedDate({
-                  year: e.target.value,
+                  year: e.target.value as number,
                   month: selectedDate.month,
                 })
               }
@@ -558,7 +564,7 @@ function Dashboard() {
               }}
             >
               <UserAvatar
-                userEmail="user@example.com"
+                // userEmail="user@example.com"
                 size={50}
                 // onImageChange={handleImageChange}
               />
@@ -615,16 +621,16 @@ function Dashboard() {
         </Dialog>
       </div>
       <div
-        class="grid-item item7"
+        className="grid-item item7"
         style={{ borderRadius: "20px", background: "white" }}
       >
-        <MonthlyChart
+        {/* <MonthlyChart
           monthlyIncome={monthlyIncome}
           monthlyExpenses={monthlyExpense}
-        />
+        /> */}
       </div>
       <div
-        class="grid-item item8"
+        className="grid-item item8"
         style={{
           borderRadius: "20px",
           background: "white", // width: "500px",
@@ -663,14 +669,28 @@ function Dashboard() {
                 style={{ marginTop: "10px" }}
                 value={monthlyIncome}
                 onChange={(e) => {
-                  setMonthlyIncome(e.target.value);
+                  // Parse the input value to a number
+                  const inputValue = parseFloat(e.target.value);
+                  // Check if the parsed value is a valid number
+                  if (!isNaN(inputValue)) {
+                    setMonthlyIncome(inputValue);
+                  } else {
+                    alert("Invalid Input");
+                  }
                 }}
               />
               <br />
               <br />
               <TextField
                 onChange={(e) => {
-                  setMonthlyExpense(e.target.value);
+                  // Parse the input value to a number
+                  const inputValue = parseFloat(e.target.value);
+                  // Check if the parsed value is a valid number
+                  if (!isNaN(inputValue)) {
+                    setMonthlyExpense(inputValue);
+                  } else {
+                    alert("Invalid Input");
+                  }
                 }}
                 label="Monthly Expenses"
                 variant="outlined"
