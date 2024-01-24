@@ -1,0 +1,28 @@
+{
+  "openFiles": [
+    "src/App.tsx",
+    "src/components/features/card.tsx",
+    "src/components/features/title.tsx",
+    "src/components/features/visual.tsx",
+    "src/components/features/store.ts",
+    "src/utils/toggle-page-overflow.ts",
+    "src/utils/use-escape-press.ts",
+    "src/index.css"
+  ],
+  "otherFiles": ["src/components/hero.tsx", "tailwind.config.js"],
+  "activeFile": "src/App.tsx",
+  "template": "vite-react-ts",
+  "options": {
+    "tailwind": true
+  },
+  "dependencies": {
+    "classnames": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "framer-motion": "10.11",
+    "zustand": "^4.3.8"
+  },
+  "externalResources": [
+    "https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap"
+  ]
+}

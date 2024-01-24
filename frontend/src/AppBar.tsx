@@ -19,6 +19,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useRecoilState } from "recoil";
 import { userState } from "./components/store/atoms/user";
 import { dateState } from "./components/store/atoms/date";
+import { motion } from "framer-motion";
 
 function Appbar() {
   const navigate = useNavigate();
@@ -96,74 +97,77 @@ function Appbar() {
 
   return (
     <div>
-      <AppBar
+      {/* <AppBar
         position="static"
         elevation={0}
         style={{
-          backgroundColor: "#daf7fd",
+          backgroundColor: "#f4f4f4",
         }}
+      > */}
+      <Toolbar
+        className="mx-auto px-4 mt-6 ml-10 mr-10 rounded-3xl bg-gray-200"
+        // sx={{
+        //   backgroundColor: "white",
+        //   justifyContent: "space-between",
+        //   borderRadius: "30px",
+        //   marginTop: "40px",
+        //   marginBottom: "20px",
+        // }}
       >
-        <Toolbar
-          sx={{
-            backgroundColor: "white",
-            justifyContent: "space-between",
-            borderRadius: "30px",
-            marginTop: "40px",
-            marginBottom: "20px",
-          }}
-        >
-          {currentUserState.userEmail ? (
-            <Typography
-              variant="h6"
-              // component={Link}
-              // to="/dashboard"
-              sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
-              onClick={() => {
-                setSelectedDate({
-                  year: new Date().getFullYear(),
-                  month: selectedDate.month,
-                });
-                navigate("/dashboard");
-              }}
-            >
-              WealthX10K
-            </Typography>
-          ) : (
-            <Typography
-              variant="h6"
-              component={Link}
-              to="/"
-              sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
-            >
-              WealthX10K
-            </Typography>
-          )}
-          {currentUserState.isLoading ? (
-            <CircularProgress color="inherit" />
-          ) : currentUserState.userEmail ? (
-            <div></div>
-          ) : (
-            // <div></div>
-            <div style={{ marginLeft: "auto" }}>
-              <Button
-                style={{ color: "black", textTransform: "none" }}
-                component={Link}
-                to="/login"
-              >
-                Login
-              </Button>
-            </div>
-          )}
-          <IconButton
-            edge="start"
-            // color="black"
-            aria-label="menu"
-            onClick={handleLogout}
+        {currentUserState.userEmail ? (
+          <Typography
+            variant="h6"
+            // component={Link}
+            // to="/dashboard"
+            sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
+            onClick={() => {
+              setSelectedDate({
+                year: new Date().getFullYear(),
+                month: selectedDate.month,
+              });
+              navigate("/dashboard");
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+            WealthX10K
+          </Typography>
+        ) : (
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
+          >
+            WealthX10K
+          </Typography>
+        )}
+        {currentUserState.isLoading ? (
+          <CircularProgress color="inherit" />
+        ) : currentUserState.userEmail ? (
+          <div></div>
+        ) : (
+          // <div></div>
+          <div style={{ marginLeft: "auto" }}>
+            <motion.button
+              className={
+                "login-button rounded-3xl bg-black text-white shadow-lg w-20 h-10"
+              }
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              Login
+            </motion.button>
+          </div>
+        )}
+        {/* <IconButton
+          edge="start"
+          // color="black"
+          aria-label="menu"
+          onClick={handleLogout}
+        >
+          <MenuIcon />
+        </IconButton> */}
+      </Toolbar>
+      {/* </AppBar> */}
       {/* Drawer for menu options */}
       {currentUserState.userEmail ? (
         <div>
