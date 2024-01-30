@@ -8,9 +8,8 @@ import Dashboard from "./components/Dashboard";
 import Appbar from "./AppBar";
 import { RecoilRoot } from "recoil";
 import ProjectedDashboard from "./components/ProjectedDashboard";
-
-// import User from "./components/AdminCourses";
-// import { AppBar } from "@mui/material";
+import StripePricingTable from "./components/StripePricingTable";
+// import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
 // Try going to /login, /register, /about, /courses on the website and see how the html changes
@@ -26,8 +25,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* <Route path="/expenses" element={<MonthlyExpenses />} /> */}
-          {/* <Route path="/monthlyIncome" element={<MonthlyIncome />} /> */}
+          <Route path="/pricing" element={<StripePricingTable />} />
+          {/* <Route path="/checkout" element={<Payment />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
 
           {/*

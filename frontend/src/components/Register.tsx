@@ -6,10 +6,21 @@ import { Card, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { userState } from "./store/atoms/user";
 import { useRecoilState } from "recoil";
+// import Payment from "./Payment";
+// import { loadStripe } from "@stripe/stripe-js";
+// import { Elements } from "@stripe/react-stripe-js";
+// import Payment from "../src/components/Payment";
+// import User from "./components/AdminCourses";
+// import { AppBar } from "@mui/material";
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY); // starts with pk_
+// console.log("secretkey", import.meta.env.VITE_STRIPE_KEY);
+// console.log(stripePromise);
 /// File is incomplete. You need to add input boxes to take input for users to register.
 function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [username, setUserName] = React.useState("");
+
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [registrationError, setRegistrationError] = useState("");
 
@@ -17,7 +28,7 @@ function Register() {
 
   // console.log(password);
   const handleRegister = () => {
-    if (!email || !password) {
+    if (!email || !password || !username) {
       // Display an error message or prevent the registration process
       console.error("Email and password are required");
       alert("Email and Password are Required");
@@ -26,7 +37,7 @@ function Register() {
     fetch(`${import.meta.env.VITE_SERVER_URL}/auth/signup`, {
       method: "POST",
       body: JSON.stringify({
-        username: email,
+        username: username,
         password: password,
       }),
       headers: {
@@ -48,7 +59,9 @@ function Register() {
             });
             localStorage.setItem("token", data.token);
             // setCurrentUserState({ userEmail: email, isLoading: false });
-            navigate("/projecteddashboard");
+            navigate("/pricing");
+            // Payment();
+            // navigate("/projecteddashboard");
             // history.go(0);
             console.log("email registered successfully", data);
           } else {
@@ -65,6 +78,7 @@ function Register() {
   };
   return (
     <div style={{ backgroundColor: "#F0F0F0", minHeight: "100vh" }}>
+      <div>{/* <Payment /> */}</div>
       <div
         style={{
           paddingTop: 120,
@@ -76,6 +90,20 @@ function Register() {
       </div>
       <div style={{ display: "flex", justifyContent: "center", padding: 10 }}>
         <Card variant="outlined" style={{ width: 400, padding: 20 }}>
+          <TextField
+            onChange={(e) => {
+              setUserName(e.target.value);
+              setRegistrationError(""); // Reset registration error when user starts typing again
+            }}
+            label="Email"
+            // inputProps={{ maxLength:  }}
+            variant="outlined"
+            type={"email"}
+            fullWidth
+            required={true}
+          />
+          <br />
+          <br />
           <TextField
             onChange={(e) => {
               setEmail(e.target.value);

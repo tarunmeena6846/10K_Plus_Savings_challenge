@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 
 const ProjectedData = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleContinue = () => {
     setIsOpen(true);
   };
@@ -159,6 +160,9 @@ const ProjectedData = () => {
                 }
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  navigate("/register");
+                }}
               >
                 Continue
               </motion.button>
