@@ -9,7 +9,9 @@
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.29.4",
     "mongoose": "^8.0.1",
+    "react-email": "^2.0.0",
     "react-transition-group": "^4.4.5",
+    "resend": "^3.1.0",
     "stripe": "^14.14.0"
   },
   "devDependencies": {
