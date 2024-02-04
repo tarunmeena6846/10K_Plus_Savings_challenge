@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { useRecoilState } from "recoil";
 import { yearlyPlan } from "./store/atoms/yearlyPlan";
 import { useNavigate, useLocation } from "react-router-dom";
-import { loadStripe } from "@stripe/stripe-js";
+import { Stripe, loadStripe } from "@stripe/stripe-js";
 import { userState } from "./store/atoms/user";
 
-let stripePromise: Promise<any>;
+let stripePromise: Promise<Stripe | null>;
 const getStripe = () => {
   if (!stripePromise) {
     stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
@@ -26,13 +26,13 @@ const StripePricingTable = () => {
   async function handleCheckout(plan: number) {
     console.log("yearlyprice", selectedYearlyPrice.price);
     const stripe = await getStripe();
-    const { error } = await stripe.redirectToCheckout({
+    const { error } = await stripe?.redirectToCheckout({
       lineItems: [
         {
           price:
             plan === 199
-              ? "price_1OdbN4SDnOSEkJDbe3mcXdyj"
-              : "price_1OdbMPSDnOSEkJDblq6ynwAO",
+              ? "price_1OeQmBSBiPFrlsnbHtsR1wlx"
+              : "price_1OeQmjSBiPFrlsnbPRGm9YvH",
           quantity: 1,
         },
       ],

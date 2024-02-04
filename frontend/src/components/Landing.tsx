@@ -17,43 +17,50 @@ import { useHidePageOverflow } from "../utils/toggle-page-overflow";
 import { useEscapePress } from "../utils/use-escape-press";
 import ProjectedData from "./ProjectedData";
 import Footer from "./Footer";
-
+import { useRef } from "react";
+import { motion, useScroll } from "framer-motion";
 const features = [
   {
-    title: "Get guidance from our Industry Experts",
+    title: "Unleash the Master Saver within",
     id: "colors",
     card: Colors,
     visual: OtherVisual,
   },
   {
-    title: "Plan your Savings and SWOT Analysis Session today",
+    title: "Manifest your ideal life and purpose",
     id: "availability",
     card: Availability,
     visual: OtherVisual,
   },
   {
-    title: "Join our savings Mastery Community.",
+    title: "Commit to a savings goal",
     id: "todo-list1",
     card: Todo,
     visual: OtherVisual,
   },
   {
-    title: "Earn extra from Side Hustle",
+    title: "Implement our proven savings mastery strategies",
     id: "music",
     card: Music,
     visual: MusicVisual,
   },
 
   {
-    title: "Save on your daily expenses",
+    title: "Develop a plan",
     id: "scheduling-links",
     card: SchedulingLinks,
     visual: OtherVisual,
   },
   {
-    title: "At Just...",
+    title: "Eliminate unhealthy spending habits",
     id: "price",
-    card: price,
+    card: SchedulingLinks,
+    visual: OtherVisual,
+  },
+  {
+    title: "  Receive reminders, alerts and rewards",
+    id: "price1",
+    card: SchedulingLinks,
     visual: OtherVisual,
   },
   //   {
@@ -70,6 +77,9 @@ function Landing() {
   const lastFullscreenFeature = useFeatureStore(
     (state) => state.lastFullscreenFeature
   );
+  const ref = useRef(null);
+  const { scrollXProgress } = useScroll({ container: ref });
+
   const setFullscreenFeature = useFeatureStore(
     (state) => state.setFullscreenFeature
   );
@@ -134,7 +144,7 @@ function Landing() {
         ))} */}
         <div className="flex w-full items-start gap-20">
           <div className="w-full py-[50vh]">
-            <ul>
+            <ul ref={ref}>
               {features.map((feature) => (
                 <li key={feature.id}>
                   <FeatureTitle id={feature.id}>{feature.title}</FeatureTitle>

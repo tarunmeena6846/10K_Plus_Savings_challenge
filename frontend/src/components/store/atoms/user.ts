@@ -8,3 +8,16 @@ export const userState = atom({
     imageUrl: "",
   },
 });
+export interface SubscriptionData {
+  isSubscribed: boolean;
+  stripeCustomerId: string;
+  stripePlanId: string;
+}
+export const subscriptionState = atom({
+  key: "subscriptionState",
+  default: {
+    isSubscribed: false,
+    stripeCustomerId: "",
+    stripePlanId: "",
+  },
+});

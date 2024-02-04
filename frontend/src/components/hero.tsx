@@ -43,7 +43,8 @@ const Hero = () => {
         transition={{ duration: 0.5 }}
         style={{ marginTop: "60px" }} // Add margin to the second line
       >
-        Join The 10K Plus Savings Challange and....
+        Join the 10k Savings Challenge, a proven program that empowers you to
+        become a master saver and save $10K+ year-after-year.
       </motion.span>
     </section>
   );

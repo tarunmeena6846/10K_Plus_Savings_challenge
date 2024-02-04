@@ -17,9 +17,19 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useRecoilState } from "recoil";
-import { userState } from "./components/store/atoms/user";
+import {
+  userState,
+  subscriptionState,
+  SubscriptionData,
+} from "./components/store/atoms/user";
 import { dateState } from "./components/store/atoms/date";
 import { motion } from "framer-motion";
+import { Resend } from "resend";
+import WelcomeEmail from "./utils/emails/Welcome";
+import { renderToString } from "react-dom/server"; // Import ReactDOMServer
+
+// import { handleSubscription } from "./stripe/subscription";
+// import { getUserSubscriptionPlan } from "./stripe/subscription";
 
 function Appbar() {
   const navigate = useNavigate();
@@ -27,6 +37,9 @@ function Appbar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+  // const subscriptionPlan = await getUserSubscriptionPlan();
+  const [subscription, setSubscripton] =
+    useRecoilState<SubscriptionData>(subscriptionState);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -47,6 +60,28 @@ function Appbar() {
               isLoading: false,
               imageUrl: data.imageUrl,
             });
+
+            setSubscripton({
+              isSubscribed: data.userData.isSubscribed,
+              stripeCustomerId: data.userData.stripeUserId,
+              stripePlanId: data.userData.stripePlanId,
+            });
+
+            // if (data.userData.isSubscribed) {
+            //   const resend = new Resend("re_NNACsYE7_2erSMMU7kcXaXufffNzUBotd");
+            //   // await handleSubscriptionCreated(session, subscription);
+            //   const htmlContent = renderToString(
+            //     <WelcomeEmail name="Brendon Urie" email="panic@thedis.co" />
+            //   );
+            //   console.log("tarun  meeana");
+            //   resend.emails.send({
+            //     from: "delivered@resend.dev",
+            //     // to: session.customer_email as string,
+            //     to: "tarunmeena6846@gmail.com",
+            //     subject: "Hello World",
+            //     html: htmlContent,
+            //   });
+            // }
           } else {
             setCurrentUserState({
               userEmail: "",
@@ -94,31 +129,21 @@ function Appbar() {
   const handleLogoutCancel = () => {
     setLogoutModalOpen(false);
   };
+  const manageSubscription = async () => {
+    setLogoutModalOpen(false);
 
+    // const session = await handleSubscription();
+
+    // if (session) {
+    //   window.location.href = session.url;
+    // }
+  };
   return (
     <div>
-      {/* <AppBar
-        position="static"
-        elevation={0}
-        style={{
-          backgroundColor: "#f4f4f4",
-        }}
-      > */}
-      <Toolbar
-        className="mx-auto px-4 mt-6 ml-10 mr-10 rounded-3xl bg-gray-200"
-        // sx={{
-        //   backgroundColor: "white",
-        //   justifyContent: "space-between",
-        //   borderRadius: "30px",
-        //   marginTop: "40px",
-        //   marginBottom: "20px",
-        // }}
-      >
+      <Toolbar className="mx-auto px-4 mt-6 ml-10 mr-10 rounded-3xl bg-gray-200">
         {currentUserState.userEmail ? (
           <Typography
             variant="h6"
-            // component={Link}
-            // to="/dashboard"
             sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
             onClick={() => {
               setSelectedDate({
@@ -128,7 +153,7 @@ function Appbar() {
               navigate("/dashboard");
             }}
           >
-            WealthX10K
+            10K Savings Challange
           </Typography>
         ) : (
           <Typography
@@ -137,13 +162,21 @@ function Appbar() {
             to="/"
             sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
           >
-            WealthX10K
+            10K Savings Challange
           </Typography>
         )}
-        {currentUserState.isLoading ? (
-          <CircularProgress color="inherit" />
-        ) : currentUserState.userEmail ? (
-          <div></div>
+
+        {currentUserState.userEmail ? (
+          <div style={{ marginLeft: "auto" }}>
+            <IconButton
+              // edge="end"
+              // color="black"
+              aria-label="menu"
+              onClick={handleLogout}
+            >
+              <MenuIcon />
+            </IconButton>
+          </div>
         ) : (
           // <div></div>
           <div style={{ marginLeft: "auto" }}>
@@ -153,19 +186,12 @@ function Appbar() {
               }
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              onClick={() => navigate("/login")}
             >
               Login
             </motion.button>
           </div>
         )}
-        {/* <IconButton
-          edge="start"
-          // color="black"
-          aria-label="menu"
-          onClick={handleLogout}
-        >
-          <MenuIcon />
-        </IconButton> */}
       </Toolbar>
       {/* </AppBar> */}
       {/* Drawer for menu options */}
@@ -203,6 +229,18 @@ function Appbar() {
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button onClick={handleLogoutConfirm}>Logout</Button>
                 <Button onClick={handleLogoutCancel}>Cancel</Button>
+                <form
+                  method="POST"
+                  action="http://localhost:3000/create-customer-portal-session"
+                >
+                  <input
+                    type="hidden"
+                    name="customerId"
+                    value={subscription.stripeCustomerId}
+                  />
+
+                  <button type="submit">Manage billing</button>
+                </form>
               </Box>
             </Box>
           </Modal>

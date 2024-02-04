@@ -16,7 +16,7 @@ const ProjectedData = () => {
   const ref = useRef<HTMLParagraphElement>(null);
   const documentRef = useRef(document);
   const isInView = useInView(ref, {
-    margin: "-50% 0px -50% 0px",
+    // margin: "0% 0px 0% 0px",
     // NOTE: The only reason we pass in the document here, is because
     // of security restrictions set by the browser when using an iFrame.
     // In an iFrame (so eg in the preview on frontend.fyi),
@@ -46,7 +46,7 @@ const ProjectedData = () => {
           isInView ? "text-black" : "text-gray-300"
         )}
       >
-        Let's see how much you will save before the end-of-year.
+        Let’s calculate your current year-end savings trajectory.
       </p>
       {!isOpen ? (
         <motion.div
