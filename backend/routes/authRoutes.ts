@@ -80,6 +80,8 @@ router.get(
           res.status(200).send({
             userEmail: bIsAdminPresent.username,
             imageUrl: bIsAdminPresent.imageUrl,
+            userData: bIsAdminPresent,
+            // subscription: bIsAdminPresent.subscriptions,
           });
         } else {
           res.status(401).send("unauthorised");
@@ -95,6 +97,11 @@ router.get(
 );
 // TODO add the below logic to a common place for the autentcation
 router.post("/login", async (req: Request, res: Response) => {
+  console.log(
+    "tarun email and pas",
+    req.headers.username,
+    req.headers.password
+  );
   const bIsAdminPresent = await AdminModel.findOne({
     username: req.headers.username,
     password: req.headers.password,

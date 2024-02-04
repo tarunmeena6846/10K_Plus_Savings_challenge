@@ -3,14 +3,14 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface Subscription extends Document {
   planId: string;
   userId: string;
-  status: string;
+  isSubscribed: Boolean;
   // Add more fields as needed
 }
 
 const subscriptionSchema = new Schema<Subscription>({
   planId: {
     type: String,
-    ref: "Plan", // Assuming you have a Plan schema for storing plan details
+    // ref: "Plan", // Assuming you have a Plan schema for storing plan details
     required: true,
   },
   userId: {
@@ -18,9 +18,9 @@ const subscriptionSchema = new Schema<Subscription>({
     // ref: "User", // Assuming you have a User schema for storing user details
     required: true,
   },
-  status: {
-    type: String,
-    default: "active", // You can update the status based on subscription events
+  isSubscribed: {
+    type: Boolean,
+    default: false, // You can update the status based on subscription events
   },
   // Add more fields as needed
 });

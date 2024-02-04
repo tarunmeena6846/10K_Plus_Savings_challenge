@@ -14,73 +14,7 @@ const router: Router = express.Router();
 
 // async createSubscription(createSubscriptionRequest) {
 
-// }
 
-router.post(
-  "/create-subscription",
-  // detokenizeAdmin,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      // Create a Stripe customer
-      const customer = await stripe.customers.create({
-        name: req.body.name,
-        email: req.body.email,
-        payment_method: req.body.paymentMethod,
-        invoice_settings: {
-          default_payment_method: req.body.paymentMethod,
-        },
-      });
-      console.log("customer", customer);
-      // Create a subscription
-      const subscription = await stripe.subscriptions.create({
-        customer: customer.id,
-        items: [{ price: req.body.priceId }],
-        payment_settings: {
-          payment_method_options: {
-            card: {
-              request_three_d_secure: "any",
-            },
-          },
-          payment_method_types: ["card"],
-          save_default_payment_method: "on_subscription",
-        },
-        expand: ["latest_invoice.payment_intent"],
-      });
-
-      console.log("subscription", subscription);
-      const invoice = subscription.latest_invoice as Stripe.Invoice;
-      console.log("invoice", invoice);
-      if (invoice.payment_intent) {
-        const intent = invoice.payment_intent as Stripe.PaymentIntent;
-        res.status(200).json({
-          error: false,
-          message: "Subsscription created sucessfully",
-          data: {
-            subscriptionId: subscription.id,
-            clientSecret: intent.client_secret,
-          },
-        });
-        // res.send({
-        //   subscriptionId: subscription.id,
-        //   clientSecret: intent.client_secret,
-        // });
-      }
-      // Return the subscription details
-      // res.status(200).json({
-      //   error: false,
-      //   message: "Subsscription created sucessfully",
-      //   data: {
-      //     clientSecret:
-      //       subscription.latest_invoice?.payment_intent?.clientSecret,
-      //     subscriptionId: subscription.id,
-      //   },
-      // });
-    } catch (error) {
-      console.error("Error creating subscription:", error);
-      res.status(500).json({ error: "Failed to create subscription" });
-    }
-  }
-);
 
 router.post(
   "/reset-monthly-data",
