@@ -53,7 +53,8 @@ app.post("/create-customer-portal-session", async (req, res) => {
     customer: req.body.customerId,
     return_url: process.env.RETURN_CLIENT_URL,
   });
-
+  console.log("session url", session.url);
+  console.log("process.env.RETURN_CLIENT_URL", process.env.RETURN_CLIENT_URL);
   res.redirect(session.url);
 });
 app.post(
