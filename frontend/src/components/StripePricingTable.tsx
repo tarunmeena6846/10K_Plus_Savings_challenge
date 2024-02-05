@@ -24,25 +24,32 @@ const StripePricingTable = () => {
   //   const location = useLocation();
 
   async function handleCheckout(plan: number) {
-    console.log("yearlyprice", selectedYearlyPrice.price);
-    const stripe = await getStripe();
-    const { error } = await stripe?.redirectToCheckout({
-      lineItems: [
-        {
-          price:
-            plan === 199
-              ? "price_1OeQmBSBiPFrlsnbHtsR1wlx"
-              : "price_1OeQmjSBiPFrlsnbPRGm9YvH",
-          quantity: 1,
-        },
-      ],
-      mode: "subscription",
-      successUrl: `${import.meta.env.VITE_CLIENT_URL}/projecteddashboard`,
-      cancelUrl: `${import.meta.env.VITE_CLIENT_URL}/pricing`,
-      customerEmail: currentUserState.userEmail,
-    });
-    if (error) {
-      console.error("Error redirecting to checkout:", error);
+    // console.log("yearlyprice", selectedYearlyPrice.price);
+    try {
+      const stripe = await getStripe();
+      console.log("tarun stripe", stripe);
+      const stripeResult = await stripe?.redirectToCheckout({
+        lineItems: [
+          {
+            price:
+              plan === 199
+                ? "price_1OeQmBSBiPFrlsnbHtsR1wlx"
+                : "price_1OeQmjSBiPFrlsnbPRGm9YvH",
+            quantity: 1,
+          },
+        ],
+        mode: "subscription",
+        successUrl: `${import.meta.env.VITE_CLIENT_URL}/projecteddashboard`,
+        cancelUrl: `${import.meta.env.VITE_CLIENT_URL}/pricing`,
+        customerEmail: currentUserState.userEmail,
+      });
+
+      console.log("stripeResult", stripeResult);
+      if (stripeResult?.error) {
+        console.error("Error redirecting to checkout:", stripeResult?.error);
+      }
+    } catch (error) {
+      console.error("stripe error ", error);
     }
   }
 

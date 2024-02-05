@@ -67,6 +67,9 @@ function Appbar() {
               stripePlanId: data.userData.stripePlanId,
             });
 
+            if (!data.userData.isSubscribed) {
+              navigate("/pricing");
+            }
             // if (data.userData.isSubscribed) {
             //   const resend = new Resend("re_NNACsYE7_2erSMMU7kcXaXufffNzUBotd");
             //   // await handleSubscriptionCreated(session, subscription);
@@ -231,7 +234,7 @@ function Appbar() {
                 <Button onClick={handleLogoutCancel}>Cancel</Button>
                 <form
                   method="POST"
-                  action="http://localhost:3000/create-customer-portal-session"
+                  action={`${process.env.VITE_SERVER_URL}/create-customer-portal-session`}
                 >
                   <input
                     type="hidden"

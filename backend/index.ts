@@ -51,7 +51,7 @@ app.post("/create-customer-portal-session", async (req, res) => {
   console.log("customer id", req.body.customerId);
   const session = await stripe.billingPortal.sessions.create({
     customer: req.body.customerId,
-    return_url: "http://localhost:5173/projecteddashboard",
+    return_url: process.env.RETURN_CLIENT_URL,
   });
 
   res.redirect(session.url);
@@ -204,7 +204,7 @@ app.post(
     }
   }
 );
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
