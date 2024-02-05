@@ -40,7 +40,10 @@ function Appbar() {
   // const subscriptionPlan = await getUserSubscriptionPlan();
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
-
+  console.log(
+    "import.meta.env.VITE_SERVER_URL",
+    import.meta.env.VITE_SERVER_URL
+  );
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -234,7 +237,9 @@ function Appbar() {
                 <Button onClick={handleLogoutCancel}>Cancel</Button>
                 <form
                   method="POST"
-                  action={`${process.env.VITE_SERVER_URL}/create-customer-portal-session`}
+                  action={`${
+                    import.meta.env.VITE_SERVER_URL
+                  }/create-customer-portal-session`}
                 >
                   <input
                     type="hidden"
