@@ -51,7 +51,7 @@ app.post("/create-customer-portal-session", async (req, res) => {
   console.log("customer id", req.body.customerId);
   const session = await stripe.billingPortal.sessions.create({
     customer: req.body.customerId,
-    return_url: process.env.RETURN_CLIENT_URL,
+    return_url: `${process.env.RETURN_CLIENT_URL}/projecteddashboard`,
   });
   console.log("session url", session.url);
   console.log("process.env.RETURN_CLIENT_URL", process.env.RETURN_CLIENT_URL);
