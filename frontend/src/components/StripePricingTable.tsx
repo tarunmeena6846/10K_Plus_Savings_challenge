@@ -6,7 +6,12 @@ import { useRecoilState } from "recoil";
 import { yearlyPlan } from "./store/atoms/yearlyPlan";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Stripe, loadStripe } from "@stripe/stripe-js";
-import { userState } from "./store/atoms/user";
+import {
+  SubscriptionData,
+  subscriptionState,
+  userState,
+} from "./store/atoms/user";
+import ManageBillingForm from "../stripe/ManageBillingForm";
 
 let stripePromise: Promise<Stripe | null>;
 const getStripe = () => {
@@ -22,8 +27,11 @@ const StripePricingTable = () => {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const navigate = useNavigate();
   //   const location = useLocation();
+  const [subscription, setSubscripton] =
+    useRecoilState<SubscriptionData>(subscriptionState);
+  const [isYearly, setIsYearly] = useState(true); // State to track selected pricing option
 
-  async function handleCheckout(plan: number) {
+  async function handleCheckout(plan: string) {
     // console.log("yearlyprice", selectedYearlyPrice.price);
     try {
       const stripe = await getStripe();
@@ -31,10 +39,7 @@ const StripePricingTable = () => {
       const stripeResult = await stripe?.redirectToCheckout({
         lineItems: [
           {
-            price:
-              plan === 199
-                ? "price_1OeQmBSBiPFrlsnbHtsR1wlx"
-                : "price_1OeQmjSBiPFrlsnbPRGm9YvH",
+            price: plan,
             quantity: 1,
           },
         ],
@@ -57,35 +62,57 @@ const StripePricingTable = () => {
     {
       name: "Start",
       yearlyPrice: 199,
+      yearlyPlanId: "price_1OeQmBSBiPFrlsnbHtsR1wlx",
+      monthlyPrice: 18,
+      monthlyPlanId: "price_1OeQr8SBiPFrlsnbK6qF3cTT",
       description:
         "A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
       name: "Plus",
       yearlyPrice: 499,
+      yearlyPlanId: "price_1OeQmjSBiPFrlsnbPRGm9YvH",
+      monthlyPrice: 45,
+      monthlyPlanId: "price_1OeQqRSBiPFrlsnb7DJKbvbr",
       description:
         "A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       green: true,
     },
   ];
-
+  console.log("subscription saate ", subscription);
   return (
     <div className="py-10 md:px-14 p-4 max-w-7xl mx-auto">
       <div className="text-center">
         <h2 className="md:text-7xl text-7xl mb-2">Here are all our plans</h2>
       </div>
-      <motion.div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-10 mt-20 md:w-11/12 mx-auto">
+
+      <div className="flex justify-center mt-5">
+        <button
+          className={`mx-5  w-60 items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center`}
+          onClick={() => setIsYearly(!isYearly)}
+        >
+          {isYearly ? "Show Monthly Prices" : "Show Yearly Prices"}
+        </button>
+      </div>
+      <motion.div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-10 mt-20 md:w-11/12 mx-auto border-2-green">
         {packages.map((pkg, index) => (
           <div
             key={index}
-            className="border border-black py-10 md:px-6 px-4 rounded-lg shadow-4xl"
+            className={`border ${
+              subscription.isSubscribed &&
+              pkg.planId === subscription.stripePlanId
+                ? "border-green-500"
+                : "border-black"
+            } py-10 md:px-6 px-4 rounded-lg shadow-4xl`}
           >
+            {/* {pkg.planId} */}
+            {/* {index} */}
+
             <h3 className="text-3xl  font-bold text-center">{pkg.name}</h3>
             <p className="mt-5 text-center text-secondary text-4xl font-bold">
-              {`$${pkg.yearlyPrice}`}
-              <span className="text-base text-tertiary font-medium">
-                /{"year"}
-              </span>
+              {isYearly
+                ? `$${pkg.yearlyPrice}/year`
+                : `$${pkg.monthlyPrice}/month`}
             </p>
             <ul className="mt-4 space-y-2 px-4">
               <li className="flex items-center">
@@ -127,17 +154,44 @@ const StripePricingTable = () => {
             </ul>
 
             <div className="w-full mx-auto flex justify-center mt-5">
-              <motion.button
-                className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  //   setSelectedYearlyPrice({ price: pkg.yearlyPrice });
-                  handleCheckout(pkg.yearlyPrice);
-                }}
-              >
-                Subscribe
-              </motion.button>
+              {subscription.isSubscribed ? (
+                <>
+                  {pkg.planId === subscription.stripePlanId ? (
+                    <motion.button
+                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-green-500 text-black shadow-lg h-10 text-center"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        // Handle action for subscribed user
+                      }}
+                    >
+                      <ManageBillingForm></ManageBillingForm>
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        handleCheckout(pkg.planId);
+                      }}
+                    ></motion.button>
+                  )}
+                </>
+              ) : (
+                <motion.button
+                  className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => {
+                    handleCheckout(
+                      isYearly ? pkg.yearlyPlanId : pkg.monthlyPlanId
+                    );
+                  }}
+                >
+                  Subscribe
+                </motion.button>
+              )}
             </div>
           </div>
         ))}

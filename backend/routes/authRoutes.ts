@@ -2,13 +2,14 @@ import express, { Router, Request, Response } from "express";
 // import AdminModel from "../models/admin.model";
 import AdminModel, { Admin } from "../models/admin";
 import { detokenizeAdmin, secretKey } from "../middleware/index";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 // const secretKey: string | undefined = process.env.JWT_SCERET; // Adjust the type based on your actual environment variable type
 // import express,  from 'express';
 // import { secretKey } from "../index";
 // console.log("at authroutes", process.env.JWT_SCERET);
 const router: Router = express.Router();
 import { AuthenticatedRequest } from "../middleware/index";
+import { Resend } from "resend";
 router.post("/signup", async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -24,14 +25,8 @@ router.post("/signup", async (req: Request, res: Response) => {
     if (!bIsAdminPresent) {
       // const obj = { username: req.body.username, password: req.body.password };
       // console.log(obj);
-      const newAdmin: Admin = new AdminModel({
-        username: username,
-        password: password,
-      });
-      newAdmin.save();
-      console.log(newAdmin._id);
+
       // currentUserId = newAdmin.username;
-      console.log(newAdmin);
       console.log(secretKey);
       if (secretKey) {
         let token = jwt.sign(
@@ -42,9 +37,25 @@ router.post("/signup", async (req: Request, res: Response) => {
           secretKey,
           { expiresIn: "24h" }
         );
-        res.status(200).json({
-          content: "Admin created successfully",
-          token,
+        const newAdmin: Admin = new AdminModel({
+          username: username,
+          password: password,
+          verificationToken: token,
+        });
+        newAdmin.save();
+        console.log(newAdmin._id);
+        const resend = new Resend(process.env.RESEND_KEY);
+        // // awaitcons handleSubscriptionCreated(session, subscription);
+        console.log("before resend call");
+        resend.emails.send({
+          from: "delivered@resend.dev",
+          // to: session.customer_email as string,
+          to: username as string,
+          subject: "Email Verification",
+          html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
+        });
+        res.status(201).send({
+          message: "An Email sent to your account please verify",
           success: true,
         });
       } else {
@@ -63,6 +74,34 @@ router.post("/signup", async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Error in admin signup:", error);
     res.status(500).json({ error: "Internal server error", success: false });
+  }
+});
+
+router.get("/verify-email/:token", async (req: Request, res: Response) => {
+  // const authHeader = req.params.token;
+  console.log("key", secretKey, req.params.token);
+  try {
+    if (secretKey) {
+      const userInfo = jwt.verify(req.params.token, secretKey) as JwtPayload;
+      console.log("tarun id", userInfo);
+      // if (!userInfo) return res.status(400).send({ message: "Invalid token" });
+      const user = await AdminModel.findOne({ username: userInfo.username });
+      if (!user) return res.status(400).send({ message: "Invalid link" });
+      console.log("user ", user);
+
+      if (user.verificationToken != "") {
+        user.verified = true;
+        user.verificationToken = "";
+        await user.save();
+        res.status(200).send({ message: "Email verified successfully" });
+        // return res.redirect("http://localhost:5173/login");
+      } else {
+        res.status(400).send({ message: "Invalid link" });
+      }
+    }
+    // res.status(200).send({ message: "Email verified successfully" });
+  } catch (e) {
+    res.status(400).send("error");
   }
 });
 
@@ -115,9 +154,30 @@ router.post("/login", async (req: Request, res: Response) => {
         secretKey,
         { expiresIn: "1h" }
       );
-      res
-        .status(200)
-        .send({ content: "Login successfully", token, success: true });
+      if (bIsAdminPresent.verified) {
+        res.status(200).send({
+          content: "Login successfully",
+          token,
+          success: true,
+          verified: true,
+        });
+      } else {
+        const resend = new Resend(process.env.RESEND_KEY);
+        // // awaitcons handleSubscriptionCreated(session, subscription);
+        console.log("before resend call");
+        resend.emails.send({
+          from: "delivered@resend.dev",
+          // to: session.customer_email as string,
+          to: bIsAdminPresent.username as string,
+          subject: "Email Verification",
+          html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
+        });
+        res.status(201).send({
+          message: "An Email sent to your account please verify",
+          success: true,
+          verified: false,
+        });
+      }
     } else {
       console.error(
         "JWT_SECRET environment variable is not set. Unable to sign JWT."

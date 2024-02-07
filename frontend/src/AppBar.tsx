@@ -14,6 +14,8 @@ import {
   Modal,
   Box,
   Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useRecoilState } from "recoil";
@@ -27,6 +29,7 @@ import { motion } from "framer-motion";
 import { Resend } from "resend";
 import WelcomeEmail from "./utils/emails/Welcome";
 import { renderToString } from "react-dom/server"; // Import ReactDOMServer
+import ManageBillingForm from "./stripe/ManageBillingForm";
 
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
@@ -44,6 +47,21 @@ function Appbar() {
     "import.meta.env.VITE_SERVER_URL",
     import.meta.env.VITE_SERVER_URL
   );
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuItemClick = (route) => {
+    setAnchorEl(null);
+    navigate(route);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -62,6 +80,7 @@ function Appbar() {
               userEmail: data.userEmail,
               isLoading: false,
               imageUrl: data.imageUrl,
+              isVerified: data.userData.verified,
             });
 
             setSubscripton({
@@ -93,6 +112,7 @@ function Appbar() {
               userEmail: "",
               isLoading: false,
               imageUrl: "",
+              isVerified: currentUserState.isVerified,
             });
           }
         })
@@ -102,11 +122,17 @@ function Appbar() {
             userEmail: "",
             isLoading: false,
             imageUrl: "",
+            isVerified: currentUserState.isVerified,
           });
           setLogoutModalOpen(false);
         });
     } else {
-      setCurrentUserState({ userEmail: "", isLoading: false, imageUrl: "" });
+      setCurrentUserState({
+        userEmail: "",
+        isLoading: false,
+        imageUrl: "",
+        isVerified: currentUserState.isVerified,
+      });
     }
   }, [setCurrentUserState, navigate, setSelectedDate]);
 
@@ -124,6 +150,7 @@ function Appbar() {
       userEmail: "",
       isLoading: false,
       imageUrl: currentUserState.imageUrl,
+      isVerified: currentUserState.isVerified,
     });
     setSelectedDate({
       year: selectedDate.year,
@@ -146,61 +173,176 @@ function Appbar() {
   };
   return (
     <div>
-      <Toolbar className="mx-auto px-4 mt-6 ml-10 mr-10 rounded-3xl bg-gray-200">
-        {currentUserState.userEmail ? (
-          <Typography
-            variant="h6"
-            sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
+      <Toolbar
+        className="mx-auto px-4 mt-6 rounded-3xl"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          {currentUserState.userEmail ? (
+            <Typography
+              variant="h6"
+              sx={{ textDecoration: "none", color: "black" }}
+              onClick={() => {
+                setSelectedDate({
+                  year: new Date().getFullYear(),
+                  month: selectedDate.month,
+                });
+                navigate("/dashboard");
+              }}
+            >
+              10K Savings Challange
+            </Typography>
+          ) : (
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/"
+              sx={{ textDecoration: "none", color: "black" }}
+            >
+              10K Savings Challange
+            </Typography>
+          )}
+        </div>
+        <div
+          // className={"rounded-3xl "}
+          className="hidden md:flex space-x-4 rounded-3xl"
+          style={{
+            border: "2px solid black",
+            gap: "10px",
+            padding: "10px",
+            // display: "flex",
+            // justifyContent: "center",
+          }}
+        >
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
+            }
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => {
-              setSelectedDate({
-                year: new Date().getFullYear(),
-                month: selectedDate.month,
-              });
-              navigate("/dashboard");
+              navigate("/pricing");
             }}
           >
-            10K Savings Challange
-          </Typography>
-        ) : (
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
-            sx={{ flexFlow: 1, textDecoration: "none", color: "black" }}
+            Pricing
+          </motion.button>
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
+            }
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            10K Savings Challange
-          </Typography>
-        )}
+            Incomes
+          </motion.button>
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
+            }
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            Expenses
+          </motion.button>
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
+            }
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            Blog
+          </motion.button>
+        </div>
 
-        {currentUserState.userEmail ? (
-          <div style={{ marginLeft: "auto" }}>
-            <IconButton
-              // edge="end"
-              // color="black"
-              aria-label="menu"
-              onClick={handleLogout}
-            >
-              <MenuIcon />
-            </IconButton>
-          </div>
-        ) : (
-          // <div></div>
-          <div style={{ marginLeft: "auto" }}>
-            <motion.button
-              className={
-                "login-button rounded-3xl bg-black text-white shadow-lg w-20 h-10"
-              }
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </motion.button>
-          </div>
-        )}
+        <div>
+          {!currentUserState.userEmail ? (
+            <div className="hidden md:flex space-x-4">
+              <motion.button
+                className={
+                  "login-button rounded-3xl bg-black text-white shadow-lg w-20 h-10"
+                }
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </motion.button>
+            </div>
+          ) : (
+            <>
+              {" "}
+              <IconButton
+                aria-label="menu"
+                onClick={handleLogout}
+                // color="inherit"
+              >
+                <MenuIcon />
+              </IconButton>
+            </>
+          )}
+        </div>
+        <div className="md:hidden md:flex">
+          <IconButton
+            aria-label="menu"
+            onClick={handleMenuClick}
+            // color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
+        </div>
+        {/* <div className="md:hidden">
+          <IconButton
+            aria-label="menu"
+            onClick={handleMenuClick}
+            // color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
+        </div>
+
+        <div className="hidden md:flex space-x-4">
+          <Button color="inherit" onClick={() => navigate("/pricing")}>
+            Pricing
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/incomes")}>
+            Incomes
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/expenses")}>
+            Expenses
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/blog")}>
+            Blog
+          </Button>
+        </div> */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          className="md:hidden"
+        >
+          <MenuItem onClick={() => handleMenuItemClick("/pricing")}>
+            Pricing
+          </MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("/incomes")}>
+            Incomes
+          </MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("/expenses")}>
+            Expenses
+          </MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("/blog")}>Blog</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("/login")}>
+            Login
+          </MenuItem>
+        </Menu>
       </Toolbar>
       {/* </AppBar> */}
       {/* Drawer for menu options */}
+      {/* {currentUserState.userEmail} */}
       {currentUserState.userEmail ? (
         <div>
           {/* Logout modal */}
@@ -235,7 +377,7 @@ function Appbar() {
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button onClick={handleLogoutConfirm}>Logout</Button>
                 <Button onClick={handleLogoutCancel}>Cancel</Button>
-                <form
+                {/* <form
                   method="POST"
                   action={`${
                     import.meta.env.VITE_SERVER_URL
@@ -248,7 +390,8 @@ function Appbar() {
                   />
 
                   <button type="submit">Manage billing</button>
-                </form>
+                </form> */}
+                <ManageBillingForm></ManageBillingForm>
               </Box>
             </Box>
           </Modal>

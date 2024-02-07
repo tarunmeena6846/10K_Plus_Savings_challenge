@@ -20,6 +20,7 @@ function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [username, setUserName] = React.useState("");
+  const [msg, setMsg] = useState("");
 
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [registrationError, setRegistrationError] = useState("");
@@ -52,14 +53,15 @@ function Register() {
         resp.json().then((data) => {
           console.log("before router", data);
           if (data.success) {
-            setCurrentUserState({
-              userEmail: email,
-              isLoading: false,
-              imageUrl: currentUserState.imageUrl,
-            });
-            localStorage.setItem("token", data.token);
+            setMsg(data.message);
+            // setCurrentUserState({
+            //   userEmail: email,
+            //   isLoading: false,
+            //   imageUrl: currentUserState.imageUrl,
+            // });
+            // localStorage.setItem("token", data.token);
             // setCurrentUserState({ userEmail: email, isLoading: false });
-            navigate("/pricing");
+            // navigate("/pricing");  
             // Payment();
             // navigate("/projecteddashboard");
             // history.go(0);
@@ -135,6 +137,8 @@ function Register() {
               {registrationError}
             </Typography>
           )}
+          {msg && <div className="message">{msg}</div>}
+
           <Button variant="contained" color="primary" onClick={handleRegister}>
             Signup
           </Button>

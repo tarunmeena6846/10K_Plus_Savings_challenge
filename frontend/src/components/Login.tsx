@@ -3,7 +3,11 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Card, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { userState } from "./store/atoms/user";
+import {
+  SubscriptionData,
+  subscriptionState,
+  userState,
+} from "./store/atoms/user";
 import { useRecoilState } from "recoil";
 
 /// File is incomplete. You need to add input boxes to take input for users to login.
@@ -13,6 +17,9 @@ function Login() {
   const navigate = useNavigate();
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [resetRequested, setResetRequested] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [subscription, setSubscripton] =
+    useRecoilState<SubscriptionData>(subscriptionState);
   console.log(password);
   const handleRegister = () => {
     if (!email || !password) {
@@ -34,15 +41,20 @@ function Login() {
         }
         resp.json().then((data) => {
           console.log(data);
-          localStorage.setItem("token", data.token);
-          setCurrentUserState({
-            userEmail: email as string,
-            isLoading: false,
-            imageUrl: currentUserState.imageUrl,
-          });
-          navigate("/dashboard");
-          console.log(data.token);
-          console.log("Login successfully", data);
+          if (data.verified) {
+            localStorage.setItem("token", data.token);
+            console.log("Login successfully", data);
+            setCurrentUserState({
+              userEmail: email as string,
+              isLoading: false,
+              imageUrl: currentUserState.imageUrl,
+              isVerified: currentUserState.isVerified,
+            });
+            if (subscription.isSubscribed) navigate("/dashboard");
+            else navigate("/pricing");
+          } else {
+            setMsg(data.message);
+          }
         });
       })
       .catch((error) => {
@@ -82,6 +94,7 @@ function Login() {
             />
             <br />
             <br />
+            {msg && <div className="message">{msg}</div>}
             <Button
               variant="contained"
               color="primary"

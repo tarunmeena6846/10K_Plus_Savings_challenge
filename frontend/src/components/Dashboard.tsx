@@ -57,6 +57,7 @@ function Dashboard() {
       userEmail: currentUserState.userEmail,
       isLoading: currentUserState.isLoading,
       imageUrl: "",
+      isVerified: currentUserState.isVerified,
     });
   };
   const handleOpenSettingsDialog = () => {
@@ -113,6 +114,7 @@ function Dashboard() {
                 userEmail: currentUserState.userEmail,
                 isLoading: false,
                 imageUrl: currentUserState.imageUrl,
+                isVerified: currentUserState.isVerified,
               });
               setIncomeDialogOpen(false);
               fetchData();

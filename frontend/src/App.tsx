@@ -9,6 +9,7 @@ import Appbar from "./AppBar";
 import { RecoilRoot } from "recoil";
 import ProjectedDashboard from "./components/ProjectedDashboard";
 import StripePricingTable from "./components/StripePricingTable";
+import EmailVerify from "./components/EmailVerify";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -28,7 +29,7 @@ function App() {
           <Route path="/pricing" element={<StripePricingTable />} />
           {/* <Route path="/checkout" element={<Payment />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
-
+          <Route path="/verify-email/:token" element={<EmailVerify />} />
           {/*
 
         <Route path="/createCourse" element={<CreateCourse />} />
