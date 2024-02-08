@@ -30,9 +30,13 @@ const StripePricingTable = () => {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
   const [isYearly, setIsYearly] = useState(true); // State to track selected pricing option
-
+  console.log("current", currentUserState.userEmail);
   async function handleCheckout(plan: string) {
     // console.log("yearlyprice", selectedYearlyPrice.price);
+
+    if (!currentUserState.userEmail) {
+      navigate("/register");
+    }
     try {
       const stripe = await getStripe();
       console.log("tarun stripe", stripe);

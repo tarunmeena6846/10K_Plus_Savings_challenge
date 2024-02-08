@@ -49,13 +49,24 @@ const endpointSecret =
   "whsec_87d735066aaff8a39ea87d59156cdc240d9ca075cfed64255174e6b13b13cccc";
 app.post("/create-customer-portal-session", async (req, res) => {
   console.log("customer id", req.body.customerId);
-  const session = await stripe.billingPortal.sessions.create({
-    customer: req.body.customerId,
-    return_url: `${process.env.RETURN_CLIENT_URL}`,
-  });
-  console.log("session url", session.url);
-  console.log("process.env.RETURN_CLIENT_URL", process.env.RETURN_CLIENT_URL);
-  res.redirect(session.url);
+  // const session = await stripe.billingPortal.sessions.create({
+  //   customer: req.body.customerId,
+  //   return_url: `${process.env.RETURN_CLIENT_URL}`,
+  // });
+  try {
+    // Make request to Stripe API to create customer portal session
+    const session = await stripe.billingPortal.sessions.create({
+      customer: req.body.customerId,
+      return_url: `${process.env.RETURN_CLIENT_URL}`,
+    });
+    // console.log("session url", session.url);
+    console.log("process.env.RETURN_CLIENT_URL", process.env.RETURN_CLIENT_URL);
+    // res.redirect(session.url);
+    res.status(200).json({ url: session.url }); // Return URL of Stripe-hosted checkout page
+  } catch (error) {
+    console.error("Error creating customer portal session:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 app.post(
   "/webhook",

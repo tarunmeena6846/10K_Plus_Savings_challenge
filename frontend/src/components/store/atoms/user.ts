@@ -13,6 +13,7 @@ export interface SubscriptionData {
   isSubscribed: boolean;
   stripeCustomerId: string;
   stripePlanId: string;
+  isTopTier: boolean;
 }
 export const subscriptionState = atom({
   key: "subscriptionState",
@@ -20,5 +21,6 @@ export const subscriptionState = atom({
     isSubscribed: false,
     stripeCustomerId: "",
     stripePlanId: "",
+    isTopTier: false,
   },
 });

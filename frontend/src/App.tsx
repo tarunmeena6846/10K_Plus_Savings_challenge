@@ -10,6 +10,9 @@ import { RecoilRoot } from "recoil";
 import ProjectedDashboard from "./components/ProjectedDashboard";
 import StripePricingTable from "./components/StripePricingTable";
 import EmailVerify from "./components/EmailVerify";
+import SavingPortalLanding from "./components/savingportal/SavingPortalLanding";
+import IncomePortalLanding from "./components/incomeportal/IncomePortalLanding";
+import CommunityLanding from "./components/community/CommunityLanding";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -27,6 +30,10 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pricing" element={<StripePricingTable />} />
+          <Route path="/savingportal" element={<SavingPortalLanding />} />
+          <Route path="/incomeportal" element={<IncomePortalLanding />} />
+          <Route path="/community" element={<CommunityLanding />} />
+
           {/* <Route path="/checkout" element={<Payment />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
           <Route path="/verify-email/:token" element={<EmailVerify />} />

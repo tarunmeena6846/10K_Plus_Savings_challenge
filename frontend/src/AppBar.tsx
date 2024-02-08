@@ -87,6 +87,7 @@ function Appbar() {
               isSubscribed: data.userData.isSubscribed,
               stripeCustomerId: data.userData.stripeUserId,
               stripePlanId: data.userData.stripePlanId,
+              isTopTier: data.userData.isTopTier,
             });
 
             if (!data.userData.isSubscribed) {
@@ -181,32 +182,14 @@ function Appbar() {
           justifyContent: "space-between",
         }}
       >
-        <div>
-          {currentUserState.userEmail ? (
-            <Typography
-              variant="h6"
-              sx={{ textDecoration: "none", color: "black" }}
-              onClick={() => {
-                setSelectedDate({
-                  year: new Date().getFullYear(),
-                  month: selectedDate.month,
-                });
-                navigate("/dashboard");
-              }}
-            >
-              10K Savings Challange
-            </Typography>
-          ) : (
-            <Typography
-              variant="h6"
-              component={Link}
-              to="/"
-              sx={{ textDecoration: "none", color: "black" }}
-            >
-              10K Savings Challange
-            </Typography>
-          )}
-        </div>
+        <Typography
+          variant="h6"
+          component={Link}
+          to={currentUserState.userEmail ? "/dashboard" : "/"}
+          sx={{ textDecoration: "none", color: "black" }}
+        >
+          10K Savings Challenge
+        </Typography>
         <div
           // className={"rounded-3xl "}
           className="hidden md:flex space-x-4 rounded-3xl"
@@ -214,10 +197,23 @@ function Appbar() {
             border: "2px solid black",
             gap: "10px",
             padding: "10px",
+            width: "auto",
             // display: "flex",
             // justifyContent: "center",
           }}
         >
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
+            }
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              navigate(currentUserState.userEmail ? "/dashboard" : "/");
+            }}
+          >
+            Home
+          </motion.button>
           <motion.button
             className={
               "login-button rounded-3xl bg-transparent text-black w-20 h-10"
@@ -230,7 +226,7 @@ function Appbar() {
           >
             Pricing
           </motion.button>
-          <motion.button
+          {/* <motion.button
             className={
               "login-button rounded-3xl bg-transparent text-black w-20 h-10"
             }
@@ -247,15 +243,57 @@ function Appbar() {
             whileTap={{ scale: 0.9 }}
           >
             Expenses
-          </motion.button>
+          </motion.button> */}
           <motion.button
             className={
               "login-button rounded-3xl bg-transparent text-black w-20 h-10"
             }
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileHover={{
+              background: "black",
+              color: "white",
+              width: "120px",
+              scale: 1.1,
+            }}
             whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              navigate("/community");
+            }}
           >
-            Blog
+            Community
+          </motion.button>
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-50 h-10"
+            }
+            whileHover={{
+              background: "black",
+              color: "white",
+              width: "120px",
+              scale: 1.1,
+            }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              navigate("/savingportal");
+            }}
+          >
+            Saving Portal
+          </motion.button>
+          <motion.button
+            className={
+              "login-button rounded-3xl bg-transparent text-black w-50 h-10"
+            }
+            whileHover={{
+              background: "black",
+              width: "120px",
+              color: "white",
+              scale: 1.1,
+            }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              navigate("/incomeportal");
+            }}
+          >
+            Income Portal
           </motion.button>
         </div>
 
@@ -374,6 +412,10 @@ function Appbar() {
                   marginBottom: "16px", // Add margin to separate Avatar and buttons
                 }}
               />
+              {currentUserState.userEmail}
+              <br />
+              <br />
+
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button onClick={handleLogoutConfirm}>Logout</Button>
                 <Button onClick={handleLogoutCancel}>Cancel</Button>

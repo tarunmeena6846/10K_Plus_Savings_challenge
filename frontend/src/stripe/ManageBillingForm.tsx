@@ -5,7 +5,7 @@ import { subscriptionState } from "../components/store/atoms/user";
 const ManageBillingForm = () => {
   const [subscription, setSubscription] = useRecoilState(subscriptionState);
   const [loading, setLoading] = useState(false);
-
+  console.log("susbcription", subscription.stripeCustomerId);
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -31,7 +31,8 @@ const ManageBillingForm = () => {
       // After creating the billing portal, you may want to handle the response
       // For example, log the response or perform any necessary actions
       console.log("Billing portal created successfully");
-
+      const { url } = await response.json(); // Assuming your backend returns the URL
+      window.location.href = url;
       // Reset loading state after successful submission
       setLoading(false);
     } catch (error) {

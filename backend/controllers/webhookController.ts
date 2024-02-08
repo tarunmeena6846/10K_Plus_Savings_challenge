@@ -67,7 +67,12 @@ export async function handleSubscriptionCreated(event: any, subscription: any) {
       userData.stripePlanId = subscription.plan.id;
       userData.stripeUserId = event.customer;
       userData.isSubscribed = true;
-
+      if (
+        subscription.plan.id === "price_1OeQqRSBiPFrlsnb7DJKbvbr" ||
+        subscription.plan.id === "price_1OeQmjSBiPFrlsnbPRGm9YvH"
+      ) {
+        userData.isTopTier = true;
+      }
       // Save the updated userData document
       await userData.save();
     } catch (error) {
@@ -104,7 +109,12 @@ export async function handleSubscriptionUpdated(event: any, subscription: any) {
       userData.stripePlanId = subscription.plan.id;
       userData.stripeUserId = event.data.object.customer;
       userData.isSubscribed = true;
-
+      if (
+        subscription.plan.id === "price_1OeQqRSBiPFrlsnb7DJKbvbr" ||
+        subscription.plan.id === "price_1OeQmjSBiPFrlsnbPRGm9YvH"
+      ) {
+        userData.isTopTier = true;
+      }
       // Save the updated userData document
       await userData.save();
     } catch (error) {

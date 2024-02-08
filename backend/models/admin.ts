@@ -9,6 +9,7 @@ export interface Admin extends Document {
   stripePlanId?: string;
   stripeUserId?: string;
   isSubscribed?: Boolean;
+  isTopTier: Boolean;
   verificationToken: string;
 }
 
@@ -29,6 +30,8 @@ const adminSchema = new Schema<Admin>({
   isSubscribed: Boolean,
   verified: { type: Boolean, default: false },
   verificationToken: { type: String },
+  isTopTier: { type: Boolean, default: false },
+
   // subscriptions: [
   //   {
   //     type: Schema.Types.ObjectId,
