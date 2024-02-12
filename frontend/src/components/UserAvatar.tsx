@@ -18,6 +18,7 @@ const UserAvatar = ({ size = 40 }) => {
           userEmail: currentUserState.userEmail,
           isLoading: currentUserState.isLoading,
           imageUrl: imageUrl as string,
+          isVerified: currentUserState.isVerified,
         });
         setIsEditing(false); // Reset isEditing after handling image change
         // Clear the file input value to allow selecting the same file again

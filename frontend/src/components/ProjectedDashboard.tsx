@@ -1,18 +1,27 @@
 import { Card, Modal, Typography } from "@mui/material";
 import { useState } from "react";
-import { SubscriptionData, subscriptionState } from "./store/atoms/user";
+import {
+  SubscriptionData,
+  subscriptionState,
+  userState,
+} from "./store/atoms/user";
 import { useRecoilState } from "recoil";
 import { motion, useInView } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 function ProjectedDashboard() {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
   const [incomeInputVisible, setIncomeInputVisible] = useState(false);
   const [expenseInputVisible, setExpenseInputVisible] = useState(false);
   const [saveVisible, setSaveVisible] = useState(false);
+  const [communityVisible, setCommunityVisble] = useState(false);
 
+  const [targetIncome, setTargetIncome] = useState(0);
+  const [targetExpense, setTargetExpense] = useState(0);
+  const [selectedCurrency, setSelectedCurrency] = useState("USD");
+  const navigate = useNavigate();
   const handleVideoModalClose = () => {
     setVideoModalOpen(false);
   };
@@ -34,6 +43,10 @@ function ProjectedDashboard() {
     setSaveVisible(!saveVisible);
     // setIncomeInputVisible(false); // Close income input section
   };
+  const handleCommunityClick = () => {
+    setSaveVisible(false);
+    setCommunityVisble(true);
+  };
 
   const handleSubmitIncome = () => {
     setIncomeInputVisible(false);
@@ -45,10 +58,58 @@ function ProjectedDashboard() {
     setSaveVisible(true);
     // Perform other actions if needed
   };
-  const handleSaveSubmit = () => {
-    // setExpenseInputVisible(false);
-    // setSaveVisible(true);
-    // Perform other actions if needed
+
+  const handleSaveSubmit = async () => {
+    await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/data/update-projected-savings`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          projectedYearlySavings: targetIncome - targetExpense,
+          // year: currentDate.getFullYear(),
+          year: new Date().getFullYear,
+        }),
+      }
+    )
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("Network response is not ok");
+        }
+        resp.json().then((responseData) => {
+          console.log("response data at update projeted savings", responseData);
+
+          // setCourses(data);
+          if (responseData.success == true) {
+            // Clear items array after saving
+            // setMonthlyExpense(responseData.totalExpenses);
+            // navigate("/dashboard");
+            // setCurrentUserState({
+            //   userEmail: currentUserState.userEmail,
+            //   isLoading: false,
+            //   imageUrl: currentUserState.imageUrl,
+            // });
+          } else {
+            // setCurrentUserState({
+            //   userEmail: null,
+            //   isLoading: false,
+            //   imageUrl: "",
+            // });
+            console.error("Error saving projected data:", responseData.error);
+          }
+        });
+      })
+      .catch((error) => {
+        // setCurrentUserState({
+        //   userEmail: null,
+        //   isLoading: false,
+        //   imageUrl: "",
+        // });
+        console.error("Error saving projected data");
+      });
   };
 
   // handleSaveSubmit
@@ -58,7 +119,6 @@ function ProjectedDashboard() {
 
   return (
     <>
-      {/* Video Popup */}
       {videoModalOpen && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-75">
           <div className="relative bg-white rounded-lg shadow-lg p-4 w-full max-w-3xl">
@@ -136,11 +196,41 @@ function ProjectedDashboard() {
                 income and pave the way to your dreams
               </span>
               <br />
-              <motion.input
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+              {/* <select
+                value={selectedCurrency}
+                onChange={(e) => setSelectedCurrency(e.target.value)}
                 className="mb-2 mt-5 p-2 rounded"
-              />
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select> */}
+              <motion.div className="relative">
+                <div className="flex items-center">
+                  <motion.input
+                    type="number"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mb-2 mt-5 p-2 rounded"
+                    onChange={(e) => {
+                      // Parse the input value to a number
+                      // Check if the parsed value is a valid number
+                      setTargetIncome(parseFloat(e.target.value));
+                    }}
+                  />
+                  <select
+                    value={selectedCurrency}
+                    onChange={(e) => setSelectedCurrency(e.target.value)}
+                    className=" ml-2 mb-2 mt-5 p-2 rounded"
+                  >
+                    <option value="$">USD ($)</option>
+                    <option value="€">EUR (€)</option>
+                    <option value="£">GBP (£)</option>
+                    {/* Add more currency options as needed */}
+                  </select>
+                </div>
+              </motion.div>
+
               <motion.button
                 className="flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 w-20 text-center mt-2"
                 whileHover={{ scale: 1.1 }}
@@ -206,11 +296,32 @@ function ProjectedDashboard() {
                 financial future tomorrow.
               </span>
               <br />
-              <motion.input
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mb-2 mt-5 p-2 rounded"
-              />
+              <motion.div className="relative">
+                <div className="flex items-center">
+                  <motion.input
+                    type="number"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mb-2 mt-5 p-2 rounded"
+                    onChange={(e) => {
+                      // Parse the input value to a number
+                      // Check if the parsed value is a valid number
+                      setTargetExpense(parseFloat(e.target.value));
+                    }}
+                  />
+                  <select
+                    value={selectedCurrency}
+                    onChange={(e) => setSelectedCurrency(e.target.value)}
+                    className=" ml-2 mb-2 mt-5 p-2 rounded"
+                  >
+                    <option value="$">USD ($)</option>
+                    <option value="€">EUR (€)</option>
+                    <option value="£">GBP (£)</option>
+                    {/* Add more currency options as needed */}
+                  </select>
+                </div>
+              </motion.div>
+
               <motion.button
                 className="flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 w-20 text-center mt-2"
                 whileHover={{ scale: 1.1 }}
@@ -277,10 +388,11 @@ function ProjectedDashboard() {
               </span>
               <br />
               <p className="feature-title py-16 font-heading text-5xl transition-colors text-black">
-                Projected Savings: $1000
+                Projected Savings: {targetIncome - targetExpense}
+                {selectedCurrency}
               </p>
               <motion.button
-                className="flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 w-20 text-center mt-2"
+                className="flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 w-20 text-center mt-1"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSaveSubmit}
@@ -291,7 +403,77 @@ function ProjectedDashboard() {
             <div className="mt-4 md:mt-4">
               <img
                 className="rounded-3xl max-w-full h-auto"
-                src="./target.jpg"
+                src="./goal.jpg"
+                alt="Target"
+              />
+            </div>
+          </div>
+        )}
+      </motion.div>
+
+      <motion.div
+        className="projected-input"
+        layout
+        style={{
+          borderRadius: "20px",
+          background: "grey",
+          margin: "50px",
+          cursor: "pointer",
+          boxShadow: "0px 10px 30px black",
+          padding: "20px",
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          style={{
+            marginBottom: "10px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+          onClick={handleCommunityClick}
+        >
+          <span style={{ marginRight: "10px" }}>
+            Create your Community Profile.
+          </span>
+          <button>
+            <img
+              className="arrow"
+              src={communityVisible ? "./up.svg" : "./down.svg"}
+              alt="Dropdown arrow"
+            />
+          </button>
+        </div>
+        {communityVisible && (
+          <div className="flex flex-col md:flex-row">
+            <div className="mt-10 md:mt-20 mr-5 flex-grow">
+              <span className="mb-2">
+                Secure your financial future by setting ambitious savings goals.
+                Every dollar you save today is a step closer to the life you
+                envision for tomorrow.
+              </span>
+              <br />
+              {/* <p className="feature-title py-16 font-heading text-5xl transition-colors text-black">
+                Projected Savings: {targetIncome - targetExpense}
+                {selectedCurrency}
+              </p> */}
+              <motion.button
+                className="flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 w-20 text-center mt-1"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  navigate("/community");
+                }}
+              >
+                Continue
+              </motion.button>
+            </div>
+            <div className="mt-4 md:mt-4">
+              <img
+                className="rounded-3xl max-w-full h-auto"
+                src="./goal.jpg"
                 alt="Target"
               />
             </div>

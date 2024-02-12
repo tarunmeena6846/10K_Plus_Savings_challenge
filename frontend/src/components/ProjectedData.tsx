@@ -16,7 +16,7 @@ const ProjectedData = () => {
   const ref = useRef<HTMLParagraphElement>(null);
   const documentRef = useRef(document);
   const isInView = useInView(ref, {
-    // margin: "0% 0px 0% 0px",
+    margin: "0% 0px 0% 0px",
     // NOTE: The only reason we pass in the document here, is because
     // of security restrictions set by the browser when using an iFrame.
     // In an iFrame (so eg in the preview on frontend.fyi),
