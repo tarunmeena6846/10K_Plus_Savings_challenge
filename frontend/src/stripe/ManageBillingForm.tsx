@@ -14,7 +14,7 @@ const ManageBillingForm = () => {
       // For example, show loading indicator
 
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/create-customer-portal-session`,
+        `${import.meta.env.VITE_SERVER_URL}/stripe/create-customer-portal-session`,
         {
           method: "POST",
           headers: {

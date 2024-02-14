@@ -9,7 +9,9 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 // console.log("at authroutes", process.env.JWT_SCERET);
 const router: Router = express.Router();
 import { AuthenticatedRequest } from "../middleware/index";
-import { Resend } from "resend";
+import { sendEmail } from "../emails";
+import { getWelcomeEmail } from "../emails/welcomeEmail";
+// import { Resend } from "resend";
 router.post("/signup", async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -44,16 +46,17 @@ router.post("/signup", async (req: Request, res: Response) => {
         });
         newAdmin.save();
         console.log(newAdmin._id);
-        const resend = new Resend(process.env.RESEND_KEY);
-        // // awaitcons handleSubscriptionCreated(session, subscription);
-        console.log("before resend call");
-        resend.emails.send({
-          from: "delivered@resend.dev",
-          // to: session.customer_email as string,
-          to: username as string,
-          subject: "Email Verification",
-          html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
-        });
+        sendEmail(username, "Email Verification", getWelcomeEmail(token));
+        // const resend = new Resend(process.env.RESEND_KEY);
+        // // // awaitcons handleSubscriptionCreated(session, subscription);
+        // console.log("before resend call");
+        // resend.emails.send({
+        //   from: "delivered@resend.dev",
+        //   // to: session.customer_email as string,
+        //   to: username as string,
+        //   subject: "Email Verification",
+        //   html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
+        // });
         res.status(201).send({
           message: "An Email sent to your account please verify",
           success: true,
@@ -162,16 +165,22 @@ router.post("/login", async (req: Request, res: Response) => {
           verified: true,
         });
       } else {
-        const resend = new Resend(process.env.RESEND_KEY);
-        // // awaitcons handleSubscriptionCreated(session, subscription);
-        console.log("before resend call");
-        resend.emails.send({
-          from: "delivered@resend.dev",
-          // to: session.customer_email as string,
-          to: bIsAdminPresent.username as string,
-          subject: "Email Verification",
-          html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
-        });
+        sendEmail(
+          req.headers.username as string,
+          "Email Verification",
+          getWelcomeEmail(token)
+        );
+
+        // const resend = new Resend(process.env.RESEND_KEY);
+        // // // awaitcons handleSubscriptionCreated(session, subscription);
+        // console.log("before resend call");
+        // resend.emails.send({
+        //   from: "delivered@resend.dev",
+        //   // to: session.customer_email as string,
+        //   to: bIsAdminPresent.username as string,
+        //   subject: "Email Verification",
+        //   html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
+        // });
         res.status(201).send({
           message: "An Email sent to your account please verify",
           success: true,

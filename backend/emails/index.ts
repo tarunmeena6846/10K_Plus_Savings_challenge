@@ -1,39 +1,37 @@
-// // import { nanoid } from "@dub/utils";
-// import { JSXElementConstructor, ReactElement } from "react";
-// import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-// export const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.NODEMAILER_ADMIN_EMAIL,
+    pass: process.env.NODEMAILER_ADMIN_PASS,
+  },
+});
+export const sendEmail = async (
+  email: string,
+  subject: string,
+  html: string
+) => {
+  try {
+    const mailOptions = {
+      from: process.env.NODEMAILER_ADMIN_EMAIL,
+      to: email,
+      subject,
+      html,
+    };
+    // await transporter.sendMail(mailOptions);
 
-// export const sendEmail = async ({
-//   email,
-//   subject,
-//   react,
-//   marketing,
-//   test,
-// }: {
-//   email: string;
-//   subject: string;
-//   react: ReactElement<any, string | JSXElementConstructor<any>>;
-//   marketing?: boolean;
-//   test?: boolean;
-// }) => {
-//   if (!process.env.RESEND_API_KEY) {
-//     console.log(
-//       "Resend is not configured. You need to add a RESEND_API_KEY in your .env file for emails to work."
-//     );
-//     return Promise.resolve();
-//   }
-//   return resend.emails.send({
-//     from: marketing
-//       ? "Steven from Dub.co <steven@ship.dub.co>"
-//       : process.env.NEXT_PUBLIC_IS_DUB
-//       ? "Dub.co <system@dub.co>"
-//       : `system@${process.env.NEXT_PUBLIC_APP_DOMAIN}`,
-//     to: test ? "delivered@resend.dev" : email,
-//     subject,
-//     react,
-//     headers: {
-//       // "X-Entity-Ref-ID": nanoid(),
-//     },
-//   });
-// };
+    transporter.sendMail(mailOptions, function (error: any, info: any) {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
