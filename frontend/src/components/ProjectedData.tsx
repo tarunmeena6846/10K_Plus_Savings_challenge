@@ -2,9 +2,15 @@ import React, { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
+import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
+import { useRecoilState } from "recoil";
 
 const ProjectedData = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [monthlyExpense, setMonthlyExpense] =
+    useRecoilState<number>(monthlyExpenseState);
+  const [monthlyIncome, setMonthlyIncome] =
+    useRecoilState<number>(monthlyIncomeState);
   const navigate = useNavigate();
   const handleContinue = () => {
     setIsOpen(true);
@@ -79,17 +85,25 @@ const ProjectedData = () => {
                 flexDirection: "column",
               }}
             >
-              <label className="text-white mb-2">Income</label>
+              <label className="text-white mb-2">Last Month's Income</label>
               <motion.input
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="mb-4 p-2 rounded"
+                onChange={(e) => {
+                  setMonthlyIncome(parseFloat(e.target.value));
+                  localStorage.setItem("monthlyincome", e.target.value);
+                }}
               />
-              <label className="text-white mb-2">Expense</label>
+              <label className="text-white mb-2">Last Month's Expense</label>
               <motion.input
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="mb-4 p-2 rounded"
+                onChange={(e) => {
+                  setMonthlyExpense(parseFloat(e.target.value));
+                  localStorage.setItem("monthlyexpense", e.target.value);
+                }}
               />
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -130,7 +144,9 @@ const ProjectedData = () => {
               }}
             >
               <h1 className="mb-10 text-white font-heading text-5xl">
-                You will Save $10,000
+                You will Save $
+                {(monthlyIncome - monthlyExpense) *
+                  (12 - new Date().getMonth())}
               </h1>
               {/* <motion.input
                 initial={{ opacity: 0 }}

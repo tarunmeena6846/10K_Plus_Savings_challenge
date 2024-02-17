@@ -172,6 +172,8 @@ function Appbar() {
     //   window.location.href = session.url;
     // }
   };
+
+  // if (currentUserState.userEmail === "") navigate("/login");
   return (
     <div>
       <Toolbar
@@ -295,6 +297,25 @@ function Appbar() {
           >
             Income Portal
           </motion.button>
+          <div>
+            <motion.button
+              className={
+                "login-button rounded-3xl bg-transparent text-black w-50 h-10"
+              }
+              whileHover={{
+                background: "black",
+                width: "120px",
+                color: "white",
+                scale: 1.1,
+              }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => {
+                navigate("/swotportal");
+              }}
+            >
+              SWOT Portal
+            </motion.button>
+          </div>
         </div>
 
         <div>

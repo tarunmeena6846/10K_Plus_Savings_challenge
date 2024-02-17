@@ -13,7 +13,7 @@ function ProjectedDashboard() {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
-  const [incomeInputVisible, setIncomeInputVisible] = useState(false);
+  const [incomeInputVisible, setIncomeInputVisible] = useState(true);
   const [expenseInputVisible, setExpenseInputVisible] = useState(false);
   const [saveVisible, setSaveVisible] = useState(false);
   const [communityVisible, setCommunityVisble] = useState(false);
@@ -30,22 +30,28 @@ function ProjectedDashboard() {
     setIncomeInputVisible(!incomeInputVisible);
     setExpenseInputVisible(false); // Close expense input section
     setSaveVisible(false);
+    setCommunityVisble(false);
   };
 
   const handleExpenseDivClick = () => {
     setExpenseInputVisible(!expenseInputVisible);
-    setIncomeInputVisible(false); // Close income input section
-    setSaveVisible(false);
+    setSaveVisible(!saveVisible);
+    setCommunityVisble(false);
+    setIncomeInputVisible(false);
   };
 
   const handleSaveDivClick = () => {
     setExpenseInputVisible(false);
     setSaveVisible(!saveVisible);
+    setCommunityVisble(false);
+    setIncomeInputVisible(false);
     // setIncomeInputVisible(false); // Close income input section
   };
   const handleCommunityClick = () => {
     setSaveVisible(false);
-    setCommunityVisble(true);
+    setIncomeInputVisible(false); // Close income input section
+    setExpenseInputVisible(false);
+    setCommunityVisble(!communityVisible);
   };
 
   const handleSubmitIncome = () => {
@@ -71,7 +77,7 @@ function ProjectedDashboard() {
         body: JSON.stringify({
           projectedYearlySavings: targetIncome - targetExpense,
           // year: currentDate.getFullYear(),
-          year: new Date().getFullYear,
+          year: new Date().getFullYear(),
         }),
       }
     )
@@ -86,7 +92,7 @@ function ProjectedDashboard() {
           if (responseData.success == true) {
             // Clear items array after saving
             // setMonthlyExpense(responseData.totalExpenses);
-            // navigate("/dashboard");
+            navigate("/swotportal");
             // setCurrentUserState({
             //   userEmail: currentUserState.userEmail,
             //   isLoading: false,
@@ -311,7 +317,7 @@ function ProjectedDashboard() {
                   />
                   <select
                     value={selectedCurrency}
-                    onChange={(e) => setSelectedCurrency(e.target.value)}
+                    // onChange={(e) => setSelectedCurrency(e.target.value)}
                     className=" ml-2 mb-2 mt-5 p-2 rounded"
                   >
                     <option value="$">USD ($)</option>
@@ -459,16 +465,25 @@ function ProjectedDashboard() {
                 Projected Savings: {targetIncome - targetExpense}
                 {selectedCurrency}
               </p> */}
-              <motion.button
-                className="flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 w-20 text-center mt-1"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  navigate("/community");
-                }}
-              >
-                Continue
-              </motion.button>
+              <div className="flex mt-4">
+                <motion.input
+                  className="rounded"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial="Claim username"
+                ></motion.input>
+
+                <motion.button
+                  className="flex items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center ml-5 p-2"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => {
+                    navigate("/community");
+                  }}
+                >
+                  Choose username
+                </motion.button>
+              </div>
             </div>
             <div className="mt-4 md:mt-4">
               <img

@@ -13,6 +13,8 @@ import EmailVerify from "./components/EmailVerify";
 import SavingPortalLanding from "./components/savingportal/SavingPortalLanding";
 import IncomePortalLanding from "./components/incomeportal/IncomePortalLanding";
 import CommunityLanding from "./components/community/CommunityLanding";
+import SWOTanalysisPortal from "./components/SWOTanalysisPortal/SWOTanalysisPortal";
+
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -36,6 +38,8 @@ function App() {
 
           {/* <Route path="/checkout" element={<Payment />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
+          <Route path="/swotportal" element={<SWOTanalysisPortal />} />
+
           <Route path="/verify-email/:token" element={<EmailVerify />} />
           {/*
 

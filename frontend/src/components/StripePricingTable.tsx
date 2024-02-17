@@ -12,6 +12,7 @@ import {
   userState,
 } from "./store/atoms/user";
 import ManageBillingForm from "../stripe/ManageBillingForm";
+import redirectToStripeCheckout from "../stripe/StripeCheckout";
 
 let stripePromise: Promise<Stripe | null>;
 const getStripe = () => {
@@ -37,29 +38,35 @@ const StripePricingTable = () => {
     if (!currentUserState.userEmail) {
       navigate("/register");
     }
-    try {
-      const stripe = await getStripe();
-      console.log("tarun stripe", stripe);
-      const stripeResult = await stripe?.redirectToCheckout({
-        lineItems: [
-          {
-            price: plan,
-            quantity: 1,
-          },
-        ],
-        mode: "subscription",
-        successUrl: `${import.meta.env.VITE_CLIENT_URL}/projecteddashboard`,
-        cancelUrl: `${import.meta.env.VITE_CLIENT_URL}/pricing`,
-        customerEmail: currentUserState.userEmail,
-      });
 
-      console.log("stripeResult", stripeResult);
-      if (stripeResult?.error) {
-        console.error("Error redirecting to checkout:", stripeResult?.error);
-      }
-    } catch (error) {
-      console.error("stripe error ", error);
-    }
+    await redirectToStripeCheckout(
+      plan,
+      "subscription",
+      currentUserState.userEmail
+    );
+    // try {
+    //   const stripe = await getStripe();
+    //   console.log("tarun stripe", stripe);
+    //   const stripeResult = await stripe?.redirectToCheckout({
+    //     lineItems: [
+    //       {
+    //         price: plan,
+    //         quantity: 1,
+    //       },
+    //     ],
+    //     mode: "subscription",
+    //     successUrl: `${import.meta.env.VITE_CLIENT_URL}/projecteddashboard`,
+    //     cancelUrl: `${import.meta.env.VITE_CLIENT_URL}/pricing`,
+    //     customerEmail: currentUserState.userEmail,
+    //   });
+
+    //   console.log("stripeResult", stripeResult);
+    //   if (stripeResult?.error) {
+    //     console.error("Error redirecting to checkout:", stripeResult?.error);
+    //   }
+    // } catch (error) {
+    //   console.error("stripe error ", error);
+    // }
   }
 
   const packages = [
