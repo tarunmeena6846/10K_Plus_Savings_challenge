@@ -94,7 +94,7 @@ const SWOTdashboard = () => {
       >
         {!showPopup && (
           <div>
-            +Tasklist
+            +tasklist
             <img src="./tasklist.svg" />
           </div>
         )}

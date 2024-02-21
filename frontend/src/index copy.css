@@ -134,4 +134,8 @@ header {
     grid-column: auto; /* Reset grid column */
     grid-row: auto; /* Reset grid row */
   }
+  .item9 {
+    grid-column: auto; /* Reset grid column */
+    grid-row: auto; /* Reset grid row */
+  }
 }

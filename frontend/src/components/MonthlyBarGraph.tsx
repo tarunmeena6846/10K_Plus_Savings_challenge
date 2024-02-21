@@ -11,8 +11,6 @@ import {
   BarElement,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { months } from "./MonthlyIncome";
-import { Typography } from "@mui/material";
 import { MonthlyDataItem } from "./Dashboard";
 interface MonthlyBarGraphProps {
   monthlyData: MonthlyDataItem[];
@@ -71,18 +69,7 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     ],
   };
 
-  return (
-    <div style={{ height: "300px" }}>
-      {/* <div style={{ paddingTop: "20px" }}> */}
-      {/* <Typography variant="subheading2"> */}
-      {/* Projected Savings Vs Actual Savings */}
-      {/* </Typography> */}
-      {/* </div> */}
-      {/* <div style={{ marginTop: "100px" }}> */}
-      <Bar options={options} data={data} />
-      {/* </div> */}
-    </div>
-  );
+  return <Bar options={options} data={data} />;
 };
 
 export default MonthlyBarGraph;

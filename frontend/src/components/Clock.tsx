@@ -32,13 +32,9 @@ const Clock = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        {formatTime(currentDateTime)}
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        {formatDate(currentDateTime)}
-      </Typography>
+    <div className="p-4 flex justify-between">
+      <h2 className="text-3xl mr-2">{formatTime(currentDateTime)}</h2>
+      <h2 className="text-3xl">{formatDate(currentDateTime)}</h2>
     </div>
   );
 };

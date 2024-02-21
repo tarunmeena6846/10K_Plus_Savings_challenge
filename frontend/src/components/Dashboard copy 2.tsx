@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
-import MonthlyChart from "./MonthlyChart";
+// import MonthlyChart from "./MonthlyChart";
 import MonthlyBarGraph from "./MonthlyBarGraph";
 import { userState } from "./store/atoms/user";
 import UserAvatar from "./UserAvatar"; // Adjust the path based on your project structure
@@ -32,7 +32,7 @@ export interface MonthlyDataItem {
   projectedSaving: number; // Replace 'any' with the actual type
 }
 
-const Dashboard = () => {
+function Dashboard() {
   const navigate = useNavigate();
   const [monthlyIncome, setMonthlyIncome] = useRecoilState(monthlyIncomeState);
   const [monthlyExpense, setMonthlyExpense] =
@@ -342,154 +342,322 @@ const Dashboard = () => {
     setCurrentUserState,
   ]);
   return (
-    <div className="grid grid-cols-1 md:grid-rows-6 md:grid-cols-6 gap-4 m-10 ">
-      {/* First item takes the full width of the page */}
-      <div className="md:col-span-2 row-span-2">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4">
-            <h2 className="text-3xl mb-2" style={{ color: "#454545" }}>
-              Welcome Back,
-            </h2>
-          </div>
-          <div className="p-4 col-span-1">
-            <img src="./profile.jpg" className="rounded-full h-20 w-20" />
-          </div>
-          <div className="p-4 col-span-2">
-            {/* <Typography variant="h4">{currentUserState.userEmail}</Typography> */}
-            <h2 className="text-3xl mb-2">Liss Antony </h2>
-          </div>
-          <div
-            className="p-4 bg-white rounded-2xl col-span-2"
-            style={{ background: "#e3bfff" }}
-          >
-            <Clock></Clock>
-          </div>
-          <div className="p-6 bg-white rounded-2xl col-span-2 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-x-4">
-            <div className="flex flex-col">
-              <label htmlFor="selectMonth" className="text-sm font-medium">
-                Select Month
-              </label>
-              <select
-                id="selectMonth"
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                value={selectedDate.month}
-                onChange={(e) =>
-                  setSelectedDate({
-                    month: e.target.value,
-                    year: selectedDate.year,
-                  })
-                }
-              >
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="selectYear" className="text-sm font-medium">
-                Select Year
-              </label>
-              <select
-                id="selectYear"
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                value={selectedDate.year}
-                onChange={(e) =>
-                  setSelectedDate({
-                    year: parseInt(e.target.value),
-                    month: selectedDate.month,
-                  })
-                }
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Second item takes the full width of the page */}
-      <div className="md:row-span-2">
-        <div className="flex flex-col h-full">
-          <div
-            className="p-6 rounded-2xl flex-grow"
-            style={{ background: "#ffcbfb", overflow: "hidden" }}
-          >
-            <h2>Income</h2>
-            <h2 className="text-4xl">${monthlyIncome}</h2>
-          </div>
-          <div
-            className="p-6 rounded-2xl mt-4 flex-grow"
-            style={{ background: "#b2edff", overflow: "hidden" }}
-          >
-            <h2>Expenses</h2>
-            <h2 className="text-4xl">${monthlyExpense}</h2>
-          </div>
-          <div
-            className="p-6 rounded-2xl mt-4 flex-grow"
-            style={{ background: "#ceffae", overflow: "hidden" }}
-          >
-            <h2>Savings</h2>
-            <h2 className="text-4xl">${monthlyIncome - monthlyExpense}</h2>
-          </div>
-        </div>
-      </div>
-      {/* Third item takes the full width of the page */}
-      <div className="md:col-span-3 md:row-span-2">
-        <div className="h-full w-full bg-white rounded-2xl">
-          {isMonthlyDataReady && <MonthlyBarGraph monthlyData={monthlyData} />}
-        </div>
-      </div>
-      {/* Fourth item takes the full width of the page */}
+    <div className="grid-container" style={{ margin: "20px" }}>
       <div
-        className="bg-red-500 p-4 row-span-1 rounded-2xl"
+        className="grid-item item1"
         style={{
-          background: "#ffccfb",
-        }}
-      >
-        <div className="flex justify-center flex-col">
-          <h2 className="p-2"> Target Annual Savings</h2>
-          <h2 className="text-4xl">{`$${monthlyIncome}`}</h2>
-        </div>
-      </div>
-      {/* Fifth item takes the full width of the page */}
-      <div
-        className="p-4 rounded-2xl"
-        style={{
-          background: "#b2ecff",
-        }}
-      >
-        <div className="flex justify-center flex-col">
-          <h2 className="p-2"> Actual Annual Savings</h2>
-          <h2 className="text-4xl">{`$${monthlyIncome}`}</h2>
-        </div>
-      </div>
-      {/* Sixth item takes the full width of the page */}
-      <div className="p-4 md:col-span-2 row-span-2 rounded-2xl bg-white">
-        <MonthlyChart
-          monthlyIncome={500}
-          // monthlyIncome={0}
-          monthlyExpenses={200}
-        />
-      </div>
-      {/* Seventh item takes the full width of the page */}
-      <div
-        className="pt-6 md:col-span-2 row-span-2 flex flex-col items-center"
-        style={{
-          borderRadius: "20px",
-          background: "white",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           overflow: "hidden",
         }}
       >
-        <h2 className="mb-4 text-center">Monthly Income</h2>
+        {/* <UserAvatar userEmail={currentUserState.userEmail} size={50} /> */}
+        <label htmlFor="avatar-upload">
+          <Avatar
+            alt="Edit Avatar"
+            src={currentUserState.imageUrl}
+            style={{
+              position: "absolute",
+              width: "90px",
+              height: "90px",
+            }}
+          />
+        </label>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            paddingLeft: "70px",
+          }}
+        >
+          <Typography variant="h4" style={{ color: "#454545" }}>
+            Welcome Back,
+          </Typography>
+          <span
+            style={{
+              textShadow: "1px 1px 1px black", // Border color for "Here"
+              color: "black",
+              // Optional: Add padding for spacing
+            }}
+          >
+            <Typography variant="h4">{currentUserState.userEmail}</Typography>
+          </span>
+        </div>
+      </div>
+      <div
+        className="grid-item item2 "
+        style={{
+          borderRadius: "20px",
+          background: "#e3c0ff",
+          overflow: "hidden",
+          // height: "130px",
+        }}
+      >
+        <Typography
+          variant="body1"
+          style={{
+            color: "#454545",
+          }}
+        >
+          Projected Annual Savings
+        </Typography>
+
+        <Typography variant="h4">
+          $
+          {(projectedUserData * 12).toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+          })}
+        </Typography>
+      </div>
+      <div
+        className="grid-item item13 "
+        style={{
+          marginTop: "0px",
+          background: "#b2ecff",
+          borderRadius: "20px",
+          overflow: "hidden",
+        }}
+      >
+        <Typography
+          variant="body1"
+          style={{
+            color: "#454545",
+          }}
+        >
+          Actual Annual Savings
+        </Typography>
+        <Typography variant="h4">
+          $
+          {(yearlyIncome - yearlyExpense).toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+          })}
+        </Typography>
+      </div>
+      <div
+        className="grid-item item3"
+        style={{
+          background: "#ffccfb",
+          borderRadius: "20px",
+          overflow: "hidden",
+        }}
+      >
+        <Typography
+          variant="body1"
+          style={{
+            color: "#454545",
+          }}
+        >
+          Projected Monthly Savings
+        </Typography>
+        <Typography variant="h4">
+          $
+          {projectedUserData.toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+          })}
+        </Typography>
+      </div>
+      <div
+        className="grid-item item4"
+        style={{
+          background: "#b2ecff",
+          borderRadius: "20px",
+          overflow: "hidden",
+        }}
+      >
+        <Typography
+          variant="body1"
+          style={{
+            color: "#454545",
+          }}
+        >
+          Actual Monthly Savings
+        </Typography>
+        <Typography variant="h4">
+          $
+          {(monthlyIncome - monthlyExpense).toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+          })}
+        </Typography>
+      </div>
+      <div
+        className="grid-item item6"
+        style={{
+          backgroundColor: "white",
+          borderRadius: "20px",
+          // overflow: "hidden",
+        }}
+      >
+        {isMonthlyDataReady && <MonthlyBarGraph monthlyData={monthlyData} />}
+        {/* </Card> */}
+      </div>
+      <div
+        className="grid-item item12"
+        style={{
+          borderRadius: "20px", // width: "500px",
+          background: "white",
+        }}
+      >
+        <div style={{ margin: "20px" }}>
+          <FormControl variant="outlined" style={{ padding: "10px" }}>
+            <InputLabel>Select Month</InputLabel>
+            <Select
+              value={selectedDate.month}
+              onChange={(e) =>
+                setSelectedDate({
+                  month: e.target.value,
+                  year: selectedDate.year,
+                })
+              }
+              label="Select Month"
+            >
+              {months.map((month) => (
+                <MenuItem key={month} value={month}>
+                  {month}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" style={{ padding: "10px" }}>
+            <InputLabel>Select Year</InputLabel>
+            <Select
+              value={selectedDate.year}
+              onChange={(e) =>
+                setSelectedDate({
+                  year: e.target.value as number,
+                  month: selectedDate.month,
+                })
+              }
+              label="Select Year"
+            >
+              {years.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <br />
+        <br />
+        <div>
+          <Clock></Clock>
+        </div>
+        <div style={{ padding: "20px" }}>
+          <Button
+            style={{
+              color: "black",
+            }}
+            size="large"
+            onClick={handleOpenSettingsDialog}
+            startIcon={<SettingsIcon />}
+          ></Button>
+        </div>
+
+        <Dialog
+          open={settingsDialogOpen}
+          onClose={handleCloseSettingsDialog}
+          aria-labelledby="settings-dialog-title"
+          // maxWidth="md" // Set maxWidth to control the maximum width
+          fullWidth
+        >
+          <DialogTitle id="settings-dialog-title"></DialogTitle>
+          <DialogContent>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center", // Center items horizontally
+                height: "100%",
+              }}
+            >
+              <UserAvatar
+                // userEmail="user@example.com"
+                size={50}
+                // onImageChange={handleImageChange}
+              />
+              <br />
+              <Typography variant="h6">
+                Hello {currentUserState.userEmail}
+              </Typography>
+              <br />
+              <TextField
+                label="Email"
+                variant="outlined"
+                type={"email"}
+                value={currentUserState.userEmail}
+                fullWidth
+              />
+              <br />
+              <br />
+              <TextField
+                onChange={(e) => {
+                  setUserDetails({
+                    newPassword: e.target.value,
+                  });
+                }}
+                label="Password"
+                variant="outlined"
+                type={"password"}
+                fullWidth
+              />
+              <br />
+              <br></br>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              style={{ textTransform: "none" }}
+              onClick={handleSaveSettingsDialog}
+            >
+              Save
+            </Button>
+          </DialogActions>
+          <DialogActions>
+            <Button style={{ textTransform: "none" }} onClick={handleReset}>
+              Reset Image
+            </Button>
+          </DialogActions>
+          <DialogActions>
+            <Button
+              style={{ textTransform: "none" }}
+              onClick={handleCloseSettingsDialog}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+      <div
+        className="grid-item item7"
+        style={{ borderRadius: "20px", background: "white" }}
+      >
+        {/* <MonthlyChart
+          monthlyIncome={monthlyIncome}
+          monthlyExpenses={monthlyExpense}
+        /> */}
+      </div>
+      <div
+        className="grid-item item8"
+        style={{
+          borderRadius: "20px",
+          background: "white", // width: "500px",
+
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        <Typography style={{ margin: "20px" }} variant="h6">
+          Monthly Income
+        </Typography>
         <Button
           style={{
             minWidth: "100px",
-            color: "green",
+            color: " green",
             border: "2px dotted green",
             borderRadius: "20px",
             margin: "10px",
@@ -501,8 +669,9 @@ const Dashboard = () => {
           + Add Income
         </Button>
         {/* Render the updated items */}
+
         {monthIncExpInfo.length > 0 ? (
-          <div style={{ padding: "10px", width: "100%" }}>
+          <div style={{ textAlign: "start", padding: "10px" }}>
             {monthIncExpInfo
               .filter((item) => item.type === "income")
               .map((item, index) => (
@@ -514,7 +683,7 @@ const Dashboard = () => {
                     margin: "10px",
                     borderRadius: "10px",
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "space-between", // Space content horizontally
                     alignItems: "center",
                   }}
                 >
@@ -530,33 +699,24 @@ const Dashboard = () => {
           </div>
         ) : null}
       </div>
-      {/* Eighth item takes the full width of the page */}
       <div
-        className="bg-gray-500 p-4 md:col-span-2 row-span-1 rounded-2xl"
-        style={{
-          background: "#b2ecff",
-        }}
-      >
-        <div className="flex justify-center flex-col">
-          <h2 className="p-2"> Target Annual Expenses</h2>
-          <h2 className="text-4xl">{`$${monthlyIncome}`}</h2>
-        </div>
-      </div>
-      {/* Ninth item takes the full width of the page */}
-      {/* Eighth item takes the full width of the page */}
-      <div
-        className="pt-6 md:col-span-3 row-span-2 flex flex-col items-center"
+        className="grid-item item9"
         style={{
           borderRadius: "20px",
-          background: "white",
+          background: "white", // width: "500px",
+
+          display: "flex",
+          flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <h2 className="mb-4 text-center">Monthly Expenses</h2>
+        <Typography style={{ margin: "20px" }} variant="h6">
+          Monthly Expenses
+        </Typography>
         <Button
           style={{
             minWidth: "100px",
-            color: "green",
+            color: " green",
             border: "2px dotted green",
             borderRadius: "20px",
             margin: "10px",
@@ -569,9 +729,9 @@ const Dashboard = () => {
         </Button>
         {/* Render the updated items */}
         {monthIncExpInfo.length > 0 ? (
-          <div style={{ padding: "10px", width: "100%" }}>
+          <div style={{ textAlign: "start", padding: "10px" }}>
             {monthIncExpInfo
-              .filter((item) => item.type === "expense")
+              .filter((item) => item.type === "income")
               .map((item, index) => (
                 <div
                   key={index}
@@ -581,7 +741,7 @@ const Dashboard = () => {
                     margin: "10px",
                     borderRadius: "10px",
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "space-between", // Space content horizontally
                     alignItems: "center",
                   }}
                 >
@@ -598,21 +758,25 @@ const Dashboard = () => {
         ) : null}
       </div>
       <div
-        className="pt-6 md:col-span-3 row-span-2 flex flex-col items-center"
+        className="grid-item item10"
         style={{
           borderRadius: "20px",
-          background: "white",
+          background: "white", // width: "500px",
+
+          display: "flex",
+          flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <div>
-          <h2 className="mb-4 text-center">Annual Expenses</h2>
-        </div>
+        {" "}
+        <Typography style={{ margin: "20px" }} variant="h6">
+          Annual Expenses
+        </Typography>
         {/* Render the updated items */}
         {monthIncExpInfo.length > 0 ? (
-          <div style={{ padding: "10px", width: "100%" }}>
+          <div style={{ textAlign: "start", padding: "10px" }}>
             {monthIncExpInfo
-              .filter((item) => item.type === "expense")
+              .filter((item) => item.type === "income")
               .map((item, index) => (
                 <div
                   key={index}
@@ -622,7 +786,7 @@ const Dashboard = () => {
                     margin: "10px",
                     borderRadius: "10px",
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "space-between", // Space content horizontally
                     alignItems: "center",
                   }}
                 >
@@ -637,9 +801,159 @@ const Dashboard = () => {
               ))}
           </div>
         ) : null}
-      </div>{" "}
+      </div>
+      {/* <div
+        className="grid-item item8"
+        style={{
+          borderRadius: "20px",
+          background: "white", // width: "500px",
+
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          overflow: "hidden",
+        }}
+      >
+        <Dialog
+          open={incomeDialogOpen}
+          onClose={handleCloseIncomeDialog}
+          aria-labelledby="income-dialog-title"
+          fullWidth
+        >
+          <DialogTitle id="income-dialog-title"></DialogTitle>
+          <DialogContent>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center", // Center items horizontally
+                height: "100%",
+              }}
+            >
+              <Typography style={{ paddingBottom: "10px" }}>
+                Update Monthly Income and Expenses{" "}
+              </Typography>
+              <TextField
+                label="Monthly Income"
+                variant="outlined"
+                type="Number"
+                fullWidth
+                style={{ marginTop: "10px" }}
+                value={monthlyIncome}
+                onChange={(e) => {
+                  // Parse the input value to a number
+                  const inputValue = parseFloat(e.target.value);
+                  // Check if the parsed value is a valid number
+                  if (!isNaN(inputValue)) {
+                    setMonthlyIncome(inputValue);
+                  } else {
+                    alert("Invalid Input");
+                  }
+                }}
+              />
+              <br />
+              <br />
+              <TextField
+                onChange={(e) => {
+                  // Parse the input value to a number
+                  const inputValue = parseFloat(e.target.value);
+                  // Check if the parsed value is a valid number
+                  if (!isNaN(inputValue)) {
+                    setMonthlyExpense(inputValue);
+                  } else {
+                    alert("Invalid Input");
+                  }
+                }}
+                label="Monthly Expenses"
+                variant="outlined"
+                fullWidth
+                type="number"
+                value={monthlyExpense}
+              />
+              <br />
+              <br />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              style={{ textTransform: "none" }}
+              onClick={handleSaveIncome}
+            >
+              Save
+            </Button>
+          </DialogActions>
+          <DialogActions>
+            <Button
+              style={{ textTransform: "none" }}
+              onClick={handleResetIncomeDialog}
+            >
+              Reset
+            </Button>
+          </DialogActions>
+          <DialogActions>
+            <Button
+              style={{ textTransform: "none" }}
+              onClick={handleCloseIncomeDialog}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <div>
+          <Typography
+            variant="h4"
+            style={{
+              paddingTop: "20px",
+              color: "#454545",
+            }}
+          >
+            Monthly Income
+          </Typography>
+          <Typography variant="h5">{`$${monthlyIncome}`}</Typography>
+          <Typography
+            variant="h4"
+            style={{ paddingTop: "50px", color: "#454545" }}
+          >
+            Monthly Expenses
+          </Typography>
+          <Typography variant="h5">{`$${monthlyExpense}`}</Typography>
+        </div>
+        <div style={{ marginTop: "auto" }}>
+          <Button
+            style={{
+              minWidth: "100px",
+              color: " green",
+              border: "2px dotted green",
+              borderRadius: "20px",
+              margin: "10px",
+              textTransform: "none",
+            }}
+            variant="outlined"
+            onClick={handleOpenIncomeDialog}
+          >
+            + Income & Expenses
+          </Button>
+          <Button
+            style={{
+              minWidth: "100px",
+              color: " green",
+              border: "2px dotted green",
+              borderRadius: "20px",
+              margin: "10px",
+              textTransform: "none",
+            }}
+            variant="outlined"
+            onClick={() => {
+              navigate("/projecteddashboard");
+            }}
+          >
+            Update Projected Savings
+          </Button>
+        </div>
+      </div> */}
     </div>
   );
-};
+}
 
 export default Dashboard;

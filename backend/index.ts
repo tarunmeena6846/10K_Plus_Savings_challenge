@@ -54,7 +54,7 @@ console.log("pointer till 27");
 app.use("/auth", authRoutes);
 app.use("/data", dataRoute);
 app.use("/stripe", stripeRoutes); // Mount the webhook routes
-
+app.use("/post", postRoute);
 // ... (your existing app logic)
 const endpointSecret =
   "whsec_87d735066aaff8a39ea87d59156cdc240d9ca075cfed64255174e6b13b13cccc";

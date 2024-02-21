@@ -14,7 +14,7 @@ import SavingPortalLanding from "./components/savingportal/SavingPortalLanding";
 import IncomePortalLanding from "./components/incomeportal/IncomePortalLanding";
 import CommunityLanding from "./components/community/CommunityLanding";
 import SWOTanalysisPortal from "./components/SWOTanalysisPortal/SWOTanalysisPortal";
-
+import HandleCreatePost from "./components/community/CreatePost";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -41,6 +41,7 @@ function App() {
           <Route path="/swotportal" element={<SWOTanalysisPortal />} />
 
           <Route path="/verify-email/:token" element={<EmailVerify />} />
+          <Route path="/newpost" element={<HandleCreatePost />}></Route>
           {/*
 
         <Route path="/createCourse" element={<CreateCourse />} />
