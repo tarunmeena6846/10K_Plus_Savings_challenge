@@ -1,11 +1,17 @@
-import express from "express";
-const router = express.Router();
-import postController from "./controllers/postController";
+import express, { Router } from "express";
+import {
+  getAllPosts,
+  getPost,
+  createPost,
+  addComment,
+} from "../controllers/postController";
+import { detokenizeAdmin } from "../middleware";
+const router: Router = express.Router();
 
 // Routes for posts
-router.get("/posts", postController.getAllPosts);
-router.get("/posts/:id", postController.getPost);
-router.post("/posts", postController.createPost);
-router.post("/posts/:id/comments", postController.addComment);
+router.get("/", getAllPosts);
+router.get("/:id", getPost);
+router.post("/", createPost);
+router.post("/:id/comments", addComment);
 
-module.exports = router;
+export default router;

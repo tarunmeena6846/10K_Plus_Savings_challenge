@@ -7,6 +7,7 @@ import cors from "cors";
 import dataRoute from "./routes/dataRoute";
 import authRoutes from "./routes/authRoutes";
 import stripeRoutes from "./routes/stripeRoutes"; // Import the webhook routes
+import postRoute from "./routes/postRoute";
 // import { stripe } from "./config/stripe";
 // import { Resend } from "resend";
 // import {

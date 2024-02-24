@@ -15,6 +15,7 @@ import IncomePortalLanding from "./components/incomeportal/IncomePortalLanding";
 import CommunityLanding from "./components/community/CommunityLanding";
 import SWOTanalysisPortal from "./components/SWOTanalysisPortal/SWOTanalysisPortal";
 import HandleCreatePost from "./components/community/CreatePost";
+import PostLanding from "./components/community/Post/PostLanding";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -34,13 +35,15 @@ function App() {
           <Route path="/pricing" element={<StripePricingTable />} />
           <Route path="/savingportal" element={<SavingPortalLanding />} />
           <Route path="/incomeportal" element={<IncomePortalLanding />} />
-          <Route path="/community" element={<CommunityLanding />} />
 
           {/* <Route path="/checkout" element={<Payment />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
           <Route path="/swotportal" element={<SWOTanalysisPortal />} />
 
           <Route path="/verify-email/:token" element={<EmailVerify />} />
+          <Route path="/community" element={<CommunityLanding />} />
+          <Route path="/community/post/:postId" element={<PostLanding />} />
+
           <Route path="/newpost" element={<HandleCreatePost />}></Route>
           {/*
 

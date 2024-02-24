@@ -3,7 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 // import "./TextEditor.css"; // Add your custom styles here
 
-const TextEditor = () => {
+const TextEditor = ({ height, setHtmlContent }) => {
   const [editorHtml, setEditorHtml] = useState("");
 
   const modules = {
@@ -36,11 +36,13 @@ const TextEditor = () => {
   ];
 
   const handleChange = (html) => {
+    setHtmlContent(html);
     setEditorHtml(html);
+    // console.log(html);
   };
 
   return (
-    <div style={{ height: "400px", background: "white", marginBottom: "50px" }}>
+    <div style={{ height, background: "white", marginBottom: "50px" }}>
       <style>{`.ql-editor { background-color: white !important; }`}</style>
       <ReactQuill
         style={{ height: "100%", borderRadius: "6px" }}

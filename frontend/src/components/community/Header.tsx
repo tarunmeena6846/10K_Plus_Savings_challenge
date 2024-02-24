@@ -17,7 +17,7 @@ const Header = () => {
   console.log("tarun", currentUserState);
 
   return (
-    <div className="bg-green-600 flex flex-center flex-col items-center justify-center">
+    <div className="flex flex-center flex-col items-center justify-center mt-10 p-4">
       <h2 className="text-4xl">10K Savings Challenge Community</h2>
       <p>
         Together, let's turn small steps into significant savings and celebrate

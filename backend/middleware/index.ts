@@ -18,6 +18,7 @@ export function detokenizeAdmin(
 ): void {
   // ... (your existing detokenizeAdmin middleware logic)
   const authHeader = req.headers.authorization;
+  console.log("authheader", authHeader);
   // console.log("auth header ", authHeader);
   // console.log(authHeader);
   if (authHeader) {

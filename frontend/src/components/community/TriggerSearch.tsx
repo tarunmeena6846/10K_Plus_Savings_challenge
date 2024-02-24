@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import Post from "./Post"; // Assuming you have a Post component
-import { posts } from "./InfinitePostScroll"; // Assuming you have an array of posts data
+import Post from "./Post/Post"; // Assuming you have a Post component
+import { postState } from "../store/atoms/post";
 import { PostType } from "./InfinitePostScroll";
+import { useRecoilValue } from "recoil";
 const DiscussionForum = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPosts, setFilteredPosts] = useState<PostType[]>([]);
+  const posts = useRecoilValue(postState);
   const [searchTrigger, setSearchTrigger] = useState(false);
   const handleSearchInputChange = (event) => {
     const query = event.target.value;
@@ -22,18 +24,18 @@ const DiscussionForum = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="mt-8 mb-4">
+      <div className="mt-8 mb-4 flex justify-center">
         <input
           type="text"
           placeholder="Search posts..."
-          className="w-full p-2 border rounded-md"
+          className="w-3/4 p-2 border rounded-2xl"
           value={searchQuery}
           onChange={handleSearchInputChange}
         />
       </div>
 
       {searchQuery.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-5  font-bold items-center ">
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post) => (
               <Post

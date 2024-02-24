@@ -1,7 +1,13 @@
 import React from "react";
-import { PostType } from "./InfinitePostScroll";
+import { PostType } from "../InfinitePostScroll";
 import { Card, CardHeader } from "@mui/material";
+import { motion } from "framer-motion";
+import Button from "../../Button";
+import { useNavigate } from "react-router-dom";
+import ReactHtmlParser from "react-html-parser";
+
 export const timePassed = (date: Date): string => {
+  // console.log(date, "date passed");
   const now = new Date();
   const timeDiff = now.getTime() - date.getTime();
 
@@ -42,7 +48,14 @@ const Post: React.FC<PostType> = ({
   title,
   content,
 }) => {
-  console.log("tarun postid", postId, imageContent);
+  console.log("tarun postid", postId);
+  const navigate = useNavigate();
+  const excerpt = ReactHtmlParser(content.substring(0, 200)); // Adjust the length as needed
+
+  const handleClick = () => {
+    console.log("post id at click", postId);
+    navigate(`/community/post/${postId}`);
+  };
   return (
     <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-2xl m-4 shadow dark:bg-gray-800 dark:border-gray-700">
       <a href="#">
@@ -72,13 +85,8 @@ const Post: React.FC<PostType> = ({
             </h5>
           </a>
         </div>
-        <p className="mb-3 font-normal text-xl dark:text-gray-400">{content}</p>
-        <a
-          href="#"
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Read more
-        </a>
+        <p className="mb-3 font-normal text-xl dark:text-gray-400">{excerpt}</p>
+        <Button onClick={handleClick}>Read more</Button>
       </div>
     </div>
   );
