@@ -101,8 +101,9 @@ const CommentDetails = () => {
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (commentId: string) => {
     setEditingCommentId("");
+    toggleCommentClicked(commentId);
   };
 
   const handleDelete = async (commentId: string, postId: string) => {
@@ -204,7 +205,9 @@ const CommentDetails = () => {
                       Reply
                     </Button>
                   )}
-                  <Button onClick={handleCancel}>Cancel</Button>
+                  <Button onClick={() => handleCancel(comment._id)}>
+                    Cancel
+                  </Button>
                 </div>
               </div>
             )}
@@ -220,7 +223,13 @@ const CommentDetails = () => {
                   <button onClick={() => handleDelete(comment._id, postId)}>
                     Delete
                   </button>
-                  <button onClick={() => handleEdit(comment._id)}>Edit</button>
+                  {editingCommentId != comment._id && (
+                    <div>
+                      <button onClick={() => handleEdit(comment._id)}>
+                        Edit
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
