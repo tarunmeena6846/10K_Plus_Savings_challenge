@@ -5,3 +5,15 @@ export const postState = atom<PostType[]>({
   key: "postState",
   default: [],
 });
+
+export const currentPostState = atom({
+  key: "currentPostState",
+  default: {
+    id: "",
+    postTime: new Date(),
+    imageContent: "",
+    title: "",
+    content: "",
+    comments: [],
+  },
+});

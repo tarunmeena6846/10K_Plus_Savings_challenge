@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Post from "./Post/Post";
 import { postState } from "../store/atoms/post";
 import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 let count = 0;
 // export const posts = [
 //   // Sample post data

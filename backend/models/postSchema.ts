@@ -1,14 +1,14 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import { Admin } from "./admin";
-import Comment from "./commentSchema";
+import { CommentDocument } from "./commentSchema";
 
-interface PostSchema extends Document {
+export interface PostSchema extends Document {
   id: String;
   title: string;
   content: string;
-  author: Admin["username"];
+  author: String;
   createdAt: Date;
-  comments: mongoose.Types.ObjectId[];
+  comments: mongoose.Types.ObjectId[] | CommentDocument[];
   //   comments: CommentDocument["_id"][];
   // Add more fields as needed
 }
@@ -26,7 +26,6 @@ const postSchema = new mongoose.Schema<PostSchema>({
   },
   author: {
     type: String,
-    ref: "Admin",
     required: true,
   },
   createdAt: {

@@ -1,76 +1,63 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { PostType } from "../InfinitePostScroll";
+import { currentPostState } from "../../store/atoms/post";
+import HTMLReactParser from "html-react-parser";
+import Button from "../../Button";
+import TextEditor from "../TextEditor";
+import { handleComment } from "./postComment";
+import { timePassed } from "./Post";
+import { userState } from "../../store/atoms/user";
+
 type CommentType = {
   _id: string;
   content: string;
-  createdAt: string;
-  upvotes: number;
+  createdAt: Date;
+  likes: number;
   parentId: string | null;
+  author: string;
 };
-
-const comments = [
-  {
-    _id: "1",
-    content: "This is the first comment",
-    createdAt: "2024-02-16T10:30:00Z",
-    upvotes: 5,
-    parentId: null, // Root comment
-  },
-  {
-    _id: "2",
-    content: "This is the second comment",
-    createdAt: "2024-02-16T11:00:00Z",
-    upvotes: 10,
-    parentId: null, // Root comment
-  },
-  {
-    _id: "3",
-    content: "This is a reply to the second comment",
-    createdAt: "2024-02-16T11:15:00Z",
-    upvotes: 2,
-    parentId: "1", // Reply to second comment
-  },
-];
 const CommentDetails = () => {
-  // const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([]);
   const [sortedComments, setSortedComments] = useState<CommentType[]>([]);
   const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
   const { postId } = useParams();
+  const { userEmail } = useRecoilValue(userState);
+  const [clickedComments, setClickedComments] = useState<{
+    [key: string]: boolean;
+  }>({}); // Track clicked state for each comment
 
-  // Fetch comments for the current post from the backend
+  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  const [commentContent, setCommentContent] = useState("");
+  const toggleCommentClicked = (commentId: string) => {
+    console.log("inside toggle", commentId);
+    setClickedComments((prevState) => ({
+      ...prevState,
+      [commentId]: !prevState[commentId],
+    }));
+  };
+  console.log("currentpost", currentPost.comments);
+  // Sort comments based on the selected sorting option
+  // Sort comments based on the selected sorting option
   useEffect(() => {
-    fetch(`/api/post/${postId}/comments`, {
-      method: "GET",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response is not ok");
+    const sortedComments = [...currentPost.comments].sort(
+      (a: CommentType, b: CommentType) => {
+        // console.log(a, b);
+        if (sortBy === "createdAt") {
+          // Convert dates to milliseconds and compare
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        } else if (sortBy === "upvotes") {
+          return b.likes - a.likes;
         }
-        response.json().then((data) => {
-          // setComments(data);
-        });
-
-        // Set comments fetched from the backend
-      })
-      .catch((error) => console.error(error));
-  }, [postId]);
-  // Sort comments based on the selected sorting option
-  // Sort comments based on the selected sorting option
-  useEffect(() => {
-    const sortedComments = [...comments].sort((a, b) => {
-      if (sortBy === "createdAt") {
-        // Convert dates to milliseconds and compare
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-      } else if (sortBy === "upvotes") {
-        return b.upvotes - a.upvotes;
+        return 0;
       }
-      return 0;
-    });
+    );
     setSortedComments(sortedComments);
-  }, [sortBy, comments]);
+  }, [sortBy, comments, currentPost]);
 
   const renderComments = (
     commentsArray: CommentType[],
@@ -83,22 +70,45 @@ const CommentDetails = () => {
         <div
           key={comment._id}
           style={{ marginLeft: `${depth * 20}px`, marginBottom: "10px" }}
-          className="flex flex-row"
+          className="flex flex-col"
         >
-          <div>
+          <div
+            className="flex flex-row"
+            onClick={() => toggleCommentClicked(comment._id)}
+          >
             <img src="./save1.jpg" className="w-15 h-15"></img>
+            <p>{comment.author}</p>
+            <p>Post at: {timePassed(new Date(comment.createdAt))}</p>
+            <p>Upvotes: {comment.likes}</p>
           </div>
           <div>
-            <p>{comment.content}</p>
-            <p>Created at: {new Date(comment.createdAt).toLocaleString()}</p>
-            <p>Upvotes: {comment.upvotes}</p>
+            <p>{HTMLReactParser(comment.content)}</p>
+            {clickedComments[comment._id] && (
+              <div>
+                <TextEditor height="50px" setHtmlContent={setCommentContent} />
+                <Button
+                  onClick={() => {
+                    handleComment(
+                      commentContent,
+                      postId as string,
+                      userEmail,
+                      comment._id
+                    ).then((data) => {
+                      toggleCommentClicked(data.parentId);
+                    });
+                  }}
+                >
+                  Reply
+                </Button>
+              </div>
+            )}
             {/* Render child comments recursively */}
             {renderComments(commentsArray, comment._id, depth + 1)}
           </div>
         </div>
       ));
   };
-
+  console.log("sortedcomments", sortedComments);
   return (
     <div>
       <h2>Comments</h2>

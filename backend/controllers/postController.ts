@@ -25,13 +25,14 @@ export const getAllPosts = async (req: Request, res: Response) => {
 export const getPost = async (req: Request, res: Response) => {
   console.log("inside getpost");
   try {
-    const post = await Post.findById(req.params.id)
-      .populate("author", "username")
-      .populate({
-        path: "comments",
-        populate: { path: "author", select: "username" },
-      });
+    const post = await Post.findById(req.params.id).populate({
+      path: "comments",
+      // populate: {
+      //   path: "author", // Populate the author field of each comment
+      // },
+    });
     if (!post) return res.status(404).json({ message: "Post not found" });
+
     res.json(post);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -59,15 +60,24 @@ export const createPost = async (req: Request, res: Response) => {
 };
 
 export const addComment = async (req: Request, res: Response) => {
-  const { content, authorId } = req.body;
-  console.log("inside creatapost");
+  const { content, authorId, parentId } = req.body;
+  console.log("inside creatapost", authorId, parentId);
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
-    const comment = new Comment({ content, author: authorId });
+    console.log("post inside comment", post, req.params.id);
+    const comment = new Comment({
+      content,
+      author: authorId,
+      post: req.params.id,
+      parentId: parentId,
+    });
+
     await comment.save();
-    post.comments.push(comment.id);
+    post.comments.push(comment._id);
     await post.save();
+    console.log("comment", comment);
+
     res.status(201).json(comment);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
