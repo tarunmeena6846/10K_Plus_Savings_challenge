@@ -42,7 +42,15 @@ const TextEditor = ({ height, setHtmlContent }) => {
   };
 
   return (
-    <div style={{ height, background: "white", marginBottom: "50px" }}>
+    <div
+      style={{
+        height,
+        background: "white",
+        marginBottom: "10px",
+        resize: "vertical", // Allow resizing
+        overflow: "auto",
+      }}
+    >
       <style>{`.ql-editor { background-color: white !important; }`}</style>
       <ReactQuill
         style={{ height: "100%", borderRadius: "6px" }}

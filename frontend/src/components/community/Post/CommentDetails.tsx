@@ -25,6 +25,7 @@ const CommentDetails = () => {
   const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
   const { postId } = useParams();
   const { userEmail } = useRecoilValue(userState);
+  console.log("userEmail", userEmail);
   const [clickedComments, setClickedComments] = useState<{
     [key: string]: boolean;
   }>({}); // Track clicked state for each comment
@@ -37,6 +38,38 @@ const CommentDetails = () => {
       ...prevState,
       [commentId]: !prevState[commentId],
     }));
+  };
+
+  const handleDelete = async (commentId: String, postId: String) => {
+    try {
+      console.log("handle delete", commentId);
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/post/${postId}/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            // content: commentContent,
+            // authorId: userEmail,
+            postId: postId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network Response is not ok");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      toggleCommentClicked(commentId);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
   console.log("currentpost", currentPost.comments);
   // Sort comments based on the selected sorting option
@@ -81,11 +114,11 @@ const CommentDetails = () => {
             <p>Post at: {timePassed(new Date(comment.createdAt))}</p>
             <p>Upvotes: {comment.likes}</p>
           </div>
-          <div>
+          <div className="">
             <p>{HTMLReactParser(comment.content)}</p>
             {clickedComments[comment._id] && (
               <div>
-                <TextEditor height="50px" setHtmlContent={setCommentContent} />
+                <TextEditor height="80px" setHtmlContent={setCommentContent} />
                 <Button
                   onClick={() => {
                     handleComment(
@@ -100,6 +133,15 @@ const CommentDetails = () => {
                 >
                   Reply
                 </Button>
+                {comment.author === userEmail && (
+                  <Button
+                    onClick={() => {
+                      handleDelete(comment._id, postId as string);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )}
               </div>
             )}
             {/* Render child comments recursively */}

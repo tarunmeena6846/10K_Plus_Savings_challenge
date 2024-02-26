@@ -4,6 +4,7 @@ import {
   getPost,
   createPost,
   addComment,
+  deleteComment,
 } from "../controllers/postController";
 import { detokenizeAdmin } from "../middleware";
 const router: Router = express.Router();
@@ -15,5 +16,6 @@ router.get("/:id", getPost);
 
 router.post("/", createPost);
 router.post("/:id/comments", addComment);
+router.delete("/:postId/:id", deleteComment);
 
 export default router;
