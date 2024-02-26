@@ -64,7 +64,14 @@ const Postdetails = () => {
         <div className="mt-7 md:m-0">
           <Button
             onClick={() =>
-              handleComment(commentContent, postId as string, userEmail, null)
+              handleComment(
+                commentContent,
+                postId as string,
+                userEmail,
+                null,
+                "comment",
+                ""
+              )
             }
           >
             Comment

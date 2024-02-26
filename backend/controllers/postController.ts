@@ -92,7 +92,7 @@ export const deleteComment = async (req: Request, resp: Response) => {
     const post = await Post.findByIdAndUpdate(postId, {
       $pull: { comments: commentId }, // Remove the comment from the comments array
     });
-    if (!post) resp.status(400).json("Post is not found");
+    if (!post) resp.status(404).json("Post is not found");
     console.log("post", post);
     const deletedComment = await Comment.findByIdAndDelete(commentId);
 
@@ -101,6 +101,31 @@ export const deleteComment = async (req: Request, resp: Response) => {
     }
 
     resp.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    resp.status(500).json({ message: "Server error" });
+  }
+};
+
+export const editComment = async (req: Request, resp: Response) => {
+  const commentId: String = req.params.id;
+  // const postId = req.params.postId;
+  console.log("commentid in editcomment", commentId, req.body.content);
+  try {
+    // const post = await Post.findById(postId);
+    // if (!post) resp.status(404).json("Post is not found");
+    // console.log("post", post);
+    const updatedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      { content: req.body.content }, // newContent is the updated content
+      { new: true }
+    ); // To return the updated document);
+    console.log("updatedComment", updatedComment);
+    if (!updatedComment) {
+      return resp.status(404).json({ message: "Comment not found" });
+    }
+
+    resp.status(200).json({ message: "Comment editied successfully" });
   } catch (error) {
     console.error(error);
     resp.status(500).json({ message: "Server error" });

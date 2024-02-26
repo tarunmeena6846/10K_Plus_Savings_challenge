@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
-// import "./TextEditor.css"; // Add your custom styles here
 
-const TextEditor = ({ height, setHtmlContent }) => {
+const TextEditor = ({ height, setHtmlContent, content }) => {
   const [editorHtml, setEditorHtml] = useState("");
+
+  useEffect(() => {
+    // Set the initial value of the editor when the content prop changes
+    setEditorHtml(content);
+  }, [content]);
 
   const modules = {
     toolbar: [
@@ -38,7 +42,6 @@ const TextEditor = ({ height, setHtmlContent }) => {
   const handleChange = (html) => {
     setHtmlContent(html);
     setEditorHtml(html);
-    // console.log(html);
   };
 
   return (
@@ -47,11 +50,10 @@ const TextEditor = ({ height, setHtmlContent }) => {
         height,
         background: "white",
         marginBottom: "10px",
-        resize: "vertical", // Allow resizing
+        resize: "vertical",
         overflow: "auto",
       }}
     >
-      <style>{`.ql-editor { background-color: white !important; }`}</style>
       <ReactQuill
         style={{ height: "100%", borderRadius: "6px" }}
         theme="snow"
