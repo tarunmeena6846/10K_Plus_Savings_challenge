@@ -4,14 +4,27 @@ import Comment from "../models/commentSchema";
 import { Model } from "mongoose";
 import { Response, Request } from "express";
 
-export const getAllPosts = async (req: Request, res: Response) => {
+export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getAllpost");
   try {
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-
+    const isPublished = req.query.isPublished as string;
+    const user = req.query.user as string;
+    console.log("tarun isPublished", req.user, isPublished, offset, user);
+    let query = {};
+    if (isPublished === "true") {
+      if (user === undefined) {
+        query = { isPublished: true };
+      } else {
+        query = { author: user, isPublished: true };
+      }
+    } else {
+      // Assuming username is available in req.user
+      query = { author: req.user, isPublished: false };
+    }
     // Fetch posts from the database with pagination
-    const posts = await Post.find({})
+    const posts = await Post.find(query)
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned
     console.log("inside post", posts);
@@ -19,6 +32,21 @@ export const getAllPosts = async (req: Request, res: Response) => {
     res.status(200).json({ posts });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getDraftPosts = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
+  try {
+    const posts = await Post.find({
+      author: req.user,
+      isPublished: false,
+    });
+    resp.status(200).send({ draftPosts: posts });
+  } catch (error: any) {
+    resp.status(500).send({ message: error.message });
   }
 };
 
@@ -41,7 +69,7 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const createPost = async (req: Request, res: Response) => {
   console.log("inside creatapost");
-  const { title, content, author } = req.body;
+  const { title, content, author, isPublished } = req.body;
   console.log(title, content, author);
   try {
     const post = new Post({
@@ -50,6 +78,7 @@ export const createPost = async (req: Request, res: Response) => {
       author: author,
       createdAt: new Date(),
       comments: [],
+      isPublished: isPublished,
     });
     await post.save();
     console.log("post", post);

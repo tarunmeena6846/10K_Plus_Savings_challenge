@@ -27,7 +27,7 @@ const DiscussionForum = () => {
       <div className="mt-8 mb-4 flex justify-center">
         <input
           type="text"
-          placeholder="Search posts..."
+          placeholder="Search"
           className="w-3/4 p-2 border rounded-2xl"
           value={searchQuery}
           onChange={handleSearchInputChange}

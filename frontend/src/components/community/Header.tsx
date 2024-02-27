@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   SubscriptionData,
   subscriptionState,
@@ -9,7 +9,13 @@ import ManageBillingForm from "../../stripe/ManageBillingForm";
 import { motion } from "framer-motion";
 import UserAvatar from "../UserAvatar";
 import TriggerSearch from "./TriggerSearch";
-const Header = () => {
+
+interface HeaderProps {
+  title: string;
+  description: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ title, description }) => {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
   console.log("subs", subscription);
@@ -18,12 +24,9 @@ const Header = () => {
 
   return (
     <div className="flex flex-center flex-col items-center justify-center mt-10 p-4">
-      <h2 className="text-4xl">10K Savings Challenge Community</h2>
-      <p>
-        Together, let's turn small steps into significant savings and celebrate
-        the power of collective progress in the 10K Savings Challenge Community.
-      </p>
-      <TriggerSearch></TriggerSearch>
+      <h2 className="text-4xl">{title}</h2>
+      <p>{description}</p>
+      <TriggerSearch />
     </div>
   );
 };

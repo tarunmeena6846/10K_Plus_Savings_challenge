@@ -6,13 +6,16 @@ import {
   addComment,
   deleteComment,
   editComment,
+  getDraftPosts,
 } from "../controllers/postController";
 import { detokenizeAdmin } from "../middleware";
 const router: Router = express.Router();
 
 // Routes for posts
-router.get("/", getAllPosts);
+router.get("/", detokenizeAdmin, getAllPosts);
 router.get("/:id", getPost);
+router.get("/", detokenizeAdmin, getDraftPosts);
+
 // router.get("/:id/comments", showComments);
 
 router.post("/", createPost);

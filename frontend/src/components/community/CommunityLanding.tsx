@@ -24,11 +24,14 @@ const CommunityLanding = () => {
         {!subscription.isTopTier && <ManageBillingForm></ManageBillingForm>}
         {!currentUserState.userEmail && <button>Login</button>}
       </div> */}
-      <Header></Header>
+      <Header
+        title="10K Savings Challenge Community"
+        description="Together, let's turn small steps into significant savings and celebrate the power of collective progress in the 10K Savings Challenge Community."
+      />
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <InfinitePostScroll></InfinitePostScroll>
+            <InfinitePostScroll isPublished={true}></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
             <SideBar></SideBar>

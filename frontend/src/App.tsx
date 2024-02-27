@@ -16,6 +16,9 @@ import CommunityLanding from "./components/community/CommunityLanding";
 import SWOTanalysisPortal from "./components/SWOTanalysisPortal/SWOTanalysisPortal";
 import HandleCreatePost from "./components/community/CreatePost";
 import PostLanding from "./components/community/Post/PostLanding";
+import MyDraft from "./components/community/UserPosts/MyDraft";
+import MyPosts from "./components/community/UserPosts/MyPosts";
+import MyBookmarked from "./components/community/UserPosts/MyBookmarked";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -42,6 +45,9 @@ function App() {
 
           <Route path="/verify-email/:token" element={<EmailVerify />} />
           <Route path="/community" element={<CommunityLanding />} />
+          <Route path="/community/mydiscussion" element={<MyPosts />} />
+          <Route path="/community/bookmarked" element={<MyBookmarked />} />
+          <Route path="/community/drafts" element={<MyDraft />} />
           <Route path="/community/post/:postId" element={<PostLanding />} />
 
           <Route path="/newpost" element={<HandleCreatePost />}></Route>

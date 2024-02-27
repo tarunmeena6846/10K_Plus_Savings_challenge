@@ -12,8 +12,8 @@ const HandleCreatePost = () => {
   const navigate = useNavigate();
   const handleCancel = () => {};
   const handleShowtags = () => {};
-  const handleCreatePost = () => {
-    console.log("postcontent", postContent, currentUserState);
+  const handleCreatePost = (isPublished: Boolean) => {
+    console.log("postcontent", postContent, currentUserState, );
     // headers.append("Username", email);
     // headers.append("Password", password);
     fetch(`${import.meta.env.VITE_SERVER_URL}/post`, {
@@ -26,6 +26,7 @@ const HandleCreatePost = () => {
         title: postTitle,
         content: postContent,
         author: currentUserState.userEmail,
+        isPublished: isPublished,
       }),
     })
       .then((resp) => {
@@ -79,8 +80,11 @@ const HandleCreatePost = () => {
           <motion.button>Show tags</motion.button>
         </div>
         <div>
-          <Button onClick={handleCancel}>Cancel</Button>
-          <Button onClick={handleCreatePost}>Post Discussion</Button>
+          <Button onClick={() => handleCreatePost(false)}>Save as Draft</Button>
+          <Button onClick={() => handleCreatePost(true)}>
+            Post Discussion
+          </Button>
+          <Button onClick={() => handleCancel}>Cancel</Button>
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ export interface PostSchema extends Document {
   author: String;
   createdAt: Date;
   comments: mongoose.Types.ObjectId[] | CommentDocument[];
+  isPublished: Boolean;
   //   comments: CommentDocument["_id"][];
   // Add more fields as needed
 }
@@ -32,6 +33,7 @@ const postSchema = new mongoose.Schema<PostSchema>({
     type: Date,
     default: Date.now,
   },
+  isPublished: { type: Boolean, default: true },
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,

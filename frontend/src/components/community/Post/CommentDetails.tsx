@@ -154,7 +154,7 @@ const CommentDetails = () => {
           className="flex flex-col p-2 rounded-2xl"
         >
           <div className="flex flex-row gap-2">
-            <img src="./save1.jpg" className="w-15 h-15" alt="avatar" />
+            <img src="" className="w-15 h-15" />
             <p>{comment.author}</p>
             <p>{timePassed(new Date(comment.createdAt))}</p>
           </div>
