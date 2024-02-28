@@ -30,7 +30,7 @@ const StripePricingTable = () => {
   //   const location = useLocation();
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
-  const [isYearly, setIsYearly] = useState(true); // State to track selected pricing option
+  // const [isYearly, setIsYearly] = useState(true); // State to track selected pricing option
   console.log("current", currentUserState.userEmail);
   async function handleCheckout(plan: string) {
     // console.log("yearlyprice", selectedYearlyPrice.price);
@@ -74,8 +74,8 @@ const StripePricingTable = () => {
       name: "Start",
       yearlyPrice: 199,
       yearlyPlanId: "price_1OeQmBSBiPFrlsnbHtsR1wlx",
-      monthlyPrice: 18,
-      monthlyPlanId: "price_1OeQr8SBiPFrlsnbK6qF3cTT",
+      // monthlyPrice: 18,
+      // monthlyPlanId: "price_1OeQr8SBiPFrlsnbK6qF3cTT",
       description:
         "A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
@@ -83,8 +83,8 @@ const StripePricingTable = () => {
       name: "Plus",
       yearlyPrice: 499,
       yearlyPlanId: "price_1OeQmjSBiPFrlsnbPRGm9YvH",
-      monthlyPrice: 45,
-      monthlyPlanId: "price_1OeQqRSBiPFrlsnb7DJKbvbr",
+      // monthlyPrice: 45,
+      // monthlyPlanId: "price_1OeQqRSBiPFrlsnb7DJKbvbr",
       description:
         "A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       green: true,
@@ -97,14 +97,14 @@ const StripePricingTable = () => {
         <h2 className="md:text-7xl text-7xl mb-2">Here are all our plans</h2>
       </div>
 
-      <div className="flex justify-center mt-5">
+      {/* <div className="flex justify-center mt-5">
         <button
           className={`mx-5  w-60 items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center`}
           onClick={() => setIsYearly(!isYearly)}
         >
           {isYearly ? "Show Monthly Prices" : "Show Yearly Prices"}
         </button>
-      </div>
+      </div> */}
       <motion.div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-10 mt-20 md:w-11/12 mx-auto border-2-green">
         {packages.map((pkg, index) => (
           <div
@@ -121,9 +121,8 @@ const StripePricingTable = () => {
 
             <h3 className="text-3xl  font-bold text-center">{pkg.name}</h3>
             <p className="mt-5 text-center text-secondary text-4xl font-bold">
-              {isYearly
-                ? `$${pkg.yearlyPrice}/year`
-                : `$${pkg.monthlyPrice}/month`}
+              {/* {isYearly */}${pkg.yearlyPrice}/year
+              {/* : `$${pkg.monthlyPrice}/month`} */}
             </p>
             <ul className="mt-4 space-y-2 px-4">
               <li className="flex items-center">
@@ -195,9 +194,7 @@ const StripePricingTable = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => {
-                    handleCheckout(
-                      isYearly ? pkg.yearlyPlanId : pkg.monthlyPlanId
-                    );
+                    handleCheckout(pkg.yearlyPlanId);
                   }}
                 >
                   Subscribe

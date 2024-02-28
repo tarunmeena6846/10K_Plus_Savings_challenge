@@ -14,7 +14,7 @@ const router: Router = express.Router();
 // Routes for posts
 router.get("/", detokenizeAdmin, getAllPosts);
 router.get("/:id", getPost);
-router.get("/", detokenizeAdmin, getDraftPosts);
+// router.get("/", detokenizeAdmin, getDraftPosts);
 
 // router.get("/:id/comments", showComments);
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PostType } from "../InfinitePostScroll";
 import { Card, CardHeader } from "@mui/material";
 import { motion } from "framer-motion";
@@ -51,21 +51,60 @@ const Post: React.FC<PostType> = ({
   console.log("tarun postid", postId);
   const navigate = useNavigate();
   const excerpt = ReactHtmlParser(content.substring(0, 200)); // Adjust the length as needed
+  const [showDeleteOption, setShowDeleteOption] = useState(false);
+  const optionRef = useRef(null);
+  const isDarkTheme = document.documentElement.classList.contains("dark");
 
   const handleClick = () => {
     console.log("post id at click", postId);
     navigate(`/community/post/${postId}`);
   };
+  const toggleDeleteOption = () => {
+    setShowDeleteOption(!showDeleteOption);
+  };
+  const handleOutsideClick = (event) => {
+    if (optionRef.current && !optionRef.current.contains(event.target)) {
+      setShowDeleteOption(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
+  console.log("theme", isDarkTheme);
   return (
-    <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-2xl m-4 shadow dark:bg-gray-800 dark:border-gray-700">
-      <a href="#">
-        <div className="rounded-t-lg overflow-hidden">
-          <img className="w-full" src={imageContent} alt="" />
+    <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-2xl m-4 shadow dark:bg-gray-800 dark:border-gray-700 relative">
+      <div className="rounded-t-lg overflow-hidden">
+        <img className="w-full" src={imageContent} alt="" />
+        <div className="absolute top-0 right-0 m-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 cursor-pointer"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke={isDarkTheme ? "white" : "currentColor"} // Set stroke color based on theme
+            onClick={toggleDeleteOption}
+            ref={optionRef}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 6a2 2 0 100-4 2 2 0 000 4zm0 8a2 2 0 100-4 2 2 0 000 4zm0 8a2 2 0 100-4 2 2 0 000 4z"
+            />
+          </svg>
         </div>
-      </a>
+      </div>
       <div className="p-5">
         <div className="flex items-center">
-          <img className="w-12 h-12 rounded-full mr-2" src="./profile.jpg" />
+          <img
+            className="w-12 h-12 rounded-full mr-2"
+            src="./profile.jpg"
+            alt="Profile"
+          />
           <div className="ml-2 flex justify-center items-center text-lg">
             <span className="text-gray-600 font-normal text-sm p-1">
               Posted by{" "}
@@ -88,6 +127,18 @@ const Post: React.FC<PostType> = ({
         <p className="mb-3 font-normal text-xl dark:text-gray-400">{excerpt}</p>
         <Button onClick={handleClick}>Read more</Button>
       </div>
+      {showDeleteOption && (
+        <div className="absolute top-0 right-0 m-2">
+          <div className="bg-white p-2 rounded-lg shadow-md border border-gray-200">
+            <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+              Delete
+            </button>
+            <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+              Bookmark
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

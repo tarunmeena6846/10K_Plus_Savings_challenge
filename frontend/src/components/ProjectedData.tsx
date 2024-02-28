@@ -144,7 +144,7 @@ const ProjectedData = () => {
               }}
             >
               <h1 className="mb-10 text-white font-heading text-5xl">
-                You will Save $
+                You will save $
                 {(monthlyIncome - monthlyExpense) *
                   (12 - new Date().getMonth())}
               </h1>

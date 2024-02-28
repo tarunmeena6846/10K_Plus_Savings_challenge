@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   AppBar,
-  Button,
   Toolbar,
   Typography,
   CircularProgress,
@@ -30,7 +29,7 @@ import { Resend } from "resend";
 import WelcomeEmail from "./utils/emails/Welcome";
 import { renderToString } from "react-dom/server"; // Import ReactDOMServer
 import ManageBillingForm from "./stripe/ManageBillingForm";
-
+import Button from "./components/Button";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
@@ -194,10 +193,10 @@ function Appbar() {
         </Typography>
         <div
           // className={"rounded-3xl "}
-          className="hidden md:flex space-x-4 rounded-3xl"
+          className="hidden md:flex space-x-4 rounded-3xl justify-between item-center"
           style={{
             border: "2px solid black",
-            gap: "10px",
+            // gap: "10px",
             padding: "10px",
             width: "auto",
             // display: "flex",
@@ -205,9 +204,17 @@ function Appbar() {
           }}
         >
           <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 1 }} // Define hover animation
+            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            onClick={() =>
+              navigate(currentUserState.userEmail ? "/dashboard" : "/")
             }
+          >
+            Home
+          </motion.button>
+          {/* <motion.button
+            className={"login-button rounded-3xl bg-transparent text-black"}
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => {
@@ -215,11 +222,19 @@ function Appbar() {
             }}
           >
             Home
-          </motion.button>
+          </motion.button> */}
           <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
-            }
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 1 }} // Define hover animation
+            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            onClick={() => {
+              navigate("/pricing");
+            }}
+          >
+            Pricing
+          </motion.button>
+          {/* <motion.button
+            className={"login-button rounded-3xl bg-transparent text-black"}
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => {
@@ -227,7 +242,7 @@ function Appbar() {
             }}
           >
             Pricing
-          </motion.button>
+          </motion.button> */}
           {/* <motion.button
             className={
               "login-button rounded-3xl bg-transparent text-black w-20 h-10"
@@ -247,23 +262,23 @@ function Appbar() {
             Expenses
           </motion.button> */}
           <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
-            }
-            whileHover={{
-              background: "black",
-              color: "white",
-              width: "120px",
-              scale: 1.1,
-            }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 1 }} // Define hover animation
+            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            // whileHover={{
+            //   background: "black",
+            //   color: "white",
+            //   // width: "120px",
+            //   scale: 1.1,
+            // }}
+            // whileTap={{ scale: 0.9 }}
             onClick={() => {
               navigate("/community");
             }}
           >
             Community
           </motion.button>
-          <motion.button
+          {/* <motion.button
             className={
               "login-button rounded-3xl bg-transparent text-black w-50 h-10"
             }
@@ -296,26 +311,26 @@ function Appbar() {
             }}
           >
             Income Portal
+          </motion.button> */}
+
+          <motion.button
+            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileTap={{ scale: 1 }} // Define hover animation
+            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            // className={"login-button rounded-3xl bg-transparent text-black"}
+            // whileHover={{
+            //   background: "black",
+            //   // width: "120px",
+            //   color: "white",
+            //   scale: 1.1,
+            // }}
+            // whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              navigate("/swotportal");
+            }}
+          >
+            SWOT Portal
           </motion.button>
-          <div>
-            <motion.button
-              className={
-                "login-button rounded-3xl bg-transparent text-black w-50 h-10"
-              }
-              whileHover={{
-                background: "black",
-                width: "120px",
-                color: "white",
-                scale: 1.1,
-              }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => {
-                navigate("/swotportal");
-              }}
-            >
-              SWOT Portal
-            </motion.button>
-          </div>
         </div>
 
         <div>

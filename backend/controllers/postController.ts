@@ -35,20 +35,20 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export const getDraftPosts = async (
-  req: AuthenticatedRequest,
-  resp: Response
-) => {
-  try {
-    const posts = await Post.find({
-      author: req.user,
-      isPublished: false,
-    });
-    resp.status(200).send({ draftPosts: posts });
-  } catch (error: any) {
-    resp.status(500).send({ message: error.message });
-  }
-};
+// export const getDraftPosts = async (
+//   req: AuthenticatedRequest,
+//   resp: Response
+// ) => {
+//   try {
+//     const posts = await Post.find({
+//       author: req.user,
+//       isPublished: false,
+//     });
+//     resp.status(200).send({ draftPosts: posts });
+//   } catch (error: any) {
+//     resp.status(500).send({ message: error.message });
+//   }
+// };
 
 export const getPost = async (req: Request, res: Response) => {
   console.log("inside getpost");

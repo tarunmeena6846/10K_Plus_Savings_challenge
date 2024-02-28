@@ -10,7 +10,6 @@ import TextEditor from "../TextEditor";
 import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
 import { userState } from "../../store/atoms/user";
-import { json } from "stream/consumers";
 
 type CommentType = {
   _id: string;
@@ -61,45 +60,45 @@ const CommentDetails = () => {
     console.log("inside upvote");
   };
 
-  const handleReply = (commentId: string) => {
-    setEditingCommentId("");
-    setCommentContent("");
-    toggleCommentClicked(commentId);
-  };
+  // const handleReply = (commentId: string) => {
+  //   setEditingCommentId("");
+  //   setCommentContent("");
+  //   toggleCommentClicked(commentId);
+  // };
 
   const handleEdit = (commentId: string) => {
     setEditingCommentId(commentId);
     toggleCommentClicked(commentId);
   };
 
-  const handleSave = async (commentId: string) => {
-    // Implement logic to save edited comment
-    console.log("commentContent", commentContent);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/post/${commentId}`,
-        {
-          method: "POST",
-          headers: {
-            "content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({ commentContent: commentContent }),
-        }
-      );
+  // const handleSave = async (commentId: string) => {
+  //   // Implement logic to save edited comment
+  //   console.log("commentContent", commentContent);
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_SERVER_URL}/post/${commentId}`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "content-Type": "application/json",
+  //           Authorization: "Bearer " + localStorage.getItem("token"),
+  //         },
+  //         body: JSON.stringify({ commentContent: commentContent }),
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Network Response is not ok");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Network Response is not ok");
+  //     }
 
-      const data = await response.json();
-      console.log(data);
-      toggleCommentClicked(commentId);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+  //     const data = await response.json();
+  //     console.log(data);
+  //     toggleCommentClicked(commentId);
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // };
 
   const handleCancel = (commentId: string) => {
     setEditingCommentId("");

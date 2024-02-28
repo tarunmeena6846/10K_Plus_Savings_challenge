@@ -1,8 +1,29 @@
 import React from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-const popularTags = ["Technology", "Travel", "Food", "Fitness"];
-const links = ["My Discussions", "My Bookmarks", "My Drafts"];
-const sorts = ["Dates", "MostPopular", "Name"];
+import { useNavigate } from "react-router-dom";
+const popularTags = [
+  "SavingsChallenge",
+  "FinancialGoals",
+  "BudgetingTips",
+  "InvestingAdvice",
+  "FrugalLiving",
+  "MoneyManagement",
+  "PersonalFinance",
+  "WealthBuilding",
+  "FinancialFreedom",
+  "SavingsTips",
+  "DebtFreeJourney",
+  "RetirementPlanning",
+  "EmergencyFund",
+  "InvestmentStrategies",
+  "FinancialEducation",
+];
+
+const links = [
+  "Recent Discussions",
+  "My Discussions",
+  "My Bookmarks",
+  "My Drafts",
+];
 
 import { motion } from "framer-motion";
 import Button from "../Button";
@@ -19,6 +40,9 @@ const SideBar = () => {
     if (tag === "My Drafts") {
       navigate("/community/drafts");
     }
+    if (tag === "Recent Discussions") {
+      navigate("/community");
+    }
   };
   return (
     <div>
@@ -33,15 +57,25 @@ const SideBar = () => {
       </div>
       <div>
         <h2 className="text-lg font-bold">Quick Links</h2>
-        <ul>
+        <div className="">
           {links.map((tag, index) => (
-            <li key={index} className="mb-1">
-              <button onClick={() => handleOnClick(tag)}>{tag}</button>
-            </li>
+            <div className="mb-2" key={index}>
+              <div className="flex justify-between items-center">
+                <motion.button
+                  whileHover={{ scale: 1.1 }} // Define hover animation
+                  whileTap={{ scale: 1 }} // Define hover animation
+                  onClick={() => handleOnClick(tag)}
+                >
+                  {tag}
+                </motion.button>
+                {tag != "Recent Discussions" && <div>0</div>}
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
-      <div>
+
+      {/* <div>
         <h2 className="text-lg font-bold">Sort by</h2>
         <ul>
           {sorts.map((tag, index) => (
@@ -52,18 +86,23 @@ const SideBar = () => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
       <div>
         <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
-        <ul>
+        <div className="flex flex-wrap gap-2">
           {popularTags.map((tag, index) => (
-            <li key={index} className="mb-1">
-              <a href="#" className="text-grey-700">
-                {tag}
-              </a>
-            </li>
+            // <li key={index} className="mb-1">
+            <motion.button
+              whileHover={{ scale: 1.1 }} // Define hover animation
+              whileTap={{ scale: 1 }} // Define hover animation
+              className="bg-gray-400 rounded-2xl px-2 "
+              onClick={() => handleOnClick(tag)}
+            >
+              {tag}
+            </motion.button>
+            // </li>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

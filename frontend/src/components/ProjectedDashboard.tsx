@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 function ProjectedDashboard() {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [videoModalOpen, setVideoModalOpen] = useState(true);
   const [incomeInputVisible, setIncomeInputVisible] = useState(true);
   const [expenseInputVisible, setExpenseInputVisible] = useState(false);
   const [saveVisible, setSaveVisible] = useState(false);
@@ -159,7 +159,7 @@ function ProjectedDashboard() {
         </div>
       )}
 
-      <motion.div
+      {/* <motion.div
         className="projected-input"
         layout
         style={{
@@ -210,7 +210,7 @@ function ProjectedDashboard() {
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="GBP">GBP</option>
-              </select> */}
+              </select> 
               <motion.div className="relative">
                 <div className="flex items-center">
                   <motion.input
@@ -232,7 +232,7 @@ function ProjectedDashboard() {
                     <option value="$">USD ($)</option>
                     <option value="€">EUR (€)</option>
                     <option value="£">GBP (£)</option>
-                    {/* Add more currency options as needed */}
+                    {/* Add more currency options as needed 
                   </select>
                 </div>
               </motion.div>
@@ -323,7 +323,7 @@ function ProjectedDashboard() {
                     <option value="$">USD ($)</option>
                     <option value="€">EUR (€)</option>
                     <option value="£">GBP (£)</option>
-                    {/* Add more currency options as needed */}
+                    {/* Add more currency options as needed 
                   </select>
                 </div>
               </motion.div>
@@ -461,10 +461,7 @@ function ProjectedDashboard() {
                 envision for tomorrow.
               </span>
               <br />
-              {/* <p className="feature-title py-16 font-heading text-5xl transition-colors text-black">
-                Projected Savings: {targetIncome - targetExpense}
-                {selectedCurrency}
-              </p> */}
+             
               <div className="flex mt-4">
                 <motion.input
                   className="rounded"
@@ -494,7 +491,7 @@ function ProjectedDashboard() {
             </div>
           </div>
         )}
-      </motion.div>
+      </motion.div> */}
     </>
   );
 }
