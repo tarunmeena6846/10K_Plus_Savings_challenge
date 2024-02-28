@@ -48,7 +48,7 @@ const EmailVerify = () => {
       }
     };
     verifyEmailUrl();
-  }, [param.token]);
+  }, []);
 
   return (
     <div>
