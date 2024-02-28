@@ -19,7 +19,7 @@ router.post("/create-customer-portal-session", async (req, res) => {
     // Make request to Stripe API to create customer portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: req.body.customerId,
-      return_url: `${process.env.RETURN_CLIENT_URL}`,
+      return_url: `${process.env.RETURN_CLIENT_URL}/dashboard`,
     });
     console.log("process.env.RETURN_CLIENT_URL", process.env.RETURN_CLIENT_URL);
     res.status(200).json({ url: session.url }); // Return URL of Stripe-hosted checkout page
@@ -68,7 +68,6 @@ router.post(
             }
           } else if (session.mode === "payment") {
             console.log("in else part");
-            
           }
 
           break;
