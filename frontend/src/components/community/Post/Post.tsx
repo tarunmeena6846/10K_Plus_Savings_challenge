@@ -4,7 +4,7 @@ import { Card, CardHeader } from "@mui/material";
 import { motion } from "framer-motion";
 import Button from "../../Button";
 import { useNavigate } from "react-router-dom";
-import HtmlParser from "react-html-parser";
+// import HtmlParser from "react-html-parser";
 
 export const timePassed = (date: Date): string => {
   // console.log(date, "date passed");
@@ -50,7 +50,9 @@ const Post: React.FC<PostType> = ({
 }) => {
   console.log("tarun postid", postId);
   const navigate = useNavigate();
-  const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
+  // const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
+  const excerpt = (content.substring(0, 200)); // Adjust the length as needed
+
   const [showDeleteOption, setShowDeleteOption] = useState(false);
   const optionRef = useRef(null);
   const isDarkTheme = document.documentElement.classList.contains("dark");
