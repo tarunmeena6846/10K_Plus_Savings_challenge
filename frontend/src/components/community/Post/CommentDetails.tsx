@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { PostType } from "../InfinitePostScroll";
 import { currentPostState } from "../../store/atoms/post";
-import HTMLReactParser from "html-react-parser";
+import HTMLReactParser from "react-html-parser";
 import Button from "../../Button";
 import TextEditor from "../TextEditor";
 import { handleComment } from "./postComment";

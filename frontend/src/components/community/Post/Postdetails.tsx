@@ -6,11 +6,7 @@ import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
 import { userState } from "../../store/atoms/user";
 import { useRecoilState, useRecoilValue } from "recoil";
-import HTMLReactParser, {
-  domToReact,
-  htmlToDOM,
-  Element,
-} from "html-react-parser";
+import HTMLReactParser from "react-html-parser";
 
 import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
