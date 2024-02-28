@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { PostType } from "../InfinitePostScroll";
 import { currentPostState } from "../../store/atoms/post";
-import HTMLReactParser from "react-html-parser";
+import HtmlParser from "react-html-parser";
 import Button from "../../Button";
 import TextEditor from "../TextEditor";
 import { handleComment } from "./postComment";
@@ -158,7 +158,7 @@ const CommentDetails = () => {
             <p>{timePassed(new Date(comment.createdAt))}</p>
           </div>
           <div className="">
-            <p className="p-2 ml-5">{HTMLReactParser(comment.content)}</p>
+            <p className="p-2 ml-5">{HtmlParser(comment.content)}</p>
             {clickedComments[comment._id] && (
               <div>
                 <TextEditor

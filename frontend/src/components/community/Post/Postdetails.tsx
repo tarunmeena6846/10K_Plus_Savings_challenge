@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
 import { userState } from "../../store/atoms/user";
 import { useRecoilState, useRecoilValue } from "recoil";
-import HTMLReactParser from "react-html-parser";
+import HtmlParser from "react-html-parser";
 
 import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
@@ -47,7 +47,7 @@ const Postdetails = () => {
         {currentPost?.title as string}
       </div>
       {currentPost?.content && ( // Check if post?.content exists
-        <div className="mb-4">{HTMLReactParser(currentPost.content)}</div> // Render HTMLReactParser
+        <div className="mb-4">{HtmlParser(currentPost.content)}</div> // Render HTMLReactParser
       )}
       <div className="flex flex-col">
         comment as {userEmail}
