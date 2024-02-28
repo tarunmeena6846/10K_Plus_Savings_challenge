@@ -206,7 +206,7 @@ function Appbar() {
           <motion.button
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            className="rounded-3xl text-black pl-3 pr-3 mr-1 ml-1"
             onClick={() =>
               navigate(currentUserState.userEmail ? "/dashboard" : "/")
             }
@@ -226,7 +226,7 @@ function Appbar() {
           <motion.button
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            className="rounded-3xl text-black p-2"
             onClick={() => {
               navigate("/pricing");
             }}
@@ -264,7 +264,7 @@ function Appbar() {
           <motion.button
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            className="rounded-3xl text-black p-2"
             // whileHover={{
             //   background: "black",
             //   color: "white",
@@ -316,7 +316,7 @@ function Appbar() {
           <motion.button
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black p-2 pl-3 pr-3 mr-1 ml-1"
+            className="rounded-3xl text-black pr-3 p-2"
             // className={"login-button rounded-3xl bg-transparent text-black"}
             // whileHover={{
             //   background: "black",

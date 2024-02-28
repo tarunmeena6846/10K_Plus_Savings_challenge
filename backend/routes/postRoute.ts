@@ -6,7 +6,7 @@ import {
   addComment,
   deleteComment,
   editComment,
-  getDraftPosts,
+  // getDraftPosts,
 } from "../controllers/postController";
 import { detokenizeAdmin } from "../middleware";
 const router: Router = express.Router();

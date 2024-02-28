@@ -26,7 +26,7 @@ const redirectToStripeCheckout = async (
         },
       ],
       mode: mode,
-      successUrl: `${import.meta.env.VITE_CLIENT_URL}/projecteddashboard`,
+      successUrl: `${import.meta.env.VITE_CLIENT_URL}/dashboard`,
       cancelUrl: `${import.meta.env.VITE_CLIENT_URL}/pricing`,
       customerEmail: currentUserEmail,
     });

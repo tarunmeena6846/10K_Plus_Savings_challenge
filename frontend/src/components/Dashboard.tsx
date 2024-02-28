@@ -301,7 +301,7 @@ const Dashboard = () => {
         setMonthlyExpense(0);
         setYearlyExpense(0);
         setYearlyIncome(0);
-        navigate("/projecteddashboard");
+        // navigate("/projecteddashboard");
       }
 
       // console.log("monthlyData", monthlyData);
