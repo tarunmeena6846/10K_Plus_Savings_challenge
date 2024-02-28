@@ -82,20 +82,21 @@ router.post("/signup", async (req: Request, res: Response) => {
 
 router.get("/verify-email/:token", async (req: Request, res: Response) => {
   // const authHeader = req.params.token;
-  console.log("key", secretKey, req.params.token);
+  console.log("key", req.params.token);
   try {
     if (secretKey) {
-      const userInfo = jwt.verify(req.params.token, secretKey) as JwtPayload;
-      console.log("tarun id", userInfo);
+      // const userInfo = jwt.verify(req.params.token, secretKey) as JwtPayload;
+      // console.log("tarun id", userInfo);
       // if (!userInfo) return res.status(400).send({ message: "Invalid token" });
-      const user = await AdminModel.findOne({ username: userInfo.username });
-      if (!user) return res.status(400).send({ message: "Invalid link" });
-      console.log("user ", user);
+      // const user = await AdminModel.findOne({ username: userInfo.username });
+      // if (!user) return res.status(400).send({ message: "Invalid link" });
+      // console.log("user ", user);
 
-      if (user.verificationToken != "") {
-        user.verified = true;
-        user.verificationToken = "";
-        await user.save();
+      // if (user.verificationToken  != "") {
+      if (secretKey) {
+        // user.verified = true;
+        // user.verificationToken = "";
+        // await user.save();
         res.status(200).send({ message: "Email verified successfully" });
         // return res.redirect("http://localhost:5173/login");
       } else {
