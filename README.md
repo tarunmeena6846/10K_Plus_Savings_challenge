@@ -1,9 +1,9 @@
 
 # 10K Plus savings challenge
 
-10K Plus savings challenge is a simple money saving challenge. The project was developed for a freelecing client.
+10K Plus savings challenge is a simple money-saving challenge. This project was developed for a freelancing client.
 
-I have used MERN stack with tailwind and framer-motion for styling.
+I have used the MERN stack with tailwind and framer-motion for styling.
 
 
 ## Tech Stack
