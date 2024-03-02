@@ -18,6 +18,10 @@ const redirectToStripeCheckout = async (
     const stripe = await getStripe();
     console.log("currentuseremail", currentUserEmail, mode);
     console.log("tarun stripe", stripe);
+    let url = `${import.meta.env.VITE_CLIENT_URL}/dashboard`;
+    if (mode === "payment") {
+      url = `${import.meta.env.VITE_CLIENT_URL}/swotportal/schedulesession`;
+    }
     const stripeResult = await stripe?.redirectToCheckout({
       lineItems: [
         {
@@ -26,7 +30,7 @@ const redirectToStripeCheckout = async (
         },
       ],
       mode: mode,
-      successUrl: `${import.meta.env.VITE_CLIENT_URL}/dashboard`,
+      successUrl: url,
       cancelUrl: `${import.meta.env.VITE_CLIENT_URL}/pricing`,
       customerEmail: currentUserEmail,
     });

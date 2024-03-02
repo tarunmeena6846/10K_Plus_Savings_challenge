@@ -19,6 +19,7 @@ import PostLanding from "./components/community/Post/PostLanding";
 import MyDraft from "./components/community/UserPosts/MyDraft";
 import MyPosts from "./components/community/UserPosts/MyPosts";
 import MyBookmarked from "./components/community/UserPosts/MyBookmarked";
+import BookSession from "./components/scheduler/BookSession";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -42,6 +43,7 @@ function App() {
           {/* <Route path="/checkout" element={<Payment />} /> */}
           <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
           <Route path="/swotportal" element={<SWOTanalysisPortal />} />
+          <Route path="/swotportal/schedulesession" element={<BookSession />} />
 
           <Route path="/verify-email/:token" element={<EmailVerify />} />
           <Route path="/community" element={<CommunityLanding />} />
