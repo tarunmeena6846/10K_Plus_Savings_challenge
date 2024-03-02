@@ -30,6 +30,7 @@ import WelcomeEmail from "./utils/emails/Welcome";
 import { renderToString } from "react-dom/server"; // Import ReactDOMServer
 import ManageBillingForm from "./stripe/ManageBillingForm";
 import Button from "./components/Button";
+import handleBuyClick from "./stripe/SwotCheckout";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
@@ -80,6 +81,7 @@ function Appbar() {
               isLoading: false,
               imageUrl: data.imageUrl,
               isVerified: data.userData.verified,
+              myWhy: data.userData.myWhy,
             });
 
             setSubscripton({
@@ -113,6 +115,7 @@ function Appbar() {
               isLoading: false,
               imageUrl: "",
               isVerified: currentUserState.isVerified,
+              myWhy: currentUserState.myWhy,
             });
           }
         })
@@ -123,6 +126,7 @@ function Appbar() {
             isLoading: false,
             imageUrl: "",
             isVerified: currentUserState.isVerified,
+            myWhy: currentUserState.myWhy,
           });
           setLogoutModalOpen(false);
         });
@@ -132,6 +136,7 @@ function Appbar() {
         isLoading: false,
         imageUrl: "",
         isVerified: currentUserState.isVerified,
+        myWhy: currentUserState.myWhy,
       });
     }
   }, [setCurrentUserState, navigate, setSelectedDate]);
@@ -151,6 +156,7 @@ function Appbar() {
       isLoading: false,
       imageUrl: currentUserState.imageUrl,
       isVerified: currentUserState.isVerified,
+      myWhy: currentUserState.myWhy,
     });
     setSelectedDate({
       year: selectedDate.year,
@@ -455,6 +461,11 @@ function Appbar() {
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button onClick={handleLogoutConfirm}>Logout</Button>
                 <Button onClick={handleLogoutCancel}>Cancel</Button>
+                <Button
+                  onClick={() => handleBuyClick(currentUserState.userEmail)}
+                >
+                  Book SWOT Session
+                </Button>
                 {/* <form
                   method="POST"
                   action={`${

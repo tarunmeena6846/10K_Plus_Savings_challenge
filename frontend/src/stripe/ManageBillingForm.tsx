@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { subscriptionState } from "../components/store/atoms/user";
+import { Button } from "@mui/material";
 
 const ManageBillingForm = () => {
   const [subscription, setSubscription] = useRecoilState(subscriptionState);
@@ -14,7 +15,9 @@ const ManageBillingForm = () => {
       // For example, show loading indicator
 
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/stripe/create-customer-portal-session`,
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }/stripe/create-customer-portal-session`,
         {
           method: "POST",
           headers: {
@@ -48,9 +51,20 @@ const ManageBillingForm = () => {
         name="customerId"
         value={subscription.stripeCustomerId}
       />
-      <button type="submit" disabled={loading}>
+      <Button
+        type="submit"
+        disabled={loading}
+        style={{
+          textTransform: "none",
+          background: "black",
+          color: "white",
+          borderRadius: "20px",
+          paddingLeft: "10px",
+          paddingRight: "10px",
+        }}
+      >
         {loading ? "Creating Billing Portal..." : "Manage Billing"}
-      </button>
+      </Button>
     </form>
   );
 };

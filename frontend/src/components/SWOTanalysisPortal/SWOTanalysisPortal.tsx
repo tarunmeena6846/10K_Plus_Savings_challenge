@@ -7,6 +7,7 @@ import {
 import { useRecoilState } from "recoil";
 import redirectToStripeCheckout from "../../stripe/StripeCheckout";
 import SWOTdashboard from "./SWOTdashboard";
+import handleBuyClick from "../../stripe/SwotCheckout";
 const SavingPortalLanding = () => {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
@@ -26,16 +27,16 @@ const SavingPortalLanding = () => {
     // Handle DIY button click
   };
 
-  const handleBuyClick = async () => {
-    // Handle Buy button click
-    console.log("before checkout");
-    await redirectToStripeCheckout(
-      "price_1OjffbSBiPFrlsnb4MjS068p",
-      "payment",
-      currentUserState.userEmail
-    );
-    // await StripeCheckout("price_1OjffbSBiPFrlsnb4MjS068p", "payment");
-  };
+  // const handleBuyClick = async () => {
+  //   // Handle Buy button click
+  //   console.log("before checkout");
+  //   await redirectToStripeCheckout(
+  //     "price_1OjffbSBiPFrlsnb4MjS068p",
+  //     "payment",
+  //     currentUserState.userEmail
+  //   );
+  //   // await StripeCheckout("price_1OjffbSBiPFrlsnb4MjS068p", "payment");
+  // };
   return (
     <>
       {videoModalOpen && (
@@ -83,7 +84,7 @@ const SavingPortalLanding = () => {
                 DIY
               </button>
               <button
-                onClick={handleBuyClick}
+                onClick={() => handleBuyClick(currentUserState.userEmail)}
                 className="bg-green-500 text-white px-4 py-2 rounded"
               >
                 Buy

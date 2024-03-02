@@ -49,6 +49,7 @@ function Login() {
               isLoading: false,
               imageUrl: currentUserState.imageUrl,
               isVerified: currentUserState.isVerified,
+              myWhy: currentUserState.myWhy,
             });
             if (subscription.isSubscribed) navigate("/dashboard");
             else navigate("/pricing");

@@ -71,7 +71,7 @@ const StripePricingTable = () => {
 
   const packages = [
     {
-      name: "Start",
+      name: "Non-Challenger Saver",
       yearlyPrice: 199,
       yearlyPlanId: "price_1OeQmBSBiPFrlsnbHtsR1wlx",
       // monthlyPrice: 18,
@@ -80,7 +80,7 @@ const StripePricingTable = () => {
         "A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
-      name: "Plus",
+      name: "10K Savings Challenger",
       yearlyPrice: 499,
       yearlyPlanId: "price_1OeQmjSBiPFrlsnbPRGm9YvH",
       // monthlyPrice: 45,
@@ -94,7 +94,9 @@ const StripePricingTable = () => {
   return (
     <div className="py-10 md:px-14 p-4 max-w-7xl mx-auto">
       <div className="text-center">
-        <h2 className="md:text-7xl text-7xl mb-2">Here are all our plans</h2>
+        <h2 className="md:text-5xl text-7xl mb-2">
+          Choose one of the following memberships
+        </h2>
       </div>
 
       {/* <div className="flex justify-center mt-5">

@@ -200,6 +200,25 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
+router.post(
+  "/set-my-why-data",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, resp: Response) => {
+    const { data } = req.body;
+    console.log("data at set my data", data);
+    try {
+      const user = await AdminModel.findOne({ username: req.user });
+      console.log("user at set my data", user);
+      if (user) {
+        user.myWhy = data;
+        await user.save();
+        resp.status(200).send({ success: true });
+      }
+    } catch (error) {
+      resp.status(400).send({ message: "Internal server error", error });
+    }
+  }
+);
 router.post("/change-user_details", detokenizeAdmin, async (req, res) => {
   const { username, newPassword, imageUrl } = req.body;
 

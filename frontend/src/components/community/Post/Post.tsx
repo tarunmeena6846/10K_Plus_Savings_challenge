@@ -51,7 +51,7 @@ const Post: React.FC<PostType> = ({
   console.log("tarun postid", postId);
   const navigate = useNavigate();
   // const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
-  const excerpt = (content.substring(0, 200)); // Adjust the length as needed
+  const excerpt = content.substring(0, 200); // Adjust the length as needed
 
   const [showDeleteOption, setShowDeleteOption] = useState(false);
   const optionRef = useRef(null);
@@ -81,7 +81,7 @@ const Post: React.FC<PostType> = ({
     <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-2xl m-4 shadow dark:bg-gray-800 dark:border-gray-700 relative">
       <div className="rounded-t-lg overflow-hidden">
         <img className="w-full" src={imageContent} alt="" />
-        <div className="absolute top-0 right-0 m-2">
+        <div className="absolute top-0 right-0 p-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 cursor-pointer"
@@ -137,6 +137,9 @@ const Post: React.FC<PostType> = ({
             </button>
             <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
               Bookmark
+            </button>
+            <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+              Report
             </button>
           </div>
         </div>

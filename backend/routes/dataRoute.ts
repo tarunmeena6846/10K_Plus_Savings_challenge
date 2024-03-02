@@ -8,13 +8,12 @@ import { AuthenticatedRequest } from "../middleware/index";
 import { YearlyData } from "../models/monthlyData";
 import Stripe from "stripe";
 import { Error } from "mongoose";
+import AdminModel from "../models/admin";
 
 const stripe = new Stripe(process.env.STRIPE_KEY as string);
 const router: Router = express.Router();
 
 // async createSubscription(createSubscriptionRequest) {
-
-
 
 router.post(
   "/reset-monthly-data",
@@ -85,6 +84,7 @@ router.post(
     }
   }
 );
+
 // Express Route for updating projected yearly savings
 router.post(
   "/update-projected-savings",

@@ -160,7 +160,7 @@ const ProjectedData = () => {
                 className="mb-4 p-2 rounded"
               /> */}
               <h1 className="mb-4 text-white font-heading text-5xl">
-                Do you Know ?
+                Do you know ?
               </h1>
               <h1 className="mb-4 text-white font-heading text-3xl">
                 Majority of the 10K Savings Challengers identify $3k in

@@ -7,6 +7,7 @@ export const userState = atom({
     userEmail: "",
     imageUrl: "",
     isVerified: false,
+    myWhy: "",
   },
 });
 export interface SubscriptionData {

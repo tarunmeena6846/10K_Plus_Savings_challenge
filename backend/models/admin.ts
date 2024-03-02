@@ -11,6 +11,7 @@ export interface Admin extends Document {
   isSubscribed?: Boolean;
   isTopTier: Boolean;
   verificationToken: string;
+  myWhy: string;
 }
 
 const adminSchema = new Schema<Admin>({
@@ -31,6 +32,7 @@ const adminSchema = new Schema<Admin>({
   verified: { type: Boolean, default: false },
   verificationToken: { type: String },
   isTopTier: { type: Boolean, default: false },
+  myWhy: { type: String, default: "" },
 
   // subscriptions: [
   //   {

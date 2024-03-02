@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const Button = ({ children, onClick }) => {
+const CustomeButton = ({ children, onClick }) => {
   return (
     <motion.button
       whileHover={{ scale: 1.1 }} // Define hover animation
@@ -14,4 +14,4 @@ const Button = ({ children, onClick }) => {
   );
 };
 
-export default Button;
+export default CustomeButton;
