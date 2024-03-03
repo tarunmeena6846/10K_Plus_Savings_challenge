@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import UserTimeZone from "./TimeZone";
+import SessionScheduler from "./SessionScheduler";
 
 const BookSession = () => {
   const [fullName, setFullName] = useState("");
@@ -55,17 +57,11 @@ const BookSession = () => {
         />
 
         <label htmlFor="session" className="mb-4">
-          Select your preferred session - GMT+2 Jerusalem
+          Select your preferred time
         </label>
-        <motion.input
-          id="email"
-          name="email"
-          required
-          type="email"
-          value={email}
-          className="mb-4 rounded-2xl p-4"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <UserTimeZone></UserTimeZone>
+        <SessionScheduler />
+
         <button className="bookingBtn">SEND</button>
       </form>
     </div>
