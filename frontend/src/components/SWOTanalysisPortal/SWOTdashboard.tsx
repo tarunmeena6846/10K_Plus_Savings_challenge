@@ -86,7 +86,7 @@ const SWOTdashboard = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-8 p-8">
       {/* <TaskList /> */}
       <motion.button
         className="text-red-700 py-2 px-4 rounded fixed top-1/4 transform -translate-y-1/2 right-4 z-50"

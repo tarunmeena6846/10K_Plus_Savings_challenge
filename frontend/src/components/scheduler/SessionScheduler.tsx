@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const SessionScheduler = () => {
+const SessionScheduler = ({ setTime, setDate }) => {
   // Function to generate an array of time options
   const generateTimeOptions = () => {
     const options = [];
@@ -18,8 +18,8 @@ const SessionScheduler = () => {
   const generateDateOptions = () => {
     const options = [];
     const today = new Date();
-    // console.log(today.getDate());
-    for (let i = 1; i <= 7; i++) {
+    console.log(today);
+    for (let i = 0; i <= 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       options.push(date.toDateString());
@@ -30,9 +30,10 @@ const SessionScheduler = () => {
   return (
     <div className="flex flex-row justify-between">
       <motion.select
-        className="date-select w-1/2 rounded-2xl"
+        className="date-select w-1/2 rounded-2xl p-4"
         // whileHover={{ scale: 1.1 }}
         // whileTap={{ scale: 0.9 }}
+        onChange={(e) => setDate(e.target.value)}
       >
         <option value="" className="">
           Select Date
@@ -47,6 +48,7 @@ const SessionScheduler = () => {
         className="time-select w-1/2 p-4 rounded-2xl"
         // whileHover={{ scale: 1.1 }}
         // whileTap={{ scale: 0.9 }}
+        onChange={(e) => setTime(e.target.value)}
       >
         <option value="">Select Time</option>
         {generateTimeOptions().map((time, index) => (

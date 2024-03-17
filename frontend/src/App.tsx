@@ -20,6 +20,8 @@ import MyDraft from "./components/community/UserPosts/MyDraft";
 import MyPosts from "./components/community/UserPosts/MyPosts";
 import MyBookmarked from "./components/community/UserPosts/MyBookmarked";
 import BookSession from "./components/scheduler/BookSession";
+import SideBar from "./components/Sidebar/SideBar";
+import "./App.css";
 // import Payment from "./components/Payment";
 
 // This file shows how you can do routing in React.
@@ -31,34 +33,37 @@ function App() {
     <RecoilRoot>
       <Router>
         <Appbar />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/pricing" element={<StripePricingTable />} />
-          <Route path="/savingportal" element={<SavingPortalLanding />} />
-          <Route path="/incomeportal" element={<IncomePortalLanding />} />
+        {/* <SideBar> */}
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/currentdashboard" element={<Dashboard />} />
+            <Route path="/targetdashboard" element={<Dashboard />} />
+            <Route path="/actualdashboard" element={<Dashboard />} />
+            <Route path="/pricing" element={<StripePricingTable />} />
+            <Route path="/savingportal" element={<SavingPortalLanding />} />
+            <Route path="/incomeportal" element={<IncomePortalLanding />} />
+            <Route
+              path="/projecteddashboard"
+              element={<ProjectedDashboard />}
+            />
+            <Route path="/swotportal" element={<SWOTanalysisPortal />} />
+            <Route
+              path="/swotportal/schedulesession"
+              element={<BookSession />}
+            />
+            <Route path="/verify-email/:token" element={<EmailVerify />} />
+            <Route path="/community" element={<CommunityLanding />} />
+            <Route path="/community/mydiscussion" element={<MyPosts />} />
+            <Route path="/community/bookmarked" element={<MyBookmarked />} />
+            <Route path="/community/drafts" element={<MyDraft />} />
+            <Route path="/community/post/:postId" element={<PostLanding />} />
 
-          {/* <Route path="/checkout" element={<Payment />} /> */}
-          <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
-          <Route path="/swotportal" element={<SWOTanalysisPortal />} />
-          <Route path="/swotportal/schedulesession" element={<BookSession />} />
-
-          <Route path="/verify-email/:token" element={<EmailVerify />} />
-          <Route path="/community" element={<CommunityLanding />} />
-          <Route path="/community/mydiscussion" element={<MyPosts />} />
-          <Route path="/community/bookmarked" element={<MyBookmarked />} />
-          <Route path="/community/drafts" element={<MyDraft />} />
-          <Route path="/community/post/:postId" element={<PostLanding />} />
-
-          <Route path="/newpost" element={<HandleCreatePost />}></Route>
-          {/*
-
-        <Route path="/createCourse" element={<CreateCourse />} />
-        <Route path="/courses" element={<ShowCourses />} />
-        <Route path="/course/:courseId" element={<Course />} /> */}
-        </Routes>
+            <Route path="/newpost" element={<HandleCreatePost />}></Route>
+          </Routes>
+        {/* </SideBar> */}
       </Router>
     </RecoilRoot>
   );

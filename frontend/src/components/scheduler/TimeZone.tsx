@@ -13,8 +13,8 @@ const UserTimeZone = () => {
   }, []);
 
   return (
-    <div>
-      <p>User Timezone: {userTimeZone}</p>
+    <div className="pl-2">
+      <p>Your Timezone: {userTimeZone}</p>
     </div>
   );
 };

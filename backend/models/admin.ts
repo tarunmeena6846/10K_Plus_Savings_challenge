@@ -12,6 +12,7 @@ export interface Admin extends Document {
   isTopTier: Boolean;
   verificationToken: string;
   myWhy: string;
+  swotSessionTime: Date;
 }
 
 const adminSchema = new Schema<Admin>({
@@ -33,6 +34,7 @@ const adminSchema = new Schema<Admin>({
   verificationToken: { type: String },
   isTopTier: { type: Boolean, default: false },
   myWhy: { type: String, default: "" },
+  swotSessionTime: Date,
 
   // subscriptions: [
   //   {
