@@ -92,7 +92,7 @@ const SideBar = () => {
             damping: 10,
           },
         }}
-        className="h-full overflow-y-auto" // Ensure content scrolls if it exceeds height
+        className="h-full" // Ensure content scrolls if it exceeds height
       >
         <UserAvatar />
         <section className="routes">

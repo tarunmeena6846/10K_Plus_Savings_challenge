@@ -21,7 +21,17 @@ import SecondModal from "./VideoModels/SecondModel";
 import { motion } from "framer-motion";
 import CustomeButton from "./Button";
 import SideBar from "./Sidebar/SideBar";
+import SidebarLayout from "./SidebarLayout";
 
+export const monthIncExpInfo = [
+  { name: "Rent", amount: 1000, type: "expense" },
+  { name: "Car Insurance", amount: 200, type: "expense" },
+  { name: "Internet", amount: 100, type: "expense" },
+  { name: "Job", amount: 3000, type: "income" },
+  { name: "Freelencing", amount: 1000, type: "income" },
+  { name: "Side Hustle", amount: 300, type: "income" },
+  { name: "Guitar Lessons", amount: 300, type: "income" },
+];
 export interface MonthlyDataItem {
   month: string;
   actualSavings: number;
@@ -42,15 +52,6 @@ const Dashboard = () => {
   const [monthlyData, setMonthlyData] = useState<MonthlyDataItem[]>([]);
   const [isMonthlyDataReady, setIsMonthlyDataReady] = useState(false);
   // const [monthIncExpInfo, setMonthIncExpInfo] = useState([]); // holds the monthly income and expense info along with the items
-  const monthIncExpInfo = [
-    { name: "Rent", amount: 1000, type: "expense" },
-    { name: "Car Insurance", amount: 200, type: "expense" },
-    { name: "Internet", amount: 100, type: "expense" },
-    { name: "Job", amount: 3000, type: "income" },
-    { name: "Freelencing", amount: 1000, type: "income" },
-    { name: "Side Hustle", amount: 300, type: "income" },
-    { name: "Guitar Lessons", amount: 300, type: "income" },
-  ];
 
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [userDetails, setUserDetails] = useState({
@@ -452,55 +453,42 @@ const Dashboard = () => {
     setCurrentUserState,
   ]);
   return (
-    <div className="h-screen bg-gray-100">
-      {/* Set background color to grey and height to full screen */}
-      <div className="flex md:flex-row h-full">
-        {/* Ensure the flex container takes full height */}
-        <div className="md:w-80">
-          <SideBar></SideBar>
-        </div>
-        <div className="md:w-3/4">
-          <div className="grid grid-cols-1 md:grid-rows-3 p-10 md:grid-cols-3 gap-4 h-full">
-            {" "}
-            {/* Ensure the grid container takes full height */}
-            <div
-              className="p-6 rounded-2xl cols-span-1 row-span-1"
-              style={{ background: "#ffcbfb", overflow: "hidden" }}
-            >
-              <h2>Current Savings</h2>
-              <h2 className="text-4xl">${monthlyIncome}</h2>
-            </div>
-            <div
-              className="p-6 rounded-2xl cols-span-1 row-span-1"
-              style={{ background: "#b2edff", overflow: "hidden" }}
-            >
-              <h2>Target Savings</h2>
-              <h2 className="text-4xl">${monthlyExpense}</h2>
-            </div>
-            <div
-              className="p-6 rounded-2xl cols-span-1 row-span-1"
-              style={{ background: "#ceffae", overflow: "hidden" }}
-            >
-              <h2>Actual Savings</h2>
-              <h2 className="text-4xl">${monthlyIncome - monthlyExpense}</h2>
-            </div>
-            <div className="col-span-2 md:row-span-2">
-              <div className="h-full w-full bg-white rounded-2xl">
-                {isMonthlyDataReady && (
-                  <MonthlyBarGraph monthlyData={monthlyData} />
-                )}
-              </div>
-            </div>
-            <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
-              <MonthlyChart
-                monthlyIncome={500}
-                // monthlyIncome={0}
-                monthlyExpenses={200}
-              />
+    <div>
+      <SidebarLayout>
+        <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
+          <div
+            className="p-6 rounded-2xl"
+            style={{ background: "#ffcbfb", overflow: "hidden" }}
+          >
+            <h2>Current Savings</h2>
+            <h2 className="text-4xl">${monthlyIncome}</h2>
+          </div>
+          <div
+            className="p-6 rounded-2xl"
+            style={{ background: "#b2edff", overflow: "hidden" }}
+          >
+            <h2>Target Savings</h2>
+            <h2 className="text-4xl">${monthlyExpense}</h2>
+          </div>
+          <div
+            className="p-6 rounded-2xl"
+            style={{ background: "#ceffae", overflow: "hidden" }}
+          >
+            <h2>Actual Savings</h2>
+            <h2 className="text-4xl">${monthlyIncome - monthlyExpense}</h2>
+          </div>
+          <div className="col-span-2 md:row-span-2">
+            <div className="h-full w-full bg-white rounded-2xl">
+              {isMonthlyDataReady && (
+                <MonthlyBarGraph monthlyData={monthlyData} />
+              )}
             </div>
           </div>
+          <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
+            <MonthlyChart monthlyIncome={500} monthlyExpenses={200} />
+          </div>
         </div>
-      </div>
+      </SidebarLayout>
     </div>
   );
 };
