@@ -41,6 +41,11 @@ const routes = [
     name: "SWOT Portal",
     icon: <AiFillHeart />,
   },
+  {
+    path: "/",
+    name: "Analytics",
+    icon: <AiFillHeart />,
+  },
   // { path: "/settings", name: "Settings", icon: <BiCog /> },
 ];
 

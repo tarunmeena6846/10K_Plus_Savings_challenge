@@ -1,9 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import SidebarLayout from "../SidebarLayout";
 import { monthIncExpInfo } from "../Dashboard";
 import { Button } from "@mui/material";
+import AddTransactionModal from "./InputModel";
 
 export default function TargetDashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
+
+  const openModal = (tab) => {
+    setActiveTab(tab);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddIncome = () => {
+    // Add logic to handle adding income
+    console.log("Add income logic here");
+  };
+
+  const handleAddExpense = () => {
+    // Add logic to handle adding expense
+    console.log("Add expense logic here");
+  };
   return (
     <div>
       <SidebarLayout>
@@ -45,7 +67,7 @@ export default function TargetDashboard() {
                   textTransform: "none",
                 }}
                 variant="outlined"
-                // onClick={() => ("/monthlyIncome")}
+                onClick={() => openModal(0)} // Open modal when button is clicked
               >
                 + Add Income
               </Button>
@@ -95,7 +117,7 @@ export default function TargetDashboard() {
                   textTransform: "none",
                 }}
                 variant="outlined"
-                //   onClick={() => navigate("/monthlyIncome")}
+                onClick={() => openModal(1)} // Open modal when button is clicked
               >
                 + Add Expenses
               </Button>
@@ -132,6 +154,13 @@ export default function TargetDashboard() {
           </div>
         </div>
       </SidebarLayout>
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onAddIncome={handleAddIncome}
+        onAddExpense={handleAddExpense}
+        activeTab={activeTab} // Pass active tab to the modal
+      />
     </div>
   );
 }

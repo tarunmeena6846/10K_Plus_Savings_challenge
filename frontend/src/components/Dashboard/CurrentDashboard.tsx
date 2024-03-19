@@ -1,9 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import SidebarLayout from "../SidebarLayout";
 import { Button } from "@mui/material";
 import { monthIncExpInfo } from "../Dashboard";
+import AddTransactionModal from "./InputModel";
 
 export default function CurrentDashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
+
+  const openModal = (tab) => {
+    setActiveTab(tab);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddIncome = () => {
+    // Add logic to handle adding income
+    console.log("Add income logic here");
+  };
+
+  const handleAddExpense = () => {
+    // Add logic to handle adding expense
+    console.log("Add expense logic here");
+  };
   return (
     <div>
       <SidebarLayout>
@@ -30,7 +52,10 @@ export default function CurrentDashboard() {
             <h2 className="text-4xl">$0</h2>
           </div>
           <div className="md:col-span-3 grid grid-cols-4 row-span-2 gap-4">
-            <div className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl" style={{ background: "white", overflow: "hidden" }}>
+            <div
+              className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
+              style={{ background: "white", overflow: "hidden" }}
+            >
               <h2 className="mb-4 text-center">Current Income</h2>
               <Button
                 style={{
@@ -42,7 +67,7 @@ export default function CurrentDashboard() {
                   textTransform: "none",
                 }}
                 variant="outlined"
-                // onClick={() => ("/monthlyIncome")}
+                onClick={() => openModal(0)} // Open modal when button is clicked
               >
                 + Add Income
               </Button>
@@ -77,7 +102,10 @@ export default function CurrentDashboard() {
               ) : null}
             </div>
 
-            <div className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl" style={{ background: "white", overflow: "hidden" }}>
+            <div
+              className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
+              style={{ background: "white", overflow: "hidden" }}
+            >
               <h2 className="mb-4 text-center">Current Expenses</h2>
               <Button
                 style={{
@@ -89,7 +117,7 @@ export default function CurrentDashboard() {
                   textTransform: "none",
                 }}
                 variant="outlined"
-                //   onClick={() => navigate("/monthlyIncome")}
+                onClick={() => openModal(1)} // Open modal when button is clicked
               >
                 + Add Expenses
               </Button>
@@ -126,6 +154,14 @@ export default function CurrentDashboard() {
           </div>
         </div>
       </SidebarLayout>
+
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onAddIncome={handleAddIncome}
+        onAddExpense={handleAddExpense}
+        activeTab={activeTab} // Pass active tab to the modal
+      />
     </div>
   );
 }
