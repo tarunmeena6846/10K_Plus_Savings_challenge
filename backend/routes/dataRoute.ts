@@ -5,16 +5,30 @@ import MonthlyDataModel from "../models/monthlyData";
 // import { detokenizeAdmin } from "../middleware/auth.middleware";
 import { detokenizeAdmin } from "../middleware/index";
 import { AuthenticatedRequest } from "../middleware/index";
-import { YearlyData } from "../models/monthlyData";
+// import { YearlyData } from "../models/monthlyData";
 import Stripe from "stripe";
 import { Error } from "mongoose";
 import AdminModel from "../models/admin";
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 const stripe = new Stripe(process.env.STRIPE_KEY as string);
 const router: Router = express.Router();
 
 // async createSubscription(createSubscriptionRequest) {
-
+/*
 router.post(
   "/reset-monthly-data",
   detokenizeAdmin,
@@ -146,69 +160,174 @@ router.post(
     }
   }
 );
-
+*/
 router.post(
   "/save-item",
   detokenizeAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { month, year, monthlyIncome, monthlyExpense } = req.body;
-      console.log("at save item", monthlyIncome, monthlyExpense);
-
-      // Find the user's data
-      const userData = await MonthlyDataModel.findOne({
-        userId: req.user,
+      const { date, category, income, expense, item, type, itemType } =
+        req.body;
+      const parsedDate = new Date(date);
+      console.log(
+        "at save item",
+        category,
+        date,
+        income,
+        item,
+        parsedDate.getMonth() + 1,
+        parsedDate.getDate(),
+        parsedDate.getFullYear()
+      );
+      const year = parsedDate.getFullYear();
+      const month = monthNames[parsedDate.getMonth()];
+      const userId = req.user;
+      // Check if the user's data for the given year exists
+      let monthlyData = await MonthlyDataModel.findOne({
+        userId,
+        "yearlyData.year": year,
       });
 
-      if (userData) {
-        // User entry exists, find the yearly entry for the specified year
-        const yearlyEntry = userData.yearlyData.find(
-          (entry) => entry.year === year
-        );
+      // If the user's data for the year doesn't exist, create it
+      if (!monthlyData) {
+        monthlyData = await MonthlyDataModel.create({
+          userId,
+          yearlyData: [{ year, monthlyData: [] }],
+        });
+      }
 
-        if (yearlyEntry) {
-          // Year entry exists, find the monthly entry for the specified month
-          const monthlyEntry = yearlyEntry.monthlyData.find(
-            (entry) => entry.month === month
-          );
+      // Find the index of the month within the yearlyData array
+      const yearIndex = monthlyData.yearlyData.findIndex(
+        (data) => data.year === year
+      );
+      const monthIndex = monthlyData.yearlyData[
+        yearIndex
+      ].monthlyData.findIndex((data) => data.month === month);
 
-          if (monthlyEntry) {
-            // Month entry exists, update the totalIncome and totalExpenses
-            monthlyEntry.monthlyExpenses += parseInt(monthlyExpense);
-            monthlyEntry.monthlyIncome += parseInt(monthlyIncome);
+      // If the month's data exists, update it; otherwise, insert new data
+      if (monthIndex !== -1) {
+        // Update existing month's data
+        const monthData =
+          monthlyData.yearlyData[yearIndex].monthlyData[monthIndex];
+        if (type === "actual") {
+          if (itemType === "Income") {
+            monthData.actual.income += income;
+            monthlyData.yearlyData[yearIndex].totalActualIncome += income;
+            monthData.actual.items.push({
+              category: category,
+              title: item,
+              amount: income,
+              type: itemType,
+            });
           } else {
-            // Month entry doesn't exist, create a new one
-            yearlyEntry.monthlyData.push({
-              month,
-              monthlyIncome,
-              monthlyExpenses: monthlyExpense,
+            monthData.actual.expense += expense;
+            monthlyData.yearlyData[yearIndex].totalActualExpenses += expense;
+            monthData.actual.items.push({
+              category: category,
+              title: item,
+              amount: expense,
+              type: itemType,
             });
           }
-
-          // Update the totalIncome and totalExpenses based on all monthly entries
-          yearlyEntry.totalIncome += parseInt(monthlyIncome);
-          yearlyEntry.totalExpenses += parseInt(monthlyExpense);
-        } else {
-          // Year entry doesn't exist, create a new yearly entry with the monthly data
-          userData.yearlyData.push({
-            year,
-            monthlyData: [
-              {
-                month,
-                monthlyIncome,
-                monthlyExpenses: monthlyExpense,
-              },
-            ],
-            totalIncome: monthlyIncome,
-            totalExpenses: monthlyExpense,
-            projectedYearlySavings: 0,
-          });
+          // monthData.actual.items.push({category:category,title:itemName,amount:})
+        } else if (type === "current") {
+          if (itemType === "Income") {
+            monthData.current.income += income;
+            monthlyData.yearlyData[yearIndex].totalActualIncome += income;
+            monthData.current.items.push({
+              category: category,
+              title: item,
+              amount: income,
+              type: itemType,
+            });
+          } else {
+            monthData.current.expense += expense;
+            monthlyData.yearlyData[yearIndex].totalActualExpenses += expense;
+            monthData.current.items.push({
+              category: category,
+              title: item,
+              amount: expense,
+              type: itemType,
+            });
+          }
+        } else if (type === "target") {
+          if (itemType === "Income") {
+            monthData.target.income += income;
+            monthlyData.yearlyData[yearIndex].totalActualIncome += income;
+            monthData.target.items.push({
+              category: category,
+              title: item,
+              amount: income,
+              type: itemType,
+            });
+          } else {
+            monthData.target.expense += expense;
+            monthlyData.yearlyData[yearIndex].totalActualExpenses += expense;
+            monthData.target.items.push({
+              category: category,
+              title: item,
+              amount: expense,
+              type: itemType,
+            });
+          }
         }
-
-        // Save the changes
-        await userData.save();
       } else {
+        // Insert new month's data
+        const newData = {
+          month,
+          actual:
+            type === "actual"
+              ? {
+                  income: income,
+                  expense: expense,
+                  items: [
+                    {
+                      category: category,
+                      title: item,
+                      amount: expense,
+                      type: itemType,
+                    },
+                  ],
+                }
+              : { income: 0, expense: 0, items: [] },
+          current:
+            type === "current"
+              ? {
+                  income: income,
+                  expense: expense,
+                  items: [
+                    {
+                      category: category,
+                      title: item,
+                      amount: expense,
+                      type: itemType,
+                    },
+                  ],
+                }
+              : { income: 0, expense: 0, items: [] },
+          target:
+            type === "target"
+              ? {
+                  income: income,
+                  expense: expense,
+                  items: [
+                    {
+                      category: category,
+                      title: item,
+                      amount: expense,
+                      type: itemType,
+                    },
+                  ],
+                }
+              : { income: 0, expense: 0, items: [] },
+        };
+
+        console.log("inside else in ", newData, newData.actual.items);
+        monthlyData.yearlyData[yearIndex].monthlyData.push(newData);
       }
+
+      // Save the updated document
+      await monthlyData.save();
 
       res.status(201).json({
         success: true,

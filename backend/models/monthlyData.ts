@@ -1,25 +1,55 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-interface MonthlyData extends Document {
-  userId: string;
-  yearlyData: Array<YearlyData>;
+interface Item {
+  category: string;
+  title: string;
+  amount: number;
+  type: string;
 }
 
-export interface YearlyData {
-  year: number;
-  monthlyData: Array<MonthlyEntry>;
-  totalIncome: number;
-  totalExpenses: number;
-  projectedYearlySavings: number;
-}
-
-interface MonthlyEntry {
+export interface MonthlyData {
   month: string;
-  monthlyIncome: number;
-  monthlyExpenses: number;
+  actual: {
+    income: number;
+    expense: number;
+    items: Item[];
+  };
+  current: {
+    income: number;
+    expense: number;
+    items: Item[];
+  };
+  target: {
+    income: number;
+    expense: number;
+    items: Item[];
+  };
 }
 
-const monthlyDataSchema = new Schema<MonthlyData>({
+interface YearlyData {
+  year: number;
+  monthlyData: MonthlyData[];
+  totalActualIncome: number;
+  totalActualExpenses: number;
+  totalCurrentIncome: number;
+  totalCurrentExpenses: number;
+  totalTargetIncome: number;
+  totalTargetExpenses: number;
+}
+
+interface MonthlyDataSchemaDocument extends Document {
+  userId: string;
+  yearlyData: YearlyData[];
+}
+
+const itemSchema = new Schema<Item>({
+  category: { type: String, required: true },
+  title: { type: String, required: true },
+  amount: { type: Number, required: true },
+  type: { type: String, required: true },
+});
+
+const monthlyDataSchema = new Schema<MonthlyDataSchemaDocument>({
   userId: {
     type: String,
     ref: "Admin",
@@ -32,20 +62,34 @@ const monthlyDataSchema = new Schema<MonthlyData>({
       monthlyData: [
         {
           month: { type: String, required: true },
-          monthlyIncome: { type: Number, default: 0 },
-          monthlyExpenses: { type: Number, default: 0 },
+          actual: {
+            income: { type: Number, default: 0 },
+            expense: { type: Number, default: 0 },
+            items: [itemSchema],
+          },
+          current: {
+            income: { type: Number, default: 0 },
+            expense: { type: Number, default: 0 },
+            items: [itemSchema],
+          },
+          target: {
+            income: { type: Number, default: 0 },
+            expense: { type: Number, default: 0 },
+            items: [itemSchema],
+          },
         },
       ],
-      totalIncome: { type: Number, default: 0 },
-      totalExpenses: { type: Number, default: 0 },
-      projectedYearlySavings: { type: Number, default: 0 },
+      totalActualIncome: { type: Number, default: 0 },
+      totalActualExpenses: { type: Number, default: 0 },
+      totalCurrentIncome: { type: Number, default: 0 },
+      totalCurrentExpenses: { type: Number, default: 0 },
+      totalTargetIncome: { type: Number, default: 0 },
+      totalTargetExpenses: { type: Number, default: 0 },
     },
   ],
 });
 
-const MonthlyDataModel = mongoose.model<MonthlyData>(
+export default mongoose.model<MonthlyDataSchemaDocument>(
   "MonthlyData",
   monthlyDataSchema
 );
-
-export default MonthlyDataModel;

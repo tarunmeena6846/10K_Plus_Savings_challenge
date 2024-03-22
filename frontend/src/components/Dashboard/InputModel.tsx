@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button, Tabs, Tab } from "@mui/material";
+import { Modal, Button } from "@mui/material";
 
 const AddTransactionModal = ({
   isOpen,
@@ -8,14 +8,19 @@ const AddTransactionModal = ({
   onAddExpense,
   activeTab,
 }) => {
+  const [newItem, setNewItem] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [newAmount, setNewAmount] = useState(0);
+  const [newDate, setNewDate] = useState(Date);
+
   const handleAddIncome = () => {
-    // Call the onAddIncome function passed from the parent component
-    onAddIncome();
+    onAddIncome(newItem, newCategory, newAmount, newDate);
+    onClose();
   };
 
   const handleAddExpense = () => {
-    // Call the onAddExpense function passed from the parent component
-    onAddExpense();
+    onAddExpense(newItem, newCategory, newAmount, newDate);
+    onClose();
   };
 
   return (
@@ -36,98 +41,58 @@ const AddTransactionModal = ({
           maxWidth: "400px",
         }}
       >
-        {activeTab === 0 && (
-          <div>
-            <h2>New Income</h2>
-            <input
-              type="text"
-              placeholder="Item *"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <input
-              type="text"
-              placeholder="Category"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <input
-              type="date"
-              placeholder="Date"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <input
-              type="number"
-              placeholder="Amount"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <Button onClick={handleAddIncome}>Add Income</Button>
-          </div>
-        )}
-        {activeTab === 1 && (
-          <div>
-            <h2>New Expense</h2>
-            <input
-              type="text"
-              placeholder="Item *"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <input
-              type="text"
-              placeholder="Category"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <input
-              type="date"
-              placeholder="Date"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <input
-              type="number"
-              placeholder="Amount"
-              style={{
-                marginBottom: "10px",
-                width: "100%",
-                padding: "8px",
-                boxSizing: "border-box",
-              }}
-            />
-            <Button onClick={handleAddExpense}>Add Expense</Button>
-          </div>
-        )}
+        <h2>{activeTab === 0 ? "New Income" : "New Expense"}</h2>
+        <input
+          type="text"
+          placeholder="Item"
+          style={{
+            marginBottom: "10px",
+            width: "100%",
+            padding: "8px",
+            boxSizing: "border-box",
+          }}
+          value={newItem}
+          onChange={(e) => setNewItem(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Category"
+          style={{
+            marginBottom: "10px",
+            width: "100%",
+            padding: "8px",
+            boxSizing: "border-box",
+          }}
+          value={newCategory}
+          onChange={(e) => setNewCategory(e.target.value)}
+        />
+        <input
+          type="date"
+          placeholder="Date"
+          style={{
+            marginBottom: "10px",
+            width: "100%",
+            padding: "8px",
+            boxSizing: "border-box",
+          }}
+          value={newDate}
+          onChange={(e) => setNewDate(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          style={{
+            marginBottom: "10px",
+            width: "100%",
+            padding: "8px",
+            boxSizing: "border-box",
+          }}
+          value={newAmount}
+          onChange={(e) => setNewAmount(parseFloat(e.target.value))}
+        />
+        <Button onClick={activeTab === 0 ? handleAddIncome : handleAddExpense}>
+          {activeTab === 0 ? "Add Income" : "Add Expense"}
+        </Button>
       </div>
     </Modal>
   );

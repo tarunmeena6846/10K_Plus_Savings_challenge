@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import SidebarLayout from "../SidebarLayout";
-import { monthIncExpInfo } from "../Dashboard";
 import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
+import { monthIncExpInfo } from "../Dashboard";
 
 export default function ActualDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,15 +16,79 @@ export default function ActualDashboard() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  const handleAddIncome = () => {
+  const handleAddIncome = async (
+    item: String,
+    category: string,
+    amount: number,
+    date: Date
+  ) => {
+    console.log("item", item);
     // Add logic to handle adding income
+    const respose = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          item: item,
+          category: category,
+          income: amount,
+          expense: 0,
+          date: date,
+          type: "actual",
+          itemType: "Income",
+        }),
+      }
+    );
+
+    if (!respose.ok) {
+      throw new Error("Network response is not ok");
+    }
+
+    respose.json().then((data) => {
+      console.log("data at add income", data);
+    });
     console.log("Add income logic here");
   };
 
-  const handleAddExpense = () => {
-    // Add logic to handle adding expense
-    console.log("Add expense logic here");
+  const handleAddExpense = async (
+    item: String,
+    category: string,
+    amount: number,
+    date: Date
+  ) => {
+    // Handle adding expense here
+    const respose = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          item: item,
+          category: category,
+          income: 0,
+          expense: amount,
+          date: date,
+          type: "actual",
+          itemType: "Expense",
+        }),
+      }
+    );
+
+    if (!respose.ok) {
+      throw new Error("Network response is not ok");
+    }
+
+    respose.json().then((data) => {
+      console.log("data at add income", data);
+    });
+    // console.log("Adding expense:", newItem, newCategory, newAmount, newDate);
   };
   return (
     <div>
