@@ -3,7 +3,7 @@ import SidebarLayout from "../SidebarLayout";
 import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
 import { monthIncExpInfo } from "../Dashboard";
-
+import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
 export default function ActualDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
@@ -16,80 +16,82 @@ export default function ActualDashboard() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const handleAddIncome = async (
-    item: String,
-    category: string,
-    amount: number,
-    date: Date
-  ) => {
-    console.log("item", item);
-    // Add logic to handle adding income
-    const respose = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          item: item,
-          category: category,
-          income: amount,
-          expense: 0,
-          date: date,
-          type: "actual",
-          itemType: "Income",
-        }),
-      }
-    );
+  // const handleAddIncome = async (
+  //   item: String,
+  //   category: string,
+  //   amount: number,
+  //   date: Date,
+  //   type: String
+  // ) => {
+  //   console.log("item", item, type);
+  //   // Add logic to handle adding income
+  //   const respose = await fetch(
+  //     `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         authorization: "Bearer " + localStorage.getItem("token"),
+  //       },
+  //       body: JSON.stringify({
+  //         item: item,
+  //         category: category,
+  //         income: amount,
+  //         expense: 0,
+  //         date: date,
+  //         type: type,
+  //         itemType: "Income",
+  //       }),
+  //     }
+  //   );
 
-    if (!respose.ok) {
-      throw new Error("Network response is not ok");
-    }
+  //   if (!respose.ok) {
+  //     throw new Error("Network response is not ok");
+  //   }
 
-    respose.json().then((data) => {
-      console.log("data at add income", data);
-    });
-    console.log("Add income logic here");
-  };
+  //   respose.json().then((data) => {
+  //     console.log("data at add income", data);
+  //   });
+  //   console.log("Add income logic here");
+  // };
 
-  const handleAddExpense = async (
-    item: String,
-    category: string,
-    amount: number,
-    date: Date
-  ) => {
-    // Handle adding expense here
-    const respose = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          item: item,
-          category: category,
-          income: 0,
-          expense: amount,
-          date: date,
-          type: "actual",
-          itemType: "Expense",
-        }),
-      }
-    );
+  // const handleAddExpense = async (
+  //   item: String,
+  //   category: string,
+  //   amount: number,
+  //   date: Date,
+  //   type: String
+  // ) => {
+  //   // Handle adding expense here
+  //   const respose = await fetch(
+  //     `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         authorization: "Bearer " + localStorage.getItem("token"),
+  //       },
+  //       body: JSON.stringify({
+  //         item: item,
+  //         category: category,
+  //         income: 0,
+  //         expense: amount,
+  //         date: date,
+  //         type: "actual",
+  //         itemType: "Expense",
+  //       }),
+  //     }
+  //   );
 
-    if (!respose.ok) {
-      throw new Error("Network response is not ok");
-    }
+  //   if (!respose.ok) {
+  //     throw new Error("Network response is not ok");
+  //   }
 
-    respose.json().then((data) => {
-      console.log("data at add income", data);
-    });
-    // console.log("Adding expense:", newItem, newCategory, newAmount, newDate);
-  };
+  //   respose.json().then((data) => {
+  //     console.log("data at add income", data);
+  //   });
+  //   // console.log("Adding expense:", newItem, newCategory, newAmount, newDate);
+  // };
   return (
     <div>
       <SidebarLayout>
@@ -223,7 +225,8 @@ export default function ActualDashboard() {
         onClose={closeModal}
         onAddIncome={handleAddIncome}
         onAddExpense={handleAddExpense}
-        activeTab={activeTab} // Pass active tab to the modal
+        activeTab={activeTab}
+        type="actual" // Pass active tab to the modal
       />
     </div>
   );

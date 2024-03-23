@@ -3,6 +3,7 @@ import SidebarLayout from "../SidebarLayout";
 import { monthIncExpInfo } from "../Dashboard";
 import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
+import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
 
 export default function TargetDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,15 +18,15 @@ export default function TargetDashboard() {
     setIsModalOpen(false);
   };
 
-  const handleAddIncome = () => {
-    // Add logic to handle adding income
-    console.log("Add income logic here");
-  };
+  // const handleAddIncome = () => {
+  //   // Add logic to handle adding income
+  //   console.log("Add income logic here");
+  // };
 
-  const handleAddExpense = () => {
-    // Add logic to handle adding expense
-    console.log("Add expense logic here");
-  };
+  // const handleAddExpense = () => {
+  //   // Add logic to handle adding expense
+  //   console.log("Add expense logic here");
+  // };
   return (
     <div>
       <SidebarLayout>
@@ -159,7 +160,8 @@ export default function TargetDashboard() {
         onClose={closeModal}
         onAddIncome={handleAddIncome}
         onAddExpense={handleAddExpense}
-        activeTab={activeTab} // Pass active tab to the modal
+        activeTab={activeTab}
+        type="target" // Pass active tab to the modal
       />
     </div>
   );
