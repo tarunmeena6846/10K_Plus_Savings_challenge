@@ -379,20 +379,24 @@ const Dashboard = () => {
   // };
 
   useEffect(() => {
-    const savingsData = fetchData(
-      new Date().getFullYear(),
-      new Date().toLocaleString("default", { month: "long" }),
-      "savingsdashboard"
-    );
-
-    if (savingsData.success === true) {
-      setAnnualActualSavings(savingsData.annualActualSavings);
-      setAnnualTargetSavings(savingsData.annualTargetSavings);
-      setAnnualCurrentSavings(savingsData.annualCurrentSavings);
-      setMonthlyData(savingsData.monthWiseData);
-    }
+    const fetchDataAsync = async () => {
+      const savingsData = await fetchData(
+        new Date().getFullYear(),
+        new Date().toLocaleString("default", { month: "long" }),
+        "savingsdashboard"
+      );
+      console.log(savingsData);
+      if (savingsData.success === true) {
+        setAnnualActualSavings(savingsData.annualActualSavings);
+        setAnnualTargetSavings(savingsData.annualTargetSavings);
+        setAnnualCurrentSavings(savingsData.annualCurrentSavings);
+        setMonthlyData(savingsData.monthWiseData);
+        setIsMonthlyDataReady(true);
+      }
+    };
+    fetchDataAsync();
   }, []); // Run this effect only once when the component mounts
-
+  console.log(monthlyData);
   useEffect(() => {
     // Check if the necessary data is available before navigating
     if (currentUserState.userEmail && !currentUserState.isLoading) {

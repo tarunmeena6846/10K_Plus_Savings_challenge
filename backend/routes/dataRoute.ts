@@ -27,140 +27,6 @@ const monthNames = [
 const stripe = new Stripe(process.env.STRIPE_KEY as string);
 const router: Router = express.Router();
 
-// async createSubscription(createSubscriptionRequest) {
-/*
-router.post(
-  "/reset-monthly-data",
-  detokenizeAdmin,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const { month, year } = req.body;
-      // currentUserId = req.user._id;
-      // console.log("req.user.username at 2", req.user.username, currentUserId);
-
-      const userData = await MonthlyDataModel.findOne({
-        userId: req.user,
-      });
-
-      if (userData) {
-        // User entry exists, find the yearly entry for the specified year
-        const yearlyEntry = userData.yearlyData.find(
-          (entry) => entry.year === year
-        );
-
-        if (yearlyEntry) {
-          // Update the totalIncome and totalExpenses based on all monthly entries
-
-          // Year entry exists, find the monthly entry for the specified month
-          const monthlyEntry = yearlyEntry.monthlyData.find(
-            (entry) => entry.month === month
-          );
-
-          if (monthlyEntry) {
-            yearlyEntry.totalIncome -= monthlyEntry.monthlyIncome;
-            yearlyEntry.totalExpenses -= monthlyEntry.monthlyExpenses;
-            // Month entry exists, update the totalIncome and totalExpenses
-            monthlyEntry.monthlyExpenses = 0;
-            monthlyEntry.monthlyIncome = 0;
-          } else {
-            res.status(200).json({
-              success: true,
-              message: "No monthly data found for this month and year",
-              deleted: false,
-            });
-          }
-
-          // Update the totalIncome and totalExpenses based on all monthly entries
-          // yearlyEntry.totalIncome += parseInt(monthlyIncome);
-          // yearlyEntry.totalExpenses += parseInt(monthlyExpense);
-        } else {
-          res.status(200).json({
-            success: true,
-            message: "No monthly data found for this month and year",
-            deleted: false,
-          });
-        }
-        await userData.save();
-      }
-
-      res.status(200).json({
-        success: true,
-        message: "Monthly data reset successfully",
-        deleted: true,
-      });
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-        success: false,
-        message: "Internal Server Error",
-        error: error.message,
-      });
-    }
-  }
-);
-
-// Express Route for updating projected yearly savings
-router.post(
-  "/update-projected-savings",
-  detokenizeAdmin,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const { projectedYearlySavings, year } = req.body;
-      console.log(projectedYearlySavings, year, req.user);
-
-      // Find the user's data entry for the specified year
-      let userData = await MonthlyDataModel.findOne({ userId: req.user });
-
-      if (!userData) {
-        // User data not found, create a new entry
-        userData = new MonthlyDataModel({
-          userId: req.user,
-          yearlyData: [
-            {
-              year: year,
-              monthlyData: [],
-              totalIncome: 0,
-              totalExpenses: 0,
-              projectedYearlySavings: projectedYearlySavings,
-            },
-          ],
-        });
-      } else {
-        // Find the entry for the specified year within yearlyData array
-        const yearlyEntry = userData.yearlyData.find(
-          (entry) => entry.year === year
-        );
-
-        if (!yearlyEntry) {
-          // Yearly entry not found, create a new one
-          userData.yearlyData.push({
-            year: year,
-            projectedYearlySavings: projectedYearlySavings,
-          } as YearlyData);
-        } else {
-          // Update the projected yearly savings
-          yearlyEntry.projectedYearlySavings = projectedYearlySavings;
-        }
-      }
-
-      // Save the changes
-      await userData.save();
-
-      res.status(200).json({
-        success: true,
-        message: "Projected yearly savings updated successfully.",
-      });
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({
-        success: false,
-        message: "Internal Server Error",
-        error: error.message,
-      });
-    }
-  }
-);
-*/
 router.post(
   "/save-item",
   detokenizeAdmin,
@@ -236,7 +102,7 @@ router.post(
         } else if (type === "current") {
           if (itemType === "Income") {
             monthData.current.income += income;
-            monthlyData.yearlyData[yearIndex].totalActualIncome += income;
+            monthlyData.yearlyData[yearIndex].totalCurrentIncome += income;
             monthData.current.items.push({
               category: category,
               title: item,
@@ -245,7 +111,7 @@ router.post(
             });
           } else {
             monthData.current.expense += expense;
-            monthlyData.yearlyData[yearIndex].totalActualExpenses += expense;
+            monthlyData.yearlyData[yearIndex].totalCurrentExpenses += expense;
             monthData.current.items.push({
               category: category,
               title: item,
@@ -256,7 +122,7 @@ router.post(
         } else if (type === "target") {
           if (itemType === "Income") {
             monthData.target.income += income;
-            monthlyData.yearlyData[yearIndex].totalActualIncome += income;
+            monthlyData.yearlyData[yearIndex].totalTargetIncome += income;
             monthData.target.items.push({
               category: category,
               title: item,
@@ -265,7 +131,7 @@ router.post(
             });
           } else {
             monthData.target.expense += expense;
-            monthlyData.yearlyData[yearIndex].totalActualExpenses += expense;
+            monthlyData.yearlyData[yearIndex].totalTargetExpenses += expense;
             monthData.target.items.push({
               category: category,
               title: item,
@@ -408,6 +274,9 @@ router.get(
               target: 0,
             });
           }
+        });
+        monthWiseData.sort((a, b) => {
+          return monthNames.indexOf(a.month) - monthNames.indexOf(b.month);
         });
 
         return res.status(200).json({

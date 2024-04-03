@@ -26,13 +26,14 @@ ChartJS.register(
 );
 
 const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
+  monthlyData.sort();
   console.log("monthlyData at graph", monthlyData);
   // if (monthlyData.length <= 0) return;
   const options = {
     plugins: {
       title: {
         display: true,
-        text: "Projected Savings Vs Actual Savings",
+        text: "Projected Savings Vs Actual Savings Vs Current Savings",
         padding: {
           top: 10,
           // bottom: 50, // Adjust the top padding for the title
@@ -54,17 +55,24 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     labels: monthlyData.map((data) => data.month),
     datasets: [
       {
-        label: "Projected Saving",
+        label: "Target Saving",
         backgroundColor: "#76d6f3",
         // borderColor: "white",
-        data: monthlyData.map((data) => data.projectedSaving),
+        data: monthlyData.map((data) => data.target),
         // borderRadius: 10,
       },
       {
         label: "Actual Saving",
         backgroundColor: "#f377e7",
         // borderColor: "white",
-        data: monthlyData.map((data) => data.actualSavings),
+        data: monthlyData.map((data) => data.actual),
+      },
+      {
+        label: "Current Saving",
+        backgroundColor: "green",
+        // borderColor: "white",
+        data: monthlyData.map((data) => data.current),
+        // borderRadius: 10,
       },
     ],
   };
