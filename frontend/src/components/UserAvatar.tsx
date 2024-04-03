@@ -84,11 +84,13 @@
 // export default UserAvatar;
 
 import { Avatar, Dropdown } from "flowbite-react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userState } from "./store/atoms/user";
-
+import { useNavigate } from "react-router-dom";
 export default function UserAvatar() {
-  const currentUserState = useRecoilValue(userState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  const navigate = useNavigate();
+
   return (
     <Dropdown
       label={
@@ -112,7 +114,22 @@ export default function UserAvatar() {
       <Dropdown.Divider />
       <Dropdown.Item>Account Setting</Dropdown.Item>
       <Dropdown.Divider />
-      <Dropdown.Item>Sign out</Dropdown.Item>
+      <Dropdown.Item
+        onClick={() => {
+          localStorage.removeItem("token");
+          setCurrentUserState({
+            userEmail: "",
+            isLoading: false,
+            imageUrl: currentUserState.imageUrl,
+            isVerified: currentUserState.isVerified,
+            myWhy: currentUserState.myWhy,
+          });
+
+          navigate("/");
+        }}
+      >
+        Sign out
+      </Dropdown.Item>
     </Dropdown>
   );
 }
