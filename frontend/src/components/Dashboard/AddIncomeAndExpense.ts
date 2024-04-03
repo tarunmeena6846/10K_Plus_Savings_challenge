@@ -59,7 +59,7 @@ export const handleAddExpense = async (
         income: 0,
         expense: amount,
         date: date,
-        type: "actual",
+        type: type,
         itemType: "Expense",
       }),
     }

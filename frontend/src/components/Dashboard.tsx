@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import CustomeButton from "./Button";
 import SideBar from "./Sidebar/SideBar";
 import SidebarLayout from "./SidebarLayout";
+import { fetchData } from "./Dashboard/fetchIncomeAndExpenseData";
 
 export const monthIncExpInfo = [
   { name: "Rent", amount: 1000, type: "expense" },
@@ -52,7 +53,9 @@ const Dashboard = () => {
   const [monthlyData, setMonthlyData] = useState<MonthlyDataItem[]>([]);
   const [isMonthlyDataReady, setIsMonthlyDataReady] = useState(false);
   // const [monthIncExpInfo, setMonthIncExpInfo] = useState([]); // holds the monthly income and expense info along with the items
-
+  const [annualActualSavings, setAnnualActualSavings] = useState(0);
+  const [annualTargetSavings, setAnnualTargetSavings] = useState(0);
+  const [annualCurrentSavings, setAnnualCurrentSavings] = useState(0);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [userDetails, setUserDetails] = useState({
     newPassword: "",
@@ -291,93 +294,104 @@ const Dashboard = () => {
     }
   };
   // Fetch monthly data from the backend
-  const fetchData = async () => {
-    try {
-      console.log("selectedDate", selectedDate);
-      const token = localStorage.getItem("token"); // Get the token from your authentication process
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/data/get-list/${
-          selectedDate.year
-        }/${selectedDate.month}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      console.log("Monthly data", data);
-      if (data.success) {
-        setMonthlyIncome(0);
-        setMonthlyExpense(0);
-        console.log("inside");
-        setYearlyExpense(data.yearlyEntry.totalExpenses);
-        setYearlyIncome(data.yearlyEntry.totalIncome);
-        setProjectedUserData(data.yearlyEntry.projectedYearlySavings);
-        console.log("yearly entry:", data.yearlyEntry.monthlyData);
+  // const fetchData = async () => {
+  //   try {
+  //     console.log("selectedDate", selectedDate);
+  //     const token = localStorage.getItem("token"); // Get the token from your authentication process
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_SERVER_URL}/data/get-list/${
+  //         selectedDate.year
+  //       }/${selectedDate.month}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     console.log("Monthly data", data);
+  //     if (data.success) {
+  //       setMonthlyIncome(0);
+  //       setMonthlyExpense(0);
+  //       console.log("inside");
+  //       setYearlyExpense(data.yearlyEntry.totalExpenses);
+  //       setYearlyIncome(data.yearlyEntry.totalIncome);
+  //       setProjectedUserData(data.yearlyEntry.projectedYearlySavings);
+  //       console.log("yearly entry:", data.yearlyEntry.monthlyData);
 
-        const allMonthsData = months.map((month) => {
-          console.log("month", month);
-          const existingEntry = data.yearlyEntry.monthlyData.find(
-            (entry: { month: String }) => entry.month === month
-          );
+  //       const allMonthsData = months.map((month) => {
+  //         console.log("month", month);
+  //         const existingEntry = data.yearlyEntry.monthlyData.find(
+  //           (entry: { month: String }) => entry.month === month
+  //         );
 
-          if (existingEntry) {
-            const actualSavings =
-              existingEntry.monthlyIncome - existingEntry.monthlyExpenses;
-            return {
-              month,
-              actualSavings,
-              projectedSaving: data.yearlyEntry.projectedYearlySavings,
-            };
-          } else {
-            return {
-              month,
-              actualSavings: 0,
-              projectedSaving: data.yearlyEntry.projectedYearlySavings,
-            };
-          }
-        });
+  //         if (existingEntry) {
+  //           const actualSavings =
+  //             existingEntry.monthlyIncome - existingEntry.monthlyExpenses;
+  //           return {
+  //             month,
+  //             actualSavings,
+  //             projectedSaving: data.yearlyEntry.projectedYearlySavings,
+  //           };
+  //         } else {
+  //           return {
+  //             month,
+  //             actualSavings: 0,
+  //             projectedSaving: data.yearlyEntry.projectedYearlySavings,
+  //           };
+  //         }
+  //       });
 
-        console.log("allmonthdata", allMonthsData);
-        setMonthlyData(allMonthsData);
+  //       console.log("allmonthdata", allMonthsData);
+  //       setMonthlyData(allMonthsData);
 
-        if (data.monthlyEntry) {
-          setMonthlyIncome(data.monthlyEntry.monthlyIncome);
-          setMonthlyExpense(data.monthlyEntry.monthlyExpenses);
-        }
-        // return <MonthlyBarGraph allMonthsData={allMonthsData} />;
-        setIsMonthlyDataReady(true); // Set the flag to true when data is ready
-        if (data.yearlyEntry.projectedYearlySavings === 0) {
-          // navigate("/projecteddashboard");
-        }
-        // setMonthIncExpInfo(data.items);
-      } else {
-        console.error("Failed to fetch monthly data");
-        setMonthlyIncome(0);
-        console.log("data", data);
-        setProjectedUserData(0);
+  //       if (data.monthlyEntry) {
+  //         setMonthlyIncome(data.monthlyEntry.monthlyIncome);
+  //         setMonthlyExpense(data.monthlyEntry.monthlyExpenses);
+  //       }
+  //       // return <MonthlyBarGraph allMonthsData={allMonthsData} />;
+  //       setIsMonthlyDataReady(true); // Set the flag to true when data is ready
+  //       if (data.yearlyEntry.projectedYearlySavings === 0) {
+  //         // navigate("/projecteddashboard");
+  //       }
+  //       // setMonthIncExpInfo(data.items);
+  //     } else {
+  //       console.error("Failed to fetch monthly data");
+  //       setMonthlyIncome(0);
+  //       console.log("data", data);
+  //       setProjectedUserData(0);
 
-        setMonthlyExpense(0);
-        setYearlyExpense(0);
-        setYearlyIncome(0);
-        // navigate("/projecteddashboard");
-      }
+  //       setMonthlyExpense(0);
+  //       setYearlyExpense(0);
+  //       setYearlyIncome(0);
+  //       // navigate("/projecteddashboard");
+  //     }
 
-      // console.log("monthlyData", monthlyData);
-    } catch (error) {
-      console.error("Error fetching monthly data:", error);
-      setMonthlyIncome(0);
-      setMonthlyExpense(0);
-      setYearlyExpense(0);
-      setYearlyIncome(0);
-    }
-  };
+  //     // console.log("monthlyData", monthlyData);
+  //   } catch (error) {
+  //     console.error("Error fetching monthly data:", error);
+  //     setMonthlyIncome(0);
+  //     setMonthlyExpense(0);
+  //     setYearlyExpense(0);
+  //     setYearlyIncome(0);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchData();
-  }, [selectedDate.month, selectedDate.year, setCurrentUserState]); // Run this effect only once when the component mounts
+    const savingsData = fetchData(
+      new Date().getFullYear(),
+      new Date().toLocaleString("default", { month: "long" }),
+      "savingsdashboard"
+    );
+
+    if (savingsData.success === true) {
+      setAnnualActualSavings(savingsData.annualActualSavings);
+      setAnnualTargetSavings(savingsData.annualTargetSavings);
+      setAnnualCurrentSavings(savingsData.annualCurrentSavings);
+      setMonthlyData(savingsData.monthWiseData);
+    }
+  }, []); // Run this effect only once when the component mounts
 
   useEffect(() => {
     // Check if the necessary data is available before navigating
@@ -461,32 +475,32 @@ const Dashboard = () => {
             style={{ background: "#ffcbfb", overflow: "hidden" }}
           >
             <h2>Current Savings</h2>
-            <h2 className="text-4xl">${monthlyIncome}</h2>
+            <h2 className="text-4xl">${annualCurrentSavings}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
             style={{ background: "#b2edff", overflow: "hidden" }}
           >
             <h2>Target Savings</h2>
-            <h2 className="text-4xl">${monthlyExpense}</h2>
+            <h2 className="text-4xl">${annualTargetSavings}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
             style={{ background: "#ceffae", overflow: "hidden" }}
           >
             <h2>Actual Savings</h2>
-            <h2 className="text-4xl">${monthlyIncome - monthlyExpense}</h2>
+            <h2 className="text-4xl">${annualActualSavings}</h2>
           </div>
-          <div className="col-span-2 md:row-span-2">
+          <div className="col-span-3 md:row-span-2">
             <div className="h-full w-full bg-white rounded-2xl">
               {isMonthlyDataReady && (
                 <MonthlyBarGraph monthlyData={monthlyData} />
               )}
             </div>
           </div>
-          <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
+          {/* <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
             <MonthlyChart monthlyIncome={500} monthlyExpenses={200} />
-          </div>
+          </div> */}
         </div>
       </SidebarLayout>
     </div>

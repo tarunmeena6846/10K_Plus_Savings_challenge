@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SidebarLayout from "../SidebarLayout";
 import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
 import { monthIncExpInfo } from "../Dashboard";
 import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
+import { fetchData } from "./fetchIncomeAndExpenseData";
 export default function ActualDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
-
+  const [actualItemList, setActualItemList] = useState([]);
+  const [actualIncome, setActualIncome] = useState(0);
+  const [actualExpense, setActualExpense] = useState(0);
   const openModal = (tab) => {
     setActiveTab(tab);
     setIsModalOpen(true);
@@ -16,82 +19,23 @@ export default function ActualDashboard() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  // const handleAddIncome = async (
-  //   item: String,
-  //   category: string,
-  //   amount: number,
-  //   date: Date,
-  //   type: String
-  // ) => {
-  //   console.log("item", item, type);
-  //   // Add logic to handle adding income
-  //   const respose = await fetch(
-  //     `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //       body: JSON.stringify({
-  //         item: item,
-  //         category: category,
-  //         income: amount,
-  //         expense: 0,
-  //         date: date,
-  //         type: type,
-  //         itemType: "Income",
-  //       }),
-  //     }
-  //   );
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      const actualData = await fetchData(
+        new Date().getFullYear(),
+        new Date().toLocaleString("default", { month: "long" }),
+        "actual"
+      );
+      console.log(actualData);
+      if (actualData.success) {
+        setActualIncome(actualData.actualData.income);
+        setActualExpense(actualData.actualData.expense);
+        setActualItemList(actualData.actualData.items);
+      }
+    };
+    fetchDataAsync();
+  }, []); // Run this effect only once when the component mounts
 
-  //   if (!respose.ok) {
-  //     throw new Error("Network response is not ok");
-  //   }
-
-  //   respose.json().then((data) => {
-  //     console.log("data at add income", data);
-  //   });
-  //   console.log("Add income logic here");
-  // };
-
-  // const handleAddExpense = async (
-  //   item: String,
-  //   category: string,
-  //   amount: number,
-  //   date: Date,
-  //   type: String
-  // ) => {
-  //   // Handle adding expense here
-  //   const respose = await fetch(
-  //     `${import.meta.env.VITE_SERVER_URL}/data/save-item`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //       body: JSON.stringify({
-  //         item: item,
-  //         category: category,
-  //         income: 0,
-  //         expense: amount,
-  //         date: date,
-  //         type: "actual",
-  //         itemType: "Expense",
-  //       }),
-  //     }
-  //   );
-
-  //   if (!respose.ok) {
-  //     throw new Error("Network response is not ok");
-  //   }
-
-  //   respose.json().then((data) => {
-  //     console.log("data at add income", data);
-  //   });
-  //   // console.log("Adding expense:", newItem, newCategory, newAmount, newDate);
-  // };
   return (
     <div>
       <SidebarLayout>
@@ -101,21 +45,21 @@ export default function ActualDashboard() {
             style={{ background: "#ffcbfb", overflow: "hidden" }}
           >
             <h2>Actual Income</h2>
-            <h2 className="text-4xl">$0</h2>
+            <h2 className="text-4xl">${actualIncome}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
             style={{ background: "#b2edff", overflow: "hidden" }}
           >
             <h2>Actual Expenses</h2>
-            <h2 className="text-4xl">$0</h2>
+            <h2 className="text-4xl">${actualExpense}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
             style={{ background: "#ceffae", overflow: "hidden" }}
           >
             <h2>Actual Savings</h2>
-            <h2 className="text-4xl">$0</h2>
+            <h2 className="text-4xl">${actualIncome - actualExpense}</h2>
           </div>
           <div className="md:col-span-3 grid grid-cols-4 row-span-2 gap-4">
             <div
@@ -138,10 +82,10 @@ export default function ActualDashboard() {
                 + Add Income
               </Button>
               {/* Render the updated items */}
-              {monthIncExpInfo.length > 0 ? (
+              {actualItemList.length > 0 ? (
                 <div style={{ padding: "10px", width: "100%" }}>
-                  {monthIncExpInfo
-                    .filter((item) => item.type === "income")
+                  {actualItemList
+                    .filter((item) => item.type === "Income")
                     .map((item, index) => (
                       <div
                         key={index}
@@ -155,7 +99,7 @@ export default function ActualDashboard() {
                           alignItems: "center",
                         }}
                       >
-                        <span style={{ flex: 1 }}>{item.name}</span>
+                        <span style={{ flex: 1 }}>{item.title}</span>
                         <span>
                           $
                           {item.amount.toLocaleString("en-US", {
@@ -188,10 +132,10 @@ export default function ActualDashboard() {
                 + Add Expenses
               </Button>
               {/* Render the updated items */}
-              {monthIncExpInfo.length > 0 ? (
+              {actualItemList.length > 0 ? (
                 <div style={{ padding: "10px", width: "100%" }}>
-                  {monthIncExpInfo
-                    .filter((item) => item.type === "expense")
+                  {actualItemList
+                    .filter((item) => item.type === "Expense")
                     .map((item, index) => (
                       <div
                         key={index}
@@ -205,7 +149,7 @@ export default function ActualDashboard() {
                           alignItems: "center",
                         }}
                       >
-                        <span style={{ flex: 1 }}>{item.name}</span>
+                        <span style={{ flex: 1 }}>{item.title}</span>
                         <span>
                           $
                           {item.amount.toLocaleString("en-US", {

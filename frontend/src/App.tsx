@@ -41,35 +41,35 @@ function App() {
     "/actualdashboard",
   ];
   const shouldRenderAppbar = !hideAppbarRoutes.includes(location.pathname);
+  // console.log("tarun inside app.tsx");
 
   return (
     // <Router>
-      <RecoilRoot>
-        {shouldRenderAppbar && <Appbar />}{" "}
-        {/* Render the Appbar conditionally */}
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/currentdashboard" element={<CurrentDashboard />} />
-          <Route path="/targetdashboard" element={<TargetDashboard />} />
-          <Route path="/actualdashboard" element={<ActualDashboard />} />
-          <Route path="/pricing" element={<StripePricingTable />} />
-          <Route path="/savingportal" element={<SavingPortalLanding />} />
-          <Route path="/incomeportal" element={<IncomePortalLanding />} />
-          <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
-          <Route path="/swotportal" element={<SWOTanalysisPortal />} />
-          <Route path="/swotportal/schedulesession" element={<BookSession />} />
-          <Route path="/verify-email/:token" element={<EmailVerify />} />
-          <Route path="/community" element={<CommunityLanding />} />
-          <Route path="/community/mydiscussion" element={<MyPosts />} />
-          <Route path="/community/bookmarked" element={<MyBookmarked />} />
-          <Route path="/community/drafts" element={<MyDraft />} />
-          <Route path="/community/post/:postId" element={<PostLanding />} />
-          <Route path="/newpost" element={<HandleCreatePost />}></Route>
-        </Routes>
-      </RecoilRoot>
+    <RecoilRoot>
+      {shouldRenderAppbar && <Appbar />} {/* Render the Appbar conditionally */}
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/currentdashboard" element={<CurrentDashboard />} />
+        <Route path="/targetdashboard" element={<TargetDashboard />} />
+        <Route path="/actualdashboard" element={<ActualDashboard />} />
+        <Route path="/pricing" element={<StripePricingTable />} />
+        <Route path="/savingportal" element={<SavingPortalLanding />} />
+        <Route path="/incomeportal" element={<IncomePortalLanding />} />
+        <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
+        <Route path="/swotportal" element={<SWOTanalysisPortal />} />
+        <Route path="/swotportal/schedulesession" element={<BookSession />} />
+        <Route path="/verify-email/:token" element={<EmailVerify />} />
+        <Route path="/community" element={<CommunityLanding />} />
+        <Route path="/community/mydiscussion" element={<MyPosts />} />
+        <Route path="/community/bookmarked" element={<MyBookmarked />} />
+        <Route path="/community/drafts" element={<MyDraft />} />
+        <Route path="/community/post/:postId" element={<PostLanding />} />
+        <Route path="/newpost" element={<HandleCreatePost />}></Route>
+      </Routes>
+    </RecoilRoot>
     // </Router>
   );
 }

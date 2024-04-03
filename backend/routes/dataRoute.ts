@@ -1,7 +1,7 @@
 // src/routes/monthlyData.routes.ts
 import express, { Router, Response } from "express";
 // import MonthlyDataModel from "../models/monthlyData.model";
-import MonthlyDataModel from "../models/monthlyData";
+import MonthlyDataModel, { MonthlyData } from "../models/monthlyData";
 // import { detokenizeAdmin } from "../middleware/auth.middleware";
 import { detokenizeAdmin } from "../middleware/index";
 import { AuthenticatedRequest } from "../middleware/index";
@@ -174,13 +174,16 @@ router.post(
         category,
         date,
         income,
+        expense,
+        itemType,
+        type,
         item,
         parsedDate.getMonth() + 1,
         parsedDate.getDate(),
         parsedDate.getFullYear()
       );
       const year = parsedDate.getFullYear();
-      const month = monthNames[parsedDate.getMonth()];
+      const month = parsedDate.toLocaleString("default", { month: "long" });
       const userId = req.user;
       // Check if the user's data for the given year exists
       let monthlyData = await MonthlyDataModel.findOne({
@@ -346,12 +349,12 @@ router.post(
 
 // Express Route for retrieving income items
 router.get(
-  "/get-list/:year/:month",
+  "/get-list/:year/:month/:type",
   detokenizeAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { month, year } = req.params;
-      console.log(month, year);
+      const { month, year, type } = req.params;
+      console.log(month, year, type);
 
       const userData = await MonthlyDataModel.findOne({ userId: req.user });
       // let newObj = new MonthlyData();
@@ -375,7 +378,49 @@ router.get(
           message: "No data found for the specified year.",
         });
       }
+      if (type === "savingsdashboard") {
+        const monthWiseData: {
+          month: string;
+          actual: Number;
+          current: Number;
+          target: Number;
+        }[] = [];
+        yearlyEntry.monthlyData.forEach((monthData) => {
+          const monthInfo = {
+            month: monthData.month,
+            actual: monthData.actual.income - monthData.actual.expense,
+            current: monthData.current.income - monthData.current.expense,
+            target: monthData.target.income - monthData.current.expense,
+          };
+          monthWiseData.push(monthInfo);
+        });
 
+        // Add data for months where data is not present
+        monthNames.forEach((month) => {
+          const monthExists = monthWiseData.some(
+            (data) => data.month === month
+          );
+          if (!monthExists) {
+            monthWiseData.push({
+              month: month,
+              actual: 0,
+              current: 0,
+              target: 0,
+            });
+          }
+        });
+
+        return res.status(200).json({
+          success: true,
+          annualActualSavings:
+            yearlyEntry.totalActualIncome - yearlyEntry.totalActualExpenses,
+          annualTargetSavings:
+            yearlyEntry.totalTargetIncome - yearlyEntry.totalTargetExpenses,
+          annualCurrentSavings:
+            yearlyEntry.totalCurrentIncome - yearlyEntry.totalCurrentExpenses,
+          monthWiseData: monthWiseData,
+        });
+      }
       // Find the monthly entry for the specified month
       const monthlyEntry = yearlyEntry.monthlyData.find(
         (entry) => entry.month === month
@@ -384,15 +429,35 @@ router.get(
       if (!monthlyEntry) {
         return res.status(200).json({
           success: true,
-          yearlyEntry,
+          // yearlyEntry,
           message: "No data found for the specified month.",
         });
       }
-      res.status(200).json({
-        success: true,
-        yearlyEntry,
-        monthlyEntry,
-      });
+      if (type === "current") {
+        res.status(200).json({
+          success: true,
+          currentData: monthlyEntry.current,
+          // yearlyEntry,
+          // monthlyEntry,
+        });
+      }
+      if (type === "target") {
+        res.status(200).json({
+          success: true,
+          targetData: monthlyEntry.target,
+          // yearlyEntry,
+          // monthlyEntry,
+        });
+      }
+
+      if (type === "actual") {
+        res.status(200).json({
+          success: true,
+          actualData: monthlyEntry.actual,
+          // yearlyEntry,
+          // monthlyEntry,
+        });
+      }
     } catch (error: any) {
       console.error(error);
       res.status(500).json({

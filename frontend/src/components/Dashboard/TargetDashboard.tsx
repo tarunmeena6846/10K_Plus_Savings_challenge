@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SidebarLayout from "../SidebarLayout";
 import { monthIncExpInfo } from "../Dashboard";
 import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
 import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
+import { fetchData } from "./fetchIncomeAndExpenseData";
 
 export default function TargetDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
-
+  const [targetItemList, setTargetItemList] = useState([]);
+  const [targetIncome, setTargetIncome] = useState(0);
+  const [targetExpense, setTargetExpense] = useState(0);
   const openModal = (tab) => {
     setActiveTab(tab);
     setIsModalOpen(true);
@@ -17,6 +20,21 @@ export default function TargetDashboard() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      const targetData = await fetchData(
+        new Date().getFullYear(),
+        new Date().toLocaleString("default", { month: "long" }),
+        "target"
+      );
+      if (targetData.success) {
+        setTargetIncome(targetData.targetData.income);
+        setTargetExpense(targetData.targetData.expense);
+        setTargetItemList(targetData.targetData.items);
+      }
+    };
+    fetchDataAsync();
+  }, []); // Run this effect only once when the component mounts
 
   // const handleAddIncome = () => {
   //   // Add logic to handle adding income
@@ -36,21 +54,21 @@ export default function TargetDashboard() {
             style={{ background: "#ffcbfb", overflow: "hidden" }}
           >
             <h2>Target Income</h2>
-            <h2 className="text-4xl">$0</h2>
+            <h2 className="text-4xl">${targetIncome}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
             style={{ background: "#b2edff", overflow: "hidden" }}
           >
             <h2>Target Expenses</h2>
-            <h2 className="text-4xl">$0</h2>
+            <h2 className="text-4xl">${targetExpense}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
             style={{ background: "#ceffae", overflow: "hidden" }}
           >
             <h2>Target Savings</h2>
-            <h2 className="text-4xl">$0</h2>
+            <h2 className="text-4xl">${targetIncome - targetExpense}</h2>
           </div>
           <div className="md:col-span-3 grid grid-cols-4 row-span-2 gap-4">
             <div
@@ -73,10 +91,10 @@ export default function TargetDashboard() {
                 + Add Income
               </Button>
               {/* Render the updated items */}
-              {monthIncExpInfo.length > 0 ? (
+              {targetItemList.length > 0 ? (
                 <div style={{ padding: "10px", width: "100%" }}>
-                  {monthIncExpInfo
-                    .filter((item) => item.type === "income")
+                  {targetItemList
+                    .filter((item) => item.type === "Income")
                     .map((item, index) => (
                       <div
                         key={index}
@@ -90,7 +108,7 @@ export default function TargetDashboard() {
                           alignItems: "center",
                         }}
                       >
-                        <span style={{ flex: 1 }}>{item.name}</span>
+                        <span style={{ flex: 1 }}>{item.title}</span>
                         <span>
                           $
                           {item.amount.toLocaleString("en-US", {
@@ -123,10 +141,10 @@ export default function TargetDashboard() {
                 + Add Expenses
               </Button>
               {/* Render the updated items */}
-              {monthIncExpInfo.length > 0 ? (
+              {targetItemList.length > 0 ? (
                 <div style={{ padding: "10px", width: "100%" }}>
-                  {monthIncExpInfo
-                    .filter((item) => item.type === "expense")
+                  {targetItemList
+                    .filter((item) => item.type === "Expense")
                     .map((item, index) => (
                       <div
                         key={index}
@@ -140,7 +158,7 @@ export default function TargetDashboard() {
                           alignItems: "center",
                         }}
                       >
-                        <span style={{ flex: 1 }}>{item.name}</span>
+                        <span style={{ flex: 1 }}>{item.title}</span>
                         <span>
                           $
                           {item.amount.toLocaleString("en-US", {
