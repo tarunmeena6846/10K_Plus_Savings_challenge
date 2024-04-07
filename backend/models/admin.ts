@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import SwotDetailsModel, { SwotDetails } from "./swotModel";
 
 export interface Admin extends Document {
   username: string;
@@ -13,6 +14,7 @@ export interface Admin extends Document {
   verificationToken: string;
   myWhy: string;
   swotSessionTime: Date;
+  swotTasksDetails: Schema.Types.ObjectId | null; // Correcting the type
 }
 
 const adminSchema = new Schema<Admin>({
@@ -35,7 +37,11 @@ const adminSchema = new Schema<Admin>({
   isTopTier: { type: Boolean, default: false },
   myWhy: { type: String, default: "" },
   swotSessionTime: Date,
-
+  swotTasksDetails: {
+    type: Schema.Types.ObjectId,
+    ref: "SwotDetails",
+    default: null,
+  },
   // subscriptions: [
   //   {
   //     type: Schema.Types.ObjectId,

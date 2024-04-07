@@ -49,7 +49,15 @@ function Appbar() {
   );
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const handleMouseEnter = () => {
+    setIsDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDropdownOpen(false);
+  };
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -94,21 +102,6 @@ function Appbar() {
             if (!data.userData.isSubscribed) {
               navigate("/pricing");
             }
-            // if (data.userData.isSubscribed) {
-            //   const resend = new Resend("re_NNACsYE7_2erSMMU7kcXaXufffNzUBotd");
-            //   // await handleSubscriptionCreated(session, subscription);
-            //   const htmlContent = renderToString(
-            //     <WelcomeEmail name="Brendon Urie" email="panic@thedis.co" />
-            //   );
-            //   console.log("tarun  meeana");
-            //   resend.emails.send({
-            //     from: "delivered@resend.dev",
-            //     // to: session.customer_email as string,
-            //     to: "tarunmeena6846@gmail.com",
-            //     subject: "Hello World",
-            //     html: htmlContent,
-            //   });
-            // }
           } else {
             setCurrentUserState({
               userEmail: "",
@@ -170,15 +163,8 @@ function Appbar() {
   };
   const manageSubscription = async () => {
     setLogoutModalOpen(false);
-
-    // const session = await handleSubscription();
-
-    // if (session) {
-    //   window.location.href = session.url;
-    // }
   };
 
-  // if (currentUserState.userEmail === "") navigate("/login");
   return (
     <div>
       <Toolbar
@@ -219,16 +205,7 @@ function Appbar() {
           >
             Home
           </motion.button>
-          {/* <motion.button
-            className={"login-button rounded-3xl bg-transparent text-black"}
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              navigate(currentUserState.userEmail ? "/dashboard" : "/");
-            }}
-          >
-            Home
-          </motion.button> */}
+
           <motion.button
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 1 }} // Define hover animation
@@ -239,45 +216,11 @@ function Appbar() {
           >
             Pricing
           </motion.button>
-          {/* <motion.button
-            className={"login-button rounded-3xl bg-transparent text-black"}
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              navigate("/pricing");
-            }}
-          >
-            Pricing
-          </motion.button> */}
-          {/* <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
-            }
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Incomes
-          </motion.button>
-          <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-20 h-10"
-            }
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Expenses
-          </motion.button> */}
+
           <motion.button
             whileHover={{ background: "black", color: "white", scale: 1.1 }}
             whileTap={{ scale: 1 }} // Define hover animation
             className="rounded-3xl text-black p-2"
-            // whileHover={{
-            //   background: "black",
-            //   color: "white",
-            //   // width: "120px",
-            //   scale: 1.1,
-            // }}
-            // whileTap={{ scale: 0.9 }}
             onClick={() => {
               navigate("/community");
             }}
@@ -318,27 +261,48 @@ function Appbar() {
           >
             Income Portal
           </motion.button> */}
-
-          <motion.button
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black pr-3 p-2"
-            // className={"login-button rounded-3xl bg-transparent text-black"}
-            // whileHover={{
-            //   background: "black",
-            //   // width: "120px",
-            //   color: "white",
-            //   scale: 1.1,
-            // }}
-            // whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              navigate("/swotportal");
-            }}
-          >
-            SWOT Portal
-          </motion.button>
+          <div>
+            <motion.button
+              whileHover={{ background: "black", color: "white", scale: 1.1 }}
+              whileTap={{ scale: 1 }} // Define hover animation
+              className="rounded-3xl text-black pr-3 p-2"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => {
+                navigate("/swotportal");
+              }}
+            >
+              SWOT Portal
+            </motion.button>
+            {isDropdownOpen && (
+              <motion.div
+                className="dropdown bg-gray-100 p-4 rounded-2xl"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                style={{ position: "absolute", zIndex: 1 }} // Set position and z-index
+                transition={{ duration: 0.2 }}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <motion.button
+                  whileHover={{
+                    background: "black",
+                    color: "white",
+                    scale: 1.1,
+                  }}
+                  whileTap={{ scale: 1 }}
+                  className="rounded-3xl text-black pr-3 p-2"
+                  onClick={() => {
+                    navigate("/swotportal/tasklist");
+                  }}
+                >
+                  Tasklist
+                </motion.button>
+              </motion.div>
+            )}
+          </div>
         </div>
-
         <div>
           {!currentUserState.userEmail ? (
             <div className="hidden md:flex space-x-4">
@@ -375,30 +339,6 @@ function Appbar() {
             <MenuIcon />
           </IconButton>
         </div>
-        {/* <div className="md:hidden">
-          <IconButton
-            aria-label="menu"
-            onClick={handleMenuClick}
-            // color="inherit"
-          >
-            <MenuIcon />
-          </IconButton>
-        </div>
-
-        <div className="hidden md:flex space-x-4">
-          <Button color="inherit" onClick={() => navigate("/pricing")}>
-            Pricing
-          </Button>
-          <Button color="inherit" onClick={() => navigate("/incomes")}>
-            Incomes
-          </Button>
-          <Button color="inherit" onClick={() => navigate("/expenses")}>
-            Expenses
-          </Button>
-          <Button color="inherit" onClick={() => navigate("/blog")}>
-            Blog
-          </Button>
-        </div> */}
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -466,20 +406,7 @@ function Appbar() {
                 >
                   Book SWOT Session
                 </Button>
-                {/* <form
-                  method="POST"
-                  action={`${
-                    import.meta.env.VITE_SERVER_URL
-                  }/create-customer-portal-session`}
-                >
-                  <input
-                    type="hidden"
-                    name="customerId"
-                    value={subscription.stripeCustomerId}
-                  />
 
-                  <button type="submit">Manage billing</button>
-                </form> */}
                 <ManageBillingForm></ManageBillingForm>
               </Box>
             </Box>

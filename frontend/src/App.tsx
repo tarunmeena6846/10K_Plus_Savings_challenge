@@ -29,6 +29,7 @@ import "./App.css";
 import CurrentDashboard from "./components/Dashboard/CurrentDashboard";
 import TargetDashboard from "./components/Dashboard/TargetDashboard";
 import ActualDashboard from "./components/Dashboard/ActualDashboard";
+import SWOTtasklist from "./components/SWOTanalysisPortal/SWOTtaskListDisplay";
 
 function App() {
   const location = useLocation();
@@ -60,6 +61,7 @@ function App() {
         <Route path="/incomeportal" element={<IncomePortalLanding />} />
         <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
         <Route path="/swotportal" element={<SWOTanalysisPortal />} />
+        <Route path="/swotportal/tasklist" element={<SWOTtasklist />} />
         <Route path="/swotportal/schedulesession" element={<BookSession />} />
         <Route path="/verify-email/:token" element={<EmailVerify />} />
         <Route path="/community" element={<CommunityLanding />} />

@@ -8,7 +8,7 @@ import dataRoute from "./routes/dataRoute";
 import authRoutes from "./routes/authRoutes";
 import stripeRoutes from "./routes/stripeRoutes"; // Import the webhook routes
 import postRoute from "./routes/postRoute";
-
+import swotRoute from "./routes/swotRoute";
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
@@ -31,6 +31,7 @@ app.use("/auth", authRoutes);
 app.use("/data", dataRoute);
 app.use("/stripe", stripeRoutes);
 app.use("/post", postRoute);
+app.use("/swot", swotRoute);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

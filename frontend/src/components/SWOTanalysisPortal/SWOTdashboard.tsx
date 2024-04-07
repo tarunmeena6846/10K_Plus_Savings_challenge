@@ -212,12 +212,12 @@ const SWOTdashboard = () => {
             Add Threat
           </motion.button>
         </div>
-        <motion.button
+        {/* <motion.button
           type="submit"
           className="text-white bg-black px-4 py-2 mb-2 rounded-3xl"
         >
           Submit
-        </motion.button>
+        </motion.button> */}
       </form>
     </div>
   );

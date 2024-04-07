@@ -1,21 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
+export interface taskDetails {
+  title: String;
+  isComplete: Boolean;
+}
 const TaskList = ({ setShowPopup }) => {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
+  const [tasks, setTasks] = useState<taskDetails[]>([]);
+  const [newTask, setNewTask] = useState<taskDetails | null>(null);
   const [popupWidth, setPopupWidth] = useState(500);
   const [popupHeight, setPopupHeight] = useState(300);
   const [isChecked, setIsChecked] = useState(false);
 
+  const handleSaveTasks = async () => {
+    console.log("tasks", tasks);
+
+    await fetch(`${import.meta.env.VITE_SERVER_URL}/swot/savetasklist`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        tasks,
+        isReminderSet: isChecked,
+      }),
+    })
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("Network repsone is not ok");
+        }
+        resp.json().then((data) => {
+          console.log(data);
+          setTasks([]);
+        });
+      })
+      .catch((error) => {
+        console.error("Error saving tasklist");
+      });
+  };
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
   };
   const handleAddTask = () => {
-    if (newTask.trim() !== "") {
-      setTasks([...tasks, newTask]);
-      setNewTask("");
-    }
+    console.log(newTask);
+    setTasks([...tasks, newTask]);
+    setNewTask(null);
   };
 
   const handleRemoveTask = (index) => {
@@ -43,7 +72,7 @@ const TaskList = ({ setShowPopup }) => {
         onResize={handleResize}
         onClick={(e) => e.stopPropagation()}
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        // whileTap={{ scale: 0.95 }}
       >
         <div className="p-4">
           <motion.button
@@ -60,8 +89,10 @@ const TaskList = ({ setShowPopup }) => {
             type="text"
             className="w-full py-2 px-3 mr-2 border border-gray-300 rounded"
             placeholder="Enter a new task"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
+            value={newTask?.title}
+            onChange={(e) =>
+              setNewTask({ title: e.target.value, isComplete: false })
+            }
           />
           <motion.button
             className="bg-black text-white rounded-3xl p-2"
@@ -80,7 +111,7 @@ const TaskList = ({ setShowPopup }) => {
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5 }}
             >
-              <span>{task}</span>
+              <span>{task.title}</span>
               <motion.button
                 className="text-red-500 hover:text-red-600"
                 onClick={() => handleRemoveTask(index)}
@@ -90,29 +121,39 @@ const TaskList = ({ setShowPopup }) => {
             </motion.li>
           ))}
         </ul>
-        <div className="mt-2">
-          <motion.label
-            className="checkbox-container mr-3"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <input
-              type="checkbox"
-              checked={isChecked}
-              onChange={toggleCheckbox}
-            />
-            <motion.span
-              className="checkmark"
-              variants={{
-                checked: { scaleX: 1, opacity: 1 },
-                unchecked: { scaleX: 0, opacity: 0 },
-              }}
-              initial={isChecked ? "checked" : "unchecked"}
-              animate={isChecked ? "checked" : "unchecked"}
-              transition={{ duration: 0.2 }}
-            />
-          </motion.label>
-          Set Remider for Accomplishing the Tasks.
+        <div className="mt-2 flex justify-between">
+          <div className="pt-2">
+            <motion.label
+              className="checkbox-container mr-3"
+              whileHover={{ scale: 1.1 }}
+              // whileTap={{ scale: 0.9 }}
+            >
+              <input
+                type="checkbox"
+                checked={isChecked}
+                onChange={toggleCheckbox}
+              />
+              <motion.span
+                className="checkmark"
+                variants={{
+                  checked: { scaleX: 1, opacity: 1 },
+                  unchecked: { scaleX: 0, opacity: 0 },
+                }}
+                initial={isChecked ? "checked" : "unchecked"}
+                animate={isChecked ? "checked" : "unchecked"}
+                // transition={{ duration: 0.2 }}
+              />
+            </motion.label>
+            Set Remider for Accomplishing the Tasks.
+          </div>
+          <div className="flex ">
+            <motion.button
+              className="bg-black text-white rounded-3xl p-2"
+              onClick={handleSaveTasks}
+            >
+              Save
+            </motion.button>
+          </div>
         </div>
       </motion.div>
     </div>
