@@ -6,7 +6,9 @@ export interface taskDetails {
 }
 const TaskList = ({ setShowPopup }) => {
   const [tasks, setTasks] = useState<taskDetails[]>([]);
-  const [newTask, setNewTask] = useState<taskDetails | null>(null);
+  const [newTask, setNewTask] = useState<
+    taskDetails | { title: ""; isComplete: false }
+  >();
   const [popupWidth, setPopupWidth] = useState(500);
   const [popupHeight, setPopupHeight] = useState(300);
   const [isChecked, setIsChecked] = useState(false);
@@ -44,7 +46,8 @@ const TaskList = ({ setShowPopup }) => {
   const handleAddTask = () => {
     console.log(newTask);
     setTasks([...tasks, newTask]);
-    setNewTask(null);
+    setNewTask({ title: "", isComplete: false });
+    console.log(newTask);
   };
 
   const handleRemoveTask = (index) => {
