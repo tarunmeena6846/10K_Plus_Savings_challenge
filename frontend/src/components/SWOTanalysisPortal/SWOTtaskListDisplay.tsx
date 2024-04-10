@@ -111,15 +111,19 @@ export default function SWOTtasklist() {
             <input type="checkbox" onChange={handleSelectAll} />
           </div>
           <div className="flex-1">Title</div>
-          <div className="flex-1">Completed</div>
+          {/* <div className="flex-1">Completed</div> */}
+          <div className="flex-1">Due Date</div>
         </div>
         {currentTasks?.map((task) => (
           <div
             key={task._id}
-            className="flex flex-row border-t border-gray-300 p-2"
+            className={`flex flex-row border-t border-gray-300 p-2 ${
+              task.isComplete ? `text-gray-400` : ``
+            }`}
           >
             <div className="flex-1">
               <input
+                disabled={task.isComplete}
                 type="checkbox"
                 id={`task-${task._id}`}
                 checked={completedTasks.includes(task._id)}
@@ -127,7 +131,8 @@ export default function SWOTtasklist() {
               />
             </div>
             <div className="flex-1">{task.title}</div>
-            <div className="flex-1">{task.isComplete.toString()}</div>
+            {/* <div className="flex-1">{task.isComplete.toString()}</div> */}
+            <div className="flex-1">{task.dueDate ? task.dueDate : "NA"}</div>
           </div>
         ))}
       </div>

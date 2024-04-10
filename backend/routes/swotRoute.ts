@@ -1,7 +1,9 @@
-import express, { Response, Router } from "express";
+import express, { Response, Router, response } from "express";
 import { AuthenticatedRequest, detokenizeAdmin } from "../middleware";
 import AdminModel from "../models/admin";
 import SwotDetailsModel, { SwotDetails, Task } from "../models/swotModel";
+import { sendEmail } from "../emails";
+import { reminderEmail } from "../emails/Reminder";
 
 const router = express.Router();
 
@@ -11,8 +13,8 @@ router.post(
   async (req: AuthenticatedRequest, res: Response) => {
     const user = req.user;
     const tasks: Task[] = req.body.tasks;
-    const isReminderSet: Boolean = req.body.isReminderSet;
-    console.log(user, tasks);
+    const isReminderSet: boolean = req.body.isReminderSet;
+    console.log("tasks in backend", user, tasks);
     try {
       // Find the admin user
       const admin = await AdminModel.findOne({ username: user });
@@ -33,7 +35,10 @@ router.post(
           isReminderSet: isReminderSet,
         });
       } else {
+        console.log(tasks);
         swotDetails.tasks.push(...tasks);
+        console.log("swotDetails.tasks", swotDetails.tasks);
+        swotDetails.isReminderSet = isReminderSet;
       }
 
       await swotDetails.save();
@@ -41,7 +46,14 @@ router.post(
       // Update admin's swotDetails field with the ID of the saved SwotDetails document
       admin.swotTasksDetails = swotDetails._id;
       await admin.save();
+
       if (isReminderSet) {
+        setIntervalForReminder(admin.username);
+        // sendEmail(
+        //   admin.username,
+        //   "Weekly Reminder",
+        //   reminderEmail(admin.username)
+        // );
       }
       res.status(200).json({ message: "Task list saved successfully." });
     } catch (error) {
@@ -51,6 +63,31 @@ router.post(
   }
 );
 
+router.post(
+  "/set-reminder",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, resp: Response) => {
+    const email = req.body.email;
+    const user = req?.user;
+    try {
+      const swotDetails = await SwotDetailsModel.findOne({ userId: user });
+
+      if (swotDetails) {
+        if (email) {
+          setIntervalForReminder(email);
+        }
+        resp.status(200).json({ success: true });
+      } else {
+        resp.status(200).json({ success: false });
+      }
+    } catch (error) {
+      resp.status(400).json(error);
+    }
+  }
+);
+const setIntervalForReminder = (email: string) => {
+  sendEmail(email, "Weekly Reminder", reminderEmail(email));
+};
 router.get(
   "/get-task-list",
   detokenizeAdmin,
@@ -98,10 +135,14 @@ router.put(
             .status(200)
             .json({ success: true, message: "Tasks deleted successfully." });
         } else if (type === "complete") {
+          let counter = 0;
           // Update isComplete field for tasks with provided taskIds
           swotDetails.tasks.forEach((task) => {
-            if (taskIds.includes(task._id.toString())) {
-              task.isComplete = true;
+            if (!task.isComplete) {
+              console.log("counter", ++counter);
+              if (taskIds.includes(task._id.toString())) {
+                task.isComplete = true;
+              }
             }
           });
           await swotDetails.save();

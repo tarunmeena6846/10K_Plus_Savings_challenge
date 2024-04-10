@@ -4,6 +4,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface Task extends Document {
   title: string;
   isComplete: boolean;
+  dueDate?: string;
 }
 
 export interface SwotDetails extends Document {
@@ -18,7 +19,7 @@ const swotDetailsSchema = new Schema<SwotDetails>({
     required: true,
     unique: true,
   },
-  tasks: [{ title: String, isComplete: Boolean }],
+  tasks: [{ title: String, isComplete: Boolean, dueDate: String }],
   isReminderSet: { type: Boolean, default: false },
 });
 

@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { TextField } from "@mui/material";
 export interface taskDetails {
   title: String;
   isComplete: Boolean;
+  dueDate?: string;
 }
 const TaskList = ({ setShowPopup }) => {
   const [tasks, setTasks] = useState<taskDetails[]>([]);
-  const [newTask, setNewTask] = useState<
-    taskDetails | { title: ""; isComplete: false }
-  >();
+  const [newTask, setNewTask] = useState<taskDetails>({
+    title: "",
+    isComplete: false,
+  });
   const [popupWidth, setPopupWidth] = useState(500);
   const [popupHeight, setPopupHeight] = useState(300);
   const [isChecked, setIsChecked] = useState(false);
-
+  const [onCalendarClick, setOnCalendarClick] = useState(false);
+  // const handleCalenderClick = async () => {};
   const handleSaveTasks = async () => {
     console.log("tasks", tasks);
-
+    if (tasks.length === 0) {
+      alert("No tasks provided");
+      return;
+    }
     await fetch(`${import.meta.env.VITE_SERVER_URL}/swot/savetasklist`, {
       method: "POST",
       headers: {
@@ -45,6 +52,12 @@ const TaskList = ({ setShowPopup }) => {
   };
   const handleAddTask = () => {
     console.log(newTask);
+    if (newTask === undefined) {
+      alert("Please add any tasks");
+      return;
+    }
+    console.log("newTask", newTask);
+    setOnCalendarClick(false);
     setTasks([...tasks, newTask]);
     setNewTask({ title: "", isComplete: false });
     console.log(newTask);
@@ -90,13 +103,20 @@ const TaskList = ({ setShowPopup }) => {
         <div className="flex items-center mb-4 mt-4">
           <input
             type="text"
-            className="w-full py-2 px-3 mr-2 border border-gray-300 rounded"
+            className="w-3/4 py-2 px-3 mr-2 border border-gray-300 rounded"
             placeholder="Enter a new task"
             value={newTask?.title}
-            onChange={(e) =>
-              setNewTask({ title: e.target.value, isComplete: false })
-            }
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
           />
+          <motion.button className="py-2 px-3 mr-2">
+            <img
+              className=""
+              src={"calender1.svg"}
+              onClick={() => {
+                setOnCalendarClick(true);
+              }}
+            />
+          </motion.button>
           <motion.button
             className="bg-black text-white rounded-3xl p-2"
             onClick={handleAddTask}
@@ -104,6 +124,24 @@ const TaskList = ({ setShowPopup }) => {
             +Task
           </motion.button>
         </div>
+        {onCalendarClick && (
+          <div>
+            Due Date:
+            <input
+              className="py-2 px-3 border border-gray-300 rounded"
+              type="date"
+              value={newTask.dueDate || ""}
+              onChange={(e) => {
+                setNewTask({
+                  ...newTask,
+                  dueDate: new Date(e.target.value)
+                    .toISOString()
+                    .substring(0, 10),
+                });
+              }}
+            />
+          </div>
+        )}
         <ul>
           {tasks.map((task, index) => (
             <motion.li

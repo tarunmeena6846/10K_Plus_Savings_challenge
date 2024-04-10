@@ -1,14 +1,47 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import TaskList from "./Tasklist";
-
+import Button from "../Button";
+import { response } from "express";
+import { error } from "console";
+import { validateEmail } from "../validator/emailValidator";
 const SWOTdashboard = () => {
   const [strengths, setStrengths] = useState([""]);
   const [weaknesses, setWeaknesses] = useState([""]);
   const [opportunities, setOpportunities] = useState([""]);
   const [threats, setThreats] = useState([""]);
   const [showPopup, setShowPopup] = useState(false);
+  const [email, setEmail] = useState("");
+  const handleSubscribeForReminders = () => {
+    if (!validateEmail(email)) {
+      alert("Invalid email");
+      return;
+    }
+    fetch(`${import.meta.env.VITE_SERVER_URL}/swot/set-reminder`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ email: email }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response is not ok");
+        }
 
+        response.json().then((data) => {
+          if (data.success) {
+            alert("Subscribed to weekly reminders");
+          } else {
+            alert("No tasks added");
+          }
+        });
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
   const handleStrengthsChange = (index, e) => {
     const newStrengths = [...strengths];
     newStrengths[index] = e.target.value;
@@ -212,13 +245,26 @@ const SWOTdashboard = () => {
             Add Threat
           </motion.button>
         </div>
-        {/* <motion.button
-          type="submit"
-          className="text-white bg-black px-4 py-2 mb-2 rounded-3xl"
-        >
-          Submit
-        </motion.button> */}
       </form>
+      <div className="pt-10">
+        <motion.input
+          type="text"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+          required
+          placeholder="Enter email to subscribe to weekly reminders for completing the tasks"
+          className="text-black p-4 rounded-3xl w-3/4"
+        />
+        <motion.button
+          whileHover={{ scale: 1.1 }} // Define hover animation
+          whileTap={{ scale: 1 }} // Define hover animation
+          className="rounded-3xl bg-black text-white p-4 mr-1 ml-1"
+          onClick={handleSubscribeForReminders}
+        >
+          Subscribe
+        </motion.button>
+      </div>
     </div>
   );
 };
