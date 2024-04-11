@@ -3,6 +3,7 @@ import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
 import { Model } from "mongoose";
 import { Response, Request } from "express";
+import { TagModel } from "../models/tagSchema";
 
 export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getAllpost");
@@ -50,6 +51,22 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
 //   }
 // };
 
+export const getTags = async (req: Request, res: Response) => {
+  console.log("tarun inside getags");
+  try {
+    const tags = await TagModel.find({}, { tag: 1, _id: 0 }); // Exclude _id field
+    // const tags = { tag: "tagone" };
+    console.log("tags in db", tags);
+    res.status(200).json({ success: true, data: tags });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error);
+  }
+};
+export const getPostByTag = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {};
 export const getPost = async (req: Request, res: Response) => {
   console.log("inside getpost");
   try {
@@ -69,7 +86,7 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const createPost = async (req: Request, res: Response) => {
   console.log("inside creatapost");
-  const { title, content, author, isPublished } = req.body;
+  const { title, content, author, isPublished, tag } = req.body;
   console.log(title, content, author);
   try {
     const post = new Post({
@@ -79,8 +96,21 @@ export const createPost = async (req: Request, res: Response) => {
       createdAt: new Date(),
       comments: [],
       isPublished: isPublished,
+      tag: tag,
     });
     await post.save();
+    const isTagPresent = await TagModel.findOne({ tag: tag });
+
+    if (!isTagPresent) {
+      const newTag = new TagModel({
+        tag: tag,
+        posts: post._id,
+      });
+      await newTag.save();
+    } else {
+      isTagPresent.posts.push(post._id);
+    }
+    await isTagPresent?.save();
     console.log("post", post);
     res.status(201).json(post);
   } catch (error: any) {

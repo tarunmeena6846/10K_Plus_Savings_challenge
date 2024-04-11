@@ -5,15 +5,18 @@ import Button from "../Button";
 import { useRecoilValue } from "recoil";
 import { userState } from "../store/atoms/user";
 import { useNavigate } from "react-router-dom";
+import TextFieldWithDropdown from "./InputField";
 const HandleCreatePost = () => {
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
   const currentUserState = useRecoilValue(userState);
+  const [tag, setTag] = useState("");
   const navigate = useNavigate();
   const handleCancel = () => {};
   const handleShowtags = () => {};
   const handleCreatePost = (isPublished: Boolean) => {
-    console.log("postcontent", postContent, currentUserState, );
+    console.log("tag", tag);
+    console.log("postcontent", postContent, currentUserState);
     // headers.append("Username", email);
     // headers.append("Password", password);
     fetch(`${import.meta.env.VITE_SERVER_URL}/post`, {
@@ -27,6 +30,7 @@ const HandleCreatePost = () => {
         content: postContent,
         author: currentUserState.userEmail,
         isPublished: isPublished,
+        tag: tag,
       }),
     })
       .then((resp) => {
@@ -73,10 +77,11 @@ const HandleCreatePost = () => {
           <label htmlFor="discussion-title" className="block font-semibold">
             Tags
           </label>
-          <motion.input
+          {/* <motion.input
             id="discussion-tags"
             className="w-full mt-1 mb-1 p-2 border border-gray-300 rounded"
-          />
+          /> */}
+          <TextFieldWithDropdown setTags={setTag} />
           <motion.button>Show tags</motion.button>
         </div>
         <div>

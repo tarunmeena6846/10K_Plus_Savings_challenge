@@ -1,22 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const popularTags = [
-  "SavingsChallenge",
-  "FinancialGoals",
-  "BudgetingTips",
-  "InvestingAdvice",
-  "FrugalLiving",
-  "MoneyManagement",
-  "PersonalFinance",
-  "WealthBuilding",
-  "FinancialFreedom",
-  "SavingsTips",
-  "DebtFreeJourney",
-  "RetirementPlanning",
-  "EmergencyFund",
-  "InvestmentStrategies",
-  "FinancialEducation",
-];
 
 const links = [
   "Recent Discussions",
@@ -25,10 +8,36 @@ const links = [
   "My Drafts",
 ];
 
+export interface tagDataType {
+  tag: string;
+}
 import { motion } from "framer-motion";
 import Button from "../Button";
 const SideBar = () => {
   const navigate = useNavigate();
+  const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
+  useEffect(() => {
+    console.log("inside useEffect in sidebar");
+    fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network reponse is not ok");
+        }
+        response.json().then((data) => {
+          console.log("tags in db", data.data);
+          setPopularTags(data.data);
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   const handleOnClick = (tag: String) => {
     console.log("onclicked ", tag);
     if (tag === "My Discussions") {
@@ -90,15 +99,15 @@ const SideBar = () => {
       <div>
         <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
         <div className="flex flex-wrap gap-2">
-          {popularTags.map((tag, index) => (
+          {popularTags.map((tag: tagDataType, index) => (
             // <li key={index} className="mb-1">
             <motion.button
               whileHover={{ scale: 1.1 }} // Define hover animation
               whileTap={{ scale: 1 }} // Define hover animation
               className="bg-gray-400 rounded-2xl px-2 "
-              onClick={() => handleOnClick(tag)}
+              onClick={() => handleOnClick(tag.tag)}
             >
-              {tag}
+              {tag.tag}
             </motion.button>
             // </li>
           ))}
