@@ -30,7 +30,7 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
       .limit(limit); // Limit the number of posts returned
     console.log("inside post", posts);
 
-    res.status(200).json({ posts });
+    res.status(200).json({ sucess: true, data: posts });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -51,10 +51,10 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
 //   }
 // };
 
-export const getTags = async (req: Request, res: Response) => {
+export const getTags = async (req: AuthenticatedRequest, res: Response) => {
   console.log("tarun inside getags");
   try {
-    const tags = await TagModel.find({}, { tag: 1, _id: 0 }); // Exclude _id field
+    const tags = await TagModel.find({}, { tag: 1 }); // Exclude _id field
     // const tags = { tag: "tagone" };
     console.log("tags in db", tags);
     res.status(200).json({ success: true, data: tags });
@@ -66,7 +66,21 @@ export const getTags = async (req: Request, res: Response) => {
 export const getPostByTag = async (
   req: AuthenticatedRequest,
   resp: Response
-) => {};
+) => {
+  const tagId = req.params.tagId;
+  try {
+    console.log("tagId", tagId);
+    const posts = await TagModel.findById({ _id: tagId }).populate("posts");
+    console.log("posts in get id by post", posts?.posts);
+    if (posts) {
+      resp.status(200).json({ success: true, data: posts.posts });
+    } else {
+      resp.status(500).json({ success: false, data: null });
+    }
+  } catch (error) {
+    resp.status(400).json({ error });
+  }
+};
 export const getPost = async (req: Request, res: Response) => {
   console.log("inside getpost");
   try {

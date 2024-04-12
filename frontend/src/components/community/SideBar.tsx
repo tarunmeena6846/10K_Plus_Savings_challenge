@@ -9,15 +9,24 @@ const links = [
 ];
 
 export interface tagDataType {
+  _id: string;
   tag: string;
 }
 import { motion } from "framer-motion";
 import Button from "../Button";
-const SideBar = () => {
+import { postState } from "../store/atoms/post";
+import { PostType } from "./InfinitePostScroll";
+import { useRecoilState } from "recoil";
+const SideBar = ({
+  onSelectTag,
+}: {
+  onSelectTag: (tag: tagDataType) => void;
+}) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
+  const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+
   useEffect(() => {
-    console.log("inside useEffect in sidebar");
     fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags`, {
       method: "GET",
       headers: {
@@ -38,8 +47,8 @@ const SideBar = () => {
         console.error(error);
       });
   }, []);
-  const handleOnClick = (tag: String) => {
-    console.log("onclicked ", tag);
+  const handleOnClick = (tag: string | tagDataType) => {
+    console.log("onclicked ", tag, typeof tag);
     if (tag === "My Discussions") {
       navigate("/community/mydiscussion");
     }
@@ -51,6 +60,34 @@ const SideBar = () => {
     }
     if (tag === "Recent Discussions") {
       navigate("/community");
+    } else if (typeof tag === "object") {
+      console.log(tag._id);
+      onSelectTag(tag);
+      //   console.log("inside useEffect in sidebar");
+      //   fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags/${tag._id}`, {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       authorization: "Bearer " + localStorage.getItem("token"),
+      //     },
+      //   })
+      //     .then((response) => {
+      //       if (!response.ok) {
+      //         throw new Error("Network reponse is not ok");
+      //       }
+      //       response.json().then((data) => {
+      //         if (data.success) {
+      //           console.log("tags in db", data.data);
+      //           setPosts(data.data);
+      //         } else {
+      //           setPosts([]);
+      //         }
+      //       });
+      //     })
+      //     .catch((error) => {
+      //       console.error(error);
+      //     });
+      // }
     }
   };
   return (
@@ -105,7 +142,7 @@ const SideBar = () => {
               whileHover={{ scale: 1.1 }} // Define hover animation
               whileTap={{ scale: 1 }} // Define hover animation
               className="bg-gray-400 rounded-2xl px-2 "
-              onClick={() => handleOnClick(tag.tag)}
+              onClick={() => handleOnClick(tag)}
             >
               {tag.tag}
             </motion.button>
