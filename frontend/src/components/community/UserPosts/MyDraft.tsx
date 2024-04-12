@@ -1,34 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../Header";
-import SideBar from "../SideBar";
-import InfinitePostScroll from "../InfinitePostScroll";
+import SideBar, { tagDataType } from "../SideBar";
+import InfinitePostScroll, { PostType } from "../InfinitePostScroll";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userState } from "../../store/atoms/user";
+import { postState } from "../../store/atoms/post";
+import fetchPosts from "../fetchPosts";
 const MyDraft = () => {
+  const userEmail = useRecoilValue(userState);
+  const [selectedTag, setSelectedTag] = useState<tagDataType | null>();
+  const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+
+  const handleSelectTag = (tag: tagDataType | null) => {
+    setSelectedTag(tag);
+  };
+
+  fetchPosts(
+    false,
+    setPosts,
+    selectedTag === undefined ? undefined : selectedTag?._id,
+    userEmail.userEmail
+  );
+
   return (
     <div>
       <Header title="My Drafts" description="" />
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <InfinitePostScroll
-              isPublished={false}
-              userEmail={null}
-            ></InfinitePostScroll>
+            <InfinitePostScroll posts={posts}></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
-            <SideBar></SideBar>
-            {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            Create Post
-          </button>
-          <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
-          <ul>
-            {popularTags.map((tag, index) => (
-              <li key={index} className="mb-1">
-                <a href="#" className="text-blue-600 hover:underline">
-                  {tag}
-                </a>
-              </li>
-            ))}
-          </ul> */}
+            <SideBar onSelectTag={handleSelectTag}></SideBar>
           </div>
         </div>
       </div>

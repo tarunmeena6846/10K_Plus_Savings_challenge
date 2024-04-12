@@ -1,5 +1,6 @@
 import { SetterOrUpdater } from "recoil";
 import { PostType } from "./InfinitePostScroll";
+import { useEffect } from "react";
 
 export const fetchTenPosts = async (
   isPublished: boolean,
@@ -11,11 +12,20 @@ export const fetchTenPosts = async (
 ) => {
   if (loading) return;
   loading = true;
-  console.log(tag, "tarun username for my post ");
+
+  console.log(tag, "tarun username for my post ", userEmail);
   let url = "";
 
   if (tag) {
-    url = `${import.meta.env.VITE_SERVER_URL}/post/tags/${tag}`;
+    url = `${
+      import.meta.env.VITE_SERVER_URL
+    }/post/tags/${tag}?isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
+
+    if (userEmail != null) {
+      url = `${
+        import.meta.env.VITE_SERVER_URL
+      }/post/tags/${tag}?user=${userEmail}&isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
+    }
   } else {
     url = `${
       import.meta.env.VITE_SERVER_URL
@@ -69,4 +79,48 @@ export const fetchTenPosts = async (
     });
 };
 
-export default fetchTenPosts;
+const fetchPosts = async (
+  isPublished: boolean,
+  setPosts: SetterOrUpdater<PostType[]>,
+  // loading: boolean,
+  // currentOffset: number,
+  tagId?: string | undefined,
+  userEmail?: string | null
+) => {
+  let currentOffset = 0;
+  let loading = false;
+
+  useEffect(() => {
+    console.log("inside useeefetct", tagId, userEmail);
+
+    // Fetch all posts
+    // Reset currentOffset and posts when isPublished changes
+    currentOffset = 0;
+    setPosts([]);
+    fetchTenPosts(
+      isPublished,
+      setPosts,
+      loading,
+      currentOffset,
+      tagId,
+      userEmail
+    );
+
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const currentHeight = Math.ceil(
+        document.documentElement.scrollTop + window.innerHeight
+      );
+      if (currentHeight + 1 >= scrollHeight) {
+        fetchTenPosts(true, setPosts, loading, currentOffset, tagId, userEmail);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [tagId]);
+};
+export default fetchPosts;

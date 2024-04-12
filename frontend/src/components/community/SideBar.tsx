@@ -20,7 +20,7 @@ import { useRecoilState } from "recoil";
 const SideBar = ({
   onSelectTag,
 }: {
-  onSelectTag: (tag: tagDataType) => void;
+  onSelectTag: (tag: tagDataType | null) => void;
 }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
@@ -136,7 +136,15 @@ const SideBar = ({
       <div>
         <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
         <div className="flex flex-wrap gap-2">
-          {popularTags.map((tag: tagDataType, index) => (
+          <motion.button
+            whileHover={{ scale: 1.1 }} // Define hover animation
+            whileTap={{ scale: 1 }} // Define hover animation
+            className="bg-gray-400 rounded-2xl px-2 "
+            onClick={() => onSelectTag(null)}
+          >
+            All Tags
+          </motion.button>
+          {popularTags?.map((tag: tagDataType, index) => (
             // <li key={index} className="mb-1">
             <motion.button
               whileHover={{ scale: 1.1 }} // Define hover animation

@@ -1,17 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../Header";
-import SideBar from "../SideBar";
+import SideBar, { tagDataType } from "../SideBar";
+import InfinitePostScroll, { PostType } from "../InfinitePostScroll";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userState } from "../../store/atoms/user";
+import { postState } from "../../store/atoms/post";
+import fetchPosts from "../fetchPosts";
 const MyBookmarked = () => {
+  const userEmail = useRecoilValue(userState);
+  const [selectedTag, setSelectedTag] = useState<tagDataType | null>();
+  const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+
+  // Render popular tags
+  const handleSelectTag = (tag: tagDataType | null) => {
+    setSelectedTag(tag);
+  };
+
+  fetchPosts(
+    true,
+    setPosts,
+    selectedTag === undefined ? undefined : selectedTag?._id,
+    userEmail.userEmail
+  );
+
   return (
     <div>
       <Header title="My Bookmarks" description="" />
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            {/* <InfinitePostScroll></InfinitePostScroll> */}
+            <InfinitePostScroll posts={posts}></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
-            <SideBar></SideBar>
+            <SideBar onSelectTag={handleSelectTag}></SideBar>
             {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
             Create Post
           </button>

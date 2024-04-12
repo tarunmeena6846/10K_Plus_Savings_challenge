@@ -70,7 +70,28 @@ export const getPostByTag = async (
   const tagId = req.params.tagId;
   try {
     console.log("tagId", tagId);
-    const posts = await TagModel.findById({ _id: tagId }).populate("posts");
+    const offset = parseInt(req.query.offset as string) || 0;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const isPublished = req.query.isPublished as string;
+    const user = req.query.user as string;
+    let query = {};
+    if (isPublished === "true") {
+      if (user === undefined) {
+        query = { isPublished: true };
+      } else {
+        query = { author: user, isPublished: true };
+      }
+    } else {
+      // Assuming username is available in req.user
+      query = { author: req.user, isPublished: false };
+    }
+    const posts = await TagModel.findById({ _id: tagId })
+      .populate({
+        path: "posts",
+        match: query, // Filter based on isPublished field
+      })
+      .skip(offset) // Skip the specified number of posts
+      .limit(limit); // Limit the number of posts returned;
     console.log("posts in get id by post", posts?.posts);
     if (posts) {
       resp.status(200).json({ success: true, data: posts.posts });

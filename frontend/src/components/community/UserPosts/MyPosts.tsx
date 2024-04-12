@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../Header";
-import SideBar from "../SideBar";
-import InfinitePostScroll from "../InfinitePostScroll";
-import { useRecoilValue } from "recoil";
+import SideBar, { tagDataType } from "../SideBar";
+import InfinitePostScroll, { PostType } from "../InfinitePostScroll";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userState } from "../../store/atoms/user";
+import fetchPosts from "../fetchPosts";
+import { postState } from "../../store/atoms/post";
 
 const MyPosts = () => {
   const userEmail = useRecoilValue(userState);
+  const [selectedTag, setSelectedTag] = useState<tagDataType | null>();
+  const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+  console.log(userEmail);
+  // Render popular tags
+  const handleSelectTag = (tag: tagDataType | null) => {
+    setSelectedTag(tag);
+  };
+
+  fetchPosts(
+    true,
+    setPosts,
+    selectedTag === undefined ? undefined : selectedTag?._id,
+    userEmail.userEmail
+  );
+
   console.log("useremail at my post", userEmail.userEmail);
   return (
     <div>
@@ -14,13 +31,10 @@ const MyPosts = () => {
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <InfinitePostScroll
-              isPublished={true}
-              userEmail={userEmail.userEmail}
-            ></InfinitePostScroll>
+            <InfinitePostScroll posts={posts}></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
-            <SideBar></SideBar>
+            <SideBar onSelectTag={handleSelectTag}></SideBar>
             {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
             Create Post
           </button>
