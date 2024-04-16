@@ -4,6 +4,7 @@ import Comment from "../models/commentSchema";
 import { Model } from "mongoose";
 import { Response, Request } from "express";
 import { TagModel } from "../models/tagSchema";
+import AdminModel, { Admin } from "../models/admin";
 
 export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getAllpost");
@@ -36,6 +37,59 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const getBookmarkPosts = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
+  try {
+    const bookmarkedPostsForUser = await AdminModel.findOne({
+      username: req?.user,
+    }).populate("bookmarkedPosts");
+    console.log(
+      "bookmarkedPostsForUser",
+      bookmarkedPostsForUser?.bookmarkedPosts
+    );
+    if (bookmarkedPostsForUser) {
+      resp
+        .status(200)
+        .json({ success: true, data: bookmarkedPostsForUser.bookmarkedPosts });
+    } else {
+      resp.status(400).json({ success: false, data: null });
+    }
+  } catch (error) {
+    resp.status(500).json(error);
+  }
+};
+export const bookmarkedPosts = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
+  const postId = req.body.postId;
+  console.log("postId at bookmarkposts", postId);
+  try {
+    const bookmarkedPostsForUser = await AdminModel.findOne({
+      username: req?.user,
+    }).populate({ path: "bookmarkedPosts", match: { _id: postId } });
+    console.log("bookmarkedPostsForUser", bookmarkedPostsForUser);
+    if (bookmarkedPostsForUser) {
+      if (bookmarkedPostsForUser?.bookmarkedPosts.length === 0) {
+        bookmarkedPostsForUser?.bookmarkedPosts?.push(postId);
+        await bookmarkedPostsForUser.save();
+        resp
+          .status(200)
+          .json({ success: true, data: "Post bookmarked successfully" });
+      } else {
+        resp
+          .status(200)
+          .json({ success: false, data: "Post already bookmarked" });
+      }
+    } else {
+      resp.status(400).json({ success: false, data: null });
+    }
+  } catch (error) {
+    resp.status(500).json(error);
+  }
+};
 // export const getDraftPosts = async (
 //   req: AuthenticatedRequest,
 //   resp: Response

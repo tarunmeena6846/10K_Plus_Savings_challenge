@@ -14,6 +14,7 @@ export interface Admin extends Document {
   verificationToken: string;
   myWhy: string;
   swotSessionTime: Date;
+  bookmarkedPosts: Schema.Types.ObjectId[];
   swotTasksDetails: Schema.Types.ObjectId | null; // Correcting the type
 }
 
@@ -37,6 +38,12 @@ const adminSchema = new Schema<Admin>({
   isTopTier: { type: Boolean, default: false },
   myWhy: { type: String, default: "" },
   swotSessionTime: Date,
+  bookmarkedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
   swotTasksDetails: {
     type: Schema.Types.ObjectId,
     ref: "SwotDetails",

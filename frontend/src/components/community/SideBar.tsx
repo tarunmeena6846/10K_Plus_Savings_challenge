@@ -24,6 +24,7 @@ const SideBar = ({
 }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
+  const [isBookmarked, setIsBookmark] = useState(false);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
 
   useEffect(() => {
@@ -50,17 +51,23 @@ const SideBar = ({
   const handleOnClick = (tag: string | tagDataType) => {
     console.log("onclicked ", tag, typeof tag);
     if (tag === "My Discussions") {
+      setIsBookmark(false);
       navigate("/community/mydiscussion");
     }
     if (tag === "My Bookmarks") {
+      setIsBookmark(true);
       navigate("/community/bookmarked");
     }
     if (tag === "My Drafts") {
+      setIsBookmark(false);
+
       navigate("/community/drafts");
     }
     if (tag === "Recent Discussions") {
+      setIsBookmark(false);
       navigate("/community");
     } else if (typeof tag === "object") {
+      setIsBookmark(false);
       console.log(tag._id);
       onSelectTag(tag);
       //   console.log("inside useEffect in sidebar");
@@ -133,31 +140,34 @@ const SideBar = ({
           ))}
         </ul>
       </div> */}
-      <div>
-        <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
-        <div className="flex flex-wrap gap-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }} // Define hover animation
-            whileTap={{ scale: 1 }} // Define hover animation
-            className="bg-gray-400 rounded-2xl px-2 "
-            onClick={() => onSelectTag(null)}
-          >
-            All Tags
-          </motion.button>
-          {popularTags?.map((tag: tagDataType, index) => (
-            // <li key={index} className="mb-1">
+      {isBookmarked}
+      {!isBookmarked && (
+        <div>
+          <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
+          <div className="flex flex-wrap gap-2">
             <motion.button
               whileHover={{ scale: 1.1 }} // Define hover animation
               whileTap={{ scale: 1 }} // Define hover animation
               className="bg-gray-400 rounded-2xl px-2 "
-              onClick={() => handleOnClick(tag)}
+              onClick={() => onSelectTag(null)}
             >
-              {tag.tag}
+              All Tags
             </motion.button>
-            // </li>
-          ))}
+            {popularTags?.map((tag: tagDataType, index) => (
+              // <li key={index} className="mb-1">
+              <motion.button
+                whileHover={{ scale: 1.1 }} // Define hover animation
+                whileTap={{ scale: 1 }} // Define hover animation
+                className="bg-gray-400 rounded-2xl px-2 "
+                onClick={() => handleOnClick(tag)}
+              >
+                {tag.tag}
+              </motion.button>
+              // </li>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

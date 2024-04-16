@@ -8,12 +8,13 @@ export const fetchTenPosts = async (
   loading: boolean,
   currentOffset: number,
   tag?: string | undefined,
-  userEmail?: string | null
+  userEmail?: string | null,
+  isBookmarkedSet?: boolean | null
 ) => {
   if (loading) return;
   loading = true;
 
-  console.log(tag, "tarun username for my post ", userEmail);
+  console.log(tag, "tarun username for my post ", userEmail, isBookmarkedSet);
   let url = "";
 
   if (tag) {
@@ -30,10 +31,14 @@ export const fetchTenPosts = async (
     url = `${
       import.meta.env.VITE_SERVER_URL
     }/post?isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
-    if (userEmail != null) {
+    if (userEmail != null && isBookmarkedSet === undefined) {
       url = `${
         import.meta.env.VITE_SERVER_URL
       }/post?user=${userEmail}&isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
+    } else if (userEmail != null && isBookmarkedSet) {
+      url = `${
+        import.meta.env.VITE_SERVER_URL
+      }/post/getBookmarkPosts?user=${userEmail}&offset=${currentOffset}&limit=10`;
     }
   }
   fetch(url, {
@@ -85,7 +90,8 @@ const fetchPosts = async (
   // loading: boolean,
   // currentOffset: number,
   tagId?: string | undefined,
-  userEmail?: string | null
+  userEmail?: string | null,
+  isBookmarkedSet?: boolean | null
 ) => {
   let currentOffset = 0;
   let loading = false;
@@ -103,7 +109,8 @@ const fetchPosts = async (
       loading,
       currentOffset,
       tagId,
-      userEmail
+      userEmail,
+      isBookmarkedSet
     );
 
     const handleScroll = () => {
@@ -112,7 +119,15 @@ const fetchPosts = async (
         document.documentElement.scrollTop + window.innerHeight
       );
       if (currentHeight + 1 >= scrollHeight) {
-        fetchTenPosts(true, setPosts, loading, currentOffset, tagId, userEmail);
+        fetchTenPosts(
+          true,
+          setPosts,
+          loading,
+          currentOffset,
+          tagId,
+          userEmail,
+          isBookmarkedSet
+        );
       }
     };
 

@@ -8,6 +8,8 @@ import {
   editComment,
   getTags,
   getPostByTag,
+  getBookmarkPosts,
+  bookmarkedPosts,
   // getDraftPosts,
 } from "../controllers/postController";
 import { detokenizeAdmin } from "../middleware";
@@ -16,8 +18,10 @@ const router: Router = express.Router();
 // Routes for posts
 router.get("/", detokenizeAdmin, getAllPosts);
 router.get("/tags", detokenizeAdmin, getTags);
+router.get("/getBookmarkPosts", detokenizeAdmin, getBookmarkPosts);
 router.get("/tags/:tagId", detokenizeAdmin, getPostByTag);
 router.get("/:id", detokenizeAdmin, getPost);
+router.post("/bookmarkPost", detokenizeAdmin, bookmarkedPosts);
 router.post("/", detokenizeAdmin, createPost);
 router.post("/:id/comments", detokenizeAdmin, addComment);
 router.delete("/:postId/:id", detokenizeAdmin, deleteComment);

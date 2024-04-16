@@ -4,6 +4,8 @@ import { Card, CardHeader } from "@mui/material";
 import { motion } from "framer-motion";
 import Button from "../../Button";
 import { useNavigate } from "react-router-dom";
+import { response } from "express";
+import { json } from "stream/consumers";
 // import HtmlParser from "react-html-parser";
 
 export const timePassed = (date: Date): string => {
@@ -56,6 +58,36 @@ const Post: React.FC<PostType> = ({
   const [showDeleteOption, setShowDeleteOption] = useState(false);
   const optionRef = useRef(null);
   const isDarkTheme = document.documentElement.classList.contains("dark");
+  const handleSaveBookmark = () => {
+    console.log("postid at savebookmark", postId);
+    fetch(`${import.meta.env.VITE_SERVER_URL}/post/bookmarkPost`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        postId: postId,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response is not ok ");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          alert(data.data);
+        } else {
+          alert(data.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   const handleClick = () => {
     console.log("post id at click", postId);
@@ -135,7 +167,10 @@ const Post: React.FC<PostType> = ({
             <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
               Delete
             </button>
-            <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+            <button
+              className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              onClick={handleSaveBookmark}
+            >
               Bookmark
             </button>
             <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">

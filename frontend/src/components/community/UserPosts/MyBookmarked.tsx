@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { userState } from "../../store/atoms/user";
 import { postState } from "../../store/atoms/post";
 import fetchPosts from "../fetchPosts";
+import { error } from "console";
 const MyBookmarked = () => {
   const userEmail = useRecoilValue(userState);
   const [selectedTag, setSelectedTag] = useState<tagDataType | null>();
@@ -20,8 +21,32 @@ const MyBookmarked = () => {
     true,
     setPosts,
     selectedTag === undefined ? undefined : selectedTag?._id,
-    userEmail.userEmail
+    userEmail.userEmail,
+    true
   );
+
+  // fetch(`${import.meta.env.VITE_SERVER_URL}/post/bookmarked`, {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     authorization: "Bearer " + localStorage.getItem("token"),
+  //   }
+  // })
+  //   .then((response) => {
+  //     if (!response.ok) {
+  //       throw new Error("Network response is not ok ");
+  //     }
+  //     return response.json();
+  //   })
+  //   .then((data) => {
+  //     console.log(data);
+  //     if (data.success) {
+  //       setPosts(data.data);
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
 
   return (
     <div>
