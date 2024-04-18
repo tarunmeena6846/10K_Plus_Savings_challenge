@@ -46,14 +46,14 @@ export const getUserPosts = async (
   const isPublished = req.query.isPublished;
   console.log("user at getuserpost", user);
   const adminInfo = await AdminModel.findOne({ username: user })
-    .populate(isPublished ? "myPosts" : "myDrafts")
+    .populate(isPublished === "true" ? "myPosts" : "myDrafts")
     .skip(offset)
     .limit(limit);
-  console.log("admin info at getuserPOsts route", adminInfo);
+  console.log("admin info at getuserPOsts route", adminInfo, isPublished);
   if (adminInfo) {
     resp.status(200).json({
       success: true,
-      data: isPublished ? adminInfo.myPosts : adminInfo.myDrafts,
+      data: isPublished === "true" ? adminInfo.myPosts : adminInfo.myDrafts,
     });
   } else {
     resp.status(400).json({ success: false, data: null });

@@ -17,7 +17,7 @@ export const fetchTenPosts = async (
     draftCount: number;
   }>
 ) => {
-  console.log("tag at fetch post", tag)
+  console.log("tag at fetch post", tag);
   if (loading) return;
   loading = true;
 
@@ -33,9 +33,9 @@ export const fetchTenPosts = async (
         import.meta.env.VITE_SERVER_URL
       }/post?isPublished=${true}&offset=${currentOffset}&limit=10`;
     } else if (type === "myposts" || type === "mydrafts") {
-      url = `${
-        import.meta.env.VITE_SERVER_URL
-      }/post/userPosts?isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
+      url = `${import.meta.env.VITE_SERVER_URL}/post/userPosts?isPublished=${
+        type === "myposts" ? true : false
+      }&offset=${currentOffset}&limit=10`;
     } else if (type === "mybookmarks") {
       url = `${
         import.meta.env.VITE_SERVER_URL
@@ -56,8 +56,7 @@ export const fetchTenPosts = async (
       return resp.json();
     })
     .then((data) => {
-      console.log(data);
-      console.log("data at fetch post ", data.data);
+      // console.log(data);
 
       const tenPosts: PostType[] = data.data.map((p: any) => ({
         postId: p._id,
