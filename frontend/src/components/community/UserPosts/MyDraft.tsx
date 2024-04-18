@@ -6,22 +6,30 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { userState } from "../../store/atoms/user";
 import { postState } from "../../store/atoms/post";
 import fetchPosts from "../fetchPosts";
+import countAtom from "../../store/atoms/quickLinkCount";
+import useFetchPosts from "../fetchPosts";
+import { selectedTagIdState } from "../../store/atoms/selectedTag";
 const MyDraft = () => {
   const userEmail = useRecoilValue(userState);
-  const [selectedTag, setSelectedTag] = useState<tagDataType | null>();
+  const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+  const [count, setCount] = useRecoilState(countAtom);
 
-  const handleSelectTag = (tag: tagDataType | null) => {
-    setSelectedTag(tag);
+  // Render popular tags
+  const handleSelectTag = (tagId: string) => {
+    setSelectedTagId(tagId);
   };
 
-  fetchPosts(
+  useFetchPosts(
     false,
     setPosts,
-    selectedTag === undefined ? undefined : selectedTag?._id,
-    userEmail.userEmail
+    "mydrafts",
+    undefined,
+    userEmail.userEmail,
+    null,
+    setCount
   );
-
+  console.log("at my draft", count.draftCount);
   return (
     <div>
       <Header title="My Drafts" description="" />

@@ -15,7 +15,9 @@ export interface Admin extends Document {
   myWhy: string;
   swotSessionTime: Date;
   bookmarkedPosts: Schema.Types.ObjectId[];
-  swotTasksDetails: Schema.Types.ObjectId | null; // Correcting the type
+  swotTasksDetails: Schema.Types.ObjectId | null;
+  myPosts: Schema.Types.ObjectId[];
+  myDrafts: Schema.Types.ObjectId[];
 }
 
 const adminSchema = new Schema<Admin>({
@@ -49,12 +51,8 @@ const adminSchema = new Schema<Admin>({
     ref: "SwotDetails",
     default: null,
   },
-  // subscriptions: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Subscription",
-  //   },
-  // ],
+  myPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+  myDrafts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 });
 
 const AdminModel = mongoose.model<Admin>("Admin", adminSchema);

@@ -12,62 +12,30 @@ import InfinitePostScroll, { PostType } from "./InfinitePostScroll";
 import SideBar, { tagDataType } from "./SideBar";
 import { postState } from "../store/atoms/post";
 import fetchPosts, { fetchTenPosts } from "./fetchPosts";
+import useFetchPosts from "./fetchPosts";
+import { selectedTagIdState } from "../store/atoms/selectedTag";
 
 const CommunityLanding = () => {
   const [subscription, setSubscription] =
     useRecoilState<SubscriptionData>(subscriptionState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  const [selectedTag, setSelectedTag] = useState<tagDataType | null>();
+  const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
 
   // Render popular tags
-  const handleSelectTag = (tag: tagDataType) => {
-    setSelectedTag(tag);
+  const handleSelectTag = (tagId: string) => {
+    setSelectedTagId(tagId);
   };
-
-  fetchPosts(
+  console.log("selectedTag navigation after ", selectedTagId);
+  useFetchPosts(
     true,
     setPosts,
-    selectedTag === undefined ? undefined : selectedTag?._id
+    "allposts",
+    selectedTagId === "" ? undefined : selectedTagId,
+    // null,
+    null
   );
 
-  // useEffect(() => {
-  //   console.log("inside useeefetct", selectedTag);
-
-  //   // Fetch all posts
-  //   // Reset currentOffset and posts when isPublished changes
-  //   currentOffset = 0;
-  //   setPosts([]);
-  //   fetchTenPosts(
-  //     true,
-  //     setPosts,
-  //     // loading,
-  //     // currentOffset,
-  //     selectedTag === undefined ? undefined : selectedTag._id
-  //   );
-
-  //   const handleScroll = () => {
-  //     const scrollHeight = document.documentElement.scrollHeight;
-  //     const currentHeight = Math.ceil(
-  //       document.documentElement.scrollTop + window.innerHeight
-  //     );
-  //     if (currentHeight + 1 >= scrollHeight) {
-  //       fetchTenPosts(
-  //         true,
-  //         setPosts,
-  //         // loading,
-  //         // currentOffset,
-  //         selectedTag === undefined ? undefined : selectedTag._id
-  //       );
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [selectedTag]);
   return (
     <div>
       <Header

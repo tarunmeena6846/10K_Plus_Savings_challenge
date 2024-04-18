@@ -3,7 +3,6 @@ import { Admin } from "./admin";
 import { CommentDocument } from "./commentSchema";
 
 export interface PostSchema extends Document {
-  id: String;
   title: string;
   content: string;
   author: String;

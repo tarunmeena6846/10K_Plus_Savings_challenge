@@ -10,13 +10,15 @@ import {
   getPostByTag,
   getBookmarkPosts,
   bookmarkedPosts,
-  // getDraftPosts,
+  getUserPosts,
 } from "../controllers/postController";
+
 import { detokenizeAdmin } from "../middleware";
 const router: Router = express.Router();
 
 // Routes for posts
 router.get("/", detokenizeAdmin, getAllPosts);
+router.get("/userPosts", detokenizeAdmin, getUserPosts);
 router.get("/tags", detokenizeAdmin, getTags);
 router.get("/getBookmarkPosts", detokenizeAdmin, getBookmarkPosts);
 router.get("/tags/:tagId", detokenizeAdmin, getPostByTag);
@@ -27,8 +29,4 @@ router.post("/:id/comments", detokenizeAdmin, addComment);
 router.delete("/:postId/:id", detokenizeAdmin, deleteComment);
 router.post("/:id", detokenizeAdmin, editComment);
 
-function logRequest(req: any, res: any, next: any) {
-  console.log("Received request to /tags:", new Date().toISOString());
-  next(); // Call next() to proceed to the next middleware/route handler
-}
 export default router;

@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const links = [
-  "Recent Discussions",
-  "My Discussions",
-  "My Bookmarks",
-  "My Drafts",
-];
-
 export interface tagDataType {
   _id: string;
   tag: string;
@@ -16,16 +9,22 @@ import { motion } from "framer-motion";
 import Button from "../Button";
 import { postState } from "../store/atoms/post";
 import { PostType } from "./InfinitePostScroll";
-import { useRecoilState } from "recoil";
-const SideBar = ({
-  onSelectTag,
-}: {
-  onSelectTag: (tag: tagDataType | null) => void;
-}) => {
+import { useRecoilState, useRecoilValue } from "recoil";
+import countAtom from "../store/atoms/quickLinkCount";
+const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
-  const [isBookmarked, setIsBookmark] = useState(false);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+  const [loading, setLoading] = useState(true); // New state to track loading
+  const [count, setCount] = useRecoilState(countAtom);
+  console.log("count", count);
+
+  const links = [
+    { name: "Recent Discussions", count: 0 },
+    { name: "My Discussions", count: count.myDiscussionCount },
+    { name: "My Bookmarks", count: count.bookmarkCount },
+    { name: "My Drafts", count: count.draftCount },
+  ];
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags`, {
@@ -48,54 +47,32 @@ const SideBar = ({
         console.error(error);
       });
   }, []);
-  const handleOnClick = (tag: string | tagDataType) => {
-    console.log("onclicked ", tag, typeof tag);
-    if (tag === "My Discussions") {
-      setIsBookmark(false);
-      navigate("/community/mydiscussion");
-    }
-    if (tag === "My Bookmarks") {
-      setIsBookmark(true);
-      navigate("/community/bookmarked");
-    }
-    if (tag === "My Drafts") {
-      setIsBookmark(false);
 
+  const handleOnClick = (link: string) => {
+    console.log("onclicked ", link);
+    if (link === "My Discussions") {
+      // onSelectTag("");
+      navigate("/community/mydiscussion");
+    } else if (link === "My Bookmarks") {
+      // onSelectTag("");
+      navigate("/community/bookmarked");
+    } else if (link === "My Drafts") {
+      // onSelectTag("");
       navigate("/community/drafts");
-    }
-    if (tag === "Recent Discussions") {
-      setIsBookmark(false);
+    } else if (link === "Recent Discussions") {
+      onSelectTag("");
       navigate("/community");
-    } else if (typeof tag === "object") {
-      setIsBookmark(false);
-      console.log(tag._id);
-      onSelectTag(tag);
-      //   console.log("inside useEffect in sidebar");
-      //   fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags/${tag._id}`, {
-      //     method: "GET",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       authorization: "Bearer " + localStorage.getItem("token"),
-      //     },
-      //   })
-      //     .then((response) => {
-      //       if (!response.ok) {
-      //         throw new Error("Network reponse is not ok");
-      //       }
-      //       response.json().then((data) => {
-      //         if (data.success) {
-      //           console.log("tags in db", data.data);
-      //           setPosts(data.data);
-      //         } else {
-      //           setPosts([]);
-      //         }
-      //       });
-      //     })
-      //     .catch((error) => {
-      //       console.error(error);
-      //     });
-      // }
     }
+    // } else if (typeof tag === "object") {
+    //   console.log("selectedTag navigation at sidebar", tag._id);
+    //   navigate("/community");
+    //   onSelectTag({ _id: tag._id });
+    // }
+  };
+  const handleTagClick = (tagId: string) => {
+    console.log("selectedTag navigation at sidebar", tagId);
+    navigate("/community");
+    onSelectTag(tagId);
   };
   return (
     <div>
@@ -111,63 +88,48 @@ const SideBar = ({
       <div>
         <h2 className="text-lg font-bold">Quick Links</h2>
         <div className="">
-          {links.map((tag, index) => (
+          {links.map((links, index) => (
             <div className="mb-2" key={index}>
               <div className="flex justify-between items-center">
                 <motion.button
                   whileHover={{ scale: 1.1 }} // Define hover animation
                   whileTap={{ scale: 1 }} // Define hover animation
-                  onClick={() => handleOnClick(tag)}
+                  onClick={() => handleOnClick(links.name)}
                 >
-                  {tag}
+                  {links.name}
                 </motion.button>
-                {tag != "Recent Discussions" && <div>0</div>}
+                {links.count}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* <div>
-        <h2 className="text-lg font-bold">Sort by</h2>
-        <ul>
-          {sorts.map((tag, index) => (
-            <li key={index} className="mb-1">
-              <a href="#" className="text-grey-700">
-                {tag}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div> */}
-      {isBookmarked}
-      {!isBookmarked && (
-        <div>
-          <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
-          <div className="flex flex-wrap gap-2">
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
+        <div className="flex flex-wrap gap-2">
+          <motion.button
+            whileHover={{ scale: 1.1 }} // Define hover animation
+            whileTap={{ scale: 1 }} // Define hover animation
+            className="bg-gray-400 rounded-2xl px-2 "
+            onClick={() => onSelectTag("")}
+          >
+            All Tags
+          </motion.button>
+          {popularTags?.map((tag: tagDataType, index) => (
+            // <li key={index} className="mb-1">
             <motion.button
               whileHover={{ scale: 1.1 }} // Define hover animation
               whileTap={{ scale: 1 }} // Define hover animation
               className="bg-gray-400 rounded-2xl px-2 "
-              onClick={() => onSelectTag(null)}
+              onClick={() => handleTagClick(tag._id)}
             >
-              All Tags
+              {tag.tag}
             </motion.button>
-            {popularTags?.map((tag: tagDataType, index) => (
-              // <li key={index} className="mb-1">
-              <motion.button
-                whileHover={{ scale: 1.1 }} // Define hover animation
-                whileTap={{ scale: 1 }} // Define hover animation
-                className="bg-gray-400 rounded-2xl px-2 "
-                onClick={() => handleOnClick(tag)}
-              >
-                {tag.tag}
-              </motion.button>
-              // </li>
-            ))}
-          </div>
+            // </li>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };

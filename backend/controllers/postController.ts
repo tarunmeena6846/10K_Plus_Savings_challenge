@@ -11,22 +11,22 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-    const isPublished = req.query.isPublished as string;
-    const user = req.query.user as string;
-    console.log("tarun isPublished", req.user, isPublished, offset, user);
-    let query = {};
-    if (isPublished === "true") {
-      if (user === undefined) {
-        query = { isPublished: true };
-      } else {
-        query = { author: user, isPublished: true };
-      }
-    } else {
-      // Assuming username is available in req.user
-      query = { author: req.user, isPublished: false };
-    }
-    // Fetch posts from the database with pagination
-    const posts = await Post.find(query)
+    // const author = req.user; // Assuming the author's username is stored in req.user
+
+    // const isPublishedQueryParam = req.query.isPublished;
+    // const isPublished = isPublishedQueryParam
+    //   ? isPublishedQueryParam === "true"
+    //   : undefined;
+
+    // let query: any = {};
+    // if (isPublished !== undefined) {
+    //   query.isPublished = isPublished;
+    // }
+    // if (!isPublished) {
+    //   query.author = author;
+    // }
+
+    const posts = await Post.find({ isPublished: true })
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned
     console.log("inside post", posts);
@@ -36,7 +36,29 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
-
+export const getUserPosts = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
+  const offset = parseInt(req.query.offset as string) || 0;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const user = req.user;
+  const isPublished = req.query.isPublished;
+  console.log("user at getuserpost", user);
+  const adminInfo = await AdminModel.findOne({ username: user })
+    .populate(isPublished ? "myPosts" : "myDrafts")
+    .skip(offset)
+    .limit(limit);
+  console.log("admin info at getuserPOsts route", adminInfo);
+  if (adminInfo) {
+    resp.status(200).json({
+      success: true,
+      data: isPublished ? adminInfo.myPosts : adminInfo.myDrafts,
+    });
+  } else {
+    resp.status(400).json({ success: false, data: null });
+  }
+};
 export const getBookmarkPosts = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -64,30 +86,31 @@ export const bookmarkedPosts = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
-  const postId = req.body.postId;
-  console.log("postId at bookmarkposts", postId);
+  const { postId } = req.body;
+  const username = req.user;
+
   try {
-    const bookmarkedPostsForUser = await AdminModel.findOne({
-      username: req?.user,
-    }).populate({ path: "bookmarkedPosts", match: { _id: postId } });
-    console.log("bookmarkedPostsForUser", bookmarkedPostsForUser);
-    if (bookmarkedPostsForUser) {
-      if (bookmarkedPostsForUser?.bookmarkedPosts.length === 0) {
-        bookmarkedPostsForUser?.bookmarkedPosts?.push(postId);
-        await bookmarkedPostsForUser.save();
-        resp
-          .status(200)
-          .json({ success: true, data: "Post bookmarked successfully" });
-      } else {
-        resp
+    const admin = await AdminModel.findOneAndUpdate(
+      { username },
+      { $addToSet: { bookmarkedPosts: postId } }, // Use $addToSet to add postId only if it doesn't already exist
+      { new: true }
+    );
+
+    if (admin) {
+      if (admin.bookmarkedPosts.includes(postId)) {
+        return resp
           .status(200)
           .json({ success: false, data: "Post already bookmarked" });
+      } else {
+        return resp
+          .status(200)
+          .json({ success: true, data: "Post bookmarked successfully" });
       }
     } else {
-      resp.status(400).json({ success: false, data: null });
+      return resp.status(400).json({ success: false, data: null });
     }
   } catch (error) {
-    resp.status(500).json(error);
+    return resp.status(500).json(error);
   }
 };
 // export const getDraftPosts = async (
@@ -126,23 +149,22 @@ export const getPostByTag = async (
     console.log("tagId", tagId);
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-    const isPublished = req.query.isPublished as string;
-    const user = req.query.user as string;
-    let query = {};
-    if (isPublished === "true") {
-      if (user === undefined) {
-        query = { isPublished: true };
-      } else {
-        query = { author: user, isPublished: true };
-      }
-    } else {
-      // Assuming username is available in req.user
-      query = { author: req.user, isPublished: false };
-    }
+    // const user = req.user as string;
+    // console.log("user", user);
+    // if (isPublished === "true") {
+    //   // if (user === undefined) {
+    //     query = { isPublished: true };
+    //   // } else {
+    //   //   query = { author: user, isPublished: true };
+    //   // }
+    // } else {
+    //   // Assuming username is available in req.user
+    //   query = { author: req.user, isPublished: false };
+    // }
     const posts = await TagModel.findById({ _id: tagId })
       .populate({
         path: "posts",
-        match: query, // Filter based on isPublished field
+        match: { isPublished: true }, // Filter based on isPublished field
       })
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned;
@@ -200,8 +222,24 @@ export const createPost = async (req: Request, res: Response) => {
       isTagPresent.posts.push(post._id);
     }
     await isTagPresent?.save();
-    console.log("post", post);
-    res.status(201).json(post);
+
+    // Update Admin schema with the new post
+    const admin = await AdminModel.findOneAndUpdate(
+      { username: author },
+      {
+        $push: {
+          // Add the ID of the new post to myPosts array if isPublished is true
+          ...(isPublished ? { myPosts: post._id } : { myDrafts: post._id }),
+        },
+      },
+      { new: true }
+    );
+
+    if (admin) {
+      res.status(201).json({ success: true, data: post });
+    } else {
+      return res.status(400).json({ success: false, data: null });
+    }
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }

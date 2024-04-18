@@ -1,46 +1,48 @@
-import { SetterOrUpdater } from "recoil";
+import { SetterOrUpdater, useRecoilState } from "recoil";
 import { PostType } from "./InfinitePostScroll";
 import { useEffect } from "react";
 
 export const fetchTenPosts = async (
   isPublished: boolean,
   setPosts: SetterOrUpdater<PostType[]>,
+  type: string,
   loading: boolean,
   currentOffset: number,
   tag?: string | undefined,
   userEmail?: string | null,
-  isBookmarkedSet?: boolean | null
+  isBookmarkedSet?: boolean | null,
+  setCount?: SetterOrUpdater<{
+    myDiscussionCount: number;
+    bookmarkCount: number;
+    draftCount: number;
+  }>
 ) => {
+  console.log("tag at fetch post", tag)
   if (loading) return;
   loading = true;
 
-  console.log(tag, "tarun username for my post ", userEmail, isBookmarkedSet);
   let url = "";
 
   if (tag) {
     url = `${
       import.meta.env.VITE_SERVER_URL
-    }/post/tags/${tag}?isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
-
-    if (userEmail != null) {
-      url = `${
-        import.meta.env.VITE_SERVER_URL
-      }/post/tags/${tag}?user=${userEmail}&isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
-    }
+    }/post/tags/${tag}?offset=${currentOffset}&limit=10`;
   } else {
-    url = `${
-      import.meta.env.VITE_SERVER_URL
-    }/post?isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
-    if (userEmail != null && isBookmarkedSet === undefined) {
+    if (type === "allposts") {
       url = `${
         import.meta.env.VITE_SERVER_URL
-      }/post?user=${userEmail}&isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
-    } else if (userEmail != null && isBookmarkedSet) {
+      }/post?isPublished=${true}&offset=${currentOffset}&limit=10`;
+    } else if (type === "myposts" || type === "mydrafts") {
       url = `${
         import.meta.env.VITE_SERVER_URL
-      }/post/getBookmarkPosts?user=${userEmail}&offset=${currentOffset}&limit=10`;
+      }/post/userPosts?isPublished=${isPublished}&offset=${currentOffset}&limit=10`;
+    } else if (type === "mybookmarks") {
+      url = `${
+        import.meta.env.VITE_SERVER_URL
+      }/post/getBookmarkPosts?offset=${currentOffset}&limit=10`;
     }
   }
+  console.log("url before fetch", url, userEmail);
   fetch(url, {
     method: "GET",
     headers: {
@@ -54,7 +56,9 @@ export const fetchTenPosts = async (
       return resp.json();
     })
     .then((data) => {
-      console.log(data.data);
+      console.log(data);
+      console.log("data at fetch post ", data.data);
+
       const tenPosts: PostType[] = data.data.map((p: any) => ({
         postId: p._id,
         userProfile: "",
@@ -67,6 +71,12 @@ export const fetchTenPosts = async (
         console.log("No more posts available");
         return;
       }
+      console.log(
+        "variables at fetch ",
+        userEmail,
+        isBookmarkedSet,
+        isPublished
+      );
       if (currentOffset === 0) {
         // If offset is 0, replace existing posts with new posts
         setPosts(tenPosts);
@@ -84,20 +94,24 @@ export const fetchTenPosts = async (
     });
 };
 
-const fetchPosts = async (
+const useFetchPosts = async (
   isPublished: boolean,
   setPosts: SetterOrUpdater<PostType[]>,
-  // loading: boolean,
-  // currentOffset: number,
+  type: string,
   tagId?: string | undefined,
   userEmail?: string | null,
-  isBookmarkedSet?: boolean | null
+  isBookmarkedSet?: boolean | null,
+  setCount?: SetterOrUpdater<{
+    myDiscussionCount: number;
+    bookmarkCount: number;
+    draftCount: number;
+  }>
 ) => {
   let currentOffset = 0;
   let loading = false;
 
   useEffect(() => {
-    console.log("inside useeefetct", tagId, userEmail);
+    console.log("inside useEffect", tagId);
 
     // Fetch all posts
     // Reset currentOffset and posts when isPublished changes
@@ -106,11 +120,13 @@ const fetchPosts = async (
     fetchTenPosts(
       isPublished,
       setPosts,
+      type,
       loading,
       currentOffset,
       tagId,
       userEmail,
-      isBookmarkedSet
+      isBookmarkedSet,
+      setCount
     );
 
     const handleScroll = () => {
@@ -122,11 +138,13 @@ const fetchPosts = async (
         fetchTenPosts(
           true,
           setPosts,
+          type,
           loading,
           currentOffset,
           tagId,
           userEmail,
-          isBookmarkedSet
+          isBookmarkedSet,
+          setCount
         );
       }
     };
@@ -136,6 +154,7 @@ const fetchPosts = async (
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [tagId]);
+  }, [isPublished, setPosts, tagId, userEmail, isBookmarkedSet, setCount]);
 };
-export default fetchPosts;
+
+export default useFetchPosts;
