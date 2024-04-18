@@ -5,7 +5,6 @@ import InfinitePostScroll, { PostType } from "../InfinitePostScroll";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userState } from "../../store/atoms/user";
 import { postState } from "../../store/atoms/post";
-import countAtom from "../../store/atoms/quickLinkCount";
 import fetchPosts from "../fetchPosts";
 import useFetchPosts from "../fetchPosts";
 import { selectedTagIdState } from "../../store/atoms/selectedTag";
@@ -14,7 +13,6 @@ const MyPosts = () => {
   const userEmailState = useRecoilValue(userState);
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
-  const [count, setCount] = useRecoilState(countAtom);
   console.log(userEmailState);
   // useEffect(() => {
   // Ensure userEmail is populated before fetching posts
@@ -27,7 +25,6 @@ const MyPosts = () => {
     undefined,
     userEmailState.userEmail,
     null,
-    setCount
   );
   // }
   // }, [userEmailState, setPosts, selectedTag, setCount]);
@@ -37,7 +34,6 @@ const MyPosts = () => {
     setSelectedTagId(tagId);
   };
 
-  console.log("at my post", count.myDiscussionCount);
   console.log("useremail at my post", userEmailState.userEmail);
 
   return (

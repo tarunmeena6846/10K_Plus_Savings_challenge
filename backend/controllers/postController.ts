@@ -11,20 +11,6 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-    // const author = req.user; // Assuming the author's username is stored in req.user
-
-    // const isPublishedQueryParam = req.query.isPublished;
-    // const isPublished = isPublishedQueryParam
-    //   ? isPublishedQueryParam === "true"
-    //   : undefined;
-
-    // let query: any = {};
-    // if (isPublished !== undefined) {
-    //   query.isPublished = isPublished;
-    // }
-    // if (!isPublished) {
-    //   query.author = author;
-    // }
 
     const posts = await Post.find({ isPublished: true })
       .skip(offset) // Skip the specified number of posts

@@ -31,6 +31,7 @@ import { renderToString } from "react-dom/server"; // Import ReactDOMServer
 import ManageBillingForm from "./stripe/ManageBillingForm";
 import Button from "./components/Button";
 import handleBuyClick from "./stripe/SwotCheckout";
+import countAtom from "./components/store/atoms/quickLinkCount";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
@@ -40,6 +41,7 @@ function Appbar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
   // const subscriptionPlan = await getUserSubscriptionPlan();
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
@@ -98,7 +100,23 @@ function Appbar() {
               stripePlanId: data.userData.stripePlanId,
               isTopTier: data.userData.isTopTier,
             });
+            console.log(
+              data.userData.myPosts?.length ?? 0,
+              data.userData.myDrafts?.length ?? 0,
+              data.userData.bookmarkPosts?.length ?? 0
+            );
 
+            // console.log(
+            //   "cunt at appbar",
+            //   data.userData.myPosts.length,
+            //   data.userData.bookmarkPost.length,
+            //   data.userData.myDrafts.length
+            // );
+            setUserPostCount({
+              myDiscussionCount: data.userData.myPosts?.length ?? 0,
+              bookmarkCount: data.userData.bookmarkPosts?.length ?? 0,
+              draftCount: data.userData.myDrafts?.length ?? 0,
+            });
             if (!data.userData.isSubscribed) {
               navigate("/pricing");
             }

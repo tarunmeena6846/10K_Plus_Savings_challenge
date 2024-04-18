@@ -7,14 +7,12 @@ import { userState } from "../../store/atoms/user";
 import { postState } from "../../store/atoms/post";
 import fetchPosts from "../fetchPosts";
 import { error } from "console";
-import countAtom from "../../store/atoms/quickLinkCount";
 import useFetchPosts from "../fetchPosts";
 import { selectedTagIdState } from "../../store/atoms/selectedTag";
 const MyBookmarked = () => {
   const userEmail = useRecoilValue(userState);
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
-  const [count, setCount] = useRecoilState(countAtom);
   // Render popular tags
 
   // Render popular tags
@@ -29,9 +27,7 @@ const MyBookmarked = () => {
     undefined,
     userEmail.userEmail,
     true,
-    setCount
   );
-  console.log("at my bookmark", count.bookmarkCount);
   // fetch(`${import.meta.env.VITE_SERVER_URL}/post/bookmarked`, {
   //   method: "GET",
   //   headers: {

@@ -98,7 +98,7 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
                 >
                   {links.name}
                 </motion.button>
-                {links.count}
+                {links.name != "Recent Discussions" && links.count}
               </div>
             </div>
           ))}

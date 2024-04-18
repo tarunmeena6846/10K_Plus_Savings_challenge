@@ -10,12 +10,7 @@ export const fetchTenPosts = async (
   currentOffset: number,
   tag?: string | undefined,
   userEmail?: string | null,
-  isBookmarkedSet?: boolean | null,
-  setCount?: SetterOrUpdater<{
-    myDiscussionCount: number;
-    bookmarkCount: number;
-    draftCount: number;
-  }>
+  isBookmarkedSet?: boolean | null
 ) => {
   console.log("tag at fetch post", tag);
   if (loading) return;
@@ -99,12 +94,7 @@ const useFetchPosts = async (
   type: string,
   tagId?: string | undefined,
   userEmail?: string | null,
-  isBookmarkedSet?: boolean | null,
-  setCount?: SetterOrUpdater<{
-    myDiscussionCount: number;
-    bookmarkCount: number;
-    draftCount: number;
-  }>
+  isBookmarkedSet?: boolean | null
 ) => {
   let currentOffset = 0;
   let loading = false;
@@ -124,8 +114,7 @@ const useFetchPosts = async (
       currentOffset,
       tagId,
       userEmail,
-      isBookmarkedSet,
-      setCount
+      isBookmarkedSet
     );
 
     const handleScroll = () => {
@@ -142,8 +131,7 @@ const useFetchPosts = async (
           currentOffset,
           tagId,
           userEmail,
-          isBookmarkedSet,
-          setCount
+          isBookmarkedSet
         );
       }
     };
@@ -153,7 +141,7 @@ const useFetchPosts = async (
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isPublished, setPosts, tagId, userEmail, isBookmarkedSet, setCount]);
+  }, [isPublished, setPosts, tagId, userEmail, isBookmarkedSet]);
 };
 
 export default useFetchPosts;
