@@ -114,7 +114,7 @@ function Appbar() {
             // );
             setUserPostCount({
               myDiscussionCount: data.userData.myPosts?.length ?? 0,
-              bookmarkCount: data.userData.bookmarkPosts?.length ?? 0,
+              bookmarkCount: data.userData.bookmarkedPosts?.length ?? 0,
               draftCount: data.userData.myDrafts?.length ?? 0,
             });
             if (!data.userData.isSubscribed) {

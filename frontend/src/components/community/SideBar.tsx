@@ -25,7 +25,7 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
     { name: "My Bookmarks", count: count.bookmarkCount },
     { name: "My Drafts", count: count.draftCount },
   ];
-
+console.log(count)
   useEffect(() => {
     fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags`, {
       method: "GET",
