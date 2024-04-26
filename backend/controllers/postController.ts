@@ -164,8 +164,8 @@ export const getPostByTag = async (
     resp.status(400).json({ error });
   }
 };
-export const getPost = async (req: Request, res: Response) => {
-  console.log("inside getpost");
+export const getPost = async (req: AuthenticatedRequest, res: Response) => {
+  console.log("inside getpost", req.params.id);
   try {
     const post = await Post.findById(req.params.id).populate({
       path: "comments",
@@ -181,7 +181,7 @@ export const getPost = async (req: Request, res: Response) => {
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside creatapost");
   const { title, content, author, isPublished, tag } = req.body;
   console.log(title, content, author);
@@ -231,7 +231,7 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const addComment = async (req: Request, res: Response) => {
+export const addComment = async (req: AuthenticatedRequest, res: Response) => {
   const { content, authorId, parentId } = req.body;
   console.log("inside creatapost", authorId, parentId);
   try {
@@ -244,7 +244,7 @@ export const addComment = async (req: Request, res: Response) => {
       post: req.params.id,
       parentId: parentId,
     });
-
+    console.log("commen before save", comment);
     await comment.save();
     post.comments.push(comment._id);
     await post.save();
@@ -256,7 +256,10 @@ export const addComment = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteComment = async (req: Request, resp: Response) => {
+export const deleteComment = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
   const commentId: String = req.params.id;
   const postId = req.params.postId;
   console.log("commentid", commentId, postId);
@@ -279,7 +282,10 @@ export const deleteComment = async (req: Request, resp: Response) => {
   }
 };
 
-export const editComment = async (req: Request, resp: Response) => {
+export const editComment = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
   const commentId: String = req.params.id;
   // const postId = req.params.postId;
   console.log("commentid in editcomment", commentId, req.body.content);

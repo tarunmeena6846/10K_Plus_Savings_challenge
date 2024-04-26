@@ -32,7 +32,7 @@ export const handleComment = async (
     }
 
     const data = await response.json();
-    console.log(data);
+    console.log("at postcomment", data);
     return data;
   } catch (error) {
     console.error(error);

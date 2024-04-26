@@ -32,7 +32,7 @@ const CommentDetails = () => {
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
   const [commentContent, setCommentContent] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string>("");
-
+  console.log(currentPost, "currentposts");
   useEffect(() => {
     const sortedComments = [...currentPost.comments].sort(
       (a: CommentType, b: CommentType) => {
@@ -158,7 +158,7 @@ const CommentDetails = () => {
             <p>{timePassed(new Date(comment.createdAt))}</p>
           </div>
           <div className="">
-            <p className="p-2 ml-5">{(comment.content)}</p>
+            <p className="p-2 ml-5">{comment.content}</p>
             {clickedComments[comment._id] && (
               <div>
                 <TextEditor

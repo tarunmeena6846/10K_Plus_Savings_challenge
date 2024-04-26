@@ -25,13 +25,14 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
     { name: "My Bookmarks", count: count.bookmarkCount },
     { name: "My Drafts", count: count.draftCount },
   ];
-console.log(count)
   useEffect(() => {
+    console.log(count, "Bearer " + localStorage.getItem("token"));
+
     fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        authorization: "Bearer " + localStorage.getItem("token"),
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
     })
       .then((response) => {

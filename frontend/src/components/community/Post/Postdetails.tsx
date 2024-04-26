@@ -16,16 +16,19 @@ const Postdetails = () => {
   const { postId } = useParams();
   const { userEmail } = useRecoilValue(userState);
   const [commentContent, setCommentContent] = useState("");
-  const [currentPost, setCurrentPost] =
-    useRecoilState<PostType>(currentPostState);
+  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
 
   // Fetch comments for the current post from the backend
-  console.log("inside  postdetails ");
+  console.log("inside  postdetails ", postId);
 
   useEffect(() => {
-    console.log("inside useeffect of setpost");
+    console.log("inside useeffect of setpost", postId);
     fetch(`${import.meta.env.VITE_SERVER_URL}/post/${postId}`, {
       method: "GET",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
     })
       .then((response) => {
         if (!response.ok) {
@@ -59,7 +62,8 @@ const Postdetails = () => {
         </div>
         <div className="mt-7 md:m-0">
           <Button
-            onClick={() =>
+            onClick={() => {
+              setCommentContent("");
               handleComment(
                 commentContent,
                 postId as string,
@@ -67,8 +71,8 @@ const Postdetails = () => {
                 null,
                 "comment",
                 ""
-              )
-            }
+              );
+            }}
           >
             Comment
           </Button>
