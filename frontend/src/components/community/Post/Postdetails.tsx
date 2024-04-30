@@ -4,8 +4,8 @@ import InfinitePostScroll, { PostType } from "../InfinitePostScroll";
 import SideBar from "../SideBar";
 import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
-import { userState } from "../../store/atoms/user";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { actionsState, userState } from "../../store/atoms/user";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 // import HtmlParser from "react-html-parser";
 
 import { currentPostState, postState } from "../../store/atoms/post";
@@ -17,6 +17,8 @@ const Postdetails = () => {
   const { userEmail } = useRecoilValue(userState);
   const [commentContent, setCommentContent] = useState("");
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  const actions = useRecoilValue(actionsState);
+  const setActions = useSetRecoilState(actionsState);
 
   // Fetch comments for the current post from the backend
   console.log("inside  postdetails ", postId);
@@ -42,7 +44,7 @@ const Postdetails = () => {
         // Set comments fetched from the backend
       })
       .catch((error) => console.error(error));
-  }, [postId]);
+  }, [postId, actions]);
 
   return (
     <div className="">
@@ -70,6 +72,7 @@ const Postdetails = () => {
                 userEmail,
                 null,
                 "comment",
+                setActions,
                 ""
               );
             }}

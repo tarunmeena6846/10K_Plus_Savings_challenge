@@ -25,3 +25,9 @@ export const subscriptionState = atom({
     isTopTier: false,
   },
 });
+
+// actionsState.js
+export const actionsState = atom({
+  key: "actionsState",
+  default: 0, // Initial value doesn't matter, it will be updated when actions occur
+});

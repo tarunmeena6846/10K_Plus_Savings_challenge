@@ -12,7 +12,7 @@ const PostLanding = () => {
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <Postdetails></Postdetails>
+            {/* <Postdetails></Postdetails> */}
             <CommentDetails></CommentDetails>
           </div>
           <div className="md:w-1/4 p-4 m-4">

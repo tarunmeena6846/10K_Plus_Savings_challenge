@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { PostType } from "../InfinitePostScroll";
 import { currentPostState } from "../../store/atoms/post";
 // import HtmlParser from "react-html-parser";
@@ -9,7 +9,8 @@ import Button from "../../Button";
 import TextEditor from "../TextEditor";
 import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
-import { userState } from "../../store/atoms/user";
+import { actionsState, userState } from "../../store/atoms/user";
+import Postdetails from "./Postdetails";
 
 type CommentType = {
   _id: string;
@@ -22,6 +23,7 @@ type CommentType = {
 
 const CommentDetails = () => {
   const [comments, setComments] = useState([]);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [sortedComments, setSortedComments] = useState<CommentType[]>([]);
   const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
   const { postId } = useParams();
@@ -29,6 +31,8 @@ const CommentDetails = () => {
   const [clickedComments, setClickedComments] = useState<{
     [key: string]: boolean;
   }>({});
+  const setActions = useSetRecoilState(actionsState);
+
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
   const [commentContent, setCommentContent] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string>("");
@@ -127,7 +131,10 @@ const CommentDetails = () => {
 
       const data = await response.json();
       console.log(data);
-      toggleCommentClicked(commentId);
+      alert(data.message);
+      setActions((prev) => prev + 1); // Increment actionsState
+
+      // toggleCommentClicked(commentId);
     } catch (error) {
       console.error(error);
       throw error;
@@ -173,16 +180,18 @@ const CommentDetails = () => {
                     <>
                       {/* <Button onClick={() => handleSave(comment._id)}> */}
                       <Button
-                        onClick={() =>
+                        onClick={() => {
                           handleComment(
                             commentContent,
                             postId as string,
                             userEmail,
                             comment._id,
                             "save",
+                            setActions,
                             comment._id
-                          )
-                        }
+                          );
+                          handleCancel(comment._id);
+                        }}
                       >
                         Save
                       </Button>
@@ -190,16 +199,18 @@ const CommentDetails = () => {
                   ) : (
                     // <Button onClick={() => handleReply(comment._id)}>
                     <Button
-                      onClick={() =>
+                      onClick={() => {
                         handleComment(
                           commentContent,
                           postId as string,
                           userEmail,
                           comment._id,
                           "reply",
+                          setActions,
                           comment._id
-                        )
-                      }
+                        );
+                        handleCancel(comment._id);
+                      }}
                     >
                       Reply
                     </Button>
@@ -241,6 +252,7 @@ const CommentDetails = () => {
 
   return (
     <div>
+      <Postdetails></Postdetails>
       <br />
       <hr className="" />
       <br />

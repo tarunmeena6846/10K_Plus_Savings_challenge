@@ -267,18 +267,23 @@ export const deleteComment = async (
     const post = await Post.findByIdAndUpdate(postId, {
       $pull: { comments: commentId }, // Remove the comment from the comments array
     });
-    if (!post) resp.status(404).json("Post is not found");
+    if (!post)
+      resp.status(404).json({ success: false, message: "Post is not found" });
     console.log("post", post);
     const deletedComment = await Comment.findByIdAndDelete(commentId);
 
     if (!deletedComment) {
-      return resp.status(404).json({ message: "Comment not found" });
+      return resp
+        .status(404)
+        .json({ success: false, message: "Comment not found" });
     }
 
-    resp.status(200).json({ message: "Comment deleted successfully" });
+    resp
+      .status(200)
+      .json({ success: true, message: "Comment deleted successfully" });
   } catch (error) {
     console.error(error);
-    resp.status(500).json({ message: "Server error" });
+    resp.status(500).json({ success: false, message: "Server error" });
   }
 };
 

@@ -1,9 +1,13 @@
+import { SetterOrUpdater, useSetRecoilState } from "recoil";
+import { actionsState } from "../../store/atoms/user";
+
 export const handleComment = async (
   commentContent: string,
   postId: string,
   userEmail: string,
   parentId: string | null,
   type: string,
+  setActions: SetterOrUpdater,
   commentId?: string
 ) => {
   console.log("inside handlecomment", commentContent, postId);
@@ -33,6 +37,8 @@ export const handleComment = async (
 
     const data = await response.json();
     console.log("at postcomment", data);
+    setActions((prev) => prev + 1); // Increment actionsState
+
     return data;
   } catch (error) {
     console.error(error);

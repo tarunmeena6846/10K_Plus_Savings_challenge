@@ -30,6 +30,6 @@ router.post("/bookmarkPost", detokenizeAdmin, bookmarkedPosts);
 router.post("/", detokenizeAdmin, createPost);
 router.post("/:id/comments", detokenizeAdmin, addComment);
 router.delete("/:postId/:id", detokenizeAdmin, deleteComment);
-// router.post("/:id", detokenizeAdmin, editComment);
+router.post("/:id", detokenizeAdmin, editComment);
 
 export default router;
