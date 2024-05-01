@@ -3,11 +3,17 @@ import { Avatar, Dropdown, Modal } from "flowbite-react";
 import { useRecoilState } from "recoil";
 import { userState } from "./store/atoms/user";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 export default function UserAvatar() {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showAccountSettingsModal, setShowAccountSettingsModal] =
+    useState(false);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
   console.log(currentUserState);
@@ -18,7 +24,7 @@ export default function UserAvatar() {
   };
 
   // Function to handle setting the profile image
-  const handleSetProfileImage = async () => {
+  const handleSetProfileImage = async (type: string) => {
     console.log(selectedImage);
     try {
       const response = await fetch(
@@ -31,7 +37,8 @@ export default function UserAvatar() {
           },
           body: JSON.stringify({
             // username: currentUserState.userEmail,
-            imageUrl: selectedImage,
+            imageUrl: type === "profile picture" ? selectedImage : undefined,
+            newPassword: type === "password" ? confirmPassword : undefined,
           }),
         }
       );
@@ -42,11 +49,11 @@ export default function UserAvatar() {
       response.json().then((data) => {
         console.log(data);
       });
-      // // Update the avatar image URL in the state
-      // setSelectedImage((prev: any) => ({
-      //   ...prev,
-      //   imageUrl: selectedImage,
-      // }));
+      // Update the avatar image URL in the state
+      setCurrentUserState((prev: any) => ({
+        ...prev,
+        imageUrl: selectedImage,
+      }));
 
       // Close the image modal
       setShowImageModal(false);
@@ -76,8 +83,11 @@ export default function UserAvatar() {
         <Dropdown.Header>
           <span className="block text-sm">{currentUserState.userEmail}</span>
         </Dropdown.Header>
-        <Dropdown.Divider />
-        <Dropdown.Divider />
+        {/* <Dropdown.Divider />
+        <Dropdown.Divider /> */}
+        <Dropdown.Item onClick={() => setShowAccountSettingsModal(true)}>
+          Account Setting
+        </Dropdown.Item>
         <Dropdown.Item
           onClick={() => {
             console.log("logout clicked");
@@ -96,7 +106,11 @@ export default function UserAvatar() {
         </Dropdown.Item>
       </Dropdown>
       {/* Image Modal */}
-      <Modal show={showImageModal} onClose={() => setShowImageModal(false)}>
+      <Modal
+        show={showImageModal}
+        onClose={() => setShowImageModal(false)}
+        className="w-96" // Adjust the width as per your requirement
+      >
         <Modal.Body>
           <h2 className="text-lg font-bold mb-4">Choose Profile Image</h2>
           {/* Grid of images */}
@@ -112,10 +126,68 @@ export default function UserAvatar() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleSetProfileImage} className="mr-2">
+          <Button
+            onClick={() => handleSetProfileImage("profile picture")}
+            className="mr-2"
+          >
             Set Profile Image
           </Button>
           <Button onClick={() => setShowImageModal(false)}>Cancel</Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Account Settings Modal */}
+      <Modal
+        show={showAccountSettingsModal}
+        onClose={() => setShowAccountSettingsModal(false)}
+        className="w-96" // Adjust the width as per your requirement
+      >
+        <Modal.Body>
+          <h2 className="text-lg font-bold mb-4">Account Settings</h2>
+          <Avatar
+            alt="User settings"
+            img={currentUserState.imageUrl || selectedImage || ""}
+            className="mx-auto p-2"
+            size="lg"
+            rounded
+          />
+          <TextField
+            label="Email"
+            variant="outlined"
+            value={currentUserState.userEmail}
+            fullWidth
+            disabled
+            // className=""
+          />
+          <input
+            className="border rounded w-full my-2 pt-3 pb-3 pl-3" // Add margin to the top and bottom
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            // fullWidth
+          />
+          <input
+            // label="Confirm Password"
+            // variant="outlined"
+            placeholder="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            // fullWidth
+            className="border rounded w-full my-2 pt-3 pb-3 pl-3" // Add margin to the top and bottom
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => handleSetProfileImage("password")}
+            className="mr-2"
+          >
+            Update Password
+          </Button>
+          <Button onClick={() => setShowAccountSettingsModal(false)}>
+            Cancel
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
