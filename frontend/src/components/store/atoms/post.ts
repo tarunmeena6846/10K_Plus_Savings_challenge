@@ -1,5 +1,6 @@
 import { atom } from "recoil";
 import { PostType } from "../../community/InfinitePostScroll";
+import { CommentType } from "../../community/Post/CommentDetails";
 
 export const postState = atom<PostType[]>({
   key: "postState",
@@ -14,6 +15,6 @@ export const currentPostState = atom({
     imageContent: "",
     title: "",
     content: "",
-    comments: [],
+    comments: [] as CommentType[],
   },
 });

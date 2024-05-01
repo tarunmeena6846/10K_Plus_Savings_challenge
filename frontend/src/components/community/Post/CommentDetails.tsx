@@ -11,18 +11,18 @@ import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
 import { actionsState, userState } from "../../store/atoms/user";
 import Postdetails from "./Postdetails";
+import { error } from "console";
 
-type CommentType = {
+export type CommentType = {
   _id: string;
   content: string;
   createdAt: Date;
-  likes: number;
+  likes: { likes: number; username: string };
   parentId: string | null;
   author: string;
 };
 
 const CommentDetails = () => {
-  const [comments, setComments] = useState([]);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [sortedComments, setSortedComments] = useState<CommentType[]>([]);
   const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
@@ -36,7 +36,7 @@ const CommentDetails = () => {
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
   const [commentContent, setCommentContent] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string>("");
-  console.log(currentPost, "currentposts");
+  console.log(currentPost.comments, "currentposts");
   useEffect(() => {
     const sortedComments = [...currentPost.comments].sort(
       (a: CommentType, b: CommentType) => {
@@ -45,13 +45,13 @@ const CommentDetails = () => {
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           );
         } else if (sortBy === "upvotes") {
-          return b.likes - a.likes;
+          return b.likes.likes - a.likes.likes;
         }
         return 0;
       }
     );
     setSortedComments(sortedComments);
-  }, [sortBy, comments, currentPost]);
+  }, [sortBy, currentPost]);
 
   const toggleCommentClicked = (commentId: string) => {
     setClickedComments((prevState) => ({
@@ -59,11 +59,35 @@ const CommentDetails = () => {
       [commentId]: !prevState[commentId],
     }));
   };
+  //TODO make this work currently upvote url is not getting trigered from the frontend changed the atom also
+  const handleUpvote = async (comment: any) => {
+    console.log("inside upvote", comment._id);
 
-  const handleUpvote = () => {
-    console.log("inside upvote");
+    fetch(`${import.meta.env.VITE_SERVER_URL}/post/${comment._id}/upvote`, {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({
+        username: userEmail,
+      }),
+    })
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("Network response is not ok");
+        }
+        resp.json().then((data) => {
+          console.log(data);
+          setActions((prev) => prev + 1); // Increment actionsState
+          console.log("at upvote comment", data);
+        });
+      })
+      .catch((error) => {
+        // Handle error
+        console.error("Error creating post:", error);
+      });
   };
-
   // const handleReply = (commentId: string) => {
   //   setEditingCommentId("");
   //   setCommentContent("");
@@ -119,9 +143,6 @@ const CommentDetails = () => {
             "content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          body: JSON.stringify({
-            postId: postId,
-          }),
         }
       );
 
@@ -222,7 +243,9 @@ const CommentDetails = () => {
               </div>
             )}
             <div className="flex flex-row p-2 ml-5 gap-2">
-              <button onClick={handleUpvote}>Upvotes: {comment.likes}</button>
+              <button onClick={() => handleUpvote(comment)}>
+                Upvotes: {comment.likes.likes}
+              </button>
               {!clickedComments[comment._id] && (
                 <button onClick={() => toggleCommentClicked(comment._id)}>
                   Reply

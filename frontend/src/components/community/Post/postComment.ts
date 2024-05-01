@@ -18,6 +18,7 @@ export const handleComment = async (
     if (type === "save") {
       url = `${import.meta.env.VITE_SERVER_URL}/post/${commentId}`;
     }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {

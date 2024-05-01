@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import Login from "./components/Login";
 import Landing from "./components/Landing";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import Appbar from "./AppBar";
-import { RecoilRoot } from "recoil";
+import { RecoilRoot, useRecoilState } from "recoil";
 import ProjectedDashboard from "./components/ProjectedDashboard";
 import StripePricingTable from "./components/StripePricingTable";
 import EmailVerify from "./components/EmailVerify";
@@ -30,6 +31,12 @@ import CurrentDashboard from "./components/Dashboard/CurrentDashboard";
 import TargetDashboard from "./components/Dashboard/TargetDashboard";
 import ActualDashboard from "./components/Dashboard/ActualDashboard";
 import SWOTtasklist from "./components/SWOTanalysisPortal/SWOTtaskListDisplay";
+import {
+  SubscriptionData,
+  subscriptionState,
+  userState,
+} from "./components/store/atoms/user";
+import countAtom from "./components/store/atoms/quickLinkCount";
 
 function App() {
   const location = useLocation();
@@ -47,6 +54,7 @@ function App() {
   return (
     // <Router>
     <RecoilRoot>
+      <InitUser />
       {shouldRenderAppbar && <Appbar />} {/* Render the Appbar conditionally */}
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -76,4 +84,97 @@ function App() {
   );
 }
 
+export function InitUser() {
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
+  const navigate = useNavigate();
+
+  const [subscription, setSubscripton] =
+    useRecoilState<SubscriptionData>(subscriptionState);
+  const Init = async () => {
+    console.log("inside inti");
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      fetch(`${import.meta.env.VITE_SERVER_URL}/auth/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + storedToken,
+        },
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          console.log(" data after me route", data);
+          if (data && data.userEmail) {
+            setCurrentUserState({
+              userEmail: data.userEmail,
+              isLoading: false,
+              imageUrl: data.imageUrl,
+              isVerified: data.userData.verified,
+              myWhy: data.userData.myWhy,
+            });
+
+            setSubscripton({
+              isSubscribed: data.userData.isSubscribed,
+              stripeCustomerId: data.userData.stripeUserId,
+              stripePlanId: data.userData.stripePlanId,
+              isTopTier: data.userData.isTopTier,
+            });
+            console.log(
+              data.userData.myPosts?.length ?? 0,
+              data.userData.myDrafts?.length ?? 0,
+              data.userData.bookmarkPosts?.length ?? 0
+            );
+
+            // console.log(
+            //   "cunt at appbar",
+            //   data.userData.myPosts.length,
+            //   data.userData.bookmarkPost.length,
+            //   data.userData.myDrafts.length
+            // );
+            setUserPostCount({
+              myDiscussionCount: data.userData.myPosts?.length ?? 0,
+              bookmarkCount: data.userData.bookmarkedPosts?.length ?? 0,
+              draftCount: data.userData.myDrafts?.length ?? 0,
+            });
+            if (!data.userData.isSubscribed) {
+              navigate("/pricing");
+            }
+          } else {
+            setCurrentUserState({
+              userEmail: "",
+              isLoading: false,
+              imageUrl: "",
+              isVerified: currentUserState.isVerified,
+              myWhy: currentUserState.myWhy,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error while logging in", error);
+          setCurrentUserState({
+            userEmail: "",
+            isLoading: false,
+            imageUrl: "",
+            isVerified: currentUserState.isVerified,
+            myWhy: currentUserState.myWhy,
+          });
+          // setLogoutModalOpen(false);
+        });
+    } else {
+      setCurrentUserState({
+        userEmail: "",
+        isLoading: false,
+        imageUrl: "",
+        isVerified: currentUserState.isVerified,
+        myWhy: currentUserState.myWhy,
+      });
+    }
+  };
+  useEffect(() => {
+    console.log("inside inituseeffect ");
+    Init();
+  }, [setCurrentUserState, navigate]);
+  return <></>;
+}
 export default App;

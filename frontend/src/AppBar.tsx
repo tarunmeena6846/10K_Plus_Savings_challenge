@@ -41,10 +41,10 @@ function Appbar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
-  const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
+  // const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
   // const subscriptionPlan = await getUserSubscriptionPlan();
-  const [subscription, setSubscripton] =
-    useRecoilState<SubscriptionData>(subscriptionState);
+  // const [subscription, setSubscripton] =
+  //   useRecoilState<SubscriptionData>(subscriptionState);
   console.log(
     "import.meta.env.VITE_SERVER_URL",
     import.meta.env.VITE_SERVER_URL
@@ -72,85 +72,85 @@ function Appbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      fetch(`${import.meta.env.VITE_SERVER_URL}/auth/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + storedToken,
-        },
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
-          console.log(" data after me route", data);
-          if (data && data.userEmail) {
-            setCurrentUserState({
-              userEmail: data.userEmail,
-              isLoading: false,
-              imageUrl: data.imageUrl,
-              isVerified: data.userData.verified,
-              myWhy: data.userData.myWhy,
-            });
+  // useEffect(() => {
+  //   const storedToken = localStorage.getItem("token");
+  //   if (storedToken) {
+  //     fetch(`${import.meta.env.VITE_SERVER_URL}/auth/me`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: "Bearer " + storedToken,
+  //       },
+  //     })
+  //       .then((resp) => resp.json())
+  //       .then((data) => {
+  //         console.log(" data after me route", data);
+  //         if (data && data.userEmail) {
+  //           setCurrentUserState({
+  //             userEmail: data.userEmail,
+  //             isLoading: false,
+  //             imageUrl: data.imageUrl,
+  //             isVerified: data.userData.verified,
+  //             myWhy: data.userData.myWhy,
+  //           });
 
-            setSubscripton({
-              isSubscribed: data.userData.isSubscribed,
-              stripeCustomerId: data.userData.stripeUserId,
-              stripePlanId: data.userData.stripePlanId,
-              isTopTier: data.userData.isTopTier,
-            });
-            console.log(
-              data.userData.myPosts?.length ?? 0,
-              data.userData.myDrafts?.length ?? 0,
-              data.userData.bookmarkPosts?.length ?? 0
-            );
+  //           setSubscripton({
+  //             isSubscribed: data.userData.isSubscribed,
+  //             stripeCustomerId: data.userData.stripeUserId,
+  //             stripePlanId: data.userData.stripePlanId,
+  //             isTopTier: data.userData.isTopTier,
+  //           });
+  //           console.log(
+  //             data.userData.myPosts?.length ?? 0,
+  //             data.userData.myDrafts?.length ?? 0,
+  //             data.userData.bookmarkPosts?.length ?? 0
+  //           );
 
-            // console.log(
-            //   "cunt at appbar",
-            //   data.userData.myPosts.length,
-            //   data.userData.bookmarkPost.length,
-            //   data.userData.myDrafts.length
-            // );
-            setUserPostCount({
-              myDiscussionCount: data.userData.myPosts?.length ?? 0,
-              bookmarkCount: data.userData.bookmarkedPosts?.length ?? 0,
-              draftCount: data.userData.myDrafts?.length ?? 0,
-            });
-            if (!data.userData.isSubscribed) {
-              navigate("/pricing");
-            }
-          } else {
-            setCurrentUserState({
-              userEmail: "",
-              isLoading: false,
-              imageUrl: "",
-              isVerified: currentUserState.isVerified,
-              myWhy: currentUserState.myWhy,
-            });
-          }
-        })
-        .catch((error) => {
-          console.error("Error while logging in", error);
-          setCurrentUserState({
-            userEmail: "",
-            isLoading: false,
-            imageUrl: "",
-            isVerified: currentUserState.isVerified,
-            myWhy: currentUserState.myWhy,
-          });
-          setLogoutModalOpen(false);
-        });
-    } else {
-      setCurrentUserState({
-        userEmail: "",
-        isLoading: false,
-        imageUrl: "",
-        isVerified: currentUserState.isVerified,
-        myWhy: currentUserState.myWhy,
-      });
-    }
-  }, [setCurrentUserState, navigate, setSelectedDate]);
+  //           // console.log(
+  //           //   "cunt at appbar",
+  //           //   data.userData.myPosts.length,
+  //           //   data.userData.bookmarkPost.length,
+  //           //   data.userData.myDrafts.length
+  //           // );
+  //           setUserPostCount({
+  //             myDiscussionCount: data.userData.myPosts?.length ?? 0,
+  //             bookmarkCount: data.userData.bookmarkedPosts?.length ?? 0,
+  //             draftCount: data.userData.myDrafts?.length ?? 0,
+  //           });
+  //           if (!data.userData.isSubscribed) {
+  //             navigate("/pricing");
+  //           }
+  //         } else {
+  //           setCurrentUserState({
+  //             userEmail: "",
+  //             isLoading: false,
+  //             imageUrl: "",
+  //             isVerified: currentUserState.isVerified,
+  //             myWhy: currentUserState.myWhy,
+  //           });
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error while logging in", error);
+  //         setCurrentUserState({
+  //           userEmail: "",
+  //           isLoading: false,
+  //           imageUrl: "",
+  //           isVerified: currentUserState.isVerified,
+  //           myWhy: currentUserState.myWhy,
+  //         });
+  //         setLogoutModalOpen(false);
+  //       });
+  //   } else {
+  //     setCurrentUserState({
+  //       userEmail: "",
+  //       isLoading: false,
+  //       imageUrl: "",
+  //       isVerified: currentUserState.isVerified,
+  //       myWhy: currentUserState.myWhy,
+  //     });
+  //   }
+  // }, [setCurrentUserState, navigate, setSelectedDate]);
 
   const handleLogout = () => {
     setLogoutModalOpen(true);

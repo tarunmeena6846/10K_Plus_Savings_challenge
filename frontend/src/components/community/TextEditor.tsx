@@ -67,3 +67,4 @@ const TextEditor = ({ height, setHtmlContent, content }) => {
 };
 
 export default TextEditor;
+

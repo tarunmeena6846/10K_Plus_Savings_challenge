@@ -4,8 +4,15 @@ import { useParams } from "react-router-dom";
 import SideBar from "../SideBar";
 import Postdetails from "./Postdetails";
 import CommentDetails from "./CommentDetails";
+import { useRecoilState } from "recoil";
+import { selectedTagIdState } from "../../store/atoms/selectedTag";
 
 const PostLanding = () => {
+  const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
+  // Render popular tags
+  const handleSelectTag = (tagId: string) => {
+    setSelectedTagId(tagId);
+  };
   //   const params = useParams();
   return (
     <div>
@@ -16,7 +23,7 @@ const PostLanding = () => {
             <CommentDetails></CommentDetails>
           </div>
           <div className="md:w-1/4 p-4 m-4">
-            <SideBar></SideBar>
+            <SideBar onSelectTag={handleSelectTag}></SideBar>
             {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
             Create Post
           </button>

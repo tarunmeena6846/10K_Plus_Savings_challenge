@@ -136,9 +136,10 @@ const Post: React.FC<PostType> = ({
         <div className="flex items-center">
           <img
             className="w-12 h-12 rounded-full mr-2"
-            src="./profile.jpg"
+            src="./user1.svg"
             alt="Profile"
           />
+
           <div className="ml-2 flex justify-center items-center text-lg">
             <span className="text-gray-600 font-normal text-sm p-1">
               Posted by{" "}

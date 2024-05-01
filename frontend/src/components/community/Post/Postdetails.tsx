@@ -7,6 +7,8 @@ import TextEditor from "../TextEditor";
 import { actionsState, userState } from "../../store/atoms/user";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 // import HtmlParser from "react-html-parser";
+import parse from "html-react-parser";
+import MarkdownPreview from "./MarkdownPreview";
 
 import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
@@ -45,14 +47,20 @@ const Postdetails = () => {
       })
       .catch((error) => console.error(error));
   }, [postId, actions]);
-
+  // console.log(typeof currentPost.content, currentPost.content);
   return (
     <div className="">
       <div className=" text-3xl font-bold mb-4">
         {currentPost?.title as string}
       </div>
       {currentPost?.content && ( // Check if post?.content exists
-        <div className="mb-4">{currentPost.content}</div> // Render HTMLReactParser
+        // <div>
+        //   <div
+        //     // className="mb-4"
+        //     dangerouslySetInnerHTML={{ __html: currentPost.content }}
+        //   />
+        // </div>
+        <MarkdownPreview markdown={currentPost.content} />
       )}
       <div className="flex flex-col">
         comment as {userEmail}
