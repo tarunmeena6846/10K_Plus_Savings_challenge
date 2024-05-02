@@ -31,6 +31,7 @@ const HandleCreatePost = () => {
         author: currentUserState.userEmail,
         isPublished: isPublished,
         tag: tag,
+        imageUrl: currentUserState.imageUrl,
       }),
     })
       .then((resp) => {

@@ -6,6 +6,7 @@ import Button from "../../Button";
 import { useNavigate } from "react-router-dom";
 import { response } from "express";
 import { json } from "stream/consumers";
+import { currentPostState } from "../../store/atoms/post";
 // import HtmlParser from "react-html-parser";
 
 export const timePassed = (date: Date): string => {
@@ -136,7 +137,7 @@ const Post: React.FC<PostType> = ({
         <div className="flex items-center">
           <img
             className="w-12 h-12 rounded-full mr-2"
-            src="./user1.svg"
+            src={userProfile}
             alt="Profile"
           />
 

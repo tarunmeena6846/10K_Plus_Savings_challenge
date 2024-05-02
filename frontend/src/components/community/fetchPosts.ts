@@ -51,11 +51,11 @@ export const fetchTenPosts = async (
       return resp.json();
     })
     .then((data) => {
-      // console.log(data);
+      console.log(data);
 
       const tenPosts: PostType[] = data.data.map((p: any) => ({
         postId: p._id,
-        userProfile: "",
+        userProfile: p.userImage || "",
         username: p.author,
         postTime: new Date(p.createdAt),
         title: p.title,
