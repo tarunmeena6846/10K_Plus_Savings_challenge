@@ -23,7 +23,7 @@ export type CommentType = {
   imageLink: string;
 };
 
-const CommentDetails = ({ currentPost }) => {
+const CommentDetails = () => {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [sortedComments, setSortedComments] = useState<CommentType[]>([]);
   const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
@@ -34,7 +34,7 @@ const CommentDetails = ({ currentPost }) => {
   }>({});
   const setActions = useSetRecoilState(actionsState);
 
-  // const currentPost = useRecoilValue(currentPostState);
+  const currentPost = useRecoilValue(currentPostState);
   const [commentContent, setCommentContent] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string>("");
   console.log(currentPost.comments, "currentposts");
@@ -299,7 +299,7 @@ const CommentDetails = ({ currentPost }) => {
   console.log("currentposts sortedCOmments", sortedComments);
   return (
     <div>
-      {/* <Postdetails></Postdetails> */}
+      <Postdetails></Postdetails>
       <br />
       <hr className="" />
       <br />

@@ -13,12 +13,12 @@ import MarkdownPreview from "./MarkdownPreview";
 import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
 
-const Postdetails = ({ setCurrentPost }) => {
+const Postdetails = () => {
   console.log("inside postdetails");
   const { postId } = useParams();
   const { userEmail } = useRecoilValue(userState);
   const [commentContent, setCommentContent] = useState("");
-  // const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
   const actions = useRecoilValue(actionsState);
   const setActions = useSetRecoilState(actionsState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
@@ -56,9 +56,9 @@ const Postdetails = ({ setCurrentPost }) => {
   return (
     <div className="">
       <div className=" text-3xl font-bold mb-4">
-        {/* {currentPost?.title as string} */}
+        {currentPost?.title as string}
       </div>
-      {/* {currentPost?.content && ( // Check if post?.content exists
+      {currentPost?.content && ( // Check if post?.content exists
         // <div>
         //   <div
         //     // className="mb-4"
@@ -66,7 +66,7 @@ const Postdetails = ({ setCurrentPost }) => {
         //   />
         // </div>
         <MarkdownPreview markdown={currentPost.content} />
-      )} */}
+      )}
       <div className="flex flex-col">
         comment as {userEmail}
         <div className="">
