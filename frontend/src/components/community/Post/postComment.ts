@@ -5,12 +5,13 @@ export const handleComment = async (
   commentContent: string,
   postId: string,
   userEmail: string,
+  userProfile: String,
   parentId: string | null,
-  type: string,
   setActions: SetterOrUpdater,
+  type: string,
   commentId?: string
 ) => {
-  console.log("inside handlecomment", commentContent, postId);
+  console.log("inside handlecomment", commentContent, postId, userProfile);
   console.log("parentId", parentId);
 
   try {
@@ -28,6 +29,7 @@ export const handleComment = async (
       body: JSON.stringify({
         content: commentContent,
         authorId: userEmail,
+        userprofile: userProfile,
         parentId: parentId,
       }),
     });
@@ -38,7 +40,7 @@ export const handleComment = async (
 
     const data = await response.json();
     console.log("at postcomment", data);
-    setActions((prev) => prev + 1); // Increment actionsState
+    setActions((prev: any) => prev + 1); // Increment actionsState
 
     return data;
   } catch (error) {

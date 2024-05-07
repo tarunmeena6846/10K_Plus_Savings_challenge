@@ -35,7 +35,7 @@ const CommunityLanding = () => {
     // null,
     null
   );
-
+  console.log("posts at infinity", posts);
   return (
     <div>
       <Header

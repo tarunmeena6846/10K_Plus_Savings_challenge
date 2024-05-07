@@ -51,7 +51,7 @@ const Post: React.FC<PostType> = ({
   title,
   content,
 }) => {
-  console.log("tarun postid", postId);
+  console.log("tarun postid", postId, userProfile);
   const navigate = useNavigate();
   // const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
   const excerpt = content.substring(0, 200); // Adjust the length as needed
@@ -113,6 +113,7 @@ const Post: React.FC<PostType> = ({
   return (
     <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-2xl m-4 shadow dark:bg-gray-800 dark:border-gray-700 relative">
       <div className="rounded-t-lg overflow-hidden">
+        {imageContent}
         <img className="w-full" src={imageContent} alt="" />
         <div className="absolute top-0 right-0 p-4">
           <svg
@@ -120,7 +121,7 @@ const Post: React.FC<PostType> = ({
             className="h-6 w-6 cursor-pointer"
             fill="none"
             viewBox="0 0 24 24"
-            stroke={isDarkTheme ? "white" : "currentColor"} // Set stroke color based on theme
+            stroke={isDarkTheme ? "whtte" : "currentColor"} // Set stroke color based on theme
             onClick={toggleDeleteOption}
             ref={optionRef}
           >
@@ -135,6 +136,7 @@ const Post: React.FC<PostType> = ({
       </div>
       <div className="p-5">
         <div className="flex items-center">
+          {userProfile}
           <img
             className="w-12 h-12 rounded-full mr-2"
             src={userProfile}

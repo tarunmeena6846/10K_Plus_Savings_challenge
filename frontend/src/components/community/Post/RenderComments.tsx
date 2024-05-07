@@ -10,7 +10,7 @@ import TextEditor from "../TextEditor";
 import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
 import { actionsState, userState } from "../../store/atoms/user";
-import Postdetails from "./Postdetails";
+import Postdetails from "./PostRetrieval";
 import { error } from "console";
 
 export type CommentType = {
@@ -20,9 +20,10 @@ export type CommentType = {
   likes: { likes: number; username: string };
   parentId: string | null;
   author: string;
+  imageLink: string;
 };
 
-const CommentDetails = () => {
+const CommentDetails = ({ currentPost }) => {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [sortedComments, setSortedComments] = useState<CommentType[]>([]);
   const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
@@ -33,11 +34,20 @@ const CommentDetails = () => {
   }>({});
   const setActions = useSetRecoilState(actionsState);
 
-  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  // const currentPost = useRecoilValue(currentPostState);
   const [commentContent, setCommentContent] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string>("");
   console.log(currentPost.comments, "currentposts");
+
+  // if (currentPost.comments.length === 0) {
+  //   console.log("currentposts length 0");
+  //   return <div>No comments available.</div>;
+  // }
   useEffect(() => {
+    if (currentPost.comments.length === 0) {
+      console.log("currentposts length 0");
+      return;
+    }
     const sortedComments = [...currentPost.comments].sort(
       (a: CommentType, b: CommentType) => {
         if (sortBy === "createdAt") {
@@ -167,6 +177,11 @@ const CommentDetails = () => {
     parentId: string | null = null,
     depth: number = 0
   ) => {
+    if (commentsArray.length === 0) {
+      console.log("currentposts length 0");
+      return <div>No comments available.</div>;
+    }
+    console.log("currentposts at renderCOmments", commentsArray[0].imageLink);
     return commentsArray
       .filter((comment) => comment.parentId === parentId)
       .map((comment) => (
@@ -181,7 +196,15 @@ const CommentDetails = () => {
           className="flex flex-col p-2 rounded-2xl"
         >
           <div className="flex flex-row gap-2">
-            <img src="" className="w-15 h-15" />
+            {/* {comment.imageLink.substring(1)} */}
+
+            <img
+              className="w-12 h-12 rounded-full mr-2"
+              src={comment.imageLink.substring(1)}
+              // src="target.png"
+              alt="Profile"
+            />
+
             <p>{comment.author}</p>
             <p>{timePassed(new Date(comment.createdAt))}</p>
           </div>
@@ -199,16 +222,16 @@ const CommentDetails = () => {
                 <div className="flex flex-row p-2 gap-2">
                   {editingCommentId === comment._id ? (
                     <>
-                      {/* <Button onClick={() => handleSave(comment._id)}> */}
                       <Button
                         onClick={() => {
                           handleComment(
                             commentContent,
                             postId as string,
                             userEmail,
+                            currentUserState.imageUrl,
                             comment._id,
-                            "save",
                             setActions,
+                            "save",
                             comment._id
                           );
                           handleCancel(comment._id);
@@ -225,9 +248,10 @@ const CommentDetails = () => {
                           commentContent,
                           postId as string,
                           userEmail,
+                          currentUserState.imageUrl,
                           comment._id,
-                          "reply",
                           setActions,
+                          "reply",
                           comment._id
                         );
                         handleCancel(comment._id);
@@ -272,10 +296,10 @@ const CommentDetails = () => {
         </div>
       ));
   };
-
+  console.log("currentposts sortedCOmments", sortedComments);
   return (
     <div>
-      <Postdetails></Postdetails>
+      {/* <Postdetails></Postdetails> */}
       <br />
       <hr className="" />
       <br />
@@ -287,7 +311,7 @@ const CommentDetails = () => {
           <option value="upvotes">Most Popular</option>
         </select>
       </div>
-      {renderComments(sortedComments)}
+      {sortedComments.length > 0 && renderComments(sortedComments)}
     </div>
   );
 };

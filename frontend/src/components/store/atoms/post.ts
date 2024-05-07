@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { PostType } from "../../community/InfinitePostScroll";
-import { CommentType } from "../../community/Post/CommentDetails";
+import { CommentType } from "../../community/Post/RenderComments";
 
 export const postState = atom<PostType[]>({
   key: "postState",

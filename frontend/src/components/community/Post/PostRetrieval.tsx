@@ -13,47 +13,52 @@ import MarkdownPreview from "./MarkdownPreview";
 import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
 
-const Postdetails = () => {
+const Postdetails = ({ setCurrentPost }) => {
   console.log("inside postdetails");
   const { postId } = useParams();
   const { userEmail } = useRecoilValue(userState);
   const [commentContent, setCommentContent] = useState("");
-  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  // const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
   const actions = useRecoilValue(actionsState);
   const setActions = useSetRecoilState(actionsState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
   // Fetch comments for the current post from the backend
   console.log("inside  postdetails ", postId);
-
-  useEffect(() => {
+  const fetchPosts = async () => {
     console.log("inside useeffect of setpost", postId);
-    fetch(`${import.meta.env.VITE_SERVER_URL}/post/${postId}`, {
-      method: "GET",
-      headers: {
-        "content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response is not ok");
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/post/${postId}`,
+        {
+          method: "GET",
+          headers: {
+            "content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
         }
-        response.json().then((data) => {
-          console.log("data at comment details", data);
-          setCurrentPost(data);
-        });
-
-        // Set comments fetched from the backend
-      })
-      .catch((error) => console.error(error));
+      );
+      if (!response.ok) {
+        throw new Error("Network response is not ok");
+      }
+      const data = await response.json();
+      console.log("currentposts data in post retrieval ", data);
+      setCurrentPost(data);
+      // Set comments fetched from the backend
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchPosts();
   }, [postId, actions]);
   // console.log(typeof currentPost.content, currentPost.content);
   return (
     <div className="">
       <div className=" text-3xl font-bold mb-4">
-        {currentPost?.title as string}
+        {/* {currentPost?.title as string} */}
       </div>
-      {currentPost?.content && ( // Check if post?.content exists
+      {/* {currentPost?.content && ( // Check if post?.content exists
         // <div>
         //   <div
         //     // className="mb-4"
@@ -61,7 +66,7 @@ const Postdetails = () => {
         //   />
         // </div>
         <MarkdownPreview markdown={currentPost.content} />
-      )}
+      )} */}
       <div className="flex flex-col">
         comment as {userEmail}
         <div className="">
@@ -78,9 +83,10 @@ const Postdetails = () => {
                 commentContent,
                 postId as string,
                 userEmail,
+                currentUserState.imageUrl,
                 null,
-                "comment",
                 setActions,
+                "comment",
                 ""
               );
             }}

@@ -51,7 +51,7 @@ export const fetchTenPosts = async (
       return resp.json();
     })
     .then((data) => {
-      console.log(data);
+      console.log("posts data", data);
 
       const tenPosts: PostType[] = data.data.map((p: any) => ({
         postId: p._id,
