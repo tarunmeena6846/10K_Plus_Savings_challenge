@@ -21,20 +21,30 @@ const CommunityLanding = () => {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+  const [currentOffset, setCurrentOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   // Render popular tags
   const handleSelectTag = (tagId: string) => {
+    console.log("selectedtag");
     setSelectedTagId(tagId);
   };
   console.log("selectedTag navigation after ", selectedTagId);
-  useFetchPosts(
-    true,
-    setPosts,
-    "allposts",
-    selectedTagId === "" ? undefined : selectedTagId,
-    // null,
-    null
-  );
+
+  // const { items: newPosts, isLoading } = useFetchPosts(
+  //   true,
+  //   setPosts,
+  //   "allposts",
+  //   selectedTagId === "" ? undefined : selectedTagId,
+  //   null,
+  //   null
+  // );
+
+  // useEffect(() => {
+  //   if (newPosts.length > 0) {
+  //     setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+  //   }
+  // }, [newPosts, setPosts]);
   console.log("posts at infinity", posts);
   return (
     <div>
@@ -45,9 +55,13 @@ const CommunityLanding = () => {
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <InfinitePostScroll posts={posts}></InfinitePostScroll>
+            <InfinitePostScroll
+              type="allposts"
+              tag={selectedTagId}
+            ></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
+            {selectedTagId}
             <SideBar onSelectTag={handleSelectTag}></SideBar>
           </div>
         </div>

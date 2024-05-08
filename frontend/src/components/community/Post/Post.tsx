@@ -50,11 +50,12 @@ const Post: React.FC<PostType> = ({
   imageContent,
   title,
   content,
+  type,
 }) => {
   console.log("tarun postid", postId, userProfile);
   const navigate = useNavigate();
   // const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
-  const excerpt = content.substring(0, 200); // Adjust the length as needed
+  const excerpt = content.substring(0, 50); // Adjust the length as needed
 
   const [showDeleteOption, setShowDeleteOption] = useState(false);
   const optionRef = useRef(null);
@@ -91,8 +92,13 @@ const Post: React.FC<PostType> = ({
   };
 
   const handleClick = () => {
-    console.log("post id at click", postId);
-    navigate(`/community/post/${postId}`);
+    if (type === "mydrafts") {
+      console.log("post id at click", postId);
+      navigate(`/community/drafts/editpost/${postId}`);
+    } else {
+      console.log("post id at click", postId);
+      navigate(`/community/post/${postId}`);
+    }
   };
   const toggleDeleteOption = () => {
     setShowDeleteOption(!showDeleteOption);
@@ -113,8 +119,8 @@ const Post: React.FC<PostType> = ({
   return (
     <div className="w-full max-w-3xl bg-white border border-gray-200 rounded-2xl m-4 shadow dark:bg-gray-800 dark:border-gray-700 relative">
       <div className="rounded-t-lg overflow-hidden">
-        {imageContent}
-        <img className="w-full" src={imageContent} alt="" />
+        {/* {imageContent} */}
+        {/* <img className="w-full" src={imageContent} alt="" /> */}
         <div className="absolute top-0 right-0 p-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -136,10 +142,10 @@ const Post: React.FC<PostType> = ({
       </div>
       <div className="p-5">
         <div className="flex items-center">
-          {userProfile}
+          {/* {userProfile} */}
           <img
             className="w-12 h-12 rounded-full mr-2"
-            src={userProfile}
+            src={`/${userProfile}`}
             alt="Profile"
           />
 
@@ -158,11 +164,17 @@ const Post: React.FC<PostType> = ({
         <div>
           <a href="#">
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {title}
+              {title.substring(0, 60).concat(title.length > 60 ? "..." : "")}
             </h5>
           </a>
         </div>
-        <p className="mb-3 font-normal text-xl dark:text-gray-400">{excerpt}</p>
+        {/* <p className="mb-3 font-normal text-xl dark:text-gray-400">{excerpt}</p> */}
+        {/* 
+        <div
+          className="mb-3 font-normal text-xl dark:text-gray-400"
+          dangerouslySetInnerHTML={{ __html: excerpt }}
+        /> */}
+
         <Button onClick={handleClick}>Read more</Button>
       </div>
       {showDeleteOption && (

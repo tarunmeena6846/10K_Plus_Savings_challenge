@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const TextFieldWithDropdown = ({ setTags }) => {
-  const [inputValue, setInputValue] = useState("");
+const TextFieldWithDropdown = ({ setTags, tag }) => {
+  const [inputValue, setInputValue] = useState(tag);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const options = ["Option 1", "Option 2", "Option 3"];

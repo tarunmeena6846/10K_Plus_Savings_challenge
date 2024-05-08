@@ -1,5 +1,9 @@
 import { Remarkable } from "remarkable";
 import Dompurify from "isomorphic-dompurify";
+import { render } from "react-dom";
+import { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // import Quill styles
 
 const md = new Remarkable();
 
@@ -11,16 +15,24 @@ function renderMarkdownToHTML(markdown) {
   return { __html: renderedHTML };
 }
 
-export default function MarkdownPreview({ markdown }) {
-//   const markup = `
-//       <h1>How Blockchain is Saving the World</h1>
-//       <p>
-//         In his last public speech, <br>
-//         the <strong>founder</strong> of the popular 
-//         blockchain network, <br> <em>Vitalic Buterin</em>
-//         said...
-//       </p>
-//     `;
-//   console.log(markup);
-  return <h1 dangerouslySetInnerHTML={{ __html: markdown }} />;
-}
+const MarkdownPreview = ({ markdown }) => {
+  console.log(markdown);
+  return (
+    <div className="ql-container ql-snow">
+      <div
+        className="ql-editor"
+        dangerouslySetInnerHTML={{ __html: markdown }}
+      />
+    </div>
+  );
+  // var tag_id = document.getElementById("content-div");
+  // if (tag_id) {
+  //   tag_id.innerHTML = "HTML string";
+  // }
+
+  //   console.log(markup);
+  // return <h1 dangerouslySetInnerHTML={{ __html: markup }} />;
+};
+// render(<MarkdownPreview markdown={undefined} />, document.getElementById("root"));
+
+export default MarkdownPreview;

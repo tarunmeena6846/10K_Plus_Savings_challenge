@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 export interface tagDataType {
   _id: string;
@@ -11,6 +11,7 @@ import { postState } from "../store/atoms/post";
 import { PostType } from "./InfinitePostScroll";
 import { useRecoilState, useRecoilValue } from "recoil";
 import countAtom from "../store/atoms/quickLinkCount";
+import HandleCreatePost from "./CreatePost";
 const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);

@@ -17,15 +17,15 @@ const MyPosts = () => {
   // useEffect(() => {
   // Ensure userEmail is populated before fetching posts
   // if (userEmailState.userEmail) {
-  console.log("selectedTag navigation before", selectedTagId);
-  useFetchPosts(
-    true,
-    setPosts,
-    "myposts",
-    undefined,
-    userEmailState.userEmail,
-    null,
-  );
+  // console.log("selectedTag navigation before", selectedTagId);
+  // useFetchPosts(
+  //   true,
+  //   setPosts,
+  //   "myposts",
+  //   undefined,
+  //   userEmailState.userEmail,
+  //   null
+  // );
   // }
   // }, [userEmailState, setPosts, selectedTag, setCount]);
 
@@ -34,7 +34,7 @@ const MyPosts = () => {
     setSelectedTagId(tagId);
   };
 
-  console.log("useremail at my post", userEmailState.userEmail);
+  console.log("posts at my posts", posts);
 
   return (
     <div>
@@ -42,7 +42,7 @@ const MyPosts = () => {
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <InfinitePostScroll posts={posts}></InfinitePostScroll>
+            <InfinitePostScroll type="myposts" tag=""></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
             <SideBar onSelectTag={handleSelectTag}></SideBar>

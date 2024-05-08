@@ -37,6 +37,8 @@ import {
   userState,
 } from "./components/store/atoms/user";
 import countAtom from "./components/store/atoms/quickLinkCount";
+import { NewPostWrapper } from "./components/community/NewPostWrapper";
+import { EditPostWrapper } from "./components/community/EditPostWrapper";
 
 function App() {
   const location = useLocation();
@@ -77,7 +79,11 @@ function App() {
         <Route path="/community/bookmarked" element={<MyBookmarked />} />
         <Route path="/community/drafts" element={<MyDraft />} />
         <Route path="/community/post/:postId" element={<PostLanding />} />
-        <Route path="/newpost" element={<HandleCreatePost />}></Route>
+        <Route path="/newpost" element={<NewPostWrapper />}></Route>
+        <Route
+          path="/community/drafts/editpost/:postId"
+          element={<EditPostWrapper />}
+        ></Route>
       </Routes>
     </RecoilRoot>
     // </Router>

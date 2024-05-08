@@ -14,20 +14,21 @@ const MyBookmarked = () => {
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
   // Render popular tags
+  const [hasMore, setHasMore] = useState(true);
 
   // Render popular tags
   const handleSelectTag = (tagId: string) => {
     setSelectedTagId(tagId);
   };
 
-  useFetchPosts(
-    true,
-    setPosts,
-    "mybookmarks",
-    undefined,
-    userEmail.userEmail,
-    true,
-  );
+  // useFetchPosts(
+  //   true,
+  //   setPosts,
+  //   "mybookmarks",
+  //   undefined,
+  //   userEmail.userEmail,
+  //   true
+  // );
   // fetch(`${import.meta.env.VITE_SERVER_URL}/post/bookmarked`, {
   //   method: "GET",
   //   headers: {
@@ -57,7 +58,12 @@ const MyBookmarked = () => {
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
-            <InfinitePostScroll posts={posts}></InfinitePostScroll>
+            <InfinitePostScroll
+              type="mybookmarks"
+              tag=""
+              // hasMore={hasMore}
+              // setHasMore={setHasMore}
+            ></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
             <SideBar onSelectTag={handleSelectTag}></SideBar>

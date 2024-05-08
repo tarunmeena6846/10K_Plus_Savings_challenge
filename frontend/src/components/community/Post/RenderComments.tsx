@@ -240,7 +240,7 @@ const CommentDetails = () => {
                         Save
                       </Button>
                     </>
-                  ) : (
+                  )  : (
                     // <Button onClick={() => handleReply(comment._id)}>
                     <Button
                       onClick={() => {

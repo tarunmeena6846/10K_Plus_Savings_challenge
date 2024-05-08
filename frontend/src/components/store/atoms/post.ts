@@ -12,9 +12,9 @@ export const currentPostState = atom({
   default: {
     id: "",
     postTime: new Date(),
-    imageContent: "",
     title: "",
     content: "",
+    author: "",
     comments: [] as CommentType[],
   },
 });

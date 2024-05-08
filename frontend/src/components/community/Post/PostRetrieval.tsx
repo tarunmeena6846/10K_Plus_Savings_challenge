@@ -6,13 +6,38 @@ import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
 import { actionsState, userState } from "../../store/atoms/user";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-// import HtmlParser from "react-html-parser";
 import parse from "html-react-parser";
 import MarkdownPreview from "./MarkdownPreview";
 
 import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
-
+import { timePassed } from "./Post";
+export const fetchPosts = async (postId, setCurrentPost) => {
+  console.log("inside useeffect of setpost", postId);
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/post/${postId}`,
+      {
+        method: "GET",
+        headers: {
+          "content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response is not ok");
+    }
+    const data = await response.json();
+    console.log("currentposts data in post retrieval ", data);
+    setCurrentPost(data);
+    // userImage = data.userImage.substring(2);
+    // console.log("iamges", data.userImage, userImage);
+    // Set comments fetched from the backend
+  } catch (error) {
+    console.error(error);
+  }
+};
 const Postdetails = () => {
   console.log("inside postdetails");
   const { postId } = useParams();
@@ -22,57 +47,78 @@ const Postdetails = () => {
   const actions = useRecoilValue(actionsState);
   const setActions = useSetRecoilState(actionsState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-
+  const [text, setText] = useState(currentPost.content);
+  let userImage = "";
   // Fetch comments for the current post from the backend
   console.log("inside  postdetails ", postId);
-  const fetchPosts = async () => {
-    console.log("inside useeffect of setpost", postId);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/post/${postId}`,
-        {
-          method: "GET",
-          headers: {
-            "content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response is not ok");
-      }
-      const data = await response.json();
-      console.log("currentposts data in post retrieval ", data);
-      setCurrentPost(data);
-      // Set comments fetched from the backend
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const fetchPosts = async () => {
+  //   console.log("inside useeffect of setpost", postId);
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_SERVER_URL}/post/${postId}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "content-Type": "application/json",
+  //           Authorization: "Bearer " + localStorage.getItem("token"),
+  //         },
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Network response is not ok");
+  //     }
+  //     const data = await response.json();
+  //     console.log("currentposts data in post retrieval ", data);
+  //     setCurrentPost(data);
+  //     userImage = data.userImage.substring(2);
+  //     console.log("iamges", data.userImage, userImage);
+  //     // Set comments fetched from the backend
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   useEffect(() => {
-    fetchPosts();
+    fetchPosts(postId, setCurrentPost);
   }, [postId, actions]);
+
+  if(currentPost.isPublished === "false")
+  {
+    console.log("post id at click", postId);
+    navigate(`/community/post/${postId}`);
+  }
   // console.log(typeof currentPost.content, currentPost.content);
   return (
     <div className="">
-      <div className=" text-3xl font-bold mb-4">
-        {currentPost?.title as string}
+      <h1
+        className="text-3xl font-bold mb-4"
+        style={{ overflowWrap: "anywhere" }}
+      >
+        {currentPost?.title}
+      </h1>
+      {/* <article> */}
+
+      {/* <hr /> */}
+
+      <div className="flex gap-2 items-end">
+        <img
+          className="w-12 h-12 rounded-full mr-2"
+          // src="/user12.svg"
+          src={`/${currentPost.userImage}`}
+          alt="Profile"
+        ></img>
+        <p>{currentPost?.author}</p>
+        <p>{timePassed(new Date(currentPost?.createdAt))}</p>
       </div>
-      {currentPost?.content && ( // Check if post?.content exists
-        // <div>
-        //   <div
-        //     // className="mb-4"
-        //     dangerouslySetInnerHTML={{ __html: currentPost.content }}
-        //   />
-        // </div>
-        <MarkdownPreview markdown={currentPost.content} />
-      )}
-      <div className="flex flex-col">
+      {/* {text} */}
+      {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
+      <MarkdownPreview markdown={currentPost.content} />
+      <div className="flex flex-col mt-5">
         comment as {userEmail}
-        <div className="">
+        <div>
           <TextEditor
             height="100px"
             setHtmlContent={setCommentContent}
+            content={""}
           ></TextEditor>
         </div>
         <div className="mt-7 md:m-0">
