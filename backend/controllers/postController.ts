@@ -1,7 +1,7 @@
 import { AuthenticatedRequest } from "../middleware";
 import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
-import { Model } from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 import { Response, Request } from "express";
 import { TagModel } from "../models/tagSchema";
 import AdminModel, { Admin } from "../models/admin";
@@ -22,6 +22,7 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 export const getUserPosts = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -45,14 +46,49 @@ export const getUserPosts = async (
     resp.status(400).json({ success: false, data: null });
   }
 };
+export const deletePost = async (req: AuthenticatedRequest, resp: Response) => {
+  const postId = req.params.id;
+  const type = req.params.type;
+  console.log("postid and type", postId, type);
+  try {
+    const deletedPostFromAdmin = await AdminModel.findOneAndUpdate(
+      { username: req?.user },
+      // Pull the specified post ObjectId from the myDrafts array
+      {
+        $pull: {
+          ...(type === "mydrafts"
+            ? { myDrafts: postId }
+            : type === "mybookmarks"
+            ? { bookmarkedPosts: postId }
+            : { myPosts: postId }),
+        },
+        // Return the updated document after the operation
+      }
+    );
+    console.log("deletedPostFromAdmin", deletedPostFromAdmin);
+    if (type === "myposts" || type === "allposts") {
+      const deletePostInDB = await Post.findByIdAndDelete({ _id: postId });
+      console.log("deletePostInDB", deletePostInDB);
+    }
+    resp.status(200).json({ success: true, data: deletedPostFromAdmin });
+  } catch (error) {
+    resp.status(500).json({ success: false, data: "post delete" });
+  }
+};
 export const getBookmarkPosts = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
+  const offset = parseInt(req.query.offset as string) || 0;
+  const limit = parseInt(req.query.limit as string) || 10;
+
   try {
     const bookmarkedPostsForUser = await AdminModel.findOne({
       username: req?.user,
-    }).populate("bookmarkedPosts");
+    })
+      .populate("bookmarkedPosts")
+      .skip(offset)
+      .limit(limit);
     console.log(
       "bookmarkedPostsForUser",
       bookmarkedPostsForUser?.bookmarkedPosts
@@ -76,10 +112,10 @@ export const bookmarkedPosts = async (
   const username = req.user;
 
   try {
-    const admin = await AdminModel.findOneAndUpdate(
-      { username },
-      { $addToSet: { bookmarkedPosts: postId } }, // Use $addToSet to add postId only if it doesn't already exist
-      { new: true }
+    const admin = await AdminModel.findOne(
+      { username: username }
+      // { $addToSet: { bookmarkedPosts: postId } }, // Use $addToSet to add postId only if it doesn't already exist
+      // { new: true }
     );
 
     if (admin) {
@@ -88,6 +124,8 @@ export const bookmarkedPosts = async (
           .status(200)
           .json({ success: false, data: "Post already bookmarked" });
       } else {
+        admin.bookmarkedPosts.push(postId);
+        await admin.save();
         return resp
           .status(200)
           .json({ success: true, data: "Post bookmarked successfully" });
@@ -181,9 +219,71 @@ export const getPost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const editOrPublishPost = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
+  const postId = req.params.id;
+  const { title, content, author, isPublished, tag, imageUrl } = req.body;
+  console.log("tarun isPublished", isPublished);
+  try {
+    // Find the post by its ID and update its fields
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      {
+        title,
+        content,
+        author,
+        isPublished,
+        tag,
+        userImage: imageUrl,
+        updatedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    if (!updatedPost) {
+      return resp
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    console.log("updatedpost", updatedPost);
+    if (isPublished) {
+      const updatedAdminForDraft = await AdminModel.findOneAndUpdate(
+        { username: author },
+        // Pull the specified post ObjectId from the myDrafts array
+        {
+          $pull: { myDrafts: postId },
+          $push: {
+            // Add the ID of the new post to myPosts array if isPublished is true
+            myPosts: postId,
+          },
+        },
+        // Return the updated document after the operation
+        { new: true }
+      );
+      console.log("updatedadmin", updatedAdminForDraft);
+      if (!updatedAdminForDraft) {
+        return resp
+          .status(404)
+          .json({ success: false, message: "Admin not found" });
+      }
+      // await updatedAdminForDraft.save();
+      return resp
+        .status(200)
+        .json({ success: true, data: updatedAdminForDraft });
+    }
+
+    resp.status(200).json({ success: true, data: updatedPost });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 export const createPost = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside creatapost");
-  const { title, content, author, isPublished, tag } = req.body;
+  const { title, content, author, isPublished, tag, imageUrl } = req.body;
   console.log(title, content, author);
   try {
     const post = new Post({
@@ -194,6 +294,7 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
       comments: [],
       isPublished: isPublished,
       tag: tag,
+      userImage: imageUrl,
     });
     await post.save();
     const isTagPresent = await TagModel.findOne({ tag: tag });
@@ -232,8 +333,8 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export const addComment = async (req: AuthenticatedRequest, res: Response) => {
-  const { content, authorId, parentId } = req.body;
-  console.log("inside creatapost", authorId, parentId);
+  const { content, authorId, parentId, userprofile } = req.body;
+  console.log("inside creatapost", authorId, parentId, userprofile);
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
@@ -243,6 +344,7 @@ export const addComment = async (req: AuthenticatedRequest, res: Response) => {
       author: authorId,
       post: req.params.id,
       parentId: parentId,
+      imageLink: userprofile,
     });
     console.log("commen before save", comment);
     await comment.save();
@@ -286,23 +388,62 @@ export const deleteComment = async (
     resp.status(500).json({ success: false, message: "Server error" });
   }
 };
+export const upvoteComment = async (
+  req: AuthenticatedRequest,
+  resp: Response
+) => {
+  console.log("inside upvote");
+  const commentId: String = req.params.id;
+  const user = req.user;
+  console.log(user);
+  try {
+    const updatedComment = await Comment.findOneAndUpdate(
+      { _id: commentId },
+      {
+        $inc: { "likes.likes": 1 }, // Increment likes by 1
+        $set: { "likes.username": user }, // Set the username
+      },
+      { new: true }
+    );
+    if (!updatedComment) {
+      return resp
+        .status(404)
+        .json({ success: false, message: "Comment not found" });
+    }
 
+    console.log("upvoted comment", updatedComment);
+    resp.status(200).json({ success: true, message: "upvoted successfully" });
+  } catch (error) {
+    console.error(error);
+    resp.status(500).json({ success: false, message: "Server error" });
+  }
+};
 export const editComment = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
   const commentId: String = req.params.id;
-  // const postId = req.params.postId;
+  const upvoted: boolean = req.query.upvoted === "true"; // Check if upvoted query parameter is true
+
   console.log("commentid in editcomment", commentId, req.body.content);
   try {
-    // const post = await Post.findById(postId);
-    // if (!post) resp.status(404).json("Post is not found");
-    // console.log("post", post);
-    const updatedComment = await Comment.findByIdAndUpdate(
-      commentId,
-      { content: req.body.content }, // newContent is the updated content
-      { new: true }
-    ); // To return the updated document);
+    let updatedComment;
+
+    if (upvoted) {
+      // Increment likes by 1
+      updatedComment = await Comment.findByIdAndUpdate(
+        commentId,
+        { $inc: { likes: 1 } },
+        { new: true }
+      );
+    } else {
+      // Update content
+      updatedComment = await Comment.findByIdAndUpdate(
+        commentId,
+        { content: req.body.content },
+        { new: true }
+      );
+    }
     console.log("updatedComment", updatedComment);
     if (!updatedComment) {
       return resp.status(404).json({ message: "Comment not found" });

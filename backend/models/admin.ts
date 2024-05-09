@@ -54,7 +54,24 @@ const adminSchema = new Schema<Admin>({
   myPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   myDrafts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 });
+// adminSchema.post("findOneAndUpdate", async function (updatedAdmin) {
+//   try {
+//     // Fetch the updated admin document
+//     const AdminModel = this.model("Admin");
+//     const admin = await AdminModel.findById(updatedAdmin._id);
 
+//     if (admin) {
+//       // Update the userImage field in the associated posts
+//       const PostModel = mongoose.model("Post");
+//       await PostModel.updateMany(
+//         { author: admin.username },
+//         { userImage: admin.imageUrl }
+//       );
+//     }
+//   } catch (error) {
+//     console.error("Error updating associated posts:", error);
+//   }
+// });
 const AdminModel = mongoose.model<Admin>("Admin", adminSchema);
 
 export default AdminModel;

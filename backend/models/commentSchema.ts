@@ -1,14 +1,17 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import { Admin } from "./admin";
-
+export interface Likes {
+  username: string;
+  likes: number;
+}
 // Define the interface for a comment document
 export interface CommentDocument extends Document {
   content: string;
   author: string;
   post: String;
   createdAt: Date;
-  likes: number;
-  imageLink: string;
+  likes: Likes;
+  imageLink?: string;
   parentId: string;
 }
 
@@ -32,12 +35,14 @@ const commentSchema = new mongoose.Schema<CommentDocument>({
     default: Date.now,
   },
   likes: {
-    type: Number,
-    default: 0,
+    type: {
+      username: String,
+      likes: Number,
+    },
+    default: { username: "", likes: 0 },
   },
   imageLink: {
     type: String,
-    default: "",
   },
   parentId: {
     type: String,

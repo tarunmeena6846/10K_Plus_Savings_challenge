@@ -11,6 +11,8 @@ const router: Router = express.Router();
 import { AuthenticatedRequest } from "../middleware/index";
 import { sendEmail } from "../emails";
 import { getWelcomeEmail } from "../emails/welcomeEmail";
+import Post from "../models/postSchema";
+import Comment from "../models/commentSchema";
 // import { Resend } from "resend";
 router.post("/signup", async (req: Request, res: Response) => {
   try {
@@ -219,34 +221,46 @@ router.post(
     }
   }
 );
-router.post("/change-user_details", detokenizeAdmin, async (req, res) => {
-  const { username, newPassword, imageUrl } = req.body;
+router.post(
+  "/change-user_details",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { newPassword, imageUrl } = req.body;
+    console.log("at change user details", req?.user, newPassword, imageUrl);
+    try {
+      // Find admin by username
+      const bIsAdminPresent = await AdminModel.findOne({ username: req?.user });
 
-  try {
-    // Find admin by username
-    const bIsAdminPresent = await AdminModel.findOne({ username: username });
+      if (!bIsAdminPresent) {
+        return res.status(404).json({ error: "Admin not found" });
+      }
 
-    if (!bIsAdminPresent) {
-      return res.status(404).json({ error: "Admin not found" });
+      if (newPassword) {
+        bIsAdminPresent.password = newPassword;
+      }
+
+      if (imageUrl) {
+        bIsAdminPresent.imageUrl = imageUrl;
+        await Post.updateMany(
+          { author: req.user }, // Filter posts by user ID
+          { userImage: imageUrl }
+        );
+        await Comment.updateMany(
+          { author: req.user }, // Filter posts by user ID
+          { imageLink: imageUrl }
+        );
+      }
+      // Save the updated admin
+      await bIsAdminPresent.save();
+      return res
+        .status(200)
+        .json({ message: "User Deatils changed successfully", success: true });
+    } catch (error) {
+      console.error("Error changing details:", error);
+      return res
+        .status(500)
+        .json({ error: "Internal server error", success: false });
     }
-
-    if (newPassword) {
-      bIsAdminPresent.password = newPassword;
-    }
-
-    // if (imageUrl) {
-    bIsAdminPresent.imageUrl = imageUrl;
-    // }
-    // Save the updated admin
-    await bIsAdminPresent.save();
-    return res
-      .status(200)
-      .json({ message: "User Deatils changed successfully", success: true });
-  } catch (error) {
-    console.error("Error changing details:", error);
-    return res
-      .status(500)
-      .json({ error: "Internal server error", success: false });
   }
-});
+);
 export default router;

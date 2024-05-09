@@ -10,6 +10,7 @@ export interface PostSchema extends Document {
   comments: mongoose.Types.ObjectId[] | CommentDocument[];
   isPublished: Boolean;
   tag: string;
+  userImage?: string;
   //   comments: CommentDocument["_id"][];
   // Add more fields as needed
 }
@@ -41,6 +42,7 @@ const postSchema = new mongoose.Schema<PostSchema>({
       ref: "Comment",
     },
   ],
+  userImage: { type: String },
 });
 
 // Define the model for a post

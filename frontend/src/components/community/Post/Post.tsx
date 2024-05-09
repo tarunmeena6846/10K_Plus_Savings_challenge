@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { response } from "express";
 import { json } from "stream/consumers";
 import { currentPostState } from "../../store/atoms/post";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../store/atoms/user";
+import { error } from "console";
 // import HtmlParser from "react-html-parser";
 
 export const timePassed = (date: Date): string => {
@@ -52,11 +55,10 @@ const Post: React.FC<PostType> = ({
   content,
   type,
 }) => {
-  console.log("tarun postid", postId, userProfile);
+  console.log("tarun postid", postId, userProfile, username);
   const navigate = useNavigate();
   // const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
-  const excerpt = content.substring(0, 50); // Adjust the length as needed
-
+  const currentUserEmail = useRecoilValue(userState);
   const [showDeleteOption, setShowDeleteOption] = useState(false);
   const optionRef = useRef(null);
   const isDarkTheme = document.documentElement.classList.contains("dark");
@@ -90,7 +92,35 @@ const Post: React.FC<PostType> = ({
         console.error("Error:", error);
       });
   };
+  const handleDelete = async () => {
+    console.log("type at handle delete", type);
+    try {
+      let url = `${
+        import.meta.env.VITE_SERVER_URL
+      }/post/deletepost/${postId}/${type}`;
 
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Network response is not ok");
+      }
+      await response.json().then((data) => {
+        console.log(data);
+        if (data.success) {
+          alert("Post delete successfully");
+        } else {
+          alert("Issue while deleting the post");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleClick = () => {
     if (type === "mydrafts") {
       console.log("post id at click", postId);
@@ -180,9 +210,16 @@ const Post: React.FC<PostType> = ({
       {showDeleteOption && (
         <div className="absolute top-0 right-0 m-2">
           <div className="bg-white p-2 rounded-lg shadow-md border border-gray-200">
-            <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-              Delete
-            </button>
+            {/* {type} */}
+            {(type === "mybookmarks" ||
+              currentUserEmail.userEmail === username) && (
+              <button
+                className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            )}
             <button
               className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               onClick={handleSaveBookmark}
