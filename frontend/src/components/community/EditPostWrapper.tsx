@@ -8,22 +8,30 @@ import { fetchPosts } from "./Post/PostRetrieval";
 import { currentPostState } from "../store/atoms/post";
 
 export const EditPostWrapper = () => {
-  const [postTitle, setPostTitle] = useState("");
-  const [postContent, setPostContent] = useState("");
-  const currentUserState = useRecoilValue(userState);
-  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
-  const navigate = useNavigate();
-  const handleCancel = () => {};
   const { postId } = useParams();
+  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
 
-  const [tag, setTag] = useState("");
   useEffect(() => {
     fetchPosts(postId, setCurrentPost);
   }, [postId]);
 
+  console.log(currentPost);
+  const [postTitle, setPostTitle] = useState(currentPost.title);
+  const [postContent, setPostContent] = useState(currentPost.content);
+  const currentUserState = useRecoilValue(userState);
+  const navigate = useNavigate();
+  const handleCancel = () => {
+    navigate("/community/drafts");
+  };
+
+  const [tag, setTag] = useState(currentPost.tag);
+  // useEffect(() => {
+  //   fetchPosts(postId, setCurrentPost);
+  // }, [postId]);
+
   const handleSubmit = (isPublished: Boolean) => {
     console.log("tarun at handlesubmit", isPublished, postId);
-    console.log("tag", tag, postTitle, postContent);
+    console.log("tag", tag, postTitle, postContent, typeof tag);
     console.log("postcontent", postContent, currentUserState);
     // headers.append("Username", email);
     // headers.append("Password", password);
@@ -47,7 +55,7 @@ export const EditPostWrapper = () => {
           throw new Error("Network response is not ok");
         }
         resp.json().then((data) => {
-          console.log(data);
+          console.log("data in editpost", data);
           navigate("/community");
           // Handle successful post creation response
         });
@@ -61,11 +69,11 @@ export const EditPostWrapper = () => {
     <HandleCreatePost
       onSubmit={handleSubmit}
       onCancel={handleCancel}
-      title={currentPost.title}
+      title={postTitle}
       setPostTitle={setPostTitle}
-      content={currentPost.content}
+      content={postContent}
       setPostContent={setPostContent}
-      tag={currentPost.tag}
+      tag={tag}
       setTag={setTag}
     ></HandleCreatePost>
   );

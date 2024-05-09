@@ -117,6 +117,7 @@ const HandleCreatePost = ({
 }) => {
   const handleCreatePost = (isPublished: Boolean) => {
     console.log("tarun at createpost wrapper");
+    console.log("at createpost", title, content, tag);
     onSubmit(isPublished);
   };
 
