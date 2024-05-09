@@ -20,7 +20,7 @@ const TextFieldWithDropdown = ({ setTags, tag }) => {
     <div className="relative">
       <input
         type="text"
-        value={inputValue}
+        value={tag}
         onChange={handleInputChange}
         onFocus={() => setShowDropdown(true)}
         onBlur={() => setShowDropdown(false)}

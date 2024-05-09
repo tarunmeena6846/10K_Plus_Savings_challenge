@@ -15,19 +15,29 @@ export const EditPostWrapper = () => {
     fetchPosts(postId, setCurrentPost);
   }, [postId]);
 
-  console.log(currentPost);
-  const [postTitle, setPostTitle] = useState(currentPost.title);
-  const [postContent, setPostContent] = useState(currentPost.content);
+  console.log("currentpost in editpost", currentPost);
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
   const currentUserState = useRecoilValue(userState);
   const navigate = useNavigate();
   const handleCancel = () => {
     navigate("/community/drafts");
   };
 
-  const [tag, setTag] = useState(currentPost.tag);
+  const [tag, setTag] = useState("");
   // useEffect(() => {
   //   fetchPosts(postId, setCurrentPost);
   // }, [postId]);
+
+  useEffect(() => {
+    // Check if currentPost is not null before setting the initial state of input fields
+    if (currentPost) {
+      console.log(currentPost.tag);
+      setPostTitle(currentPost.title);
+      setPostContent(currentPost.content);
+      setTag(currentPost.tag);
+    }
+  }, [currentPost]);
 
   const handleSubmit = (isPublished: Boolean) => {
     console.log("tarun at handlesubmit", isPublished, postId);
