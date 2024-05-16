@@ -17,7 +17,7 @@ export const handleAddIncome = async (
       },
       body: JSON.stringify({
         item: item,
-        category: category,
+        category: category === "" ? "uncategorised" : category,
         income: amount,
         expense: 0,
         date: date,
@@ -55,7 +55,7 @@ export const handleAddExpense = async (
       },
       body: JSON.stringify({
         item: item,
-        category: category,
+        category: category === "" ? "uncategorised" : category,
         income: 0,
         expense: amount,
         date: date,

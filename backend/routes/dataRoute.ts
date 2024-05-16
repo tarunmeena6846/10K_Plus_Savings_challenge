@@ -78,7 +78,7 @@ router.post(
         // Update existing month's data
         const monthData =
           monthlyData.yearlyData[yearIndex].monthlyData[monthIndex];
-        if (type === "actual") {
+        if (type === "Actual") {
           if (itemType === "Income") {
             monthData.actual.income += income;
             monthlyData.yearlyData[yearIndex].totalActualIncome += income;
@@ -99,7 +99,7 @@ router.post(
             });
           }
           // monthData.actual.items.push({category:category,title:itemName,amount:})
-        } else if (type === "current") {
+        } else if (type === "Current") {
           if (itemType === "Income") {
             monthData.current.income += income;
             monthlyData.yearlyData[yearIndex].totalCurrentIncome += income;
@@ -110,6 +110,7 @@ router.post(
               type: itemType,
             });
           } else {
+            console.log("at add expense in current");
             monthData.current.expense += expense;
             monthlyData.yearlyData[yearIndex].totalCurrentExpenses += expense;
             monthData.current.items.push({
@@ -119,7 +120,7 @@ router.post(
               type: itemType,
             });
           }
-        } else if (type === "target") {
+        } else if (type === "Target") {
           if (itemType === "Income") {
             monthData.target.income += income;
             monthlyData.yearlyData[yearIndex].totalTargetIncome += income;
@@ -145,7 +146,7 @@ router.post(
         const newData = {
           month,
           actual:
-            type === "actual"
+            type === "Actual"
               ? {
                   income: income,
                   expense: expense,
@@ -160,7 +161,7 @@ router.post(
                 }
               : { income: 0, expense: 0, items: [] },
           current:
-            type === "current"
+            type === "Current"
               ? {
                   income: income,
                   expense: expense,
@@ -175,7 +176,7 @@ router.post(
                 }
               : { income: 0, expense: 0, items: [] },
           target:
-            type === "target"
+            type === "Target"
               ? {
                   income: income,
                   expense: expense,
@@ -302,7 +303,7 @@ router.get(
           message: "No data found for the specified month.",
         });
       }
-      if (type === "current") {
+      if (type === "Current") {
         res.status(200).json({
           success: true,
           currentData: monthlyEntry.current,
@@ -310,7 +311,7 @@ router.get(
           // monthlyEntry,
         });
       }
-      if (type === "target") {
+      if (type === "Target") {
         res.status(200).json({
           success: true,
           targetData: monthlyEntry.target,
@@ -319,7 +320,7 @@ router.get(
         });
       }
 
-      if (type === "actual") {
+      if (type === "Actual") {
         res.status(200).json({
           success: true,
           actualData: monthlyEntry.actual,

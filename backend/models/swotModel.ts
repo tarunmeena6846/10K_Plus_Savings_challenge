@@ -11,6 +11,7 @@ export interface SwotDetails extends Document {
   userId: string;
   tasks: Task[];
   isReminderSet: boolean;
+  email: string;
 }
 
 const swotDetailsSchema = new Schema<SwotDetails>({
@@ -21,6 +22,7 @@ const swotDetailsSchema = new Schema<SwotDetails>({
   },
   tasks: [{ title: String, isComplete: Boolean, dueDate: String }],
   isReminderSet: { type: Boolean, default: false },
+  email: { type: String, required: true },
 });
 
 const SwotDetailsModel = mongoose.model<SwotDetails>(

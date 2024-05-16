@@ -39,6 +39,7 @@ import {
 import countAtom from "./components/store/atoms/quickLinkCount";
 import { NewPostWrapper } from "./components/community/NewPostWrapper";
 import { EditPostWrapper } from "./components/community/EditPostWrapper";
+import AnalyticsLanding from "./AnalyticsDashboard/Landing";
 
 function App() {
   const location = useLocation();
@@ -49,6 +50,7 @@ function App() {
     "/currentdashboard",
     "/targetdashboard",
     "/actualdashboard",
+    "/analytics",
   ];
   const shouldRenderAppbar = !hideAppbarRoutes.includes(location.pathname);
   // console.log("tarun inside app.tsx");
@@ -66,6 +68,8 @@ function App() {
         <Route path="/currentdashboard" element={<CurrentDashboard />} />
         <Route path="/targetdashboard" element={<TargetDashboard />} />
         <Route path="/actualdashboard" element={<ActualDashboard />} />
+        <Route path="/analytics" element={<AnalyticsLanding />} />
+
         <Route path="/pricing" element={<StripePricingTable />} />
         <Route path="/savingportal" element={<SavingPortalLanding />} />
         <Route path="/incomeportal" element={<IncomePortalLanding />} />

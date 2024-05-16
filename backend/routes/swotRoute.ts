@@ -33,6 +33,7 @@ router.post(
           userId: user,
           tasks: tasks,
           isReminderSet: isReminderSet,
+          email: admin.username,
         });
       } else {
         console.log(tasks);
@@ -74,6 +75,8 @@ router.post(
 
       if (swotDetails) {
         if (email) {
+          swotDetails.email = email;
+          await swotDetails.save();
           setIntervalForReminder(email);
         }
         resp.status(200).json({ success: true });

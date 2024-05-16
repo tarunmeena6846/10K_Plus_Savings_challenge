@@ -24,7 +24,7 @@ export default function ActualDashboard() {
       const actualData = await fetchData(
         new Date().getFullYear(),
         new Date().toLocaleString("default", { month: "long" }),
-        "actual"
+        "Actual"
       );
       console.log(actualData);
       if (actualData.success) {
@@ -170,7 +170,7 @@ export default function ActualDashboard() {
         onAddIncome={handleAddIncome}
         onAddExpense={handleAddExpense}
         activeTab={activeTab}
-        type="actual" // Pass active tab to the modal
+        type="Actual" // Pass active tab to the modal
       />
     </div>
   );

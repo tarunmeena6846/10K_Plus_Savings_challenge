@@ -25,7 +25,7 @@ export default function TargetDashboard() {
       const targetData = await fetchData(
         new Date().getFullYear(),
         new Date().toLocaleString("default", { month: "long" }),
-        "target"
+        "Target"
       );
       if (targetData.success) {
         setTargetIncome(targetData.targetData.income);
@@ -179,7 +179,7 @@ export default function TargetDashboard() {
         onAddIncome={handleAddIncome}
         onAddExpense={handleAddExpense}
         activeTab={activeTab}
-        type="target" // Pass active tab to the modal
+        type="Target" // Pass active tab to the modal
       />
     </div>
   );

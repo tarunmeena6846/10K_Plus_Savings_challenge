@@ -43,7 +43,7 @@ interface MonthlyDataSchemaDocument extends Document {
 }
 
 const itemSchema = new Schema<Item>({
-  category: { type: String, required: true },
+  category: { type: String },
   title: { type: String, required: true },
   amount: { type: Number, required: true },
   type: { type: String, required: true },

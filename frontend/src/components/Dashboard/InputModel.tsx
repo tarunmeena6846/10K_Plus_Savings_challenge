@@ -20,7 +20,9 @@ const AddTransactionModal = ({
   };
 
   const handleAddExpense = () => {
+    console.log(newItem, newAmount);
     onAddExpense(newItem, newCategory, newAmount, newDate, type);
+
     onClose();
   };
 

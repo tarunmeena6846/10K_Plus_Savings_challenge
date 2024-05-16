@@ -42,7 +42,7 @@ const routes = [
     icon: <AiFillHeart />,
   },
   {
-    path: "/",
+    path: "/analytics",
     name: "Analytics",
     icon: <AiFillHeart />,
   },
