@@ -15,9 +15,9 @@ const AnalyticsTable = ({ items, type }) => {
             <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600">
               Amount
             </th>
-            <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600">
+            {/* <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600">
               Type
-            </th>
+            </th> */}
           </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@ const AnalyticsTable = ({ items, type }) => {
                 <td className="py-2 px-4">{item.category}</td>
                 <td className="py-2 px-4">{item.title}</td>
                 <td className="py-2 px-4">{item.amount}</td>
-                <td className="py-2 px-4">{item.type}</td>
+                {/* <td className="py-2 px-4">{item.type}</td> */}
               </tr>
             ))}
         </tbody>

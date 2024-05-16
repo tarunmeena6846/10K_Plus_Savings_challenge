@@ -6,7 +6,7 @@ import { fetchData } from "../components/Dashboard/fetchIncomeAndExpenseData";
 
 const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
 const types = ["Current", "Actual", "Target"];
-const options = ["Income", "Expense", "Savings"];
+const options = ["Income", "Expense"];
 
 const AnalyticsLanding = () => {
   const [selectedMonth, setSelectedMonth] = useState(
