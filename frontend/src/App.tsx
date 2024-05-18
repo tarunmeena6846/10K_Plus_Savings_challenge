@@ -40,6 +40,8 @@ import countAtom from "./components/store/atoms/quickLinkCount";
 import { NewPostWrapper } from "./components/community/NewPostWrapper";
 import { EditPostWrapper } from "./components/community/EditPostWrapper";
 import AnalyticsLanding from "./AnalyticsDashboard/Landing";
+import RequestOTP from "./components/RequestOTP";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   const location = useLocation();
@@ -63,6 +65,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/request-otp" element={<RequestOTP />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/currentdashboard" element={<CurrentDashboard />} />

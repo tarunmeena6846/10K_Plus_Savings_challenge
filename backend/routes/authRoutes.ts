@@ -13,6 +13,7 @@ import { sendEmail } from "../emails";
 import { getWelcomeEmail } from "../emails/welcomeEmail";
 import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
+import { resetPassword } from "../emails/ResetPassword";
 // import { Resend } from "resend";
 router.post("/signup", async (req: Request, res: Response) => {
   try {
@@ -138,6 +139,103 @@ router.get(
     } catch (error: any) {
       console.error("Error in admin signup:", error);
       res.status(500).json({ error: "Internal server error", success: false });
+    }
+  }
+);
+router.post(
+  "/request-reset-password",
+  async (req: AuthenticatedRequest, resp: Response) => {
+    const { email } = req.body;
+    console.log(email);
+    try {
+      const isUserPresent = await AdminModel.findOne({ username: email });
+
+      if (!isUserPresent) {
+        return resp
+          .status(400)
+          .send({ mesage: "User not found", success: false });
+      }
+
+      if (secretKey) {
+        const token = jwt.sign({ email: email }, secretKey, {
+          expiresIn: 300,
+        });
+        isUserPresent.resetPasswordToken = token;
+        isUserPresent.resetPasswordTokenUsed = false;
+        await isUserPresent.save();
+        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        console.log("token", token);
+        await sendEmail(
+          email,
+          "Reset password link",
+          resetPassword(resetLink, email)
+        );
+
+        resp.status(201).send({
+          message: "An Email sent to your email with reset link",
+          success: true,
+        });
+      } else {
+        console.error(
+          "JWT_SECRET environment variable is not set. Unable to sign JWT."
+        );
+        resp
+          .status(500)
+          .json({ message: "Internal server error", success: false });
+      }
+    } catch (error) {
+      resp
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    }
+  }
+);
+router.post(
+  "/reset-password",
+  async (req: AuthenticatedRequest, resp: Response) => {
+    const { token, newPassword } = req.body;
+
+    try {
+      if (secretKey) {
+        const isValidtoken = jwt.verify(token, secretKey) as JwtPayload;
+        if (isValidtoken) {
+          const email = isValidtoken.email;
+
+          const User = await AdminModel.findOne({ username: email });
+
+          if (
+            !User ||
+            User.resetPasswordToken !== token ||
+            User.resetPasswordTokenUsed
+          ) {
+            return resp
+              .status(404)
+              .json({ message: "Invalid token", success: false });
+          }
+
+          // Hash the new password before saving it
+          // const hashedPassword = await bcrypt.hash(newPassword, 10);
+          User.password = newPassword;
+          User.resetPasswordToken = "";
+          User.resetPasswordTokenUsed = true;
+          await User.save();
+
+          return resp
+            .status(200)
+            .json({ message: "Password has been reset", success: true });
+        } else {
+          return resp
+            .status(400)
+            .json({ message: "Invalid token", success: false });
+        }
+      } else {
+        return resp
+          .status(500)
+          .json({ message: "Server error", success: false });
+      }
+    } catch (error) {
+      console.error(error);
+      return resp.status(500).json({ message: "Server error", success: false });
     }
   }
 );

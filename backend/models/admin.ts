@@ -5,6 +5,8 @@ export interface Admin extends Document {
   username: string;
   email: string;
   password: string;
+  resetPasswordToken: String;
+  resetPasswordTokenUsed: Boolean;
   imageUrl?: string;
   verified: Boolean;
   // subscriptions: Schema.Types.ObjectId[];
@@ -27,6 +29,8 @@ const adminSchema = new Schema<Admin>({
     unique: true,
     required: true,
   },
+  resetPasswordToken: { type: String },
+  resetPasswordTokenUsed: { type: Boolean },
   email: {
     type: String,
     unique: true,

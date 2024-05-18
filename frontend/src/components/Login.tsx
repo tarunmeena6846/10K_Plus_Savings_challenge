@@ -65,51 +65,57 @@ function Login() {
   };
   return (
     <div style={{ backgroundColor: "#F0F0F0", minHeight: "100vh" }}>
-      <>
-        <div
-          style={{
-            paddingTop: 120,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Typography variant={"h6"}>Welcome Back!! </Typography>
+      <div
+        style={{
+          paddingTop: 120,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant={"h6"}>Welcome Back!! </Typography>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", padding: 10 }}>
+        <Card variant="outlined" style={{ width: 400, padding: 20 }}>
+          <TextField
+            onChange={(e) => setEmail(e.target.value)}
+            label="Username/Phone Number"
+            variant="outlined"
+            type="email"
+            fullWidth
+          />
+          <br />
+          <br />
+          <TextField
+            onChange={(e) => setPassword(e.target.value)}
+            label="Password"
+            variant="outlined"
+            type="password"
+            fullWidth
+          />
+          <br />
+          <br />
+          {msg && <div className="message">{msg}</div>}
+          <Button variant="contained" color="primary" onClick={handleRegister}>
+            Login
+          </Button>
+        </Card>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          Forgot Password? <a href="/request-otp">Reset</a>
         </div>
-        <div style={{ display: "flex", justifyContent: "center", padding: 10 }}>
-          <Card variant="outlined" style={{ width: 400, padding: 20 }}>
-            <TextField
-              onChange={(e) => setEmail(e.target.value)}
-              label="Username/Phone Number"
-              variant="outlined"
-              type="email"
-              fullWidth
-            />
-            <br />
-            <br />
-            <TextField
-              onChange={(e) => setPassword(e.target.value)}
-              label="Password"
-              variant="outlined"
-              type="password"
-              fullWidth
-            />
-            <br />
-            <br />
-            {msg && <div className="message">{msg}</div>}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleRegister}
-            >
-              Login
-            </Button>
-          </Card>
-        </div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div>
           New user? <a href="/register"> Register</a>
         </div>
-        {/* </div> */}
-      </>
+      </div>
+      {/* </div> */}
     </div>
   );
 }
