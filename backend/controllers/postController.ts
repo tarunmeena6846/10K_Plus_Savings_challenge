@@ -8,6 +8,8 @@ import AdminModel, { Admin } from "../models/admin";
 
 export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getAllpost");
+  // const startTime = performance.now();
+
   try {
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -16,6 +18,13 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned
     console.log("inside post", posts);
+    const endTime = performance.now();
+
+    // Calculate the execution time in milliseconds
+    // const executionTime = endTime - startTime;
+
+    // Log the execution time
+    // console.log("Query execution time:", executionTime, "milliseconds");
 
     res.status(200).json({ sucess: true, data: posts });
   } catch (error: any) {
@@ -27,23 +36,60 @@ export const getUserPosts = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
-  const offset = parseInt(req.query.offset as string) || 0;
-  const limit = parseInt(req.query.limit as string) || 10;
-  const user = req.user;
-  const isPublished = req.query.isPublished;
-  console.log("user at getuserpost", user);
-  const adminInfo = await AdminModel.findOne({ username: user })
-    .populate(isPublished === "true" ? "myPosts" : "myDrafts")
-    .skip(offset)
-    .limit(limit);
-  console.log("admin info at getuserPOsts route", adminInfo, isPublished);
-  if (adminInfo) {
-    resp.status(200).json({
-      success: true,
-      data: isPublished === "true" ? adminInfo.myPosts : adminInfo.myDrafts,
-    });
-  } else {
-    resp.status(400).json({ success: false, data: null });
+  try {
+    // const startTime = performance.now();
+
+    const offset = parseInt(req.query.offset as string) || 0;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const user = req.user;
+    const isPublished = req.query.isPublished;
+    console.log("user at getuserpost", user);
+    const adminInfo = await AdminModel.aggregate([
+      { $match: { username: user } },
+      {
+        $project: {
+          myPosts: { $cond: [{ $eq: [isPublished, "true"] }, "$myPosts", []] },
+          myDrafts: {
+            $cond: [{ $eq: [isPublished, "false"] }, "$myDrafts", []],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "posts",
+          localField: "myPosts",
+          foreignField: "_id",
+          as: "publishedPosts",
+        },
+      },
+      {
+        $lookup: {
+          from: "posts",
+          localField: "myDrafts",
+          foreignField: "_id",
+          as: "draftPosts",
+        },
+      },
+      { $project: { publishedPosts: 1, draftPosts: 1 } },
+      { $skip: offset },
+      { $limit: limit },
+    ]);
+    // const endTime = performance.now();
+    // console.log("Query result getuserposts", endTime - startTime);
+    console.log(adminInfo);
+    if (adminInfo.length > 0) {
+      resp.status(200).json({
+        success: true,
+        data:
+          isPublished === "true"
+            ? adminInfo[0].publishedPosts
+            : adminInfo[0].draftPosts,
+      });
+    } else {
+      resp.status(400).json({ success: false, data: null });
+    }
+  } catch (error: any) {
+    resp.status(500).json({ message: error.message });
   }
 };
 export const deletePost = async (req: AuthenticatedRequest, resp: Response) => {
@@ -154,10 +200,16 @@ export const bookmarkedPosts = async (
 
 export const getTags = async (req: AuthenticatedRequest, res: Response) => {
   console.log("tarun inside getags");
+  // const startTime = performance.now();
+
   try {
     const tags = await TagModel.find({}, { tag: 1 }); // Exclude _id field
     // const tags = { tag: "tagone" };
     console.log("tags in db", tags);
+    // const endtime = performance.now();
+
+    // console.log("query execution in tag", endtime - startTime);
+
     res.status(200).json({ success: true, data: tags });
   } catch (error) {
     console.log(error);

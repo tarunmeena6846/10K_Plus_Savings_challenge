@@ -49,5 +49,5 @@ const postSchema = new mongoose.Schema<PostSchema>({
 const Post = mongoose.model<PostSchema>("Post", postSchema);
 
 // Define the model for a comment
-
+Post.collection.createIndex({ isPublished: 1 });
 export default Post;

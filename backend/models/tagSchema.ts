@@ -11,4 +11,7 @@ const tagSchema = new Schema({
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
 });
 
+tagSchema.index({ tag: 1 });
 export const TagModel = mongoose.model("tag", tagSchema);
+
+// TagModel.collection.createIndex({ tag: 1 });
