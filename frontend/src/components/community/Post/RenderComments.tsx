@@ -88,9 +88,12 @@ const CommentDetails = () => {
           throw new Error("Network response is not ok");
         }
         resp.json().then((data) => {
-          console.log(data);
-          setActions((prev) => prev + 1); // Increment actionsState
           console.log("at upvote comment", data);
+
+          // if (data.success === false) {
+          //   alert(data.message);
+          // }
+          setActions((prev) => prev + 1); // Increment actionsState
         });
       })
       .catch((error) => {
@@ -182,7 +185,7 @@ const CommentDetails = () => {
       console.log("currentposts length 0");
       return <div>No comments available.</div>;
     }
-    console.log("currentposts at renderCOmments", commentsArray[0].imageLink);
+    console.log("currentposts at renderCOmments", commentsArray);
     return commentsArray
       .filter((comment) => comment.parentId === parentId)
       .map((comment) => (

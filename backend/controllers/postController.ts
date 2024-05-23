@@ -6,6 +6,11 @@ import { Response } from "express";
 import { TagModel } from "../models/tagSchema";
 import AdminModel from "../models/admin";
 
+/**
+ * Controller to get all posts.
+ * @param req Request object containing query parameters like offset and limit.
+ * @param res Response object to send the result.
+ */
 export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getAllpost");
   try {
@@ -23,6 +28,11 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+/**
+ * Controller to get posts by a specific user.
+ * @param req Request object containing query parameters like offset, limit, and user information.
+ * @param res Response object to send the result.
+ */
 export const getUserPosts = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -79,6 +89,12 @@ export const getUserPosts = async (
     resp.status(500).json({ message: error.message });
   }
 };
+
+/**
+ * Controller to delete a post from the database or admin's records.
+ * @param req Request object containing post ID, type, and user information.
+ * @param resp Response object to send the result.
+ */
 export const deletePostFromDbOrAdmin = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -131,6 +147,12 @@ export const deletePostFromDbOrAdmin = async (
     resp.status(500).json({ success: false, data: "Post delete failed" });
   }
 };
+
+/**
+ * Controller to get bookmarked post for the user.
+ * @param req Request object containing query parameters like offset and limit.
+ * @param resp Response object to send the result.
+ */
 export const getBookmarkPosts = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -139,8 +161,6 @@ export const getBookmarkPosts = async (
   const limit = parseInt(req.query.limit as string) || 10;
 
   try {
-    const startTime = performance.now();
-
     const bookmarkedPostsForUser = await AdminModel.aggregate([
       { $match: { username: req?.user } },
       {
@@ -162,8 +182,6 @@ export const getBookmarkPosts = async (
       "bookmarkedPostsForUser",
       bookmarkedPostsForUser[0]?.bookmarkedPosts || []
     );
-    const endTime = performance.now();
-    console.log("Execution Time at getBookmarkedPosts", endTime - startTime);
 
     if (bookmarkedPostsForUser.length > 0) {
       resp.status(200).json({
@@ -178,6 +196,12 @@ export const getBookmarkPosts = async (
     resp.status(500).json(error);
   }
 };
+
+/**
+ * Controller to bookmark a Post.
+ * @param req Request object containing PostId and username.
+ * @param resp Response object to send the result.
+ */
 export const bookmarkedPosts = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -208,6 +232,12 @@ export const bookmarkedPosts = async (
     return resp.status(500).json(error);
   }
 };
+
+/**
+ * Controller to get all the tags from the DB.
+ * @param req Request object containing username.
+ * @param resp Response object to send the result.
+ */
 export const getTags = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const tags = await TagModel.find({}, { tag: 1 }); // Exclude _id field
@@ -223,12 +253,17 @@ export const getTags = async (req: AuthenticatedRequest, res: Response) => {
     res.status(400).json(error);
   }
 };
+
+/**
+ * Controller to get all the post related to a specific tags from the DB.
+ * @param req Request object containing username, and TagID.
+ * @param resp Response object to send the result.
+ */
 export const getPostByTag = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
   const tagId = req.params.tagId;
-  const startTime = performance.now();
   try {
     console.log("tagId", tagId);
     const offset = parseInt(req.query.offset as string) || 0;
@@ -241,8 +276,6 @@ export const getPostByTag = async (
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned;
 
-    const endTime = performance.now();
-    console.log("Execution time at getpostbytag", endTime - startTime);
     console.log("posts in get id by post", posts?.posts);
     if (posts) {
       resp.status(200).json({ success: true, data: posts.posts });
@@ -253,14 +286,16 @@ export const getPostByTag = async (
     resp.status(400).json({ error });
   }
 };
+/**
+ * Controller to get post based on post._id from the DB.
+ * @param req Request object containing username and postID.
+ * @param resp Response object to send the result.
+ */
 export const getPost = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getpost", req.params.id);
   try {
     const post = await Post.findById(req.params.id).populate({
       path: "comments",
-      // populate: {
-      //   path: "author", // Populate the author field of each comment
-      // },
     });
     if (!post) return res.status(404).json({ message: "Post not found" });
 
@@ -269,13 +304,17 @@ export const getPost = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+/**
+ * Controller to edit a draft post or publish the draft post.
+ * @param req Request object containing username and postID, title,content, author, isPublished, tag, and imageURL.
+ * @param resp Response object to send the result.
+ */
 export const editOrPublishPost = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
   const postId = req.params.id;
   const { title, content, author, isPublished, tag, imageUrl } = req.body;
-  const startTime = performance.now();
   try {
     // Validate input data
     if (!postId || !title || !content || !author || !tag) {
@@ -326,8 +365,6 @@ export const editOrPublishPost = async (
           .json({ success: false, message: "Admin not found" });
       }
     }
-    const endTime = performance.now();
-    console.log("Execution time at updateorpublish", endTime - startTime);
     resp.status(200).json({ success: true, data: updatedPost });
   } catch (error) {
     console.error("Error in editOrPublishPost:", error);
@@ -335,13 +372,17 @@ export const editOrPublishPost = async (
   }
 };
 
+/**
+ * Controller to create a post.
+ * @param req Request object containing username and postID, title,content, author, isPublished, tag, and imageURL.
+ * @param resp Response object to send the result.
+ */
 export const createPost = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside creatapost");
   const { title, content, author, isPublished, tag, imageUrl } = req.body;
   console.log(title, content, author);
 
   try {
-    const startTime = performance.now();
     const post = new Post({
       title,
       content,
@@ -374,9 +415,7 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
       adminUpdate,
       { new: true }
     );
-    const endTime = performance.now();
 
-    console.log("Execution time at crate post", endTime - startTime);
     if (admin) {
       res.status(201).json({ success: true, data: post });
     } else {
@@ -386,12 +425,15 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 };
-
+/**
+ * Controller to add comment to a post.
+ * @param req Request object containing username and , title,content, author, isPublished, tag, and imageURL.
+ * @param resp Response object to send the result.
+ */
 export const addComment = async (req: AuthenticatedRequest, res: Response) => {
   const { content, authorId, parentId, userprofile } = req.body;
-  console.log("inside creatapost", authorId, parentId, userprofile);
+  console.log("inside creatapost", authorId, parentId, userprofile, content);
   try {
-    const startTime = performance.now();
     // const post = await Post.findByIdAndUpdate(req.params.id);
     const comment = new Comment({
       content,
@@ -402,6 +444,8 @@ export const addComment = async (req: AuthenticatedRequest, res: Response) => {
     });
     console.log("commen before save", comment);
     await comment.save();
+    console.log("commen after save");
+
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, {
       $push: { comments: comment._id },
     });
@@ -409,8 +453,6 @@ export const addComment = async (req: AuthenticatedRequest, res: Response) => {
     if (!updatedPost)
       return res.status(404).json({ message: "Post not found" });
 
-    const endTime = performance.now();
-    console.log("execution time at ad comment ", endTime - startTime);
     console.log("update post and new comment", comment, updatedPost);
 
     res.status(201).json(comment);
@@ -418,7 +460,11 @@ export const addComment = async (req: AuthenticatedRequest, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 };
-
+/**
+ * Controller to delete a comment from a post.
+ * @param req Request object containing username and postid, and commentid.
+ * @param resp Response object to send the result.
+ */
 export const deleteComment = async (
   req: AuthenticatedRequest,
   resp: Response
@@ -428,9 +474,8 @@ export const deleteComment = async (
 
   console.log("commentid", commentId, postId, req.user);
   try {
-    const startTime = performance.now();
     const post = await Post.findOneAndUpdate(
-      { _id: postId, author: req.user, isPublished: true }, // TODO check this query its not updating the usage of index in mongoDB
+      { _id: postId, isPublished: true }, // TODO check this query its not updating the usage of index in mongoDB
       {
         $pull: { comments: commentId }, // Remove the comment from the comments array
       },
@@ -443,8 +488,7 @@ export const deleteComment = async (
     }
     console.log("post", post);
     const deletedComment = await Comment.findByIdAndDelete(commentId);
-    const endTime = performance.now();
-    console.log("execution time at delete comment", endTime - startTime);
+
     if (!deletedComment) {
       return resp
         .status(404)
@@ -459,36 +503,64 @@ export const deleteComment = async (
     resp.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+/**
+ * Controller to upvote a comment.
+ * @param req Request object containing username and commentID.
+ * @param resp Response object to send the result.
+ */
 export const upvoteComment = async (
   req: AuthenticatedRequest,
   resp: Response
 ) => {
   console.log("inside upvote");
-  const commentId: String = req.params.id;
+  const commentId: string = req.params.id;
   const user = req.user;
   console.log(user);
+
   try {
-    const updatedComment = await Comment.findOneAndUpdate(
-      { _id: commentId },
-      {
-        $inc: { "likes.likes": 1 }, // Increment likes by 1
-        $set: { "likes.username": user }, // Set the username
-      },
-      { new: true }
-    );
-    if (!updatedComment) {
-      return resp
-        .status(404)
-        .json({ success: false, message: "Comment not found" });
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return resp.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
     }
 
-    console.log("upvoted comment", updatedComment);
-    resp.status(200).json({ success: true, message: "upvoted successfully" });
+    const hasUpvoted = comment.likes.users.includes(user as string);
+    const update = hasUpvoted
+      ? { $inc: { "likes.likes": -1 }, $pull: { "likes.users": user } }
+      : { $inc: { "likes.likes": 1 }, $push: { "likes.users": user } };
+
+    const updatedComment = await Comment.findByIdAndUpdate(commentId, update, {
+      new: true,
+    });
+
+    const message = hasUpvoted
+      ? "Removed upvote successfully"
+      : "Upvoted successfully";
+
+    resp.status(200).json({
+      success: true,
+      message,
+      comment: updatedComment,
+    });
+    console.log("updated comment", updatedComment);
   } catch (error) {
     console.error(error);
-    resp.status(500).json({ success: false, message: "Server error" });
+    resp.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
+
+/**
+ * Controller to edit a comment.
+ * @param req Request object containing username and commentID.
+ * @param resp Response object to send the result.
+ */
 export const editComment = async (
   req: AuthenticatedRequest,
   resp: Response

@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import { Admin } from "./admin";
 export interface Likes {
-  username: string;
+  users: string[];
   likes: number;
 }
 // Define the interface for a comment document
@@ -36,10 +36,16 @@ const commentSchema = new mongoose.Schema<CommentDocument>({
   },
   likes: {
     type: {
-      username: String,
-      likes: Number,
+      users: {
+        type: [String], // Define users as an array of strings
+        default: [], // Default value is an empty array
+      },
+      likes: {
+        type: Number,
+        default: 0, // Default value is 0
+      },
     },
-    default: { username: "", likes: 0 },
+    default: { users: [], likes: 0 },
   },
   imageLink: {
     type: String,
