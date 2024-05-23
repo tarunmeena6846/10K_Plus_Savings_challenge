@@ -50,4 +50,7 @@ const Post = mongoose.model<PostSchema>("Post", postSchema);
 
 // Define the model for a comment
 Post.collection.createIndex({ isPublished: 1 });
+// Post.collection.createIndex({ title: 1 });
+Post.collection.createIndex({ author: 1 });
+// Post.collection.createIndex({ createdAt: 1 });
 export default Post;

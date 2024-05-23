@@ -52,5 +52,5 @@ const commentSchema = new mongoose.Schema<CommentDocument>({
 
 // Define the model for a comment
 const Comment = mongoose.model<CommentDocument>("Comment", commentSchema);
-
+Comment.collection.createIndex({ author: 1 });
 export default Comment;

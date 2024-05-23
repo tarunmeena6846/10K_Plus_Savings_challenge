@@ -144,6 +144,7 @@ const CommentDetails = () => {
   };
 
   const handleDelete = async (commentId: string, postId: string) => {
+    console.log("at delete comment", commentId, postId);
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/post/${postId}/${commentId}`,
@@ -240,7 +241,7 @@ const CommentDetails = () => {
                         Save
                       </Button>
                     </>
-                  )  : (
+                  ) : (
                     // <Button onClick={() => handleReply(comment._id)}>
                     <Button
                       onClick={() => {

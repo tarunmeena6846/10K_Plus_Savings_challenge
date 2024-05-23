@@ -13,7 +13,7 @@ import {
   getUserPosts,
   upvoteComment,
   editOrPublishPost,
-  deletePost,
+  deletePostFromDbOrAdmin,
 } from "../controllers/postController";
 
 import { detokenizeAdmin } from "../middleware";
@@ -32,7 +32,11 @@ router.post("/", detokenizeAdmin, createPost);
 router.post("/:id/comments", detokenizeAdmin, addComment);
 router.post("/:id", detokenizeAdmin, editComment);
 router.post("/editPost/:id", detokenizeAdmin, editOrPublishPost);
-router.delete("/deletepost/:id/:type", detokenizeAdmin, deletePost);
-// router.delete("/:postId/:id", detokenizeAdmin, deleteComment);
+router.delete(
+  "/deletepost/:id/:type",
+  detokenizeAdmin,
+  deletePostFromDbOrAdmin
+);
+router.delete("/:postId/:id", detokenizeAdmin, deleteComment);
 
 export default router;
