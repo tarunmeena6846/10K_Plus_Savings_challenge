@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { subscriptionState } from "../components/store/atoms/user";
 import { Button } from "@mui/material";
+import manageBillingInformation from "./BillingInformation";
 
 const ManageBillingForm = () => {
   const [subscription, setSubscription] = useRecoilState(subscriptionState);
@@ -14,28 +15,29 @@ const ManageBillingForm = () => {
       // Perform any additional actions before creating the billing portal
       // For example, show loading indicator
 
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_SERVER_URL
-        }/stripe/create-customer-portal-session`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerId: subscription.stripeCustomerId,
-          }),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to create billing portal");
-      }
-      // After creating the billing portal, you may want to handle the response
-      // For example, log the response or perform any necessary actions
-      console.log("Billing portal created successfully");
-      const { url } = await response.json(); // Assuming your backend returns the URL
-      window.location.href = url;
+      await manageBillingInformation(subscription.stripeCustomerId);
+      // const response = await fetch(
+      //   `${
+      //     import.meta.env.VITE_SERVER_URL
+      //   }/stripe/create-customer-portal-session`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       customerId: subscription.stripeCustomerId,
+      //     }),
+      //   }
+      // );
+      // if (!response.ok) {
+      //   throw new Error("Failed to create billing portal");
+      // }
+      // // After creating the billing portal, you may want to handle the response
+      // // For example, log the response or perform any necessary actions
+      // console.log("Billing portal created successfully");
+      // const { url } = await response.json(); // Assuming your backend returns the URL
+      // window.location.href = url;
       // Reset loading state after successful submission
       setLoading(false);
     } catch (error) {

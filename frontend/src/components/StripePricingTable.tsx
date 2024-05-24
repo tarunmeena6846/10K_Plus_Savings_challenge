@@ -13,8 +13,9 @@ import {
 } from "./store/atoms/user";
 import ManageBillingForm from "../stripe/ManageBillingForm";
 import redirectToStripeCheckout from "../stripe/StripeCheckout";
+import manageBillingInformation from "../stripe/BillingInformation";
 
-let stripePromise: Promise<Stripe | null>
+let stripePromise: Promise<Stripe | null>;
 const getStripe = () => {
   if (!stripePromise) {
     stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
@@ -31,7 +32,6 @@ const StripePricingTable = () => {
     useRecoilState<SubscriptionData>(subscriptionState);
   console.log("current", currentUserState.userEmail);
   async function handleCheckout(plan: string) {
-
     if (!currentUserState.userEmail) {
       navigate("/register");
     }
@@ -87,7 +87,7 @@ const StripePricingTable = () => {
             key={index}
             className={`border ${
               subscription.isSubscribed &&
-              pkg.planId === subscription.stripePlanId
+              pkg.yearlyPlanId === subscription.stripePlanId
                 ? "border-green-500"
                 : "border-black"
             } py-10 md:px-6 px-4 rounded-lg shadow-4xl`}
@@ -142,26 +142,32 @@ const StripePricingTable = () => {
             <div className="w-full mx-auto flex justify-center mt-5">
               {subscription.isSubscribed ? (
                 <>
-                  {pkg.planId === subscription.stripePlanId ? (
+                  {pkg.yearlyPlanId === subscription.stripePlanId ? (
                     <motion.button
-                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-green-500 text-black shadow-lg h-10 text-center"
+                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => {
-                        // Handle action for subscribed user
+                      onClick={async () => {
+                        await manageBillingInformation(
+                          subscription.stripeCustomerId
+                        );
                       }}
                     >
-                      <ManageBillingForm></ManageBillingForm>
+                      Manage Membership
                     </motion.button>
                   ) : (
                     <motion.button
                       className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => {
-                        handleCheckout(pkg.planId);
+                      onClick={async () => {
+                        await manageBillingInformation(
+                          subscription.stripeCustomerId
+                        );
                       }}
-                    ></motion.button>
+                    >
+                      Switch Membership
+                    </motion.button>
                   )}
                 </>
               ) : (

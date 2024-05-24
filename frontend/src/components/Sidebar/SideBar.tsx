@@ -32,6 +32,11 @@ const routes = [
     icon: <BiMoney />,
   },
   {
+    path: "/pricing",
+    name: "Pricing",
+    icon: <BiMoney />,
+  },
+  {
     path: "/community",
     name: "Community",
     icon: <BiMoney />,
