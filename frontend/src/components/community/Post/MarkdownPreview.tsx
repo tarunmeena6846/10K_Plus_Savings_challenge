@@ -18,7 +18,7 @@ function renderMarkdownToHTML(markdown) {
 const MarkdownPreview = ({ markdown }) => {
   console.log(markdown);
   return (
-    <div className="ql-container ql-snow">
+    <div className="ql-snow">
       <div
         className="ql-editor"
         dangerouslySetInnerHTML={{ __html: markdown }}

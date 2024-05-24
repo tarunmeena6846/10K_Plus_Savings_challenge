@@ -12,12 +12,13 @@ import { timePassed } from "./Post";
 import { actionsState, userState } from "../../store/atoms/user";
 import Postdetails from "./PostRetrieval";
 import { error } from "console";
+import MarkdownPreview from "./MarkdownPreview";
 
 export type CommentType = {
   _id: string;
   content: string;
   createdAt: Date;
-  likes: { likes: number; username: string };
+  likes: { likes: number; users: string[] };
   parentId: string | null;
   author: string;
   imageLink: string;
@@ -33,16 +34,23 @@ const CommentDetails = () => {
     [key: string]: boolean;
   }>({});
   const setActions = useSetRecoilState(actionsState);
+  const [isProcessing, setIsProcessing] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const currentPost = useRecoilValue(currentPostState);
   const [commentContent, setCommentContent] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string>("");
   console.log(currentPost.comments, "currentposts");
 
-  // if (currentPost.comments.length === 0) {
-  //   console.log("currentposts length 0");
-  //   return <div>No comments available.</div>;
-  // }
+  // Debounce function to prevent multiple rapid requests
+  const debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
   useEffect(() => {
     if (currentPost.comments.length === 0) {
       console.log("currentposts length 0");
@@ -70,76 +78,111 @@ const CommentDetails = () => {
     }));
   };
   //TODO make this work currently upvote url is not getting trigered from the frontend changed the atom also
-  const handleUpvote = async (comment: any) => {
-    console.log("inside upvote", comment._id);
+  // const handleUpvote = async (comment: any) => {
+  //   console.log("inside upvote", comment._id);
 
-    fetch(`${import.meta.env.VITE_SERVER_URL}/post/${comment._id}/upvote`, {
-      method: "POST",
-      headers: {
-        "content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        username: userEmail,
-      }),
-    })
-      .then((resp) => {
-        if (!resp.ok) {
-          throw new Error("Network response is not ok");
-        }
-        resp.json().then((data) => {
-          console.log("at upvote comment", data);
+  //   fetch(`${import.meta.env.VITE_SERVER_URL}/post/${comment._id}/upvote`, {
+  //     method: "POST",
+  //     headers: {
+  //       "content-Type": "application/json",
+  //       Authorization: "Bearer " + localStorage.getItem("token"),
+  //     },
+  //     body: JSON.stringify({
+  //       username: userEmail,
+  //     }),
+  //   })
+  //     .then((resp) => {
+  //       if (!resp.ok) {
+  //         throw new Error("Network response is not ok");
+  //       }
+  //       resp.json().then((data) => {
+  //         console.log("at upvote comment", data);
 
-          // if (data.success === false) {
-          //   alert(data.message);
-          // }
-          setActions((prev) => prev + 1); // Increment actionsState
-        });
-      })
-      .catch((error) => {
-        // Handle error
-        console.error("Error creating post:", error);
-      });
-  };
-  // const handleReply = (commentId: string) => {
-  //   setEditingCommentId("");
-  //   setCommentContent("");
-  //   toggleCommentClicked(commentId);
+  //         // if (data.success === false) {
+  //         //   alert(data.message);
+  //         // }
+  //         setActions((prev) => prev + 1); // Increment actionsState
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       // Handle error
+  //       console.error("Error creating post:", error);
+  //     });
   // };
+
+  const handleUpvote = debounce(async (comment: CommentType) => {
+    setIsProcessing((prev) => ({ ...prev, [comment._id]: true }));
+    const alreadyUpvoted = comment.likes.users?.includes(userEmail);
+    console.log("inside upvote", alreadyUpvoted, comment);
+
+    // Update the local state first
+    const updatedComments = sortedComments.map((c) => {
+      if (c._id === comment._id) {
+        return {
+          ...c,
+          likes: {
+            ...c.likes,
+            likes: alreadyUpvoted ? c.likes.likes - 1 : c.likes.likes + 1, // Increment or decrement likes count locally
+            username: alreadyUpvoted
+              ? c.likes.users.filter((u) => u !== userEmail)
+              : [...c.likes.users, userEmail], // Add or remove the user from the list of upvoters
+          },
+        };
+      }
+      return c;
+    });
+    setSortedComments(updatedComments);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/post/${comment._id}/upvote`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            username: userEmail,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response is not ok");
+      }
+      const data = await response.json();
+      console.log("at upvote comment", data);
+      setActions((prev) => prev + 1); // Increment actionsState
+    } catch (error) {
+      // Revert the local state if an error occurs
+      const revertedComments = sortedComments.map((c) => {
+        if (c._id === comment._id) {
+          return {
+            ...c,
+            likes: {
+              ...c.likes,
+              likes: alreadyUpvoted ? c.likes.likes + 1 : c.likes.likes - 1, // Increment or decrement likes count locally
+              username: alreadyUpvoted
+                ? [...c.likes.users, userEmail]
+                : c.likes.users.filter((u) => u !== userEmail), // Add or remove the user from the list of upvoters
+            },
+          };
+        }
+        return c;
+      });
+      setSortedComments(revertedComments);
+      console.error("Error creating post:", error);
+      alert("An error occurred while processing your request.");
+    } finally {
+      setIsProcessing((prev) => ({ ...prev, [comment._id]: false }));
+    }
+  }, 300);
 
   const handleEdit = (commentId: string) => {
     setEditingCommentId(commentId);
     toggleCommentClicked(commentId);
   };
-
-  // const handleSave = async (commentId: string) => {
-  //   // Implement logic to save edited comment
-  //   console.log("commentContent", commentContent);
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_SERVER_URL}/post/${commentId}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "content-Type": "application/json",
-  //           Authorization: "Bearer " + localStorage.getItem("token"),
-  //         },
-  //         body: JSON.stringify({ commentContent: commentContent }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Network Response is not ok");
-  //     }
-
-  //     const data = await response.json();
-  //     console.log(data);
-  //     toggleCommentClicked(commentId);
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // };
 
   const handleCancel = (commentId: string) => {
     setEditingCommentId("");
@@ -213,7 +256,7 @@ const CommentDetails = () => {
             <p>{timePassed(new Date(comment.createdAt))}</p>
           </div>
           <div className="">
-            <p className="p-2 ml-5">{comment.content}</p>
+            <MarkdownPreview markdown={comment.content} />
             {clickedComments[comment._id] && (
               <div>
                 <TextEditor
@@ -315,7 +358,11 @@ const CommentDetails = () => {
           <option value="upvotes">Most Popular</option>
         </select>
       </div>
-      {sortedComments.length > 0 && renderComments(sortedComments)}
+      {sortedComments.length > 0 ? (
+        renderComments(sortedComments)
+      ) : (
+        <p>No comments yet</p>
+      )}
     </div>
   );
 };

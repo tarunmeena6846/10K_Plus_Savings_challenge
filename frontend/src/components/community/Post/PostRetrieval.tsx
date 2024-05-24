@@ -81,8 +81,7 @@ const Postdetails = () => {
     fetchPosts(postId, setCurrentPost);
   }, [postId, actions]);
 
-  if(currentPost.isPublished === "false")
-  {
+  if (currentPost.isPublished === "false") {
     console.log("post id at click", postId);
     navigate(`/community/post/${postId}`);
   }
@@ -112,6 +111,7 @@ const Postdetails = () => {
       {/* {text} */}
       {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
       <MarkdownPreview markdown={currentPost.content} />
+      <hr />
       <div className="flex flex-col mt-5">
         comment as {userEmail}
         <div>
