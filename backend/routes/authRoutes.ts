@@ -122,12 +122,12 @@ router.get(
     try {
       if (req.user) {
         const bIsAdminPresent = await AdminModel.findOne({
-          username: req.user,
+          email: req.user,
         });
         console.log(" bIsAdminPresent at /me route", bIsAdminPresent);
         if (bIsAdminPresent) {
           res.status(200).send({
-            userEmail: bIsAdminPresent.username,
+            userEmail: bIsAdminPresent.email,
             imageUrl: bIsAdminPresent.imageUrl,
             userData: bIsAdminPresent,
             // subscription: bIsAdminPresent.subscriptions,
@@ -247,7 +247,6 @@ router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.headers;
   const bIsAdminPresent = await AdminModel.findOne({
     email: email,
-    // password: req.headers.password,
   });
 
   if (!bIsAdminPresent) {
@@ -260,6 +259,7 @@ router.post("/login", async (req: Request, res: Response) => {
     password as string,
     bIsAdminPresent.password
   );
+  console.log("is match ", isMatch);
   if (!isMatch) {
     res
       .status(400)
@@ -320,7 +320,7 @@ router.post(
     const { data } = req.body;
     console.log("data at set my data", data);
     try {
-      const user = await AdminModel.findOne({ username: req.user });
+      const user = await AdminModel.findOne({ email: req.user });
       console.log("user at set my data", user);
       if (user) {
         user.myWhy = data;
@@ -340,7 +340,7 @@ router.post(
     console.log("at change user details", req?.user, newPassword, imageUrl);
     try {
       // Find admin by username
-      const bIsAdminPresent = await AdminModel.findOne({ username: req?.user });
+      const bIsAdminPresent = await AdminModel.findOne({ email: req?.user });
 
       if (!bIsAdminPresent) {
         return res.status(404).json({ error: "Admin not found" });

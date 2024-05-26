@@ -98,6 +98,7 @@ export default function UserAvatar() {
               imageUrl: currentUserState.imageUrl,
               isVerified: currentUserState.isVerified,
               myWhy: currentUserState.myWhy,
+              isAdmin: currentUserState.isAdmin,
             });
             navigate("/");
           }}

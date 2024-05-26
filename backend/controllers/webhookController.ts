@@ -5,7 +5,7 @@ export async function handleSubscriptionCreated(event: any, subscription: any) {
   console.log("tarun subs", subscription);
 
   const userData = await AdminModel.findOne({
-    username: event.customer_email,
+    email: event.customer_email,
   });
   console.log("user data ", userData);
   if (userData) {

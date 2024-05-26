@@ -18,12 +18,16 @@ export function detokenizeAdmin(
       let detokenizedUser = jwt.verify(token, secretKey) as JwtPayload;
       console.log("detokenizedUser", detokenizedUser);
       if (detokenizedUser.role === "user") {
-        console.log(" username after detoken" + detokenizedUser.username);
-        req.user = detokenizedUser.username;
+        console.log(" username after detoken" + detokenizedUser.email);
+        req.user = detokenizedUser.email;
         //   currentUserId = user.username;
         next();
+      } else if (detokenizedUser.role === "admin") {
+        console.log(" username after detoken" + detokenizedUser.email);
+        req.user = detokenizedUser.email;
+        next();
       } else {
-        res.status(403).send("Unauthorised");
+        res.status(500).json("Unauthorised");
       }
     } else {
       // Handle the case when secretKey is undefined

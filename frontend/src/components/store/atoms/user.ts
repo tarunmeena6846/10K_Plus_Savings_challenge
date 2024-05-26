@@ -8,6 +8,7 @@ export const userState = atom({
     imageUrl: "",
     isVerified: false,
     myWhy: "",
+    isAdmin: false,
   },
 });
 export interface SubscriptionData {

@@ -72,6 +72,7 @@ const Dashboard = () => {
       imageUrl: "",
       isVerified: currentUserState.isVerified,
       myWhy: currentUserState.myWhy,
+      isAdmin: currentUserState.isAdmin,
     });
   };
   const handleOpenSettingsDialog = () => {
@@ -188,6 +189,7 @@ const Dashboard = () => {
                 imageUrl: currentUserState.imageUrl,
                 isVerified: currentUserState.isVerified,
                 myWhy: currentUserState.myWhy,
+                isAdmin: currentUserState.isAdmin,
               });
               setIncomeDialogOpen(false);
               fetchData();

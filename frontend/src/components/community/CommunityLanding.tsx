@@ -29,7 +29,7 @@ const CommunityLanding = () => {
     console.log("selectedtag");
     setSelectedTagId(tagId);
   };
-  console.log("selectedTag navigation after ", selectedTagId);
+  console.log("selectedTag navigation after ", currentUserState);
 
   // const { items: newPosts, isLoading } = useFetchPosts(
   //   true,
@@ -61,7 +61,6 @@ const CommunityLanding = () => {
             ></InfinitePostScroll>
           </div>
           <div className="md:w-1/4 p-4 m-4">
-            {selectedTagId}
             <SideBar onSelectTag={handleSelectTag}></SideBar>
           </div>
         </div>

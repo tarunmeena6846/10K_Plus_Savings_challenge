@@ -127,6 +127,7 @@ export function InitUser() {
               imageUrl: data.imageUrl,
               isVerified: data.userData.verified,
               myWhy: data.userData.myWhy,
+              isAdmin: data.userData.isAdmin,
             });
 
             setSubscripton({
@@ -162,6 +163,7 @@ export function InitUser() {
               imageUrl: "",
               isVerified: currentUserState.isVerified,
               myWhy: currentUserState.myWhy,
+              isAdmin: currentUserState.isAdmin,
             });
           }
         })
@@ -173,6 +175,7 @@ export function InitUser() {
             imageUrl: "",
             isVerified: currentUserState.isVerified,
             myWhy: currentUserState.myWhy,
+            isAdmin: currentUserState.isAdmin,
           });
           // setLogoutModalOpen(false);
         });
@@ -183,6 +186,7 @@ export function InitUser() {
         imageUrl: "",
         isVerified: currentUserState.isVerified,
         myWhy: currentUserState.myWhy,
+        isAdmin: currentUserState.isAdmin,
       });
     }
   };

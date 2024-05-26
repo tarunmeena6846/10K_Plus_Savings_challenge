@@ -29,7 +29,7 @@ function Login() {
       return;
     }
     const headers = new Headers();
-    headers.append("Username", email);
+    headers.append("email", email);
     headers.append("Password", password);
     fetch(`${import.meta.env.VITE_SERVER_URL}/auth/login`, {
       method: "POST",
@@ -40,7 +40,7 @@ function Login() {
           throw new Error("Network response is not ok");
         }
         resp.json().then((data) => {
-          console.log(data);
+          console.log("data after login", data);
           if (data.verified) {
             localStorage.setItem("token", data.token);
             console.log("Login successfully", data);
@@ -50,6 +50,7 @@ function Login() {
               imageUrl: currentUserState.imageUrl,
               isVerified: currentUserState.isVerified,
               myWhy: currentUserState.myWhy,
+              isAdmin: currentUserState.isAdmin,
             });
             if (subscription.isSubscribed) navigate("/dashboard");
             else navigate("/pricing");
@@ -78,7 +79,7 @@ function Login() {
         <Card variant="outlined" style={{ width: 400, padding: 20 }}>
           <TextField
             onChange={(e) => setEmail(e.target.value)}
-            label="Username/Phone Number"
+            label="Email"
             variant="outlined"
             type="email"
             fullWidth

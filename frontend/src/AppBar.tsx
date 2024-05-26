@@ -32,6 +32,7 @@ import ManageBillingForm from "./stripe/ManageBillingForm";
 import Button from "./components/Button";
 import handleBuyClick from "./stripe/SwotCheckout";
 import countAtom from "./components/store/atoms/quickLinkCount";
+import Dropdown from "./Dropdown";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
@@ -41,6 +42,10 @@ function Appbar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
+  const adminItems = [{ label: "Admin Console", route: "/adminconsole" }];
+
+  const swotItems = [{ label: "Tasklist", route: "/swotportal/tasklist" }];
   // const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
   // const subscriptionPlan = await getUserSubscriptionPlan();
   // const [subscription, setSubscripton] =
@@ -60,6 +65,16 @@ function Appbar() {
   const handleMouseLeave = () => {
     setIsDropdownOpen(false);
   };
+  const handleAdminMouseEnter = () => {
+    if (currentUserState.isAdmin) {
+      setIsAdminDropdownOpen(true);
+    }
+  };
+
+  const handleAdminMouseLeave = () => {
+    setIsAdminDropdownOpen(false);
+  };
+
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -79,9 +94,6 @@ function Appbar() {
 
   const handleLogoutConfirm = () => {
     setLogoutModalOpen(false);
-    // Perform any additional actions here
-    // ...
-    // For now, let's just logout
     localStorage.removeItem("token");
     setCurrentUserState({
       userEmail: "",
@@ -89,6 +101,7 @@ function Appbar() {
       imageUrl: currentUserState.imageUrl,
       isVerified: currentUserState.isVerified,
       myWhy: currentUserState.myWhy,
+      isAdmin: currentUserState.isAdmin,
     });
     setSelectedDate({
       year: selectedDate.year,
@@ -103,7 +116,7 @@ function Appbar() {
   const manageSubscription = async () => {
     setLogoutModalOpen(false);
   };
-
+  console.log(currentUserState.isAdmin);
   return (
     <div>
       <Toolbar
@@ -155,17 +168,28 @@ function Appbar() {
           >
             Pricing
           </motion.button>
-
-          <motion.button
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black p-2"
-            onClick={() => {
-              navigate("/community");
-            }}
-          >
-            Community
-          </motion.button>
+          <div>
+            <motion.button
+              whileHover={{ background: "black", color: "white", scale: 1.1 }}
+              whileTap={{ scale: 1 }} // Define hover animation
+              onMouseEnter={handleAdminMouseEnter}
+              onMouseLeave={handleAdminMouseLeave}
+              className="rounded-3xl text-black p-2"
+              onClick={() => {
+                navigate("/community");
+              }}
+            >
+              Community
+            </motion.button>
+            {/* {currentUserState.isAdmin && <p>hello</p>} */}
+            <Dropdown
+              items={adminItems}
+              isOpen={isAdminDropdownOpen}
+              onMouseEnter={handleAdminMouseEnter}
+              onMouseLeave={handleAdminMouseLeave}
+              navigate={navigate}
+            />
+          </div>
           {/* <motion.button
             className={
               "login-button rounded-3xl bg-transparent text-black w-50 h-10"
@@ -213,33 +237,13 @@ function Appbar() {
             >
               SWOT Portal
             </motion.button>
-            {isDropdownOpen && (
-              <motion.div
-                className="dropdown bg-gray-100 p-4 rounded-2xl border"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                style={{ position: "absolute", zIndex: 1 }} // Set position and z-index
-                transition={{ duration: 0.2 }}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <motion.button
-                  whileHover={{
-                    background: "black",
-                    color: "white",
-                    scale: 1.1,
-                  }}
-                  whileTap={{ scale: 1 }}
-                  className="rounded-3xl text-black pr-3 p-2"
-                  onClick={() => {
-                    navigate("/swotportal/tasklist");
-                  }}
-                >
-                  Tasklist
-                </motion.button>
-              </motion.div>
-            )}
+            <Dropdown
+              items={swotItems}
+              isOpen={isDropdownOpen}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              navigate={navigate}
+            />
           </div>
         </div>
         <div>
