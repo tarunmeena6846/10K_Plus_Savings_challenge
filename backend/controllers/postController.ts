@@ -18,6 +18,7 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
 
     const posts = await Post.find({ isPublished: true })
+      .sort({ createdAt: -1 })
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned
     console.log("inside post", posts);
