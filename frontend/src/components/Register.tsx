@@ -2,37 +2,36 @@ import React, { useState } from "react";
 // import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { Card, Typography } from "@mui/material";
+import { Card, Input, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { userState } from "./store/atoms/user";
 import { useRecoilState } from "recoil";
-// import Payment from "./Payment";
-// import { loadStripe } from "@stripe/stripe-js";
-// import { Elements } from "@stripe/react-stripe-js";
-// import Payment from "../src/components/Payment";
-// import User from "./components/AdminCourses";
-// import { AppBar } from "@mui/material";
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY); // starts with pk_
-// console.log("secretkey", import.meta.env.VITE_STRIPE_KEY);
-// console.log(stripePromise);
-/// File is incomplete. You need to add input boxes to take input for users to register.
+import CheckBox from "./Checkbox";
+import { validateEmail } from "./validator/emailValidator";
 function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [username, setUserName] = React.useState("");
-  const [msg, setMsg] = useState("");
-
+  const [isChecked, setIsChecked] = useState(false);
+  const [secretePhrase, setSecretePhase] = useState("");
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [registrationError, setRegistrationError] = useState("");
 
   const navigate = useNavigate();
 
-  // console.log(password);
   const handleRegister = () => {
+    if (isChecked && secretePhrase === "") {
+      setRegistrationError("Secret phrase can not be empty");
+      return;
+    }
     if (!email || !password || !username) {
       // Display an error message or prevent the registration process
       console.error("Email and password are required");
       alert("Email and Password are Required");
+      return;
+    }
+    if (validateEmail(email) === false) {
+      setRegistrationError("Email format not correct");
       return;
     }
     fetch(`${import.meta.env.VITE_SERVER_URL}/auth/signup`, {
@@ -40,6 +39,8 @@ function Register() {
       body: JSON.stringify({
         username: username,
         password: password,
+        email: email,
+        secretePhrase: isChecked ? secretePhrase : "",
       }),
       headers: {
         "content-Type": "application/json",
@@ -53,18 +54,8 @@ function Register() {
         resp.json().then((data) => {
           console.log("before router", data);
           if (data.success) {
-            setMsg(data.message);
-            // setCurrentUserState({
-            //   userEmail: email,
-            //   isLoading: false,
-            //   imageUrl: currentUserState.imageUrl,
-            // });
-            // localStorage.setItem("token", data.token);
-            // setCurrentUserState({ userEmail: email, isLoading: false });
-            // navigate("/pricing");  
-            // Payment();
-            // navigate("/projecteddashboard");
-            // history.go(0);
+            setRegistrationError(data.message);
+
             console.log("email registered successfully", data);
           } else {
             setRegistrationError(
@@ -94,7 +85,7 @@ function Register() {
         <Card variant="outlined" style={{ width: 400, padding: 20 }}>
           <TextField
             onChange={(e) => {
-              setUserName(e.target.value);
+              setEmail(e.target.value);
               setRegistrationError(""); // Reset registration error when user starts typing again
             }}
             label="Email"
@@ -108,10 +99,10 @@ function Register() {
           <br />
           <TextField
             onChange={(e) => {
-              setEmail(e.target.value);
+              setUserName(e.target.value);
               setRegistrationError(""); // Reset registration error when user starts typing again
             }}
-            label="Username/Phone Number"
+            label="Username"
             inputProps={{ maxLength: 15 }}
             variant="outlined"
             type={"email"}
@@ -132,16 +123,35 @@ function Register() {
           />
           <br />
           <br></br>
-          {registrationError && (
-            <Typography variant="body2" color="error">
-              {registrationError}
-            </Typography>
-          )}
-          {msg && <div className="message">{msg}</div>}
-
-          <Button variant="contained" color="primary" onClick={handleRegister}>
-            Signup
-          </Button>
+          <div className="flex flex-col items-start ">
+            <div className=" flex flex-row">
+              <CheckBox isChecked={isChecked} setIsChecked={setIsChecked} />
+              <p className="ml-2 mb-1">Signup as Root user</p>
+            </div>
+            {isChecked && (
+              <TextField
+                type="password"
+                variant="outlined"
+                fullWidth
+                label="Enter key Phrase"
+                value={secretePhrase}
+                onChange={(e) => {
+                  setSecretePhase(e.target.value);
+                }}
+                style={{ marginBottom: "10px" }}
+              />
+            )}
+            {registrationError && (
+              <div className="text-red-500 mb-2">{registrationError}</div>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleRegister}
+            >
+              Signup
+            </Button>
+          </div>
         </Card>
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>

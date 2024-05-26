@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TextField } from "@mui/material";
+import CheckBox from "../Checkbox";
 export interface taskDetails {
   title: String;
   isComplete: Boolean;
@@ -47,9 +48,7 @@ const TaskList = ({ setShowPopup }) => {
         console.error("Error saving tasklist");
       });
   };
-  const toggleCheckbox = () => {
-    setIsChecked(!isChecked);
-  };
+  
   const handleAddTask = () => {
     console.log(newTask);
     if (newTask === undefined) {
@@ -169,11 +168,13 @@ const TaskList = ({ setShowPopup }) => {
               whileHover={{ scale: 1.1 }}
               // whileTap={{ scale: 0.9 }}
             >
-              <input
+              <CheckBox isChecked={isChecked} setIsChecked={setIsChecked} />
+              {/* <CheckBox onChange={toggleCheckbox}></CheckBox> */}
+              {/* <input
                 type="checkbox"
                 checked={isChecked}
                 onChange={toggleCheckbox}
-              />
+              /> */}
               <motion.span
                 className="checkmark"
                 variants={{

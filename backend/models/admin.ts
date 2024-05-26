@@ -5,6 +5,7 @@ export interface Admin extends Document {
   username: string;
   email: string;
   password: string;
+  isAdmin: Boolean;
   resetPasswordToken: String;
   resetPasswordTokenUsed: Boolean;
   imageUrl?: string;
@@ -29,17 +30,18 @@ const adminSchema = new Schema<Admin>({
     unique: true,
     required: true,
   },
-  resetPasswordToken: { type: String },
-  resetPasswordTokenUsed: { type: Boolean },
   email: {
     type: String,
     unique: true,
-    // required: true,
+    required: true,
   },
   password: {
     type: String,
     required: true,
   },
+  isAdmin: { type: Boolean, default: false },
+  resetPasswordToken: { type: String },
+  resetPasswordTokenUsed: { type: Boolean },
   imageUrl: String,
   stripePlanId: String,
   stripeUserId: String,
