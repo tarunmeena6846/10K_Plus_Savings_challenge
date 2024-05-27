@@ -14,9 +14,10 @@ import {
   upvoteComment,
   editOrPublishPost,
   deletePostFromDbOrAdmin,
+  approveOrDeclinePost,
 } from "../controllers/postController";
 
-import { detokenizeAdmin } from "../middleware";
+import { detokenizeAdmin, isAdmin } from "../middleware";
 const router: Router = express.Router();
 
 // Routes for posts
@@ -29,6 +30,7 @@ router.get("/:id", detokenizeAdmin, getPost);
 router.post("/:id/upvote", detokenizeAdmin, upvoteComment);
 router.post("/bookmarkPost", detokenizeAdmin, bookmarkedPosts);
 router.post("/", detokenizeAdmin, createPost);
+router.post("/approvePost/:id", isAdmin, approveOrDeclinePost);
 router.post("/:id/comments", detokenizeAdmin, addComment);
 router.post("/:id", detokenizeAdmin, editComment);
 router.post("/editPost/:id", detokenizeAdmin, editOrPublishPost);

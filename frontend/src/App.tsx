@@ -31,6 +31,7 @@ import CurrentDashboard from "./components/Dashboard/CurrentDashboard";
 import TargetDashboard from "./components/Dashboard/TargetDashboard";
 import ActualDashboard from "./components/Dashboard/ActualDashboard";
 import SWOTtasklist from "./components/SWOTanalysisPortal/SWOTtaskListDisplay";
+
 import {
   SubscriptionData,
   subscriptionState,
@@ -42,6 +43,7 @@ import { EditPostWrapper } from "./components/community/EditPostWrapper";
 import AnalyticsLanding from "./AnalyticsDashboard/Landing";
 import RequestOTP from "./components/RequestOTP";
 import ResetPassword from "./components/ResetPassword";
+import LandingConsole from "./components/AdminConsole/ConsoleLanding";
 
 function App() {
   const location = useLocation();
@@ -89,6 +91,7 @@ function App() {
         <Route path="/community/drafts" element={<MyDraft />} />
         <Route path="/community/post/:postId" element={<PostLanding />} />
         <Route path="/newpost" element={<NewPostWrapper />}></Route>
+        <Route path="/adminconsole" element={<LandingConsole />}></Route>
         <Route
           path="/community/drafts/editpost/:postId"
           element={<EditPostWrapper />}

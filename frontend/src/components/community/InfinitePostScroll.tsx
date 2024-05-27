@@ -11,6 +11,7 @@ export interface PostType {
   imageContent: string;
   title: string;
   content: string;
+  type: string;
 }
 
 const InfinitePostScroll = ({
@@ -48,7 +49,7 @@ const InfinitePostScroll = ({
       if (type === "allposts") {
         url = `${
           import.meta.env.VITE_SERVER_URL
-        }/post?isPublished=true&offset=${index * 10}&limit=10`;
+        }/post?isApprovalReqPost=${"approved"}&offset=${index * 10}&limit=10`;
       } else if (type === "myposts" || type === "mydrafts") {
         url = `${import.meta.env.VITE_SERVER_URL}/post/userPosts?isPublished=${
           type === "myposts"
@@ -57,6 +58,12 @@ const InfinitePostScroll = ({
         url = `${
           import.meta.env.VITE_SERVER_URL
         }/post/getBookmarkPosts?offset=${index * 10}&limit=10`;
+      } else if (type === "approvalReqPosts") {
+        url = `${
+          import.meta.env.VITE_SERVER_URL
+        }/post?isApprovalReqPost=${"approvalPending"}&offset=${
+          index * 10
+        }&limit=10`;
       }
     }
     console.log(url);

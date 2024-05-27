@@ -37,3 +37,30 @@ export function detokenizeAdmin(
     }
   }
 }
+
+export function isAdmin(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    if (secretKey) {
+      let detokenizedUser = jwt.verify(token, secretKey) as JwtPayload;
+      console.log("detokenizedUser", detokenizedUser);
+      if (detokenizedUser.role === "admin") {
+        console.log(" username after detoken" + detokenizedUser.email);
+        req.user = detokenizedUser.email;
+        next();
+      } else {
+        res.status(500).json("Unauthorised");
+      }
+    } else {
+      // Handle the case when secretKey is undefined
+      console.error(
+        "JWT_SECRET environment variable is not set. Unable to sign JWT."
+      );
+    }
+  }
+}

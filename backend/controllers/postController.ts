@@ -16,8 +16,12 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-
-    const posts = await Post.find({ isPublished: true })
+    const isApprovalReqPost = req.query.isApprovalReqPost;
+    console.log("isApprovalReqPosts", isApprovalReqPost);
+    const posts = await Post.find({
+      isPublished: true,
+      status: isApprovalReqPost,
+    })
       .sort({ createdAt: -1 })
       .skip(offset) // Skip the specified number of posts
       .limit(limit); // Limit the number of posts returned
@@ -29,6 +33,29 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const approveOrDeclinePost = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  console.log("inside aprovePost");
+  try {
+    const postId = req.params.id;
+    const { type } = req.body;
+    console.log("isApprovalReqPosts", postId, type);
+    // Update the post
+    const updatedFields = {
+      status: type,
+    };
+
+    const options = { new: true };
+    const posts = await Post.findByIdAndUpdate(postId, updatedFields, options);
+    console.log("inside post", posts);
+
+    res.status(200).json({ sucess: true, data: posts });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 /**
  * Controller to get posts by a specific user.
  * @param req Request object containing query parameters like offset, limit, and user information.
@@ -45,7 +72,7 @@ export const getUserPosts = async (
     const isPublished = req.query.isPublished;
     console.log("user at getuserpost", user);
     const adminInfo = await AdminModel.aggregate([
-      { $match: { username: user } },
+      { $match: { email: user } },
       {
         $project: {
           myPosts: { $cond: [{ $eq: [isPublished, "true"] }, "$myPosts", []] },
@@ -116,7 +143,7 @@ export const deletePostFromDbOrAdmin = async (
 
     // Perform the update and delete operations concurrently
     const updatePromise = AdminModel.findOneAndUpdate(
-      { username: username },
+      { email: username },
       { $pull: { [pullField]: postId } },
       { new: true } // Return the updated document
     );
@@ -163,7 +190,7 @@ export const getBookmarkPosts = async (
 
   try {
     const bookmarkedPostsForUser = await AdminModel.aggregate([
-      { $match: { username: req?.user } },
+      { $match: { email: req?.user } },
       {
         $lookup: {
           from: "posts",
@@ -211,7 +238,7 @@ export const bookmarkedPosts = async (
   const username = req.user;
   try {
     const updateResult = await AdminModel.findOneAndUpdate(
-      { username: username },
+      { email: username },
       { $addToSet: { bookmarkedPosts: postId } }, // Use $addToSet to add postId only if it doesn't already exist
       { new: true, upsert: false }
     );
@@ -352,7 +379,7 @@ export const editOrPublishPost = async (
     // If the post is published, update the admin's records
     if (isPublished) {
       const updatedAdminForDraft = await AdminModel.findOneAndUpdate(
-        { username: author },
+        { email: author },
         {
           $pull: { myDrafts: postId },
           $addToSet: { myPosts: postId }, // Use $addToSet to prevent duplicate entries
@@ -412,7 +439,7 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
       ? { $push: { myPosts: post._id } }
       : { $push: { myDraft: post._id } };
     const admin = await AdminModel.findOneAndUpdate(
-      { username: author },
+      { email: author },
       adminUpdate,
       { new: true }
     );
