@@ -11,10 +11,13 @@ export const currentPostState = atom({
   key: "currentPostState",
   default: {
     id: "",
-    postTime: new Date(),
+    createdAt: new Date(),
     title: "",
     content: "",
     author: "",
     comments: [] as CommentType[],
+    userImage: "",
+    isPublished: "",
+    status: "",
   },
 });

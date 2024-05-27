@@ -243,15 +243,12 @@ const CommentDetails = () => {
           className="flex flex-col p-2 rounded-2xl"
         >
           <div className="flex flex-row gap-2">
-            {/* {comment.imageLink.substring(1)} */}
-
             <img
               className="w-12 h-12 rounded-full mr-2"
               src={comment.imageLink.substring(1)}
               // src="target.png"
               alt="Profile"
             />
-
             <p>{comment.author}</p>
             <p>{timePassed(new Date(comment.createdAt))}</p>
           </div>

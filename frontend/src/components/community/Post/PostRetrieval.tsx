@@ -145,7 +145,7 @@ const Postdetails = () => {
       <hr />
       {currentUserState.isAdmin && (
         <div className="flex gap-3 mt-3">
-          {currentPost.status === "approvalPending" ? (
+          {/* {currentPost.status === "approvalPending" && (
             <div className="flex gap-3 mt-3">
               <button
                 className="text-green-600"
@@ -153,15 +153,19 @@ const Postdetails = () => {
               >
                 Approve
               </button>
-
-              <button
-                className="text-red-600"
-                onClick={() => approveOrDeclinePost("rejected")}
-              >
-                Delete Post
-              </button>
             </div>
-          ) : (
+          )} */}
+          {(currentPost.status === "approvalPending" ||
+            currentPost.status === "rejected") && (
+            <button
+              className="text-green-600"
+              onClick={() => approveOrDeclinePost("approved")}
+            >
+              Approve
+            </button>
+          )}
+          {(currentPost.status === "approvalPending" ||
+            currentPost.status === "approved") && (
             <button
               className="text-red-600"
               onClick={() => approveOrDeclinePost("rejected")}
@@ -171,7 +175,10 @@ const Postdetails = () => {
           )}
         </div>
       )}
-
+      {currentPost.status === "rejected" && (
+        <p className="text-red-500">* This post is rejected by the admin.</p>
+      )}
+      {/* {currentPost.status} */}
       <div className="flex flex-col mt-3">
         comment as {userEmail}
         <div>
