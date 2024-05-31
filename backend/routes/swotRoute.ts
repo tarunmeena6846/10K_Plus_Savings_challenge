@@ -4,6 +4,7 @@ import AdminModel from "../models/admin";
 import SwotDetailsModel, { SwotDetails, Task } from "../models/swotModel";
 import { sendEmail } from "../emails";
 import { reminderEmail } from "../emails/Reminder";
+import mongoose, { Schema, SchemaTypeOptions, Types } from "mongoose";
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.post(
       await swotDetails.save();
 
       // Update admin's swotDetails field with the ID of the saved SwotDetails document
-      admin.swotTasksDetails = swotDetails._id;
+      admin.swotTasksDetails = swotDetails._id as Schema.Types.ObjectId; // Use type assertion
       await admin.save();
 
       if (isReminderSet) {

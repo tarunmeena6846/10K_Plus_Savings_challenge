@@ -1,7 +1,7 @@
 import { AuthenticatedRequest } from "../middleware";
 import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { Response } from "express";
 import { TagModel } from "../models/tagSchema";
 import AdminModel from "../models/admin";
@@ -430,7 +430,8 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
         posts: [],
       });
     }
-    tagmodel.posts.push(post._id);
+    console.log(typeof post._id);
+    tagmodel.posts.push(post._id as mongoose.Types.ObjectId);
 
     await tagmodel?.save();
 

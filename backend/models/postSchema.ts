@@ -12,6 +12,8 @@ export interface PostSchema extends Document {
   tag: string;
   userImage?: string;
   status: string;
+  _id: mongoose.Types.ObjectId; // Add this line
+
   //   comments: CommentDocument["_id"][];
   // Add more fields as needed
 }

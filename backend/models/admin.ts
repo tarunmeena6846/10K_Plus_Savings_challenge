@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import SwotDetailsModel, { SwotDetails } from "./swotModel";
 
 export interface Admin extends Document {
@@ -19,7 +19,7 @@ export interface Admin extends Document {
   myWhy: string;
   swotSessionTime: Date;
   bookmarkedPosts: Schema.Types.ObjectId[];
-  swotTasksDetails: Schema.Types.ObjectId | null;
+  swotTasksDetails: Schema.Types.ObjectId;
   myPosts: Schema.Types.ObjectId[];
   myDrafts: Schema.Types.ObjectId[];
 }

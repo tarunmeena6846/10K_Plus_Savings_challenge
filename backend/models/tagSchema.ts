@@ -3,12 +3,12 @@ import Post from "./postSchema";
 
 export interface tagDataType extends Document {
   tag: string;
-  posts: mongoose.Schema.Types.ObjectId[];
+  posts: Schema.Types.ObjectId[];
 }
 
 const tagSchema = new Schema({
   tag: { type: String, required: true },
-  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+  posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 });
 
 tagSchema.index({ tag: 1 });

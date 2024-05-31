@@ -12,6 +12,6 @@
     "isolatedModules": true,
     "jsx": "react"
   },
-  "include": ["**/*.ts", "index.ts"],
+  "include": ["**/*.ts", "index.ts", "webpack.config.js"],
   "exclude": ["node_modules"]
 }

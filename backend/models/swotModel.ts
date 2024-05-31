@@ -1,10 +1,11 @@
 // swotDetailsModel.ts
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface Task extends Document {
   title: string;
   isComplete: boolean;
   dueDate?: string;
+  _id: Schema.Types.ObjectId;
 }
 
 export interface SwotDetails extends Document {
@@ -12,6 +13,7 @@ export interface SwotDetails extends Document {
   tasks: Task[];
   isReminderSet: boolean;
   email: string;
+  _id: Schema.Types.ObjectId;
 }
 
 const swotDetailsSchema = new Schema<SwotDetails>({

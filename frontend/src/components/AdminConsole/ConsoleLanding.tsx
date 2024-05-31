@@ -1,6 +1,7 @@
 import React from "react";
 import SideBar from "../community/SideBar";
 import InfinitePostScroll from "../community/InfinitePostScroll";
+import Calender from "./Calender";
 
 const LandingConsole = () => {
   return (
@@ -16,6 +17,7 @@ const LandingConsole = () => {
           </div>
           <div className="md:w-1/4 p-4 m-4">
             {/* <CalenderInvite/> */}
+            <Calender />
             {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
             Create Post
           </button>

@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes";
 import stripeRoutes from "./routes/stripeRoutes"; // Import the webhook routes
 import postRoute from "./routes/postRoute";
 import swotRoute from "./routes/swotRoute";
+import serverless from "serverless-http";
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
@@ -33,7 +34,9 @@ app.use("/stripe", stripeRoutes);
 app.use("/post", postRoute);
 app.use("/swot", swotRoute);
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
-});
+// const PORT = process.env.PORT || 3001;
+// app.listen(PORT, () => {
+//   console.log(`Server is listening on port ${PORT}`);
+// });
+
+module.exports.handler = serverless(app);
