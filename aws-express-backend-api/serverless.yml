@@ -1,0 +1,22 @@
+# # "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: tarunmeena
+# # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: aws-express-api
+
+service: my-docker-lambda
+
+provider:
+  name: aws
+  runtime: provided.al2
+  region: us-east-1
+
+functions:
+  myDockerFunction:
+    image: 432096035218.dkr.ecr.us-east-1.amazonaws.com/hello-world:latest
+    memorySize: 512
+    timeout: 60
+    events:
+      - httpApi: "*"
+
+plugins:
+  - serverless-offline
