@@ -1,1 +1,0 @@
-# WealthX10K
