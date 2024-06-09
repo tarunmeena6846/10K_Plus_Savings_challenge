@@ -338,4 +338,13 @@ router.get(
     }
   }
 );
+
+router.post("/save-event", (req: AuthenticatedRequest, res: Response) => {
+  const events = req.body.events;
+});
+
+router.get("/get-events", (req: AuthenticatedRequest, res: Response) => {
+
+  
+});
 export default router;

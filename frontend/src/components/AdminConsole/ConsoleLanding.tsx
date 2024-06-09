@@ -8,14 +8,14 @@ const LandingConsole = () => {
     <div>
       <div className="p-4">
         <div className="flex flex-col-reverse md:flex-row">
-          <div className="md:w-3/4">
+          <div className="md:w-1/2">
             <InfinitePostScroll
               type="approvalReqPosts"
               tag={""}
             ></InfinitePostScroll>
             {/* <CommentDetails></CommentDetails> */}
           </div>
-          <div className="md:w-1/4 p-4 m-4">
+          <div className="md:w-1/2 p-4 m-4">
             {/* <CalenderInvite/> */}
             <Calender />
             {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">

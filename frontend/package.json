@@ -20,6 +20,7 @@
     "@import-meta-env/typescript": "^0.3.3",
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.14.9",
+    "@progress/kendo-react-scheduler": "^8.0.0",
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^2.4.0",
     "@types/express": "^4.17.21",
