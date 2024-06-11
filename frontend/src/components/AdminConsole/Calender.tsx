@@ -13,36 +13,53 @@ export default function DemoApp() {
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
   const [eventTitle, setEventTitle] = useState("");
-  const [eventTime, setEventTime] = useState("");
+  const [eventStartTime, setEventStartTime] = useState("");
+  const [eventEndTime, setEventEndTime] = useState("");
+  const [description, setDescription] = useState("");
 
   function handleWeekendsToggle() {
     setWeekendsVisible(!weekendsVisible);
   }
 
   function handleDateSelect(selectInfo) {
-    setSelectedDate(selectInfo);
     console.log(selectInfo);
-    setPopupPosition({
-      x: selectInfo.jsEvent.screenX,
-      y: selectInfo.jsEvent.screenY,
-    });
+    const { clientX: x, clientY: y } = selectInfo.jsEvent;
+    const popupWidth = 200; // approximate width of the popup
+    const popupHeight = 150; // approximate height of the popup
+    const buffer = 300; // buffer space between popup and screen edges
+
+    const adjustedX =
+      x + popupWidth + buffer > window.innerWidth
+        ? window.innerWidth - popupWidth - buffer
+        : x;
+    const adjustedY =
+      y + popupHeight + buffer > window.innerHeight
+        ? window.innerHeight - popupHeight - buffer
+        : y;
+
+    setSelectedDate(selectInfo.startStr);
+    setPopupPosition({ x: adjustedX, y: adjustedY });
     setEventTitle("");
-    setEventTime("");
+    setEventEndTime("");
+    setEventStartTime("");
+    setDescription("");
   }
 
   function handleEventSave() {
     let calendarApi: CalendarApi = FullCalendar.getApi();
 
-    if (eventTitle && eventTime && selectedDate) {
+    if (eventTitle && eventStartTime && selectedDate) {
       calendarApi.addEvent({
         id: createEventId(),
         title: eventTitle,
-        start: `${selectedDate}T${eventTime}`,
+        start: `${selectedDate}T${eventStartTime}`,
         allDay: false,
       });
       setSelectedDate(null);
       setEventTitle("");
-      setEventTime("");
+      setEventEndTime("");
+      setEventStartTime("");
+      setDescription("");
     }
   }
 
@@ -150,6 +167,26 @@ export default function DemoApp() {
     }
   }
 
+  const formattedSelectedDate = selectedDate
+    ? new Date(selectedDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+
+  console.log(formattedSelectedDate);
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let i = 0; i < 24; i++) {
+      const hour = i.toString().padStart(2, "0");
+      times.push(`${hour}:00`, `${hour}:30`);
+    }
+    return times;
+  };
+
+  const timeOptions = generateTimeOptions();
+
   return (
     <div className="demo-app">
       <div className="demo-app-main">
@@ -178,7 +215,9 @@ export default function DemoApp() {
           initialEvents={currentEvents} // alternatively, use the `events` setting to fetch from a feed
           select={handleDateSelect}
           eventClick={handleEventClick}
-          eventsSet={handleEvents} // called after events are initialized/added/changed/removed
+          eventsSet={() => {
+            handleEvents;
+          }} // called after events are initialized/added/changed/removed
           eventAdd={function () {
             console.log("add called");
           }}
@@ -192,33 +231,75 @@ export default function DemoApp() {
 
         {selectedDate && (
           <div
-            className="flex flex-col bg-green-500 p-4 gap-2"
+            className="flex flex-col bg-cyan-950 p-10 space-y-4 rounded-2xl"
             style={{
               position: "absolute",
               top: popupPosition.y,
               left: popupPosition.x,
-              zIndex: 1,
+              zIndex: 4, // For week interface overlapping problem
             }}
           >
             {/* <h3>Add Event</h3> */}
-            <label className="">
-              Event Title:
-              <input
-                type="text"
-                className=""
-                value={eventTitle}
-                onChange={(e) => setEventTitle(e.target.value)}
-              />
-            </label>
-            <label>
-              Event Time:
-              <input
-                type="time"
-                value={eventTime}
-                onChange={(e) => setEventTime(e.target.value)}
-              />
-            </label>
-            <button onClick={handleEventSave}>Save Event</button>
+
+            <input
+              type="text"
+              placeholder="Add Title"
+              className="w-full rounded"
+              // style={{ color: "white" }}
+              value={eventTitle}
+              style={{ height: "40px", padding: "10px" }}
+              onChange={(e) => setEventTitle(e.target.value)}
+            />
+
+            <div className="flex flex-row gap-2 items-end">
+              <p className="text-white">{formattedSelectedDate}</p>
+              <select
+                value={eventStartTime}
+                onChange={(e) => setEventStartTime(e.target.value)}
+                className="rounded p-2"
+              >
+                <option value="">Select start time</option>
+                {timeOptions.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+              <select
+                className=" rounded p-2"
+                value={eventEndTime}
+                onChange={(e) => setEventEndTime(e.target.value)}
+              >
+                <option value="">Select end time</option>
+                {timeOptions.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <input
+              type="text"
+              placeholder="Description"
+              className="w-full rounded"
+              style={{ height: "40px", padding: "10px" }}
+              // style={{ color: "white" }}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <div className="flex flex-row justify-between gap-5">
+              <button className="text-white" onClick={handleEventSave}>
+                Save Event
+              </button>
+              <button
+                className="text-white"
+                onClick={() => {
+                  setSelectedDate(null);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>
