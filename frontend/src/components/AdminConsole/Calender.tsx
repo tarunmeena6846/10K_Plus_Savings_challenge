@@ -1,181 +1,191 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { createEventId } from "./event-utils";
-import { CalendarApi } from "@fullcalendar/core";
+
+function extractDateTime(dateTimeString) {
+  const { startStr, endStr } = dateTimeString;
+  const [startDate, startTimeWithOffset] = startStr.split("T");
+  const [endDate, endTimeWithOffset] = endStr.split("T");
+
+  if (!startTimeWithOffset || !endTimeWithOffset) {
+    return { startTime: "", endTime: "", selectedDate: startDate };
+  }
+
+  const startTime = startTimeWithOffset
+    .split("+")[0]
+    .split(":")
+    .slice(0, 2)
+    .join(":");
+  const endTime = endTimeWithOffset
+    .split("+")[0]
+    .split(":")
+    .slice(0, 2)
+    .join(":");
+
+  return { startTime, endTime, selectedDate: startDate };
+}
 
 export default function DemoApp() {
+  const calendarRef = useRef(null);
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [currentEvents, setCurrentEvents] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [eventDetails, setEventDetails] = useState({
+    title: "",
+    startTime: "",
+    endTime: "",
+    description: "",
+    date: "",
+  });
 
-  const [eventTitle, setEventTitle] = useState("");
-  const [eventStartTime, setEventStartTime] = useState("");
-  const [eventEndTime, setEventEndTime] = useState("");
-  const [description, setDescription] = useState("");
+  const handleWeekendsToggle = () => setWeekendsVisible(!weekendsVisible);
 
-  function handleWeekendsToggle() {
-    setWeekendsVisible(!weekendsVisible);
-  }
-
-  function handleDateSelect(selectInfo) {
-    console.log(selectInfo);
+  const handleDateSelect = (selectInfo) => {
     const { clientX: x, clientY: y } = selectInfo.jsEvent;
-    const popupWidth = 200; // approximate width of the popup
-    const popupHeight = 150; // approximate height of the popup
-    const buffer = 300; // buffer space between popup and screen edges
+    const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
 
-    const adjustedX =
-      x + popupWidth + buffer > window.innerWidth
-        ? window.innerWidth - popupWidth - buffer
-        : x;
-    const adjustedY =
-      y + popupHeight + buffer > window.innerHeight
-        ? window.innerHeight - popupHeight - buffer
-        : y;
+    setEventDetails({
+      title: "",
+      startTime,
+      endTime,
+      description: "",
+      date: selectedDate,
+    });
 
-    setSelectedDate(selectInfo.startStr);
-    setPopupPosition({ x: adjustedX, y: adjustedY });
-    setEventTitle("");
-    setEventEndTime("");
-    setEventStartTime("");
-    setDescription("");
-  }
+    setPopupPosition({
+      x: x + 200 > window.innerWidth ? window.innerWidth - 200 : x,
+      y: y + 150 > window.innerHeight ? window.innerHeight - 150 : y,
+    });
+  };
 
-  function handleEventSave() {
-    let calendarApi: CalendarApi = FullCalendar.getApi();
+  const handleEventSave = async (e) => {
+    e.preventDefault();
+    const { title, startTime, endTime, date, description } = eventDetails;
 
-    if (eventTitle && eventStartTime && selectedDate) {
-      calendarApi.addEvent({
+    if (title && startTime && endTime) {
+      const newEvent = {
         id: createEventId(),
-        title: eventTitle,
-        start: `${selectedDate}T${eventStartTime}`,
+        title,
+        start: `${date}T${startTime}:00`,
+        end: `${date}T${endTime}:00`,
         allDay: false,
-      });
-      setSelectedDate(null);
-      setEventTitle("");
-      setEventEndTime("");
-      setEventStartTime("");
-      setDescription("");
-    }
-  }
+        description,
+      };
 
-  function handleEventClick(clickInfo) {
-    if (
-      confirm(
-        `Do you want to edit or delete the event '${clickInfo.event.title}'?`
-      )
-    ) {
+      setCurrentEvents([...currentEvents, newEvent]);
+      await updateDb(newEvent);
+
+      setEventDetails({
+        title: "",
+        startTime: "",
+        endTime: "",
+        description: "",
+        date: "",
+      });
+    }
+  };
+
+  const handleEventClick = async (clickInfo) => {
+    const { event } = clickInfo;
+
+    if (confirm(`Do you want to edit or delete the event '${event.title}'?`)) {
       if (
-        confirm(
-          `Are you sure you want to delete the event '${clickInfo.event.title}'?`
-        )
+        confirm(`Are you sure you want to delete the event '${event.title}'?`)
       ) {
-        clickInfo.event.remove();
-        handleDeleteEvent(clickInfo.event);
+        event.remove();
+        await handleDeleteEvent(event);
       } else {
-        let newTitle = prompt(
+        const newTitle = prompt(
           "Please enter a new title for your event:",
-          clickInfo.event.title
+          event.title
         );
-        let newTime = prompt(
+        const newTime = prompt(
           "Please enter the new time for your event (HH:MM format):"
         );
+
         if (newTitle && newTime) {
-          clickInfo.event.setProp("title", newTitle);
-          clickInfo.event.setStart(
-            `${clickInfo.event.startStr.split("T")[0]}T${newTime}`
-          );
-          handleEditEvent(clickInfo.event, newTitle);
+          event.setProp("title", newTitle);
+          event.setStart(`${event.startStr.split("T")[0]}T${newTime}`);
+          await handleEditEvent(event, newTitle);
         }
       }
     }
-  }
+  };
 
-  async function handleEvents(events) {
+  const handleEvents = async (events) => {
     setCurrentEvents(events);
     const newEvent = events[events.length - 1];
-    try {
-      await updateDb(newEvent);
-    } catch (error) {
-      alert("Error creating event");
-    }
-  }
+    await updateDb(newEvent);
+  };
 
-  async function updateDb(event) {
+  const updateDb = async (event) => {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/data/save-event`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          authorization: "Bearer " + localStorage.getItem("token"),
+          authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ events: event }),
       }
     );
     const data = await response.json();
+
     if (data.success) {
       console.log("Event successfully saved to the database");
     } else {
       console.error("Failed to save event to the database");
     }
-  }
+  };
 
-  async function handleDeleteEvent(event) {
+  const handleDeleteEvent = async (event) => {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/data/delete-event`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          authorization: "Bearer " + localStorage.getItem("token"),
+          authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ eventId: event.id }),
       }
     );
 
     const data = await response.json();
+
     if (data.success) {
       console.log("Event successfully deleted from the database");
     } else {
       console.error("Failed to delete event from the database");
     }
-  }
+  };
 
-  async function handleEditEvent(event, newTitle) {
+  const handleEditEvent = async (event, newTitle) => {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/data/update-event`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          authorization: "Bearer " + localStorage.getItem("token"),
+          authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ eventId: event.id, title: newTitle }),
       }
     );
 
     const data = await response.json();
+
     if (data.success) {
       console.log("Event successfully updated in the database");
     } else {
       console.error("Failed to update event in the database");
     }
-  }
+  };
 
-  const formattedSelectedDate = selectedDate
-    ? new Date(selectedDate).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
-
-  console.log(formattedSelectedDate);
   const generateTimeOptions = () => {
     const times = [];
     for (let i = 0; i < 24; i++) {
@@ -185,7 +195,15 @@ export default function DemoApp() {
     return times;
   };
 
+  const { title, startTime, endTime, date, description } = eventDetails;
   const timeOptions = generateTimeOptions();
+  const formattedSelectedDate = date
+    ? new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
 
   return (
     <div className="demo-app">
@@ -197,9 +215,10 @@ export default function DemoApp() {
             checked={weekendsVisible}
             onChange={handleWeekendsToggle}
           />
-          toggle weekends
+          Toggle weekends
         </label>
         <FullCalendar
+          ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{
             left: "prev,next",
@@ -212,50 +231,43 @@ export default function DemoApp() {
           selectMirror={true}
           dayMaxEvents={true}
           weekends={weekendsVisible}
-          initialEvents={currentEvents} // alternatively, use the `events` setting to fetch from a feed
+          events={currentEvents}
           select={handleDateSelect}
           eventClick={handleEventClick}
-          eventsSet={() => {
-            handleEvents;
-          }} // called after events are initialized/added/changed/removed
-          eventAdd={function () {
-            console.log("add called");
-          }}
-          eventChange={function () {
-            console.log("event changed called");
-          }}
-          eventRemove={function () {
-            console.log("event remove called");
-          }}
+          eventsSet={handleEvents}
         />
-
-        {selectedDate && (
-          <div
+        {date && (
+          <form
             className="flex flex-col bg-cyan-950 p-10 space-y-4 rounded-2xl"
             style={{
               position: "absolute",
               top: popupPosition.y,
               left: popupPosition.x,
-              zIndex: 4, // For week interface overlapping problem
+              zIndex: 4,
             }}
+            onSubmit={handleEventSave}
           >
-            {/* <h3>Add Event</h3> */}
-
             <input
               type="text"
-              placeholder="Add Title"
+              placeholder="Add title*"
               className="w-full rounded"
-              // style={{ color: "white" }}
-              value={eventTitle}
+              required
+              value={title}
               style={{ height: "40px", padding: "10px" }}
-              onChange={(e) => setEventTitle(e.target.value)}
+              onChange={(e) =>
+                setEventDetails({ ...eventDetails, title: e.target.value })
+              }
             />
-
             <div className="flex flex-row gap-2 items-end">
               <p className="text-white">{formattedSelectedDate}</p>
               <select
-                value={eventStartTime}
-                onChange={(e) => setEventStartTime(e.target.value)}
+                value={startTime}
+                onChange={(e) =>
+                  setEventDetails({
+                    ...eventDetails,
+                    startTime: e.target.value,
+                  })
+                }
                 className="rounded p-2"
               >
                 <option value="">Select start time</option>
@@ -266,9 +278,11 @@ export default function DemoApp() {
                 ))}
               </select>
               <select
-                className=" rounded p-2"
-                value={eventEndTime}
-                onChange={(e) => setEventEndTime(e.target.value)}
+                className="rounded p-2"
+                value={endTime}
+                onChange={(e) =>
+                  setEventDetails({ ...eventDetails, endTime: e.target.value })
+                }
               >
                 <option value="">Select end time</option>
                 {timeOptions.map((time) => (
@@ -283,24 +297,27 @@ export default function DemoApp() {
               placeholder="Description"
               className="w-full rounded"
               style={{ height: "40px", padding: "10px" }}
-              // style={{ color: "white" }}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) =>
+                setEventDetails({
+                  ...eventDetails,
+                  description: e.target.value,
+                })
+              }
             />
             <div className="flex flex-row justify-between gap-5">
-              <button className="text-white" onClick={handleEventSave}>
+              <button type="submit" className="text-white">
                 Save Event
               </button>
               <button
+                type="button"
                 className="text-white"
-                onClick={() => {
-                  setSelectedDate(null);
-                }}
+                onClick={() => setEventDetails({ ...eventDetails, date: "" })}
               >
                 Cancel
               </button>
             </div>
-          </div>
+          </form>
         )}
       </div>
     </div>
