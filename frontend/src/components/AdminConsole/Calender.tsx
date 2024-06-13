@@ -56,8 +56,8 @@ export default function DemoApp() {
     });
 
     setPopupPosition({
-      x: x + 200 > window.innerWidth ? window.innerWidth - 200 : x,
-      y: y + 150 > window.innerHeight ? window.innerHeight - 150 : y,
+      x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
+      y: y + 200 > window.innerHeight ? window.innerHeight - 200 : y,
     });
   };
 
