@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -34,12 +34,14 @@ export default function DemoApp() {
   const [currentEvents, setCurrentEvents] = useState([]);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [eventDetails, setEventDetails] = useState({
+    id: 0,
     title: "",
     startTime: "",
     endTime: "",
     description: "",
     date: "",
   });
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleWeekendsToggle = () => setWeekendsVisible(!weekendsVisible);
 
@@ -48,6 +50,7 @@ export default function DemoApp() {
     const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
 
     setEventDetails({
+      id: 0,
       title: "",
       startTime,
       endTime,
@@ -57,17 +60,51 @@ export default function DemoApp() {
 
     setPopupPosition({
       x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
-      y: y + 200 > window.innerHeight ? window.innerHeight - 200 : y,
+      y: y + 300 > window.innerHeight ? window.innerHeight - 300 : y,
     });
+
+    setIsEditing(false);
+  };
+
+  const handleEventClick = (clickInfo) => {
+    const { clientX: x, clientY: y } = clickInfo.jsEvent;
+
+    const {
+      id,
+      title,
+      startStr,
+      endStr,
+      extendedProps: { description = "" },
+    } = clickInfo.event;
+    const { startTime, endTime, selectedDate } = extractDateTime({
+      startStr,
+      endStr,
+    });
+
+    setEventDetails({
+      id,
+      title,
+      startTime,
+      endTime,
+      description,
+      date: selectedDate,
+    });
+
+    setPopupPosition({
+      x: x + 200 > window.innerWidth ? window.innerWidth - 200 : x,
+      y: y + 150 > window.innerHeight ? window.innerHeight - 150 : y,
+    });
+
+    setIsEditing(true);
   };
 
   const handleEventSave = async (e) => {
     e.preventDefault();
-    const { title, startTime, endTime, date, description } = eventDetails;
+    const { id, title, startTime, endTime, date, description } = eventDetails;
 
     if (title && startTime && endTime) {
       const newEvent = {
-        id: createEventId(),
+        id: isEditing ? id : createEventId(),
         title,
         start: `${date}T${startTime}:00`,
         end: `${date}T${endTime}:00`,
@@ -75,10 +112,19 @@ export default function DemoApp() {
         description,
       };
 
-      setCurrentEvents([...currentEvents, newEvent]);
-      await updateDb(newEvent);
+      if (isEditing) {
+        const updatedEvents = currentEvents.map((event) =>
+          event.id === id ? newEvent : event
+        );
+        setCurrentEvents(updatedEvents);
+        await updateDb(newEvent);
+      } else {
+        setCurrentEvents([...currentEvents, newEvent]);
+        await saveToDb(newEvent);
+      }
 
       setEventDetails({
+        id: 0,
         title: "",
         startTime: "",
         endTime: "",
@@ -88,40 +134,11 @@ export default function DemoApp() {
     }
   };
 
-  const handleEventClick = async (clickInfo) => {
-    const { event } = clickInfo;
-
-    if (confirm(`Do you want to edit or delete the event '${event.title}'?`)) {
-      if (
-        confirm(`Are you sure you want to delete the event '${event.title}'?`)
-      ) {
-        event.remove();
-        await handleDeleteEvent(event);
-      } else {
-        const newTitle = prompt(
-          "Please enter a new title for your event:",
-          event.title
-        );
-        const newTime = prompt(
-          "Please enter the new time for your event (HH:MM format):"
-        );
-
-        if (newTitle && newTime) {
-          event.setProp("title", newTitle);
-          event.setStart(`${event.startStr.split("T")[0]}T${newTime}`);
-          await handleEditEvent(event, newTitle);
-        }
-      }
-    }
+  const handleEvents = (events) => {
+    // setCurrentEvents(events);
   };
 
-  const handleEvents = async (events) => {
-    setCurrentEvents(events);
-    const newEvent = events[events.length - 1];
-    await updateDb(newEvent);
-  };
-
-  const updateDb = async (event) => {
+  const saveToDb = async (event) => {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/data/save-event`,
       {
@@ -142,29 +159,7 @@ export default function DemoApp() {
     }
   };
 
-  const handleDeleteEvent = async (event) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/data/delete-event`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ eventId: event.id }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.success) {
-      console.log("Event successfully deleted from the database");
-    } else {
-      console.error("Failed to delete event from the database");
-    }
-  };
-
-  const handleEditEvent = async (event, newTitle) => {
+  const updateDb = async (event) => {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/data/update-event`,
       {
@@ -173,7 +168,7 @@ export default function DemoApp() {
           "Content-Type": "application/json",
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ eventId: event.id, title: newTitle }),
+        body: JSON.stringify({ eventId: event.id, ...event }),
       }
     );
 
@@ -305,18 +300,18 @@ export default function DemoApp() {
                 })
               }
             />
-            <div className="flex flex-row justify-between gap-5">
-              <button type="submit" className="text-white">
-                Save Event
-              </button>
-              <button
-                type="button"
-                className="text-white"
-                onClick={() => setEventDetails({ ...eventDetails, date: "" })}
-              >
-                Cancel
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white p-2 rounded"
+            >
+              {isEditing ? "Update Event" : "Add Event"}
+            </button>
+            <button
+              className="bg-red-500 text-white p-2 rounded"
+              onClick={() => setEventDetails({ ...eventDetails, date: "" })}
+            >
+              Cancel
+            </button>
           </form>
         )}
       </div>
