@@ -8,7 +8,7 @@ import postRoute from "./routes/postRoute";
 import swotRoute from "./routes/swotRoute";
 import serverless from "serverless-http";
 import dotenv from "dotenv";
-
+import eventRoute from "./routes/eventRoute";
 dotenv.config();
 
 const app = express();
@@ -59,6 +59,7 @@ app.use("/data", dataRoute);
 app.use("/stripe", stripeRoutes);
 app.use("/post", postRoute);
 app.use("/swot", swotRoute);
+app.use("/event", eventRoute);
 
 app.get("/", (req, res) => {
   console.log("health status check");

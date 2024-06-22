@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { createEventId } from "./event-utils";
 
 function extractDateTime(dateTimeString) {
   const { startStr, endStr } = dateTimeString;
@@ -34,7 +33,7 @@ export default function DemoApp() {
   const [currentEvents, setCurrentEvents] = useState([]);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [eventDetails, setEventDetails] = useState({
-    id: 0,
+    _id: "",
     title: "",
     startTime: "",
     endTime: "",
@@ -43,6 +42,51 @@ export default function DemoApp() {
   });
   const [isEditing, setIsEditing] = useState(false);
 
+  function addDaysToDate(dateString, daysToAdd) {
+    // Parse the input date string
+    const date = new Date(dateString);
+
+    // Add the specified number of days
+    date.setDate(date.getDate() + daysToAdd);
+
+    // Format the date back to 'YYYY-MM-DD'
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so we add 1
+
+    return { year, month };
+  }
+  // useEffect(() => {
+  // Fetch events from the database when the component mounts
+  const fetchEventsForMonth = async (dateInfo) => {
+    const { startTime, endTime, selectedDate } = extractDateTime(dateInfo);
+
+    console.log(startTime, endTime, selectedDate);
+    const { year, month } = addDaysToDate(selectedDate, 15);
+
+    console.log(year, month); // Output: '2024-06-10'
+
+    const response = await fetch(
+      `${
+        import.meta.env.VITE_SERVER_URL
+      }/event/get-events?month=${month}&year=${year}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (data.success) {
+      setCurrentEvents(data.events);
+    } else {
+      console.error("Failed to fetch events from the database");
+    }
+  };
+
+  // fetchEvents();
+  // }, []);
+
   const handleWeekendsToggle = () => setWeekendsVisible(!weekendsVisible);
 
   const handleDateSelect = (selectInfo) => {
@@ -50,7 +94,7 @@ export default function DemoApp() {
     const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
 
     setEventDetails({
-      id: 0,
+      _id: "",
       title: "",
       startTime,
       endTime,
@@ -70,19 +114,19 @@ export default function DemoApp() {
     const { clientX: x, clientY: y } = clickInfo.jsEvent;
 
     const {
-      id,
       title,
       startStr,
       endStr,
-      extendedProps: { description = "" },
+      extendedProps: { description = "", _id },
     } = clickInfo.event;
     const { startTime, endTime, selectedDate } = extractDateTime({
       startStr,
       endStr,
     });
-
+    console.log(clickInfo);
+    console.log(_id, title, startTime, endTime, description);
     setEventDetails({
-      id,
+      _id,
       title,
       startTime,
       endTime,
@@ -91,8 +135,8 @@ export default function DemoApp() {
     });
 
     setPopupPosition({
-      x: x + 200 > window.innerWidth ? window.innerWidth - 200 : x,
-      y: y + 150 > window.innerHeight ? window.innerHeight - 150 : y,
+      x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
+      y: y + 400 > window.innerHeight ? window.innerHeight - 400 : y,
     });
 
     setIsEditing(true);
@@ -100,31 +144,92 @@ export default function DemoApp() {
 
   const handleEventSave = async (e) => {
     e.preventDefault();
-    const { id, title, startTime, endTime, date, description } = eventDetails;
+    const { _id, title, startTime, endTime, date, description } = eventDetails;
 
     if (title && startTime && endTime) {
       const newEvent = {
-        id: isEditing ? id : createEventId(),
+        _id: isEditing ? _id : `temp-${Date.now()}`, // Use a temporary ID for new events
         title,
         start: `${date}T${startTime}:00`,
         end: `${date}T${endTime}:00`,
-        allDay: false,
         description,
       };
 
+      console.log("New Event:", newEvent);
+
       if (isEditing) {
+        console.log(currentEvents);
+        const originalEventBeforeUpdate = [...currentEvents];
+        // Update existing event
         const updatedEvents = currentEvents.map((event) =>
-          event.id === id ? newEvent : event
+          event._id === _id ? newEvent : event
         );
+        console.log(updatedEvents);
         setCurrentEvents(updatedEvents);
-        await updateDb(newEvent);
+
+        // Attempt to update in the database
+        try {
+          const success = await updateDb(newEvent);
+
+          if (!success) {
+            console.log("in nonsucces");
+            // // Revert to previous state on failure
+            setCurrentEvents(originalEventBeforeUpdate);
+          }
+        } catch (error) {
+          console.log("in catch block");
+          alert("Error updating event");
+          setCurrentEvents(originalEventBeforeUpdate);
+
+          // Handle error appropriately (e.g., revert state)
+        }
       } else {
+        // Add new event
         setCurrentEvents([...currentEvents, newEvent]);
-        await saveToDb(newEvent);
+
+        // Attempt to save in the database
+        try {
+          const savedEvent = await saveToDb(newEvent);
+          console.log(savedEvent);
+          if (savedEvent) {
+            console.log(currentEvents);
+            // Update currentEvents with savedEvent from database
+
+            // setCurrentEvents((prevEvents) =>
+            //   prevEvents.map((event) =>
+            //     event._id === newEvent._id ? savedEvent : event
+            //   )
+            // );
+
+            setCurrentEvents((prevEvents) => {
+              const updatedEvents = prevEvents.map((event) =>
+                event._id === newEvent._id
+                  ? { ...event, _id: savedEvent._id }
+                  : event
+              ); // Perform actions based on updatedEvents
+              console.log(updatedEvents, newEvent);
+
+              return updatedEvents; // Return the updated state
+            });
+          } else {
+            console.log("Failed to save event to database");
+            // Remove temporary event if save fails
+            setCurrentEvents((prevEvents) =>
+              prevEvents.filter((event) => event._id !== newEvent._id)
+            );
+          }
+        } catch (error) {
+          console.log("Error saving event:", error);
+          // Handle error appropriately (e.g., remove temporary event)
+          setCurrentEvents((prevEvents) =>
+            prevEvents.filter((event) => event._id !== newEvent._id)
+          );
+        }
       }
 
+      // Reset eventDetails state
       setEventDetails({
-        id: 0,
+        _id: "",
         title: "",
         startTime: "",
         endTime: "",
@@ -134,41 +239,148 @@ export default function DemoApp() {
     }
   };
 
-  const handleEvents = (events) => {
-    // setCurrentEvents(events);
+  // const handleEventSave = async (e) => {
+  //   e.preventDefault();
+  //   const { _id, title, startTime, endTime, date, description } = eventDetails;
+  //   if (title && startTime && endTime) {
+  //     const newEvent = {
+  //       _id: isEditing ? _id : `temp-${Date.now()}`, // Use a temporary ID for new events
+  //       title,
+  //       start: `${date}T${startTime}:00`,
+  //       end: `${date}T${endTime}:00`,
+  //       description,
+  //     };
+  //     console.log(newEvent);
+  //     if (isEditing) {
+  //       // Update in-memory state immediately
+  //       const updatedEvents = currentEvents.map((event) =>
+  //         event._id === _id ? newEvent : event
+  //       );
+  //       setCurrentEvents(updatedEvents);
+  //       // Attempt to update in the database
+  //       const success = await updateDb(newEvent);
+  //       if (!success) {
+  //         // Revert in-memory state if update fails
+  //         setCurrentEvents((prevEvents) =>
+  //           prevEvents.map((event) =>
+  //             event._id === _id ? { ...event, ...eventDetails } : event
+  //           )
+  //         );
+  //       }
+  //     } else {
+  //       // Add to in-memory state immediately
+  //       console.log(currentEvents, newEvent);
+  //       setCurrentEvents([...currentEvents, newEvent]);
+  //       // Attempt to save in the database
+  //       const savedEvent = await saveToDb(newEvent);
+  //       console.log(savedEvent, currentEvents);
+  //       if (savedEvent) {
+  //         // // Replace temporary ID with actual ID from the database
+  //         setCurrentEvents((prevEvents) =>
+  //           prevEvents.map((event) =>
+  //             event._id === newEvent._id ? savedEvent : event
+  //           )
+  //         );
+
+  //         console.log(currentEvents);
+  //       } else {
+  //         console.log("inside else part");
+  //         // Remove the temporary event if save fails
+  //         setCurrentEvents((prevEvents) =>
+  //           prevEvents.filter((event) => event._id !== newEvent._id)
+  //         );
+  //       }
+  //     }
+
+  //     setEventDetails({
+  //       _id: "",
+  //       title: "",
+  //       startTime: "",
+  //       endTime: "",
+  //       description: "",
+  //       date: "",
+  //     });
+  //   }
+  // };
+
+  const handleDeleteEvent = async () => {
+    const { _id } = eventDetails;
+    const eventBeforeDelete = [...currentEvents];
+    console.log(_id, eventBeforeDelete);
+
+    try {
+      const newEventList = currentEvents.filter((event) => event._id !== _id);
+      console.log(newEventList);
+      setCurrentEvents(newEventList);
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/event/delete-event`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ eventId: _id }),
+        }
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Event successfully deleted from the database");
+      } else {
+        setCurrentEvents(eventBeforeDelete);
+        alert("Failed to delete event from the database");
+      }
+    } catch (error) {
+      console.log("Error deleting the event from the db");
+      setCurrentEvents(eventBeforeDelete);
+    }
+
+    // Reset eventDetails state
+    setEventDetails({
+      _id: "",
+      title: "",
+      startTime: "",
+      endTime: "",
+      description: "",
+      date: "",
+    });
   };
 
   const saveToDb = async (event) => {
+    console.log(event);
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/data/save-event`,
+      `${import.meta.env.VITE_SERVER_URL}/event/save-event`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ events: event }),
+        body: JSON.stringify({ event }),
       }
     );
     const data = await response.json();
 
     if (data.success) {
       console.log("Event successfully saved to the database");
+      return data.event; // Return the saved event with _id
     } else {
       console.error("Failed to save event to the database");
+      return null;
     }
   };
 
   const updateDb = async (event) => {
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/data/update-event`,
+      `${import.meta.env.VITE_SERVER_URL}/event/update-event`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ eventId: event.id, ...event }),
+        body: JSON.stringify({ event }),
       }
     );
 
@@ -176,8 +388,10 @@ export default function DemoApp() {
 
     if (data.success) {
       console.log("Event successfully updated in the database");
+      return data.data;
     } else {
       console.error("Failed to update event in the database");
+      return null;
     }
   };
 
@@ -199,7 +413,7 @@ export default function DemoApp() {
         day: "numeric",
       })
     : "";
-
+  console.log(currentEvents);
   return (
     <div className="demo-app">
       <div className="demo-app-main">
@@ -229,7 +443,11 @@ export default function DemoApp() {
           events={currentEvents}
           select={handleDateSelect}
           eventClick={handleEventClick}
-          eventsSet={handleEvents}
+          // eventsSet={setCurrentEvents} // Sync with currentEvents state
+          datesSet={(dateInfo) => {
+            console.log(dateInfo);
+            fetchEventsForMonth(dateInfo);
+          }}
         />
         {date && (
           <form
@@ -300,12 +518,23 @@ export default function DemoApp() {
                 })
               }
             />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
-            >
-              {isEditing ? "Update Event" : "Add Event"}
-            </button>
+            <div className="flex gap-1">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white p-2 rounded grow"
+              >
+                {isEditing ? "Update Event" : "Add Event"}
+              </button>
+              {isEditing && (
+                <button
+                  type="button"
+                  className="bg-red-500 text-white p-2 rounded grow"
+                  onClick={handleDeleteEvent}
+                >
+                  Delete Event
+                </button>
+              )}
+            </div>
             <button
               className="bg-red-500 text-white p-2 rounded"
               onClick={() => setEventDetails({ ...eventDetails, date: "" })}
