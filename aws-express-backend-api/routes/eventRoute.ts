@@ -9,31 +9,40 @@ router.get(
   isAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     console.log("inside getevents");
-    const { year, month } = req.query;
-    console.log(year, month);
-    if (!month || !year) {
+    const { startTime, endTime } = req.query;
+    console.log(startTime, endTime);
+    if (!startTime || !endTime) {
       return res.status(400).send("Month and year are required");
     }
-    const monthNum = parseInt(month as string, 10);
-    const yearNum = parseInt(year as string, 10);
+    // const monthNum = parseInt(month as string, 10);
+    // const yearNum = parseInt(year as string, 10);
 
-    if (isNaN(monthNum) || isNaN(yearNum)) {
-      return res.status(400).send("Invalid month or year");
-    }
+    // if (isNaN(monthNum) || isNaN(yearNum)) {
+    //   return res.status(400).send("Invalid month or year");
+    // }
+    // const startOfMonth = new Date(yearNum, monthNum - 1, 1, 0, 0);
+    // const endOfMonth = new Date(yearNum, monthNum, 0, 23, 59, 59);
+    // const formatDateToLocalString = (date: string) => {
+    //   const format = date.split(" ");
+    //   return format[0];
+    // };
 
-    const startOfMonth = new Date(Date.UTC(yearNum, monthNum - 1, 1, 0, 0, 0));
-    const endOfMonth = new Date(
-      Date.UTC(yearNum, monthNum, 0, 23, 59, 59, 999)
-    ); // last day of the month
+    // const startOfMonthFormatted = formatDateToLocalString(startTime);
+    // const endOfMonthFormatted = formatDateToLocalString(endTime);
 
-    console.log("tarun startofmonth", startOfMonth, endOfMonth);
+    // console.log(
+    //   "tarun startofmonth",
+    //   startOfMonthFormatted,
+    //   endOfMonthFormatted
+    // );
     try {
       const events = await EventModal.find({
-        startTime: { $gte: startOfMonth },
-        endTime: { $lte: endOfMonth },
+        start: { $gte: startTime },
+        end: { $lte: endTime },
       });
 
-      console.log(events);
+      console.log("event between dates ", events);
+      res.status(200).json({ success: true, events: events });
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }
@@ -50,8 +59,8 @@ router.post(
     const newEvent = new EventModal({
       //   id: event.id,
       title: event.title,
-      startTime: event.start,
-      endTime: event.end,
+      start: event.start,
+      end: event.end,
       description: event.description,
     });
     console.log("events at eventroute", newEvent);
@@ -100,8 +109,8 @@ router.post(
         { _id: event._id },
         {
           title: event.title,
-          startTime: event.start,
-          endTime: event.end,
+          start: event.start,
+          end: event.end,
           description: event.description,
         },
         { new: true }

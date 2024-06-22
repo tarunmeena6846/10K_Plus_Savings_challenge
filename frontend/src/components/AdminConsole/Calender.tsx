@@ -58,17 +58,17 @@ export default function DemoApp() {
   // useEffect(() => {
   // Fetch events from the database when the component mounts
   const fetchEventsForMonth = async (dateInfo) => {
-    const { startTime, endTime, selectedDate } = extractDateTime(dateInfo);
+    // const { startTime, endTime, selectedDate } = extractDateTime(dateInfo);
 
-    console.log(startTime, endTime, selectedDate);
-    const { year, month } = addDaysToDate(selectedDate, 15);
+    // console.log(startTime, endTime, selectedDate);
+    // const { year, month } = addDaysToDate(selectedDate, 15);
 
-    console.log(year, month); // Output: '2024-06-10'
-
+    // console.log(year, month); // Output: '2024-06-10'
+    console.log(dateInfo, typeof dateInfo.startStr);
     const response = await fetch(
-      `${
-        import.meta.env.VITE_SERVER_URL
-      }/event/get-events?month=${month}&year=${year}`,
+      `${import.meta.env.VITE_SERVER_URL}/event/get-events?startTime=${
+        dateInfo.startStr
+      }&endTime=${dateInfo.endStr}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -78,6 +78,7 @@ export default function DemoApp() {
     );
     const data = await response.json();
     if (data.success) {
+      console.log(data.events);
       setCurrentEvents(data.events);
     } else {
       console.error("Failed to fetch events from the database");
@@ -202,6 +203,7 @@ export default function DemoApp() {
             // );
 
             setCurrentEvents((prevEvents) => {
+              console.log(prevEvents);
               const updatedEvents = prevEvents.map((event) =>
                 event._id === newEvent._id
                   ? { ...event, _id: savedEvent._id }
@@ -364,6 +366,7 @@ export default function DemoApp() {
 
     if (data.success) {
       console.log("Event successfully saved to the database");
+      console.log(data.event);
       return data.event; // Return the saved event with _id
     } else {
       console.error("Failed to save event to the database");
