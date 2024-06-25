@@ -407,8 +407,22 @@ export default function DemoApp() {
     return times;
   };
 
+  const generateEndTimeOptions = (startTime) => {
+    const times = generateTimeOptions();
+    if (startTime) {
+      const [startHour, startMinute] = startTime.split(":").map(Number);
+      return times.filter((time) => {
+        const [hour, minute] = time.split(":").map(Number);
+        return hour > startHour || (hour === startHour && minute > startMinute);
+      });
+    }
+    return times;
+  };
+
   const { title, startTime, endTime, date, description } = eventDetails;
   const timeOptions = generateTimeOptions();
+  const endTimeOptions = generateEndTimeOptions(startTime);
+
   const formattedSelectedDate = date
     ? new Date(date).toLocaleDateString("en-US", {
         year: "numeric",
@@ -501,7 +515,7 @@ export default function DemoApp() {
                 }
               >
                 <option value="">Select end time</option>
-                {timeOptions.map((time) => (
+                {endTimeOptions.map((time) => (
                   <option key={time} value={time}>
                     {time}
                   </option>
