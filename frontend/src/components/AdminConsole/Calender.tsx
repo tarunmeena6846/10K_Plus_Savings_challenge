@@ -64,7 +64,7 @@ export default function DemoApp() {
     // const { year, month } = addDaysToDate(selectedDate, 15);
 
     // console.log(year, month); // Output: '2024-06-10'
-    console.log(dateInfo, typeof dateInfo.startStr);
+    console.log(dateInfo.startStr, dateInfo.endStr);
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/event/get-events?startTime=${
         dateInfo.startStr
