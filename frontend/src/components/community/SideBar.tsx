@@ -12,14 +12,17 @@ import { PostType } from "./InfinitePostScroll";
 import { useRecoilState, useRecoilValue } from "recoil";
 import countAtom from "../store/atoms/quickLinkCount";
 import HandleCreatePost from "./CreatePost";
+import { currentEventsState } from "../store/atoms/events";
 const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
   const [loading, setLoading] = useState(true); // New state to track loading
   const [count, setCount] = useRecoilState(countAtom);
-  console.log("count", count);
+  const [currentEvents, setCurrentEvents] = useRecoilState(currentEventsState);
 
+  console.log("count", count);
+  console.log(currentEvents);
   const links = [
     { name: "Recent Discussions", count: 0 },
     { name: "My Discussions", count: count.myDiscussionCount },
@@ -128,6 +131,14 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
               >
                 {tag.tag}
               </motion.button>
+            </div>
+          ))}
+          {currentEvents.map((event, index) => (
+            <div key={index}>
+              <div className="flex justify-between items-center">
+                <h1>{event.title}</h1>
+                <h1>{event.start}</h1>
+              </div>
             </div>
           ))}
         </div>

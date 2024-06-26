@@ -1,6 +1,9 @@
 import express, { Response, Router } from "express";
 import { AuthenticatedRequest, detokenizeAdmin, isAdmin } from "../middleware";
 import EventModal from "../models/eventSchema";
+import { sendEmail } from "../emails";
+import AdminModel from "../models/admin";
+import { eventNotificationEmail } from "../emails/eventNotification";
 
 const router: Router = express.Router();
 
@@ -66,6 +69,16 @@ router.post(
     console.log("events at eventroute", newEvent);
 
     await newEvent.save();
+    const currentActiveUsers = await AdminModel.find(
+      { verified: true },
+      { email: 1 }
+    );
+    //TODO try to get the username while sending the email
+    await sendEmail(
+      currentActiveUsers,
+      "10K SAVINGS CHALLENGE: Notification of Community Admin Post",
+      eventNotificationEmail(currentActiveUsers)
+    );
 
     res.status(200).json({ success: true, event: newEvent });
   }

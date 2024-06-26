@@ -10,11 +10,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NODEMAILER_ADMIN_PASS,
   },
 });
-export const sendEmail = async (
-  email: string,
-  subject: string,
-  html: string
-) => {
+export const sendEmail = async (email: [], subject: string, html: string) => {
   try {
     const mailOptions = {
       from: process.env.NODEMAILER_ADMIN_EMAIL,

@@ -3,6 +3,9 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { useRecoilState } from "recoil";
+import { currentEventsState } from "../store/atoms/events";
 
 function extractDateTime(dateTimeString) {
   const { startStr, endStr } = dateTimeString;
@@ -30,7 +33,7 @@ function extractDateTime(dateTimeString) {
 export default function DemoApp() {
   const calendarRef = useRef(null);
   const [weekendsVisible, setWeekendsVisible] = useState(true);
-  const [currentEvents, setCurrentEvents] = useState([]);
+  const [currentEvents, setCurrentEvents] = useRecoilState(currentEventsState);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [eventDetails, setEventDetails] = useState({
     _id: "",
@@ -93,7 +96,7 @@ export default function DemoApp() {
   const handleDateSelect = (selectInfo) => {
     const { clientX: x, clientY: y } = selectInfo.jsEvent;
     const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
-
+    console.log;
     setEventDetails({
       _id: "",
       title: "",
@@ -447,9 +450,9 @@ export default function DemoApp() {
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{
-            left: "prev,next",
+            start: "prev,next",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+            end: "dayGridMonth,timeGridWeek,timeGridDay",
           }}
           initialView="dayGridMonth"
           editable={true}
