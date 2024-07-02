@@ -101,6 +101,7 @@ router.post(
           // monthData.actual.items.push({category:category,title:itemName,amount:})
         } else if (type === "Current") {
           if (itemType === "Income") {
+            console.log("at current income if block", income);
             monthData.current.income += income;
             monthlyData.yearlyData[yearIndex].totalCurrentIncome += income;
             monthData.current.items.push({
@@ -154,7 +155,7 @@ router.post(
                     {
                       category: category,
                       title: item,
-                      amount: expense,
+                      amount: itemType === "Income" ? income : expense,
                       type: itemType,
                     },
                   ],
@@ -169,7 +170,7 @@ router.post(
                     {
                       category: category,
                       title: item,
-                      amount: expense,
+                      amount: itemType === "Income" ? income : expense,
                       type: itemType,
                     },
                   ],
@@ -184,7 +185,7 @@ router.post(
                     {
                       category: category,
                       title: item,
-                      amount: expense,
+                      amount: itemType === "Income" ? income : expense,
                       type: itemType,
                     },
                   ],
@@ -194,6 +195,25 @@ router.post(
 
         console.log("inside else in ", newData, newData.actual.items);
         monthlyData.yearlyData[yearIndex].monthlyData.push(newData);
+        if (type === "Actual") {
+          if (itemType === "Income") {
+            monthlyData.yearlyData[yearIndex].totalActualIncome += income;
+          } else {
+            monthlyData.yearlyData[yearIndex].totalActualExpenses += expense;
+          }
+        } else if (type === "Current") {
+          if (itemType === "Income") {
+            monthlyData.yearlyData[yearIndex].totalCurrentIncome += income;
+          } else {
+            monthlyData.yearlyData[yearIndex].totalCurrentExpenses += expense;
+          }
+        } else if (type === "Target") {
+          if (itemType === "Income") {
+            monthlyData.yearlyData[yearIndex].totalTargetIncome += income;
+          } else {
+            monthlyData.yearlyData[yearIndex].totalTargetExpenses += expense;
+          }
+        }
       }
 
       // Save the updated document
@@ -257,8 +277,9 @@ router.get(
             month: monthData.month,
             actual: monthData.actual.income - monthData.actual.expense,
             current: monthData.current.income - monthData.current.expense,
-            target: monthData.target.income - monthData.current.expense,
+            target: monthData.target.income - monthData.target.expense,
           };
+          console.log("monthInfo", monthInfo);
           monthWiseData.push(monthInfo);
         });
 
@@ -339,12 +360,4 @@ router.get(
   }
 );
 
-router.post("/save-event", (req: AuthenticatedRequest, res: Response) => {
-  const events = req.body.events;
-});
-
-router.get("/get-events", (req: AuthenticatedRequest, res: Response) => {
-
-  
-});
 export default router;
