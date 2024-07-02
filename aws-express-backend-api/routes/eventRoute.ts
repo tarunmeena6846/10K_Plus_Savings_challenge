@@ -69,15 +69,36 @@ router.post(
     console.log("events at eventroute", newEvent);
 
     await newEvent.save();
-    const currentActiveUsers = await AdminModel.find(
-      { verified: true },
-      { email: 1 }
-    );
+    const currentActiveUsers = await AdminModel.aggregate([
+      {
+        $match: { verified: true }, // Filter to include only verified users
+      },
+      {
+        $group: {
+          _id: null,
+          emails: { $push: "$email" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          emails: 1,
+        },
+      },
+    ]);
+
+    const emails = currentActiveUsers.length
+      ? currentActiveUsers[0].emails
+      : [];
+
+    console.log(emails);
+
+    console.log("currentactiveusers", emails);
     //TODO try to get the username while sending the email
     await sendEmail(
-      currentActiveUsers,
+      emails,
       "10K SAVINGS CHALLENGE: Notification of Community Admin Post",
-      eventNotificationEmail(currentActiveUsers)
+      eventNotificationEmail(emails)
     );
 
     res.status(200).json({ success: true, event: newEvent });

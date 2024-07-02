@@ -1,4 +1,5 @@
-export const eventNotificationEmail = (name: string) => {
+export const eventNotificationEmail = (name: []) => {
+  console.log("inside event notification", name);
   return ` <!DOCTYPE html>
     <html lang="en">
     <head>
