@@ -13,13 +13,14 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import countAtom from "../store/atoms/quickLinkCount";
 import HandleCreatePost from "./CreatePost";
 import { currentEventsState } from "../store/atoms/events";
+import { Tooltip } from "../ToolTip";
 const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
   const [loading, setLoading] = useState(true); // New state to track loading
   const [count, setCount] = useRecoilState(countAtom);
-  const [currentEvents, setCurrentEvents] = useRecoilState(currentEventsState);
+  const currentEvents = useRecoilValue(currentEventsState);
 
   console.log("count", count);
   console.log(currentEvents);
@@ -133,11 +134,25 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
               </motion.button>
             </div>
           ))}
+          {/*           
           {currentEvents.map((event, index) => (
             <div key={index}>
               <div className="flex justify-between items-center">
-                <h1>{event.title}</h1>
-                <h1>{event.start}</h1>
+                <h1 className="flex">{event.title}</h1>
+                <h1 className="flex">{event.start}</h1>
+              </div>
+            </div>
+          ))} */}
+        </div>
+        <div className="">
+          <h1 className="text-lg font-semibold mb-1 mt-3">Events this month</h1>
+          {currentEvents.map((event, index) => (
+            <div key={index}>
+              <div className="flex justify-between items-center">
+                <Tooltip title={event.title}>
+                  {event.title.substring(0, 20)}
+                </Tooltip>
+                <h1 className="">{event.start.split("T")[0]}</h1>
               </div>
             </div>
           ))}
