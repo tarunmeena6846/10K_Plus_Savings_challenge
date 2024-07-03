@@ -88,6 +88,7 @@ export default function CurrentDashboard() {
                 <div style={{ padding: "10px", width: "100%" }}>
                   {currentItemList
                     .filter((item) => item.type === "Income")
+                    .slice(0, 5)
                     .map((item, index) => (
                       <div
                         key={index}
@@ -135,9 +136,17 @@ export default function CurrentDashboard() {
               </Button>
               {/* Render the updated items */}
               {currentItemList.length > 0 ? (
-                <div style={{ padding: "10px", width: "100%" }}>
+                <div
+                  style={{
+                    padding: "10px",
+                    width: "100%",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                >
                   {currentItemList
                     .filter((item) => item.type === "Expense")
+                    .slice(0, 5)
                     .map((item, index) => (
                       <div
                         key={index}

@@ -3,7 +3,7 @@ import React from "react";
 const AnalyticsTable = ({ items, type }) => {
   console.log(type, items);
   return (
-    <div className="overflow-x-auto p-4">
+    <div className="p-4" style={{ overflowY: "auto", maxHeight: "350px" }}>
       <table className="min-w-full">
         <thead>
           <tr>

@@ -51,28 +51,36 @@ export default function TargetDashboard() {
         <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
           <div
             className="p-6 rounded-2xl"
-            style={{ background: "#ffcbfb", overflow: "hidden" }}
+            style={{
+              background: "#ffcbfb",
+            }}
           >
             <h2>Target Income</h2>
             <h2 className="text-4xl">${targetIncome}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
-            style={{ background: "#b2edff", overflow: "hidden" }}
+            style={{
+              background: "#b2edff",
+              overflow: "scroll",
+            }}
           >
             <h2>Target Expenses</h2>
             <h2 className="text-4xl">${targetExpense}</h2>
           </div>
           <div
             className="p-6 rounded-2xl"
-            style={{ background: "#ceffae", overflow: "hidden" }}
+            style={{
+              background: "#ceffae",
+              overflowX: "auto",
+            }}
           >
             <h2>Target Savings</h2>
             <h2 className="text-4xl">${targetIncome - targetExpense}</h2>
           </div>
           <div className="md:col-span-3 grid grid-cols-4 row-span-2 gap-4">
             <div
-              className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
+              className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl "
               style={{ background: "white", overflow: "hidden" }}
             >
               <h2 className="mb-4 text-center">Target Income</h2>
@@ -92,9 +100,15 @@ export default function TargetDashboard() {
               </Button>
               {/* Render the updated items */}
               {targetItemList.length > 0 ? (
-                <div style={{ padding: "10px", width: "100%" }}>
+                <div
+                  style={{
+                    padding: "10px",
+                    width: "100%",
+                  }}
+                >
                   {targetItemList
                     .filter((item) => item.type === "Income")
+                    .slice(0, 5)
                     .map((item, index) => (
                       <div
                         key={index}
@@ -145,6 +159,7 @@ export default function TargetDashboard() {
                 <div style={{ padding: "10px", width: "100%" }}>
                   {targetItemList
                     .filter((item) => item.type === "Expense")
+                    .slice(0, 5)
                     .map((item, index) => (
                       <div
                         key={index}

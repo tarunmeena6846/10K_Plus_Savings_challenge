@@ -133,7 +133,14 @@ export default function ActualDashboard() {
               </Button>
               {/* Render the updated items */}
               {actualItemList.length > 0 ? (
-                <div style={{ padding: "10px", width: "100%" }}>
+                <div
+                  style={{
+                    padding: "10px",
+                    width: "100%",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                >
                   {actualItemList
                     .filter((item) => item.type === "Expense")
                     .map((item, index) => (
