@@ -132,7 +132,9 @@ export default function TargetDashboard() {
                       </div>
                     ))}
                 </div>
-              ) : null}
+              ) : (
+                <>No records to show</>
+              )}
             </div>
 
             <div
@@ -183,7 +185,9 @@ export default function TargetDashboard() {
                       </div>
                     ))}
                 </div>
-              ) : null}
+              ) : (
+                <>No records to show</>
+              )}
             </div>
           </div>
         </div>

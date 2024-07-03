@@ -4,8 +4,13 @@ import { MdMessage } from "react-icons/md";
 import { BiAnalyse, BiMoney, BiSearch } from "react-icons/bi";
 import { BiCog } from "react-icons/bi";
 import { AiFillHeart, AiTwotoneFileExclamation } from "react-icons/ai";
+import { ImPriceTags } from "react-icons/im";
+import { TbBuildingCommunity } from "react-icons/tb";
+import { IoAnalyticsSharp } from "react-icons/io5";
+
+import { MdOutlineSavings } from "react-icons/md";
 import { BsCartCheck } from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
 import { Avatar } from "@mui/material";
@@ -24,7 +29,7 @@ const routes = [
   {
     path: "/targetdashboard",
     name: "Target Savings Portal",
-    icon: <BiMoney />,
+    icon: <MdOutlineSavings />,
   },
   {
     path: "/actualdashboard",
@@ -34,12 +39,12 @@ const routes = [
   {
     path: "/pricing",
     name: "Pricing",
-    icon: <BiMoney />,
+    icon: <ImPriceTags />,
   },
   {
     path: "/community",
     name: "Community",
-    icon: <BiMoney />,
+    icon: <TbBuildingCommunity />,
   },
   {
     path: "/swotportal",
@@ -49,54 +54,35 @@ const routes = [
   {
     path: "/analytics",
     name: "Analytics",
-    icon: <AiFillHeart />,
+    icon: <IoAnalyticsSharp />,
   },
-  // { path: "/settings", name: "Settings", icon: <BiCog /> },
 ];
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const toggle = () => setIsOpen(!isOpen);
-  const inputAnimation = {
-    hidden: {
-      width: 0,
-      padding: 0,
-      transition: {
-        duration: 0.2,
-      },
-    },
-    show: {
-      width: "140px",
-      padding: "5px 15px",
-      transition: {
-        duration: 0.2,
-      },
-    },
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const showAnimation = {
+    hidden: { width: 0, opacity: 0, transition: { duration: 0.5 } },
+    show: { opacity: 1, width: "auto", transition: { duration: 0.5 } },
   };
 
-  const showAnimation = {
-    hidden: {
-      width: 0,
-      opacity: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-    show: {
-      opacity: 1,
-      width: "auto",
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 768;
 
   return (
     <div className="fixed top-0 left-0 h-screen bg-gray-600 z-50">
       <motion.div
         animate={{
           overflow: "auto",
-          width: isOpen ? "300px" : "45px",
+          width: isMobile ? "45px" : "300px",
           transition: {
             duration: 0.5,
             type: "spring",
@@ -107,17 +93,6 @@ const SideBar = () => {
         <UserAvatar />
         <section className="routes">
           {routes.map((route, index) => {
-            // if (route.subRoutes) {
-            //   return (
-            //     <SidebarMenu
-            //       setIsOpen={setIsOpen}
-            //       route={route}
-            //       showAnimation={showAnimation}
-            //       isOpen={isOpen}
-            //     />
-            //   );
-            // }
-
             return (
               <NavLink
                 to={route.path}
@@ -144,8 +119,6 @@ const SideBar = () => {
           })}
         </section>
       </motion.div>
-
-      {/* <main>{children}</main> */}
     </div>
   );
 };

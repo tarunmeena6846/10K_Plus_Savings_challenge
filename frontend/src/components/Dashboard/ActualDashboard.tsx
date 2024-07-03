@@ -86,6 +86,7 @@ export default function ActualDashboard() {
                 <div style={{ padding: "10px", width: "100%" }}>
                   {actualItemList
                     .filter((item) => item.type === "Income")
+                    .slice(0, 5)
                     .map((item, index) => (
                       <div
                         key={index}
@@ -109,7 +110,9 @@ export default function ActualDashboard() {
                       </div>
                     ))}
                 </div>
-              ) : null}
+              ) : (
+                <>No records to show</>
+              )}
             </div>
 
             <div
@@ -143,6 +146,7 @@ export default function ActualDashboard() {
                 >
                   {actualItemList
                     .filter((item) => item.type === "Expense")
+                    .slice(0, 5)
                     .map((item, index) => (
                       <div
                         key={index}
@@ -166,7 +170,9 @@ export default function ActualDashboard() {
                       </div>
                     ))}
                 </div>
-              ) : null}
+              ) : (
+                <>No records to show</>
+              )}
             </div>
           </div>
         </div>

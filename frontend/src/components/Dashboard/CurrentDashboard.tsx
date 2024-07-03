@@ -112,7 +112,9 @@ export default function CurrentDashboard() {
                       </div>
                     ))}
                 </div>
-              ) : null}
+              ) : (
+                <>No records to show</>
+              )}
             </div>
 
             <div
@@ -170,7 +172,9 @@ export default function CurrentDashboard() {
                       </div>
                     ))}
                 </div>
-              ) : null}
+              ) : (
+                <>No records to show</>
+              )}
             </div>
           </div>
         </div>
