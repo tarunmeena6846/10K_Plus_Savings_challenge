@@ -44,9 +44,27 @@ const AnalyticsLanding = () => {
       );
 
       console.log("Fetched data:", fetchedData, new Date().getMonth());
-      setMonthlyIncome(fetchedData.currentData.income);
-      setMonthlyExpense(fetchedData.currentData.expense);
-      setMonthlyItems(fetchedData.currentData.items);
+      setMonthlyIncome(
+        selectedPortal === "Target"
+          ? fetchedData.targetData.income
+          : selectedPortal === "Actual"
+          ? fetchedData.actualData.income
+          : fetchedData.currentData.income
+      );
+      setMonthlyExpense(
+        selectedPortal === "Target"
+          ? fetchedData.targetData.expense
+          : selectedPortal === "Actual"
+          ? fetchedData.actualData.expense
+          : fetchedData.currentData.expense
+      );
+      setMonthlyItems(
+        selectedPortal === "Target"
+          ? fetchedData.targetData.items
+          : selectedPortal === "Actual"
+          ? fetchedData.actualData.items
+          : fetchedData.currentData.items
+      );
     } catch (error) {
       setMonthlyIncome(0);
       setMonthlyExpense(0);

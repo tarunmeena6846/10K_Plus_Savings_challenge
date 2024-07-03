@@ -316,7 +316,7 @@ router.get(
       const monthlyEntry = yearlyEntry.monthlyData.find(
         (entry) => entry.month === month
       );
-
+      console.log("monthlyEntry", monthlyEntry);
       if (!monthlyEntry) {
         return res.status(200).json({
           success: true,

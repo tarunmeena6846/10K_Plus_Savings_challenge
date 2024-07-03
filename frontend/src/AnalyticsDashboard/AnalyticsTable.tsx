@@ -1,6 +1,7 @@
 import React from "react";
 
 const AnalyticsTable = ({ items, type }) => {
+  console.log(type, items);
   return (
     <div className="overflow-x-auto p-4">
       <table className="min-w-full">
