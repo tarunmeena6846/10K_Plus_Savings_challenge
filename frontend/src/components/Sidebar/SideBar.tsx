@@ -92,9 +92,10 @@ const SideBar = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-600">
+    <div className="fixed top-0 left-0 h-screen bg-gray-600 z-50">
       <motion.div
         animate={{
+          overflow: "auto",
           width: isOpen ? "300px" : "45px",
           transition: {
             duration: 0.5,
@@ -102,7 +103,6 @@ const SideBar = () => {
             damping: 10,
           },
         }}
-        className="h-full" // Ensure content scrolls if it exceeds height
       >
         <UserAvatar />
         <section className="routes">

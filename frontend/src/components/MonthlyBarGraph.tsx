@@ -77,7 +77,11 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     ],
   };
 
-  return <Bar options={options} data={data} />;
+  return (
+    <div style={{ maxHeight: "350px" }}>
+      <Bar options={options} data={data} />
+    </div>
+  );
 };
 
 export default MonthlyBarGraph;
