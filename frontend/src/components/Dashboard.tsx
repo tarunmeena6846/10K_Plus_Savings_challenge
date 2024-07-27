@@ -46,7 +46,7 @@ const Dashboard = () => {
     useRecoilState(monthlyExpenseState);
   const [yearlyIncome, setYearlyIncome] = useState(0);
   const [yearlyExpense, setYearlyExpense] = useState(0);
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [videoModalOpen, setVideoModalOpen] = useState(true);
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [myWhyModalOpen, setWhyModalOpen] = useState(false);
   const [myWhyData, setMyWhyData] = useState("");
@@ -374,7 +374,6 @@ const Dashboard = () => {
       "payment",
       currentUserState.userEmail
     );
-    // await StripeCheckout("price_1OjffbSBiPFrlsnb4MjS068p", "payment");
   };
   useEffect(() => {
     // Check if the necessary data is available before navigating
@@ -390,6 +389,7 @@ const Dashboard = () => {
   return (
     <div>
       <SidebarLayout>
+        <VideoModal isOpen={videoModalOpen} onClose={handleVideoModalClose} />
         <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
           <div
             className="p-6 rounded-2xl"
