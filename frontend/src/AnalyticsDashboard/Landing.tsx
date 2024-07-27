@@ -21,7 +21,7 @@ const AnalyticsLanding = () => {
   const [loading, setLoading] = useState(false);
   //   const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setSelectedMonth(e.target.value);
   };
 
@@ -122,7 +122,7 @@ const AnalyticsLanding = () => {
               </select>
 
               <select
-                onChange={(e) => {
+                onChange={(e: any) => {
                   setSelectedYear(e.target.value);
                 }}
                 value={selectedYear}

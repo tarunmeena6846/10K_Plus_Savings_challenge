@@ -24,10 +24,7 @@ export const EditPostWrapper = () => {
     navigate("/community/drafts");
   };
 
-  const [tag, setTag] = useState("");
-  // useEffect(() => {
-  //   fetchPosts(postId, setCurrentPost);
-  // }, [postId]);
+  const [tag, setTag] = useState<any>("");
 
   useEffect(() => {
     // Check if currentPost is not null before setting the initial state of input fields

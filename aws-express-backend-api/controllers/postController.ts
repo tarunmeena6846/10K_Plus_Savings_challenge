@@ -70,7 +70,7 @@ export const getUserPosts = async (
     const limit = parseInt(req.query.limit as string) || 10;
     const user = req.user;
     const isPublished = req.query.isPublished;
-    console.log("user at getuserpost", user);
+    console.log("user at getuserpost", user, isPublished);
     const adminInfo = await AdminModel.aggregate([
       { $match: { email: user } },
       {
@@ -101,7 +101,8 @@ export const getUserPosts = async (
       { $skip: offset },
       { $limit: limit },
     ]);
-    console.log(adminInfo);
+
+    console.log("adminInfo at get", adminInfo);
     if (adminInfo.length > 0) {
       resp.status(200).json({
         success: true,
@@ -430,21 +431,23 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
         posts: [],
       });
     }
-    console.log(typeof post._id);
+    console.log("post_id in create", post._id);
     tagmodel.posts.push(post._id as mongoose.Types.ObjectId);
 
     await tagmodel?.save();
-
+    console.log("tagid", tagmodel);
     // Update Admin schema with the new post
     const adminUpdate = isPublished
-      ? { $push: { myPosts: post._id } }
-      : { $push: { myDraft: post._id } };
+      ? { $push: { ["myPosts"]: post._id } }
+      : { $push: { ["myDrafts"]: post._id } };
+    console.log("adminUpdate", adminUpdate, author, isPublished);
     const admin = await AdminModel.findOneAndUpdate(
       { email: author },
       adminUpdate,
       { new: true }
     );
-
+    await admin?.save();
+    console.log("new admin after update", admin);
     if (admin) {
       res.status(201).json({ success: true, data: post });
     } else {

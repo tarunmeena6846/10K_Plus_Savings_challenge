@@ -14,20 +14,6 @@ const MyPosts = () => {
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [posts, setPosts] = useRecoilState<PostType[]>(postState);
   console.log(userEmailState);
-  // useEffect(() => {
-  // Ensure userEmail is populated before fetching posts
-  // if (userEmailState.userEmail) {
-  // console.log("selectedTag navigation before", selectedTagId);
-  // useFetchPosts(
-  //   true,
-  //   setPosts,
-  //   "myposts",
-  //   undefined,
-  //   userEmailState.userEmail,
-  //   null
-  // );
-  // }
-  // }, [userEmailState, setPosts, selectedTag, setCount]);
 
   // Render popular tags
   const handleSelectTag = (tagId: string) => {

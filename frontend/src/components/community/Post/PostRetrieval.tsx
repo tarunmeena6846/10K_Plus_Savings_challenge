@@ -74,40 +74,11 @@ const Postdetails = () => {
       const data = await response.json();
       console.log("data at post approve", data);
       alert("Post modified successfully");
-      // setCurrentPost(data.data);
-      // userImage = data.userImage.substring(2);
-      // console.log("iamges", data.userImage, userImage);
-      // Set comments fetched from the backend
     } catch (error) {
       console.error(error);
     }
   };
-  // const fetchPosts = async () => {
-  //   console.log("inside useeffect of setpost", postId);
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_SERVER_URL}/post/${postId}`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "content-Type": "application/json",
-  //           Authorization: "Bearer " + localStorage.getItem("token"),
-  //         },
-  //       }
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("Network response is not ok");
-  //     }
-  //     const data = await response.json();
-  //     console.log("currentposts data in post retrieval ", data);
-  //     setCurrentPost(data);
-  //     userImage = data.userImage.substring(2);
-  //     console.log("iamges", data.userImage, userImage);
-  //     // Set comments fetched from the backend
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+
   useEffect(() => {
     fetchPosts(postId, setCurrentPost);
   }, [postId, actions]);
@@ -145,16 +116,6 @@ const Postdetails = () => {
       <hr />
       {currentUserState.isAdmin && (
         <div className="flex gap-3 mt-3">
-          {/* {currentPost.status === "approvalPending" && (
-            <div className="flex gap-3 mt-3">
-              <button
-                className="text-green-600"
-                onClick={() => approveOrDeclinePost("approved")}
-              >
-                Approve
-              </button>
-            </div>
-          )} */}
           {(currentPost.status === "approvalPending" ||
             currentPost.status === "rejected") && (
             <button

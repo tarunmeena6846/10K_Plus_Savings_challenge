@@ -1,6 +1,6 @@
 import React from "react";
 
-const AnalyticsTable = ({ items, type }) => {
+const AnalyticsTable: React.FC<any> = ({ items, type }) => {
   console.log(type, items);
   return (
     <div className="p-4" style={{ overflowY: "auto", maxHeight: "350px" }}>
@@ -23,8 +23,8 @@ const AnalyticsTable = ({ items, type }) => {
         </thead>
         <tbody>
           {items
-            .filter((item) => item.type === type)
-            .map((item, index) => (
+            .filter((item: any) => item.type === type)
+            .map((item: any, index: any) => (
               <tr
                 key={index}
                 className="bg-white border border-gray-200 rounded-3xl mb-4 last:mb-0"

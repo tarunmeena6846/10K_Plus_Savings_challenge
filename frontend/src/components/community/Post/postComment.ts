@@ -7,7 +7,7 @@ export const handleComment = async (
   userEmail: string,
   userProfile: String,
   parentId: string | null,
-  setActions: SetterOrUpdater,
+  setActions: any,
   type: string,
   commentId?: string
 ) => {

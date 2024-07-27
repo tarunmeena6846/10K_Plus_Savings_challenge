@@ -31,20 +31,6 @@ const CommunityLanding = () => {
   };
   console.log("selectedTag navigation after ", currentUserState);
 
-  // const { items: newPosts, isLoading } = useFetchPosts(
-  //   true,
-  //   setPosts,
-  //   "allposts",
-  //   selectedTagId === "" ? undefined : selectedTagId,
-  //   null,
-  //   null
-  // );
-
-  // useEffect(() => {
-  //   if (newPosts.length > 0) {
-  //     setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-  //   }
-  // }, [newPosts, setPosts]);
   console.log("posts at infinity", posts);
   return (
     <div>

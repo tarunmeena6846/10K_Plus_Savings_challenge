@@ -17,15 +17,6 @@ const MyDraft = () => {
   const handleSelectTag = (tagId: string) => {
     setSelectedTagId(tagId);
   };
-
-  // useFetchPosts(
-  //   false,
-  //   setPosts,
-  //   "mydrafts",
-  //   undefined,
-  //   userEmail.userEmail,
-  //   null
-  // );
   return (
     <div>
       <Header title="My Drafts" description="" />

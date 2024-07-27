@@ -7,7 +7,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useRecoilState } from "recoil";
 import { currentEventsState } from "../store/atoms/events";
 
-function extractDateTime(dateTimeString) {
+function extractDateTime(dateTimeString: any) {
   const { startStr, endStr } = dateTimeString;
   const [startDate, startTimeWithOffset] = startStr.split("T");
   const [endDate, endTimeWithOffset] = endStr.split("T");
@@ -45,7 +45,7 @@ export default function DemoApp() {
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  function addDaysToDate(dateString, daysToAdd) {
+  function addDaysToDate(dateString: any, daysToAdd: any) {
     // Parse the input date string
     const date = new Date(dateString);
 
@@ -60,13 +60,7 @@ export default function DemoApp() {
   }
   // useEffect(() => {
   // Fetch events from the database when the component mounts
-  const fetchEventsForMonth = async (dateInfo) => {
-    // const { startTime, endTime, selectedDate } = extractDateTime(dateInfo);
-
-    // console.log(startTime, endTime, selectedDate);
-    // const { year, month } = addDaysToDate(selectedDate, 15);
-
-    // console.log(year, month); // Output: '2024-06-10'
+  const fetchEventsForMonth = async (dateInfo: any) => {
     console.log(dateInfo.startStr, dateInfo.endStr);
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/event/get-events?startTime=${
@@ -93,7 +87,7 @@ export default function DemoApp() {
 
   const handleWeekendsToggle = () => setWeekendsVisible(!weekendsVisible);
 
-  const handleDateSelect = (selectInfo) => {
+  const handleDateSelect = (selectInfo: any) => {
     const { clientX: x, clientY: y } = selectInfo.jsEvent;
     const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
     console.log;
@@ -197,13 +191,6 @@ export default function DemoApp() {
           console.log(savedEvent);
           if (savedEvent) {
             console.log(currentEvents);
-            // Update currentEvents with savedEvent from database
-
-            // setCurrentEvents((prevEvents) =>
-            //   prevEvents.map((event) =>
-            //     event._id === newEvent._id ? savedEvent : event
-            //   )
-            // );
 
             setCurrentEvents((prevEvents) => {
               console.log(prevEvents);
@@ -243,71 +230,6 @@ export default function DemoApp() {
       });
     }
   };
-
-  // const handleEventSave = async (e) => {
-  //   e.preventDefault();
-  //   const { _id, title, startTime, endTime, date, description } = eventDetails;
-  //   if (title && startTime && endTime) {
-  //     const newEvent = {
-  //       _id: isEditing ? _id : `temp-${Date.now()}`, // Use a temporary ID for new events
-  //       title,
-  //       start: `${date}T${startTime}:00`,
-  //       end: `${date}T${endTime}:00`,
-  //       description,
-  //     };
-  //     console.log(newEvent);
-  //     if (isEditing) {
-  //       // Update in-memory state immediately
-  //       const updatedEvents = currentEvents.map((event) =>
-  //         event._id === _id ? newEvent : event
-  //       );
-  //       setCurrentEvents(updatedEvents);
-  //       // Attempt to update in the database
-  //       const success = await updateDb(newEvent);
-  //       if (!success) {
-  //         // Revert in-memory state if update fails
-  //         setCurrentEvents((prevEvents) =>
-  //           prevEvents.map((event) =>
-  //             event._id === _id ? { ...event, ...eventDetails } : event
-  //           )
-  //         );
-  //       }
-  //     } else {
-  //       // Add to in-memory state immediately
-  //       console.log(currentEvents, newEvent);
-  //       setCurrentEvents([...currentEvents, newEvent]);
-  //       // Attempt to save in the database
-  //       const savedEvent = await saveToDb(newEvent);
-  //       console.log(savedEvent, currentEvents);
-  //       if (savedEvent) {
-  //         // // Replace temporary ID with actual ID from the database
-  //         setCurrentEvents((prevEvents) =>
-  //           prevEvents.map((event) =>
-  //             event._id === newEvent._id ? savedEvent : event
-  //           )
-  //         );
-
-  //         console.log(currentEvents);
-  //       } else {
-  //         console.log("inside else part");
-  //         // Remove the temporary event if save fails
-  //         setCurrentEvents((prevEvents) =>
-  //           prevEvents.filter((event) => event._id !== newEvent._id)
-  //         );
-  //       }
-  //     }
-
-  //     setEventDetails({
-  //       _id: "",
-  //       title: "",
-  //       startTime: "",
-  //       endTime: "",
-  //       description: "",
-  //       date: "",
-  //     });
-  //   }
-  // };
-
   const handleDeleteEvent = async () => {
     const { _id } = eventDetails;
     const eventBeforeDelete = [...currentEvents];

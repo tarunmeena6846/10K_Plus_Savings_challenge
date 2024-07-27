@@ -20,38 +20,6 @@ const MyBookmarked = () => {
   const handleSelectTag = (tagId: string) => {
     setSelectedTagId(tagId);
   };
-
-  // useFetchPosts(
-  //   true,
-  //   setPosts,
-  //   "mybookmarks",
-  //   undefined,
-  //   userEmail.userEmail,
-  //   true
-  // );
-  // fetch(`${import.meta.env.VITE_SERVER_URL}/post/bookmarked`, {
-  //   method: "GET",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     authorization: "Bearer " + localStorage.getItem("token"),
-  //   }
-  // })
-  //   .then((response) => {
-  //     if (!response.ok) {
-  //       throw new Error("Network response is not ok ");
-  //     }
-  //     return response.json();
-  //   })
-  //   .then((data) => {
-  //     console.log(data);
-  //     if (data.success) {
-  //       setPosts(data.data);
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //   });
-
   return (
     <div>
       <Header title="My Bookmarks" description="" />
@@ -67,19 +35,6 @@ const MyBookmarked = () => {
           </div>
           <div className="md:w-1/4 p-4 m-4">
             <SideBar onSelectTag={handleSelectTag}></SideBar>
-            {/* <motion className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            Create Post
-          </button>
-          <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
-          <ul>
-            {popularTags.map((tag, index) => (
-              <li key={index} className="mb-1">
-                <a href="#" className="text-blue-600 hover:underline">
-                  {tag}
-                </a>
-              </li>
-            ))}
-          </ul> */}
           </div>
         </div>
       </div>
