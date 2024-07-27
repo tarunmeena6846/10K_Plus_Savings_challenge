@@ -82,7 +82,7 @@ const SideBar = () => {
       <motion.div
         animate={{
           overflow: "auto",
-          width: isMobile ? "45px" : "300px",
+          width: isMobile ? "0px" : "300px",
           transition: {
             duration: 0.5,
             type: "spring",
