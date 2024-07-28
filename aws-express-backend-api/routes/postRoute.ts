@@ -18,8 +18,9 @@ import {
 } from "../controllers/postController";
 
 import { detokenizeAdmin, isAdmin } from "../middleware";
+import { scheduleWeeklyReminderEmail } from "../emails";
 const router: Router = express.Router();
-
+// scheduleWeeklyReminderEmail();
 // Routes for posts
 router.get("/", detokenizeAdmin, getAllPosts);
 router.get("/userPosts", detokenizeAdmin, getUserPosts);

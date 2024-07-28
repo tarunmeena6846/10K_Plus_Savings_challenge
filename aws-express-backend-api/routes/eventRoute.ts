@@ -1,10 +1,10 @@
 import express, { Response, Router } from "express";
 import { AuthenticatedRequest, detokenizeAdmin, isAdmin } from "../middleware";
 import EventModal from "../models/eventSchema";
-import { sendEmail } from "../emails";
+import { scheduleWeeklyReminderEmail, sendEmail } from "../emails";
 import AdminModel from "../models/admin";
 import { eventNotificationEmail } from "../emails/eventNotification";
-
+import corn from "node-cron";
 const router: Router = express.Router();
 
 router.get(
@@ -14,6 +14,7 @@ router.get(
     console.log("inside getevents");
     const { startTime, endTime } = req.query;
     console.log(startTime, endTime);
+    // scheduleWeeklyReminderEmail();
     if (!startTime || !endTime) {
       return res.status(400).send("Month and year are required");
     }

@@ -15,7 +15,7 @@ import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
 import { resetPassword } from "../emails/ResetPassword";
 import bcrypt from "bcrypt";
-
+import corn from "node-cron";
 // import { Resend } from "resend";
 router.post("/signup", async (req: Request, res: Response) => {
   try {
@@ -62,6 +62,7 @@ router.post("/signup", async (req: Request, res: Response) => {
         newAdmin.save();
         console.log(newAdmin._id);
         console.log("token", token);
+        // await corn.schedule("", async (params: any) => {});
         await sendEmail(username, "Email Verification", getWelcomeEmail(token));
         res.status(201).send({
           message: "An Email sent to your account please verify",
@@ -103,6 +104,7 @@ router.get("/verify-email/:token", async (req: Request, res: Response) => {
         user.verified = true;
         user.verificationToken = "";
         await user.save();
+        
         res.status(200).send({ message: "Email verified successfully" });
         // return res.redirect("http://localhost:5173/login");
       } else {

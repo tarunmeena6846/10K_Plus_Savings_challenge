@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-
+import corn from "node-cron";
+import { weeklyPortalReminder } from "./weeklyPortalUpdateReminder";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
@@ -36,3 +37,19 @@ export const sendEmail = async (
     console.error("Error sending email:", error);
   }
 };
+
+export const scheduleWeeklyReminderEmail = async (email: [] | string) => {
+  corn.schedule("* * * * *", async (params: any) => {
+    console.log("weekly schedular called");
+
+    sendEmail(
+      "tarunmeena6846@gmail.com",
+      "10K SAVINGS CHALLENGE: Task List Reminder ",
+      weeklyPortalReminder("tarun")
+    );
+
+    // await sendEmail();
+  });
+};
+
+scheduleWeeklyReminderEmail([]);
