@@ -9,6 +9,7 @@ import { weeklyPortalReminder } from "../emails/weeklyPortalUpdateReminder";
 import mongoose from "mongoose";
 import { getAdminPostNotificationTemp } from "../emails/adminPost";
 import { getUserPostNotificationTemp } from "../emails/userPost";
+import { getSWOTAnalysisTemp } from "../emails/swotAnalysis";
 const router: Router = express.Router();
 
 router.post(
@@ -86,12 +87,32 @@ export const sendAdminPostNotification = async (
   );
 };
 
-export const scheduleWeeklyReminderEmail = async (email: [] | string) => {
-  corn.schedule("* * * * *", async (params: any) => {
+const scheduleWeeklyReminderEmail = async () => {
+  console.log("schedular called");
+  corn.schedule("* * * * 0", async (params: any) => {
+    const subscribedUserArray = await NotificationModel.aggregate([
+      {
+        $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true
+      },
+      {
+        $group: {
+          _id: null,
+          emails: { $addToSet: "$userEmail" },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field from the output
+          emails: 1, // Include the emails field in the output
+        },
+      },
+    ]);
+
+    console.log("subscribedUserArray", subscribedUserArray);
     console.log("weekly schedular called");
 
     sendEmail(
-      "tarunmeena6846@gmail.com",
+      subscribedUserArray[0].emails,
       "10K SAVINGS CHALLENGE: Task List Reminder ",
       weeklyPortalReminder()
     );
@@ -99,5 +120,42 @@ export const scheduleWeeklyReminderEmail = async (email: [] | string) => {
     // await sendEmail();
   });
 };
+
+const scheduleMonthlySWOTEmail = async () => {
+  console.log("schedular called");
+  corn.schedule("* * * * 0", async (params: any) => {
+    const subscribedUserArray = await NotificationModel.aggregate([
+      {
+        $match: { "type.monthlySwot": true }, // Match documents where weeklyReminder is true
+      },
+      {
+        $group: {
+          _id: null,
+          emails: { $addToSet: "$userEmail" },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field from the output
+          emails: 1, // Include the emails field in the output
+        },
+      },
+    ]);
+
+    console.log("subscribedUserArray", subscribedUserArray);
+    console.log("monthly schedular called");
+
+    sendEmail(
+      subscribedUserArray[0].emails,
+      "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
+      getSWOTAnalysisTemp()
+    );
+
+    // await sendEmail();
+  });
+};
+
+scheduleMonthlySWOTEmail();
+scheduleWeeklyReminderEmail();
 
 export default router;

@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 import corn from "node-cron";
-import { weeklyPortalReminder } from "./weeklyPortalUpdateReminder";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
