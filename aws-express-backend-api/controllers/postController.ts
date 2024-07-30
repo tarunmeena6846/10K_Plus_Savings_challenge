@@ -452,14 +452,15 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
     await admin?.save();
     console.log("new admin after update", admin);
     if (admin) {
-      if (admin.isAdmin) {
-        const emailNotifcationResponse = await sendAdminPostNotification(
-          post._id,
-          admin.username,
-          post.title
-        );
-        console.log("emailNotifcationResponse ", emailNotifcationResponse);
-      }
+      const emailNotifcationResponse = await sendAdminPostNotification(
+        post._id,
+        admin.username,
+        post.title,
+        admin.isAdmin
+      );
+
+      console.log("postnotifcation ", emailNotifcationResponse);
+
       res.status(201).json({ success: true, data: post });
     } else {
       return res.status(400).json({ success: false, data: null });

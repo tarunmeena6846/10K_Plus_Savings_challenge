@@ -8,6 +8,7 @@ import corn from "node-cron";
 import { weeklyPortalReminder } from "../emails/weeklyPortalUpdateReminder";
 import mongoose from "mongoose";
 import { getAdminPostNotificationTemp } from "../emails/adminPost";
+import { getUserPostNotificationTemp } from "../emails/userPost";
 const router: Router = express.Router();
 
 router.post(
@@ -47,7 +48,8 @@ router.post(
 export const sendAdminPostNotification = async (
   postId: string | mongoose.Types.ObjectId,
   name: string,
-  title: string
+  title: string,
+  isAdmin: Boolean
 ) => {
   const postIdString = postId.toString();
 
@@ -55,7 +57,7 @@ export const sendAdminPostNotification = async (
 
   const subscribedUserArray = await NotificationModel.aggregate([
     {
-      $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true
+      $match: isAdmin ? { "type.adminPost": true } : { "type.groupPost": true }, // Match documents where weeklyReminder is true
     },
     {
       $group: {
@@ -75,8 +77,12 @@ export const sendAdminPostNotification = async (
 
   await sendEmail(
     subscribedUserArray[0].emails,
-    "10K SAVINGS CHALLENGE: Task List Reminder ",
-    getAdminPostNotificationTemp(name, title, postIdString)
+    `10K SAVINGS CHALLENGE: Notification of Community ${
+      isAdmin ? "Admin" : "Group"
+    } Post`,
+    isAdmin
+      ? getAdminPostNotificationTemp(name, title, postIdString)
+      : getUserPostNotificationTemp(name, title, postIdString)
   );
 };
 
