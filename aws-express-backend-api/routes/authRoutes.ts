@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from "express";
 // import AdminModel from "../models/admin.model";
-import AdminModel, { Admin } from "../models/admin";
+import { AdminModel, Admin } from "../models/admin";
 import { detokenizeAdmin, secretKey } from "../middleware/index";
 import jwt, { JwtPayload } from "jsonwebtoken";
 // const secretKey: string | undefined = process.env.JWT_SCERET; // Adjust the type based on your actual environment variable type
@@ -104,7 +104,7 @@ router.get("/verify-email/:token", async (req: Request, res: Response) => {
         user.verified = true;
         user.verificationToken = "";
         await user.save();
-        
+
         res.status(200).send({ message: "Email verified successfully" });
         // return res.redirect("http://localhost:5173/login");
       } else {

@@ -1,6 +1,10 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import SwotDetailsModel, { SwotDetails } from "./swotModel";
 
+export interface EmailReminder extends Document {
+  // lastNotifiedDate?: Date;
+  reminderEnabled: Boolean;
+}
 export interface Admin extends Document {
   username: string;
   email: string;
@@ -22,6 +26,7 @@ export interface Admin extends Document {
   swotTasksDetails: Schema.Types.ObjectId;
   myPosts: Schema.Types.ObjectId[];
   myDrafts: Schema.Types.ObjectId[];
+  // isSubscribedForReminder?: Boolean;
 }
 
 const adminSchema = new Schema<Admin>({
@@ -46,6 +51,7 @@ const adminSchema = new Schema<Admin>({
   stripePlanId: String,
   stripeUserId: String,
   isSubscribed: Boolean,
+  // isSubscribedForReminder: Boolean,
   verified: { type: Boolean, default: false },
   verificationToken: { type: String },
   isTopTier: { type: Boolean, default: false },
@@ -68,4 +74,24 @@ const adminSchema = new Schema<Admin>({
 
 const AdminModel = mongoose.model<Admin>("Admin", adminSchema);
 
-export default AdminModel;
+// // export default AdminModel;
+// const NotificationType = {
+//   WEEKLY_REMINDER: "weeklyReminder",
+//   SWOT_REMINDER: "swotReminder",
+//   ADMIN_POST_NOTIFICATION: "adminPostNotification",
+//   COMMUNITY_NOTIFICATION: "communityNotification",
+// };
+
+const NotificationSchema = new Schema({
+  userEmail: { type: String, required: true, unique: true },
+  type: {
+    taskListReminder: { type: Boolean, default: true },
+    adminPost: { type: Boolean, default: true },
+    groupPost: { type: Boolean, default: true },
+    monthlySwot: { type: Boolean, default: true },
+  },
+});
+
+const NotificationModel = mongoose.model("Notification", NotificationSchema);
+
+export { NotificationModel, AdminModel };

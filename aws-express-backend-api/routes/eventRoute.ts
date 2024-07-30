@@ -1,12 +1,49 @@
 import express, { Response, Router } from "express";
 import { AuthenticatedRequest, detokenizeAdmin, isAdmin } from "../middleware";
 import EventModal from "../models/eventSchema";
-import { scheduleWeeklyReminderEmail, sendEmail } from "../emails";
-import AdminModel from "../models/admin";
+import { sendEmail } from "../emails";
+import { AdminModel, NotificationModel } from "../models/admin";
 import { eventNotificationEmail } from "../emails/eventNotification";
 import corn from "node-cron";
 const router: Router = express.Router();
 
+// router.post(
+//   "/notification",
+//   detokenizeAdmin,
+//   async (req: AuthenticatedRequest, res: Response) => {
+//     console.log("inside notification", req.body.selectedNotifications);
+//     const { adminPost, groupPost, taskListReminder, monthlySwot } =
+//       req.body.selectedNotifications;
+
+//     console.log(adminPost, groupPost, taskListReminder, monthlySwot);
+
+//     const notificationInDb = await NotificationModel.findOneAndUpdate(
+//       { userEmail: req.user },
+//       {
+//         type: {
+//           taskListReminder: taskListReminder,
+//           adminPost: adminPost,
+//           groupPost: groupPost,
+//           monthlySwot: monthlySwot,
+//         },
+//       },
+//       { new: true, upsert: true }
+//     );
+
+//     console.log("notificationInDb", notificationInDb);
+//     // if (!notificationInDb) {
+//     // } else {
+//     //   notificationInDb.userEmail = req.user || "";
+//     //   notificationInDb.type = {
+//     //     taskListReminder: taskListReminder,
+//     //     adminPost: adminPost,
+//     //     groupPost: groupPost,
+//     //     monthlySwot: monthlySwot,
+//     //   };
+//     // }
+//     // await notificationInDb?.save();
+//   }
+// );
 router.get(
   "/get-events",
   isAdmin,

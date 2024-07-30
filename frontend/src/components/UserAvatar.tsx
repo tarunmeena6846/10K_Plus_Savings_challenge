@@ -4,14 +4,64 @@ import { useRecoilState } from "recoil";
 import { userState } from "./store/atoms/user";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
+import Box from "@mui/material/Box";
+import FormLabel from "@mui/material/FormLabel";
+import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import Checkbox from "@mui/material/Checkbox";
 
 export default function UserAvatar() {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [showImageModal, setShowImageModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedNotifications, setSelectedNotifications] = useState({
+    adminPost: true,
+    groupPost: true,
+    taskListReminder: true,
+    monthlySwot: true,
+  });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedNotifications({
+      ...selectedNotifications,
+      [event.target.name]: event.target.checked,
+    });
+  };
+
+  const handleSaveNotification = async () => {
+    // alert("I am gete");
+    console.log(selectedNotifications);
+
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/notification/updateNotification`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          selectedNotifications,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Notifications updated");
+      setShowNotificationSettingModal(false);
+    }
+  };
+  const { adminPost, groupPost, taskListReminder, monthlySwot } =
+    selectedNotifications;
 
   const [showAccountSettingsModal, setShowAccountSettingsModal] =
+    useState(false);
+  const [showNotificationSettingModal, setShowNotificationSettingModal] =
     useState(false);
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -87,6 +137,9 @@ export default function UserAvatar() {
         <Dropdown.Divider /> */}
         <Dropdown.Item onClick={() => setShowAccountSettingsModal(true)}>
           Account Setting
+        </Dropdown.Item>
+        <Dropdown.Item onClick={() => setShowNotificationSettingModal(true)}>
+          Notification Setting
         </Dropdown.Item>
         <Dropdown.Item
           onClick={() => {
@@ -187,6 +240,68 @@ export default function UserAvatar() {
             Update Password
           </Button>
           <Button onClick={() => setShowAccountSettingsModal(false)}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Account Settings Modal */}
+      <Modal
+        show={showNotificationSettingModal}
+        onClose={() => setShowNotificationSettingModal(false)}
+        className="w-96" // Adjust the width as per your requirement
+      >
+        <Modal.Body>
+          <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+            <FormLabel component="legend">Select notification type</FormLabel>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={adminPost}
+                    onChange={handleChange}
+                    name="adminPost"
+                  />
+                }
+                label="Community Admin Post"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={groupPost}
+                    onChange={handleChange}
+                    name="groupPost"
+                  />
+                }
+                label="Community Group Post"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={taskListReminder}
+                    onChange={handleChange}
+                    name="taskListReminder"
+                  />
+                }
+                label="Task List Reminder"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={monthlySwot}
+                    onChange={handleChange}
+                    name="monthlySwot"
+                  />
+                }
+                label="Monthly SWOT Analysis"
+              />
+            </FormGroup>
+          </FormControl>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleSaveNotification} className="mr-2">
+            Save Notification
+          </Button>
+          <Button onClick={() => setShowNotificationSettingModal(false)}>
             Cancel
           </Button>
         </Modal.Footer>

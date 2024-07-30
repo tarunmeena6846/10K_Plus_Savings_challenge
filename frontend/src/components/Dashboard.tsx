@@ -46,7 +46,7 @@ const Dashboard = () => {
     useRecoilState(monthlyExpenseState);
   const [yearlyIncome, setYearlyIncome] = useState(0);
   const [yearlyExpense, setYearlyExpense] = useState(0);
-  const [videoModalOpen, setVideoModalOpen] = useState(true);
+  const [videoModalOpen, setVideoModalOpen] = useState(false); // Video modal state variable
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [myWhyModalOpen, setWhyModalOpen] = useState(false);
   const [myWhyData, setMyWhyData] = useState("");

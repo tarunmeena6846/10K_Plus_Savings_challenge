@@ -1,4 +1,4 @@
-import AdminModel from "../models/admin";
+import { AdminModel } from "../models/admin";
 
 export async function handleSubscriptionCreated(event: any, subscription: any) {
   console.log("tarun event", event, event.customer_email);

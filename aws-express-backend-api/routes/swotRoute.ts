@@ -1,6 +1,6 @@
 import express, { Response, Router, response } from "express";
 import { AuthenticatedRequest, detokenizeAdmin } from "../middleware";
-import AdminModel from "../models/admin";
+import { AdminModel } from "../models/admin";
 import SwotDetailsModel, { SwotDetails, Task } from "../models/swotModel";
 import { sendEmail } from "../emails";
 import { reminderEmail } from "../emails/Reminder";

@@ -8,7 +8,7 @@ import { AuthenticatedRequest } from "../middleware/index";
 // import { YearlyData } from "../models/monthlyData";
 import Stripe from "stripe";
 import { Error } from "mongoose";
-import AdminModel from "../models/admin";
+import { AdminModel } from "../models/admin";
 const monthNames = [
   "January",
   "February",

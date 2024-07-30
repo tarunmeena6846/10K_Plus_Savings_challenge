@@ -11,6 +11,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NODEMAILER_ADMIN_PASS,
   },
 });
+
 export const sendEmail = async (
   email: [] | string,
   subject: string,
@@ -38,18 +39,18 @@ export const sendEmail = async (
   }
 };
 
-export const scheduleWeeklyReminderEmail = async (email: [] | string) => {
-  corn.schedule("* * * * *", async (params: any) => {
-    console.log("weekly schedular called");
+// export const scheduleWeeklyReminderEmail = async (email: [] | string) => {
+//   corn.schedule("* * * * *", async (params: any) => {
+//     console.log("weekly schedular called");
 
-    sendEmail(
-      "tarunmeena6846@gmail.com",
-      "10K SAVINGS CHALLENGE: Task List Reminder ",
-      weeklyPortalReminder("tarun")
-    );
+//     sendEmail(
+//       "tarunmeena6846@gmail.com",
+//       "10K SAVINGS CHALLENGE: Task List Reminder ",
+//       weeklyPortalReminder("tarun")
+//     );
 
-    // await sendEmail();
-  });
-};
+//     // await sendEmail();
+//   });
+// };
 
-scheduleWeeklyReminderEmail([]);
+// scheduleWeeklyReminderEmail([]);

@@ -24,7 +24,7 @@ export const EditPostWrapper = () => {
     navigate("/community/drafts");
   };
 
-  const [tag, setTag] = useState<any>("");
+  const [tag, setTag] = useState("");
 
   useEffect(() => {
     // Check if currentPost is not null before setting the initial state of input fields

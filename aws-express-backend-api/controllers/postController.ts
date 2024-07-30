@@ -4,7 +4,8 @@ import Comment from "../models/commentSchema";
 import mongoose, { ObjectId } from "mongoose";
 import { Response } from "express";
 import { TagModel } from "../models/tagSchema";
-import AdminModel from "../models/admin";
+import { AdminModel } from "../models/admin";
+import { sendAdminPostNotification } from "../routes/reminders";
 
 /**
  * Controller to get all posts.
@@ -14,6 +15,8 @@ import AdminModel from "../models/admin";
 export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getAllpost");
   try {
+    // const emailNotifcationResponse = await sendAdminPostNotification();
+
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
     const isApprovalReqPost = req.query.isApprovalReqPost;
@@ -449,6 +452,14 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
     await admin?.save();
     console.log("new admin after update", admin);
     if (admin) {
+      if (admin.isAdmin) {
+        const emailNotifcationResponse = await sendAdminPostNotification(
+          post._id,
+          admin.username,
+          post.title
+        );
+        console.log("emailNotifcationResponse ", emailNotifcationResponse);
+      }
       res.status(201).json({ success: true, data: post });
     } else {
       return res.status(400).json({ success: false, data: null });
