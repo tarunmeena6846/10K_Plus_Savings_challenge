@@ -87,7 +87,7 @@ export default function UserAvatar() {
           },
           body: JSON.stringify({
             // username: currentUserState.userEmail,
-            imageUrl: type === "profile picture" ? selectedImage : undefined,
+            // imageUrl: type === "profile picture" ? selectedImage : undefined,
             newPassword: type === "password" ? confirmPassword : undefined,
           }),
         }
@@ -160,14 +160,14 @@ export default function UserAvatar() {
         </Dropdown.Item>
       </Dropdown>
       {/* Image Modal */}
-      <Modal
+      {/* <Modal
         show={showImageModal}
         onClose={() => setShowImageModal(false)}
         className="w-96" // Adjust the width as per your requirement
       >
         <Modal.Body>
           <h2 className="text-lg font-bold mb-4">Choose Profile Image</h2>
-          {/* Grid of images */}
+
           <div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 12 }).map((_, index) => (
               <img
@@ -188,7 +188,7 @@ export default function UserAvatar() {
           </Button>
           <Button onClick={() => setShowImageModal(false)}>Cancel</Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
 
       {/* Account Settings Modal */}
       <Modal

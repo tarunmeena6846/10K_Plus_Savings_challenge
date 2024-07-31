@@ -338,8 +338,8 @@ router.post(
   "/change-user_details",
   detokenizeAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
-    const { newPassword, imageUrl } = req.body;
-    console.log("at change user details", req?.user, newPassword, imageUrl);
+    const { newPassword } = req.body;
+    console.log("at change user details", req?.user, newPassword);
     try {
       // Find admin by username
       const bIsAdminPresent = await AdminModel.findOne({ email: req?.user });
@@ -352,17 +352,17 @@ router.post(
         bIsAdminPresent.password = newPassword;
       }
 
-      if (imageUrl) {
-        bIsAdminPresent.imageUrl = imageUrl;
-        await Post.updateMany(
-          { author: req.user }, // Filter posts by user ID
-          { userImage: imageUrl }
-        );
-        await Comment.updateMany(
-          { author: req.user }, // Filter posts by user ID
-          { imageLink: imageUrl }
-        );
-      }
+      // if (imageUrl) {
+      //   bIsAdminPresent.imageUrl = imageUrl;
+      //   await Post.updateMany(
+      //     { author: req.user }, // Filter posts by user ID
+      //     { userImage: imageUrl }
+      //   );
+      //   await Comment.updateMany(
+      //     { author: req.user }, // Filter posts by user ID
+      //     { imageLink: imageUrl }
+      //   );
+      // }
       // Save the updated admin
       await bIsAdminPresent.save();
       return res

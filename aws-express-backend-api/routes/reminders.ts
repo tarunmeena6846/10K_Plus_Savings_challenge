@@ -87,75 +87,75 @@ export const sendAdminPostNotification = async (
   );
 };
 
-const scheduleWeeklyReminderEmail = async () => {
-  console.log("schedular called");
-  corn.schedule("* * * * 0", async (params: any) => {
-    const subscribedUserArray = await NotificationModel.aggregate([
-      {
-        $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true
+// const scheduleWeeklyReminderEmail = async () => {
+console.log("schedular called");
+const weeklyReminderTask = corn.schedule("* * * * 0", async (params: any) => {
+  const subscribedUserArray = await NotificationModel.aggregate([
+    {
+      $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true
+    },
+    {
+      $group: {
+        _id: null,
+        emails: { $addToSet: "$userEmail" },
       },
-      {
-        $group: {
-          _id: null,
-          emails: { $addToSet: "$userEmail" },
-        },
+    },
+    {
+      $project: {
+        _id: 0, // Exclude the _id field from the output
+        emails: 1, // Include the emails field in the output
       },
-      {
-        $project: {
-          _id: 0, // Exclude the _id field from the output
-          emails: 1, // Include the emails field in the output
-        },
+    },
+  ]);
+
+  console.log("subscribedUserArray", subscribedUserArray);
+  console.log("weekly schedular called");
+
+  sendEmail(
+    subscribedUserArray[0].emails,
+    "10K SAVINGS CHALLENGE: Task List Reminder ",
+    weeklyPortalReminder()
+  );
+
+  // await sendEmail();
+});
+// };
+
+// const scheduleMonthlySWOTEmail = async () => {
+console.log("schedular called");
+const monthlySwotTask = corn.schedule("* * * 1-12 *", async (params: any) => {
+  const subscribedUserArray = await NotificationModel.aggregate([
+    {
+      $match: { "type.monthlySwot": true }, // Match documents where weeklyReminder is true
+    },
+    {
+      $group: {
+        _id: null,
+        emails: { $addToSet: "$userEmail" },
       },
-    ]);
-
-    console.log("subscribedUserArray", subscribedUserArray);
-    console.log("weekly schedular called");
-
-    sendEmail(
-      subscribedUserArray[0].emails,
-      "10K SAVINGS CHALLENGE: Task List Reminder ",
-      weeklyPortalReminder()
-    );
-
-    // await sendEmail();
-  });
-};
-
-const scheduleMonthlySWOTEmail = async () => {
-  console.log("schedular called");
-  corn.schedule("* * * * 0", async (params: any) => {
-    const subscribedUserArray = await NotificationModel.aggregate([
-      {
-        $match: { "type.monthlySwot": true }, // Match documents where weeklyReminder is true
+    },
+    {
+      $project: {
+        _id: 0, // Exclude the _id field from the output
+        emails: 1, // Include the emails field in the output
       },
-      {
-        $group: {
-          _id: null,
-          emails: { $addToSet: "$userEmail" },
-        },
-      },
-      {
-        $project: {
-          _id: 0, // Exclude the _id field from the output
-          emails: 1, // Include the emails field in the output
-        },
-      },
-    ]);
+    },
+  ]);
 
-    console.log("subscribedUserArray", subscribedUserArray);
-    console.log("monthly schedular called");
+  console.log("subscribedUserArray", subscribedUserArray);
+  console.log("monthly schedular called");
 
-    sendEmail(
-      subscribedUserArray[0].emails,
-      "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
-      getSWOTAnalysisTemp()
-    );
+  sendEmail(
+    subscribedUserArray[0].emails,
+    "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
+    getSWOTAnalysisTemp()
+  );
 
-    // await sendEmail();
-  });
-};
+  // await sendEmail();
+});
+// };
 
-scheduleMonthlySWOTEmail();
-scheduleWeeklyReminderEmail();
+monthlySwotTask.start();
+weeklyReminderTask.start();
 
 export default router;
