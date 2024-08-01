@@ -1,4 +1,4 @@
-import express, { Response, Router } from "express";
+import express, { Response, Router, Request } from "express";
 import { AuthenticatedRequest, detokenizeAdmin, isAdmin } from "../middleware";
 import EventModal from "../models/eventSchema";
 import { sendEmail } from "../emails";
@@ -10,8 +10,74 @@ import mongoose from "mongoose";
 import { getAdminPostNotificationTemp } from "../emails/adminPost";
 import { getUserPostNotificationTemp } from "../emails/userPost";
 import { getSWOTAnalysisTemp } from "../emails/swotAnalysis";
+import multer from "multer";
+import { S3Client } from "@aws-sdk/client-s3";
+import path from "path";
+import multerS3 from "multer-s3";
 const router: Router = express.Router();
 
+import dotenv from "dotenv";
+import Post from "../models/postSchema";
+import Comment from "../models/commentSchema";
+dotenv.config();
+
+// Configure the AWS SDK
+const s3 = new S3Client({
+  region: "us-east-1",
+  credentials: {
+    accessKeyId: `${process.env.AWS_ACCESS_KEY_ID}`,
+    secretAccessKey: `${process.env.AWS_SECRET_ACCESS_KEY}`,
+  },
+});
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3 as S3Client,
+    bucket: process.env.S3_BUCKET_NAME || "",
+    key: function (
+      req: Request,
+      file: Express.Multer.File,
+      cb: (error: any, key?: string) => void
+    ) {
+      cb(null, Date.now().toString() + "-" + file.originalname);
+    },
+  }),
+});
+
+router.post(
+  "/upload-user-profile",
+  upload.single("avatar"),
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const s3Key = (req.file as any).key; // Get the S3 key of the uploaded file
+    const s3Uri = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${s3Key}`; // Construct the S3 URI
+
+    console.log(s3Key, s3Uri);
+    try {
+      const bIsAdminPresent = await AdminModel.findOne({ email: req?.user });
+
+      if (!bIsAdminPresent) {
+        return res.status(404).json({ error: "Admin not found" });
+      }
+      bIsAdminPresent.imageUrl = s3Uri;
+      await Post.updateMany(
+        { author: req.user }, // Filter posts by user ID
+        { userImage: s3Uri }
+      );
+      await Comment.updateMany(
+        { author: req.user }, // Filter posts by user ID
+        { imageLink: s3Uri }
+      );
+      await bIsAdminPresent.save();
+
+      //   const data = await s3.upload(params).promise();
+      //   console.log("url after upload", data.Location);
+      res.json({ url: s3Uri });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to upload image" });
+    }
+  }
+);
 router.post(
   "/updateNotification",
   detokenizeAdmin,
@@ -145,17 +211,17 @@ const monthlySwotTask = corn.schedule("* * * 1-12 *", async (params: any) => {
   console.log("subscribedUserArray", subscribedUserArray);
   console.log("monthly schedular called");
 
-  sendEmail(
-    subscribedUserArray[0].emails,
-    "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
-    getSWOTAnalysisTemp()
-  );
+  //   sendEmail(
+  //     subscribedUserArray[0].emails,
+  //     "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
+  //     getSWOTAnalysisTemp()
+  //   );
 
   // await sendEmail();
 });
 // };
 
-monthlySwotTask.start();
-weeklyReminderTask.start();
+// monthlySwotTask.start();
+// weeklyReminderTask.start();
 
 export default router;

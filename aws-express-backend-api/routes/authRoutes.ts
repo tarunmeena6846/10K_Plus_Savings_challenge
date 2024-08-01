@@ -351,18 +351,6 @@ router.post(
       if (newPassword) {
         bIsAdminPresent.password = newPassword;
       }
-
-      // if (imageUrl) {
-      //   bIsAdminPresent.imageUrl = imageUrl;
-      //   await Post.updateMany(
-      //     { author: req.user }, // Filter posts by user ID
-      //     { userImage: imageUrl }
-      //   );
-      //   await Comment.updateMany(
-      //     { author: req.user }, // Filter posts by user ID
-      //     { imageLink: imageUrl }
-      //   );
-      // }
       // Save the updated admin
       await bIsAdminPresent.save();
       return res

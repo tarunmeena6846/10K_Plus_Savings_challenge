@@ -5,6 +5,7 @@ import { sendEmail } from "../emails";
 import { AdminModel, NotificationModel } from "../models/admin";
 import { eventNotificationEmail } from "../emails/eventNotification";
 import corn from "node-cron";
+
 const router: Router = express.Router();
 
 // router.post(

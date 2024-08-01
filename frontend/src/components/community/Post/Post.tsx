@@ -175,7 +175,7 @@ const Post: React.FC<PostType> = ({
           {/* {userProfile} */}
           <img
             className="w-12 h-12 rounded-full mr-2"
-            src={`/${userProfile}`}
+            src={userProfile}
             alt="Profile"
           />
 

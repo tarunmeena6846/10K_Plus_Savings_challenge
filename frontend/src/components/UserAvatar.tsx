@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Avatar, Dropdown, Modal } from "flowbite-react";
+import { useEffect, useRef, useState } from "react";
+import { Dropdown, Modal } from "flowbite-react";
+import Avatar from "@mui/material/Avatar";
 import { useRecoilState } from "recoil";
 import { userState } from "./store/atoms/user";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +15,50 @@ import Checkbox from "@mui/material/Checkbox";
 
 export default function UserAvatar() {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  const [showImageModal, setShowImageModal] = useState(false);
+  const [imageUrl, setImageUrl] = useState(currentUserState.imageUrl || "");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showUploadButton, setShowUploadButton] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const fileInputRef = useRef(null);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl: string = reader.result;
+        setCurrentUserState((prev) => ({
+          ...prev,
+          imageUrl: imageUrl,
+        }));
+        setIsEditing(true); // Reset isEditing after handling image change
+        // Clear the file input value to allow selecting the same file again
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  useEffect(() => {
+    if (isEditing) {
+      handleClick();
+    }
+  }, [isEditing]);
+
   const [selectedNotifications, setSelectedNotifications] = useState({
     adminPost: true,
     groupPost: true,
@@ -24,15 +66,52 @@ export default function UserAvatar() {
     monthlySwot: true,
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const navigate = useNavigate();
+
+  const handleChange = (event) => {
     setSelectedNotifications({
       ...selectedNotifications,
       [event.target.name]: event.target.checked,
     });
   };
 
+  const onFileUpload = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("avatar", selectedFile);
+    console.log(formData);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/notification/upload-user-profile`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      const data = await response.json();
+      setImageUrl(data.url);
+      console.log(data.url);
+      setCurrentUserState((prev) => ({
+        ...prev,
+        imageUrl: data.url,
+      }));
+      setShowUploadButton(false); // Hide the upload button after successful upload
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  console.log(currentUserState.imageUrl);
   const handleSaveNotification = async () => {
-    // alert("I am gete");
     console.log(selectedNotifications);
 
     const response = await fetch(
@@ -56,26 +135,8 @@ export default function UserAvatar() {
       setShowNotificationSettingModal(false);
     }
   };
-  const { adminPost, groupPost, taskListReminder, monthlySwot } =
-    selectedNotifications;
 
-  const [showAccountSettingsModal, setShowAccountSettingsModal] =
-    useState(false);
-  const [showNotificationSettingModal, setShowNotificationSettingModal] =
-    useState(false);
-
-  const [selectedImage, setSelectedImage] = useState(null);
-  const navigate = useNavigate();
-  console.log(currentUserState);
-  // Function to handle the selection of an image
-  const handleImageSelect = (image) => {
-    console.log(image);
-    setSelectedImage(image);
-  };
-
-  // Function to handle setting the profile image
-  const handleSetProfileImage = async (type: string) => {
-    console.log(selectedImage);
+  const handleSetProfileImage = async (type) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/auth/change-user_details`,
@@ -86,8 +147,6 @@ export default function UserAvatar() {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
           body: JSON.stringify({
-            // username: currentUserState.userEmail,
-            // imageUrl: type === "profile picture" ? selectedImage : undefined,
             newPassword: type === "password" ? confirmPassword : undefined,
           }),
         }
@@ -99,19 +158,21 @@ export default function UserAvatar() {
       response.json().then((data) => {
         console.log(data);
       });
-      // Update the avatar image URL in the state
-      setCurrentUserState((prev: any) => ({
+      setCurrentUserState((prev) => ({
         ...prev,
-        imageUrl: selectedImage,
+        imageUrl: imageUrl,
       }));
-
-      // Close the image modal
-      setShowImageModal(false);
     } catch (error) {
       console.error("Error updating user details:", error);
-      // Handle error
     }
   };
+
+  const { adminPost, groupPost, taskListReminder, monthlySwot } =
+    selectedNotifications;
+  const [showAccountSettingsModal, setShowAccountSettingsModal] =
+    useState(false);
+  const [showNotificationSettingModal, setShowNotificationSettingModal] =
+    useState(false);
 
   return (
     <>
@@ -120,11 +181,13 @@ export default function UserAvatar() {
           <div className="relative">
             <Avatar
               alt="User settings"
-              img={currentUserState.imageUrl || selectedImage || ""}
-              className="pt-5 pl-10 cursor-pointer"
-              size="lg"
-              rounded
-              onClick={() => setShowImageModal(true)} // Open image modal on click
+              src={currentUserState.imageUrl}
+              style={{
+                width: "80px",
+                height: "80px",
+                margin: "20px",
+                marginLeft: "60px",
+              }}
             />
           </div>
         }
@@ -133,8 +196,6 @@ export default function UserAvatar() {
         <Dropdown.Header>
           <span className="block text-sm">{currentUserState.userEmail}</span>
         </Dropdown.Header>
-        {/* <Dropdown.Divider />
-        <Dropdown.Divider /> */}
         <Dropdown.Item onClick={() => setShowAccountSettingsModal(true)}>
           Account Setting
         </Dropdown.Item>
@@ -143,7 +204,6 @@ export default function UserAvatar() {
         </Dropdown.Item>
         <Dropdown.Item
           onClick={() => {
-            console.log("logout clicked");
             localStorage.removeItem("token");
             setCurrentUserState({
               userEmail: "",
@@ -159,77 +219,54 @@ export default function UserAvatar() {
           Sign out
         </Dropdown.Item>
       </Dropdown>
-      {/* Image Modal */}
-      {/* <Modal
-        show={showImageModal}
-        onClose={() => setShowImageModal(false)}
-        className="w-96" // Adjust the width as per your requirement
-      >
-        <Modal.Body>
-          <h2 className="text-lg font-bold mb-4">Choose Profile Image</h2>
-
-          <div className="grid grid-cols-3 gap-4">
-            {Array.from({ length: 12 }).map((_, index) => (
-              <img
-                key={index}
-                src={`./user${index + 1}.svg`}
-                alt={`Image ${index + 1}`}
-                onClick={() => handleImageSelect(`./user${index + 1}.svg`)}
-              />
-            ))}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={() => handleSetProfileImage("profile picture")}
-            className="mr-2"
-          >
-            Set Profile Image
-          </Button>
-          <Button onClick={() => setShowImageModal(false)}>Cancel</Button>
-        </Modal.Footer>
-      </Modal> */}
-
-      {/* Account Settings Modal */}
       <Modal
         show={showAccountSettingsModal}
         onClose={() => setShowAccountSettingsModal(false)}
-        className="w-96" // Adjust the width as per your requirement
+        className="w-96"
       >
-        <Modal.Body>
+        <Modal.Body className="flex flex-col items-center">
           <h2 className="text-lg font-bold mb-4">Account Settings</h2>
           <Avatar
-            alt="User settings"
-            img={currentUserState.imageUrl || selectedImage || ""}
-            className="mx-auto p-2"
-            size="lg"
-            rounded
+            alt="User Avatar"
+            src={currentUserState.imageUrl}
+            style={{
+              width: "80px",
+              height: "80px",
+              cursor: "pointer",
+              marginBottom: "20px",
+            }}
+            onClick={handleClick}
           />
+
+          <input
+            accept="image/*"
+            id="avatar-upload"
+            type="file"
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+            ref={fileInputRef}
+          />
+          {isEditing && <Button onClick={onFileUpload}>Upload Image</Button>}
           <TextField
             label="Email"
             variant="outlined"
             value={currentUserState.userEmail}
             fullWidth
             disabled
-            // className=""
           />
           <input
-            className="border rounded w-full my-2 pt-3 pb-3 pl-3" // Add margin to the top and bottom
+            className="border rounded w-full my-2 pt-3 pb-3 pl-3"
             type="password"
             placeholder="New Password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            // fullWidth
           />
           <input
-            // label="Confirm Password"
-            // variant="outlined"
             placeholder="Confirm Password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            // fullWidth
-            className="border rounded w-full my-2 pt-3 pb-3 pl-3" // Add margin to the top and bottom
+            className="border rounded w-full my-2 pt-3 pb-3 pl-3"
           />
         </Modal.Body>
         <Modal.Footer>
@@ -244,7 +281,6 @@ export default function UserAvatar() {
           </Button>
         </Modal.Footer>
       </Modal>
-      {/* Account Settings Modal */}
       <Modal
         show={showNotificationSettingModal}
         onClose={() => setShowNotificationSettingModal(false)}

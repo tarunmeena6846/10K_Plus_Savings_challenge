@@ -245,7 +245,7 @@ const CommentDetails = () => {
           <div className="flex flex-row gap-2">
             <img
               className="w-12 h-12 rounded-full mr-2"
-              src={comment.imageLink.substring(1)}
+              src={comment.imageLink}
               // src="target.png"
               alt="Profile"
             />
