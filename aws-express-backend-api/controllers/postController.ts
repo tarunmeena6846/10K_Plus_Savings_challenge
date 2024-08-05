@@ -426,19 +426,21 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
       userImage: imageUrl,
     });
     await post.save();
-    let tagmodel = await TagModel.findOne({ tag: tag });
+    if (tag != "") {
+      let tagmodel = await TagModel.findOne({ tag: tag });
 
-    if (!tagmodel) {
-      tagmodel = new TagModel({
-        tag: tag,
-        posts: [],
-      });
+      if (!tagmodel) {
+        tagmodel = new TagModel({
+          tag: tag,
+          posts: [],
+        });
+      }
+      console.log("post_id in create", post._id);
+      tagmodel.posts.push(post._id as mongoose.Types.ObjectId);
+
+      await tagmodel?.save();
+      console.log("tagid", tagmodel);
     }
-    console.log("post_id in create", post._id);
-    tagmodel.posts.push(post._id as mongoose.Types.ObjectId);
-
-    await tagmodel?.save();
-    console.log("tagid", tagmodel);
     // Update Admin schema with the new post
     const adminUpdate = isPublished
       ? { $push: { ["myPosts"]: post._id } }

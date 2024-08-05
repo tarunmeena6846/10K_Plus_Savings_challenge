@@ -9,7 +9,7 @@ export interface PostSchema extends Document {
   createdAt: Date;
   comments: mongoose.Types.ObjectId[] | CommentDocument[];
   isPublished: Boolean;
-  tag: string;
+  tag?: string;
   userImage?: string;
   status: string;
   _id: mongoose.Types.ObjectId; // Add this line
@@ -38,7 +38,7 @@ const postSchema = new mongoose.Schema<PostSchema>({
     default: Date.now,
   },
   isPublished: { type: Boolean, default: true },
-  tag: { type: String, required: true },
+  tag: { type: String, default: "" },
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
