@@ -14,6 +14,32 @@ import countAtom from "../store/atoms/quickLinkCount";
 import HandleCreatePost from "./CreatePost";
 import { currentEventsState } from "../store/atoms/events";
 import { Tooltip } from "../ToolTip";
+export const fetchTags = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/post/tags`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response is not ok");
+    }
+
+    const data = await response.json();
+    console.log("tags in db", data.data);
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching tags:", error);
+    throw error;
+  }
+};
+
 const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
@@ -31,27 +57,18 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
     { name: "My Drafts", count: count.draftCount },
   ];
   useEffect(() => {
-    console.log(count, "Bearer " + localStorage.getItem("token"));
-
-    fetch(`${import.meta.env.VITE_SERVER_URL}/post/tags`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network reponse is not ok");
-        }
-        response.json().then((data) => {
-          console.log("tags in db", data.data);
-          setPopularTags(data.data);
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const fetchTagsFromDB = async () => {
+      console.log("here");
+      try {
+        const response = await fetchTags();
+        console.log(response);
+        console.log(response);
+        setPopularTags(response);
+      } catch (error) {
+        console.error("Error fetching tags", error);
+      }
+    };
+    fetchTagsFromDB();
   }, []);
 
   const handleOnClick = (link: string) => {

@@ -10,7 +10,9 @@ export const NewPostWrapper = () => {
   const [postContent, setPostContent] = useState("");
   const currentUserState = useRecoilValue(userState);
   const navigate = useNavigate();
-  const handleCancel = () => {};
+  const handleCancel = () => {
+    navigate("/community");
+  };
 
   const [tag, setTag] = useState("");
   const handleSubmit = (isPublished: Boolean) => {

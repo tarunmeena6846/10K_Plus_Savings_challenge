@@ -20,7 +20,7 @@ const HandleCreatePost = ({
   };
 
   return (
-    <div className="flex flex-col h-full items-center justify-center m-20">
+    <div className="flex flex-col h-full items-center justify-center m-20 mb-10">
       <div className="w-full max-w-3xl p-4">
         <div>
           <h2 className="text-3xl">New Discussion</h2>
@@ -37,6 +37,13 @@ const HandleCreatePost = ({
           />
         </div>
         <div className="mt-4 mb-4">
+          <label htmlFor="discussion-title" className="block font-semibold">
+            Tags
+          </label>
+          <TextFieldWithDropdown setTags={setTag} tag={tag} />
+          {/* <motion.button>Show tags</motion.button> */}
+        </div>
+        <div className="mt-4 mb-4">
           <label htmlFor="discussion-message" className="block font-semibold">
             Discussion Message
           </label>
@@ -46,13 +53,7 @@ const HandleCreatePost = ({
             content={content}
           />
         </div>
-        <div className="mt-4 mb-4">
-          <label htmlFor="discussion-title" className="block font-semibold">
-            Tags
-          </label>
-          <TextFieldWithDropdown setTags={setTag} tag={tag} />
-          <motion.button>Show tags</motion.button>
-        </div>
+
         <div>
           <Button onClick={() => handleCreatePost(false)}>Save as Draft</Button>
           <Button onClick={() => handleCreatePost(true)}>
