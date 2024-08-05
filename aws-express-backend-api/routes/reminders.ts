@@ -59,6 +59,7 @@ router.post(
       if (!bIsAdminPresent) {
         return res.status(404).json({ error: "Admin not found" });
       }
+
       bIsAdminPresent.imageUrl = s3Uri;
       await Post.updateMany(
         { author: req.user }, // Filter posts by user ID
@@ -72,6 +73,7 @@ router.post(
 
       //   const data = await s3.upload(params).promise();
       //   console.log("url after upload", data.Location);
+      console.log("url of profile image", s3Uri);
       res.json({ url: s3Uri });
     } catch (error) {
       res.status(500).json({ error: "Failed to upload image" });

@@ -28,8 +28,12 @@ export default function UserAvatar() {
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
+
+    const newFileName = `${currentUserState.userEmail}${Date.now()}`;
+    const renamedFile = new File([file], newFileName, { type: file.type });
+    console.log(renamedFile);
     if (file) {
-      setSelectedFile(file);
+      setSelectedFile(renamedFile);
       const reader = new FileReader();
       reader.onloadend = () => {
         const imageUrl: string = reader.result;
@@ -43,7 +47,7 @@ export default function UserAvatar() {
           fileInputRef.current.value = "";
         }
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(renamedFile);
     }
   };
 
@@ -105,6 +109,7 @@ export default function UserAvatar() {
         imageUrl: data.url,
       }));
       setShowUploadButton(false); // Hide the upload button after successful upload
+      setShowAccountSettingsModal(false);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
