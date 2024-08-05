@@ -4,7 +4,7 @@ import EventModal from "../models/eventSchema";
 import { sendEmail } from "../emails";
 import { AdminModel, NotificationModel } from "../models/admin";
 import { eventNotificationEmail } from "../emails/eventNotification";
-import corn from "node-cron";
+import cron from "node-cron";
 import { weeklyPortalReminder } from "../emails/weeklyPortalUpdateReminder";
 import mongoose from "mongoose";
 import { getAdminPostNotificationTemp } from "../emails/adminPost";
@@ -155,7 +155,7 @@ export const sendAdminPostNotification = async (
 
 // const scheduleWeeklyReminderEmail = async () => {
 console.log("schedular called");
-const weeklyReminderTask = corn.schedule("* * * * 0", async (params: any) => {
+const weeklyReminderTask = cron.schedule("* * * * 0", async (params: any) => {
   const subscribedUserArray = await NotificationModel.aggregate([
     {
       $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true
@@ -189,7 +189,7 @@ const weeklyReminderTask = corn.schedule("* * * * 0", async (params: any) => {
 
 // const scheduleMonthlySWOTEmail = async () => {
 console.log("schedular called");
-const monthlySwotTask = corn.schedule("* * * 1-12 *", async (params: any) => {
+const monthlySwotTask = cron.schedule("0 0 1 * *", async (params: any) => {
   const subscribedUserArray = await NotificationModel.aggregate([
     {
       $match: { "type.monthlySwot": true }, // Match documents where weeklyReminder is true
@@ -211,17 +211,17 @@ const monthlySwotTask = corn.schedule("* * * 1-12 *", async (params: any) => {
   console.log("subscribedUserArray", subscribedUserArray);
   console.log("monthly schedular called");
 
-  //   sendEmail(
-  //     subscribedUserArray[0].emails,
-  //     "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
-  //     getSWOTAnalysisTemp()
-  //   );
+  sendEmail(
+    subscribedUserArray[0].emails,
+    "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
+    getSWOTAnalysisTemp()
+  );
 
   // await sendEmail();
 });
 // };
 
-// monthlySwotTask.start();
-// weeklyReminderTask.start();
+monthlySwotTask.start();
+weeklyReminderTask.start();
 
 export default router;
