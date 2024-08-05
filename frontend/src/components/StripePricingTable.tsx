@@ -11,7 +11,7 @@ import {
   subscriptionState,
   userState,
 } from "./store/atoms/user";
-import ManageBillingForm from "../stripe/ManageBillingForm";
+
 import redirectToStripeCheckout from "../stripe/StripeCheckout";
 import manageBillingInformation from "../stripe/BillingInformation";
 

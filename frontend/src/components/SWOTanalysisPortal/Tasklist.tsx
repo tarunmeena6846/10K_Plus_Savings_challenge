@@ -48,7 +48,7 @@ const TaskList = ({ setShowPopup }) => {
         console.error("Error saving tasklist");
       });
   };
-  
+
   const handleAddTask = () => {
     console.log(newTask);
     if (newTask === undefined) {
@@ -112,7 +112,7 @@ const TaskList = ({ setShowPopup }) => {
               className=""
               src={"calender1.svg"}
               onClick={() => {
-                setOnCalendarClick(true);
+                setOnCalendarClick(!onCalendarClick);
               }}
             />
           </motion.button>
@@ -151,7 +151,10 @@ const TaskList = ({ setShowPopup }) => {
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5 }}
             >
-              <span>{task.title}</span>
+              <div className="flex-1 overflow-hidden">
+                <div className="truncate">{task.title}</div>
+              </div>
+              <div className="text-red-600"> {task.dueDate}</div>
               <motion.button
                 className="text-red-500 hover:text-red-600"
                 onClick={() => handleRemoveTask(index)}
@@ -162,19 +165,14 @@ const TaskList = ({ setShowPopup }) => {
           ))}
         </ul>
         <div className="mt-2 flex justify-between">
-          <div className="pt-2">
+          {/* <div className="pt-2">
             <motion.label
               className="checkbox-container mr-3"
               whileHover={{ scale: 1.1 }}
               // whileTap={{ scale: 0.9 }}
             >
               <CheckBox isChecked={isChecked} setIsChecked={setIsChecked} />
-              {/* <CheckBox onChange={toggleCheckbox}></CheckBox> */}
-              {/* <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={toggleCheckbox}
-              /> */}
+
               <motion.span
                 className="checkmark"
                 variants={{
@@ -187,7 +185,7 @@ const TaskList = ({ setShowPopup }) => {
               />
             </motion.label>
             Set Remider for Accomplishing the Tasks.
-          </div>
+          </div> */}
           <div className="flex ">
             <motion.button
               className="bg-black text-white rounded-3xl p-2"

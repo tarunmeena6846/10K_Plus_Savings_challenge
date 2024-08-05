@@ -6,7 +6,7 @@ import {
   userState,
 } from "../store/atoms/user";
 import { useRecoilState } from "recoil";
-import ManageBillingForm from "../../stripe/ManageBillingForm";
+// import ManageBillingForm from "../../stripe/ManageBillingForm";
 import Header from "./Header";
 import InfinitePostScroll, { PostType } from "./InfinitePostScroll";
 import SideBar, { tagDataType } from "./SideBar";

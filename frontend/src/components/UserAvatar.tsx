@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "flowbite-react";
 import Avatar from "@mui/material/Avatar";
 import { useRecoilState } from "recoil";
-import { userState } from "./store/atoms/user";
+import { subscriptionState, userState } from "./store/atoms/user";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -12,6 +12,9 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormHelperText from "@mui/material/FormHelperText";
 import Checkbox from "@mui/material/Checkbox";
+// import { manageBillingForm } from "../stripe/ManageBillingForm";
+import handleBuyClick from "../stripe/SwotCheckout";
+import manageBillingInformation from "../stripe/BillingInformation";
 
 export default function UserAvatar() {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
@@ -19,6 +22,7 @@ export default function UserAvatar() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showUploadButton, setShowUploadButton] = useState(false);
+  const [subscription, setSubscription] = useRecoilState(subscriptionState);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -207,6 +211,19 @@ export default function UserAvatar() {
         <Dropdown.Item onClick={() => setShowNotificationSettingModal(true)}>
           Notification Setting
         </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => handleBuyClick(currentUserState.userEmail)}
+        >
+          Book SWOT Session
+        </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() =>
+            manageBillingInformation(subscription.stripeCustomerId)
+          }
+        >
+          Manage subscription
+        </Dropdown.Item>
+        {/* <ManageBillingForm /> */}
         <Dropdown.Item
           onClick={() => {
             localStorage.removeItem("token");

@@ -5,7 +5,7 @@ import {
   userState,
 } from "../store/atoms/user";
 import { useRecoilState } from "recoil";
-import ManageBillingForm from "../../stripe/ManageBillingForm";
+// import ManageBillingForm from "../../stripe/ManageBillingForm";
 import { motion } from "framer-motion";
 import UserAvatar from "../UserAvatar";
 import TriggerSearch from "./TriggerSearch";

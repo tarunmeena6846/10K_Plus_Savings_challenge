@@ -127,7 +127,7 @@ const SWOTdashboard = () => {
       >
         {!showPopup && (
           <div>
-            +tasklist
+            +Task list
             <img src="./tasklist.svg" />
           </div>
         )}
@@ -246,7 +246,7 @@ const SWOTdashboard = () => {
           </motion.button>
         </div>
       </form>
-      <div className="pt-10">
+      {/* <div className="pt-10">
         <motion.input
           type="text"
           onChange={(e) => {
@@ -264,7 +264,7 @@ const SWOTdashboard = () => {
         >
           Subscribe
         </motion.button>
-      </div>
+      </div> */}
     </div>
   );
 };

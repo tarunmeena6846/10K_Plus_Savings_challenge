@@ -28,7 +28,7 @@ import { motion } from "framer-motion";
 import { Resend } from "resend";
 import WelcomeEmail from "./utils/emails/Welcome";
 import { renderToString } from "react-dom/server"; // Import ReactDOMServer
-import ManageBillingForm from "./stripe/ManageBillingForm";
+// import ManageBillingForm from "./stripe/ManageBillingForm";
 import Button from "./components/Button";
 import handleBuyClick from "./stripe/SwotCheckout";
 import countAtom from "./components/store/atoms/quickLinkCount";
@@ -343,13 +343,13 @@ function Appbar() {
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button onClick={handleLogoutConfirm}>Logout</Button>
                 <Button onClick={handleLogoutCancel}>Cancel</Button>
-                <Button
+                {/* <Button
                   onClick={() => handleBuyClick(currentUserState.userEmail)}
                 >
                   Book SWOT Session
                 </Button>
 
-                <ManageBillingForm></ManageBillingForm>
+                <ManageBillingForm></ManageBillingForm> */}
               </Box>
             </Box>
           </Modal>
