@@ -81,6 +81,28 @@ router.post(
   }
 );
 router.post(
+  "/disabledashboardVideoPopup",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const userFromDB = await AdminModel.findOneAndUpdate(
+        { email: req.user },
+        {
+          videoModalSettings: { dashboardVideoModal: false },
+        }
+      );
+
+      if (userFromDB) {
+        return res.status(200).json({ success: true });
+      }
+
+      res.status(400).json({ success: false });
+    } catch (error) {
+      res.status(500).json({ success: false });
+    }
+  }
+);
+router.post(
   "/updateNotification",
   detokenizeAdmin,
   async (req: AuthenticatedRequest, res: Response) => {

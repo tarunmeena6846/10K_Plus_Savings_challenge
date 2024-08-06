@@ -5,6 +5,9 @@ export interface EmailReminder extends Document {
   // lastNotifiedDate?: Date;
   reminderEnabled: Boolean;
 }
+export interface VideoModalTypes {
+  dashboardVideoModal: Boolean;
+}
 export interface Admin extends Document {
   username: string;
   email: string;
@@ -26,6 +29,7 @@ export interface Admin extends Document {
   swotTasksDetails: Schema.Types.ObjectId;
   myPosts: Schema.Types.ObjectId[];
   myDrafts: Schema.Types.ObjectId[];
+  videoModalSettings: VideoModalTypes;
   // isSubscribedForReminder?: Boolean;
 }
 
@@ -47,6 +51,7 @@ const adminSchema = new Schema<Admin>({
   isAdmin: { type: Boolean, default: false },
   resetPasswordToken: { type: String },
   resetPasswordTokenUsed: { type: Boolean },
+  videoModalSettings: { dashboardVideoModal: { type: Boolean, default: true } },
   imageUrl: String,
   stripePlanId: String,
   stripeUserId: String,

@@ -12,36 +12,36 @@ const SWOTdashboard = () => {
   const [threats, setThreats] = useState([""]);
   const [showPopup, setShowPopup] = useState(false);
   const [email, setEmail] = useState("");
-  const handleSubscribeForReminders = () => {
-    if (!validateEmail(email)) {
-      alert("Invalid email");
-      return;
-    }
-    fetch(`${import.meta.env.VITE_SERVER_URL}/swot/set-reminder`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({ email: email }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response is not ok");
-        }
+  // const handleSubscribeForReminders = () => {
+  //   if (!validateEmail(email)) {
+  //     alert("Invalid email");
+  //     return;
+  //   }
+  //   fetch(`${import.meta.env.VITE_SERVER_URL}/swot/set-reminder`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       authorization: "Bearer " + localStorage.getItem("token"),
+  //     },
+  //     body: JSON.stringify({ email: email }),
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Network response is not ok");
+  //       }
 
-        response.json().then((data) => {
-          if (data.success) {
-            alert("Subscribed to weekly reminders");
-          } else {
-            alert("No tasks added");
-          }
-        });
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
+  //       response.json().then((data) => {
+  //         if (data.success) {
+  //           alert("Subscribed to weekly reminders");
+  //         } else {
+  //           alert("No tasks added");
+  //         }
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       alert(error);
+  //     });
+  // };
   const handleStrengthsChange = (index, e) => {
     const newStrengths = [...strengths];
     newStrengths[index] = e.target.value;

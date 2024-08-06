@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Modal, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
 import MonthlyChart from "./MonthlyChart";
 import MonthlyBarGraph from "./MonthlyBarGraph";
-import { userState } from "./store/atoms/user";
+import { userState, videoModalState } from "./store/atoms/user";
 import UserAvatar from "./UserAvatar"; // Adjust the path based on your project structure
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -46,7 +46,11 @@ const Dashboard = () => {
     useRecoilState(monthlyExpenseState);
   const [yearlyIncome, setYearlyIncome] = useState(0);
   const [yearlyExpense, setYearlyExpense] = useState(0);
-  const [videoModalOpen, setVideoModalOpen] = useState(false); // Video modal state variable
+  // const defaultVideoModalState = useRecoilValue(videoModalState);
+
+  // const [videoModalOpen, setVideoModalOpen] = useState(true); // Video modal state variable
+  const [videoModalOpen, setVideoModalOpen] = useRecoilState(videoModalState);
+  console.log(videoModalOpen);
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [myWhyModalOpen, setWhyModalOpen] = useState(false);
   const [myWhyData, setMyWhyData] = useState("");
@@ -327,13 +331,36 @@ const Dashboard = () => {
   ]);
 
   const handleVideoModalClose = () => {
-    setVideoModalOpen(false);
+    setVideoModalOpen({ dashboardVideoModal: false });
     setShowSecondModal(true); // Show the second modal when the first modal is closed
   };
-  const handleDIYClick = () => {
-    setShowSecondModal(false); // Show the second modal when the first modal is closed
+  const handleDisablePopup = async () => {
+    console.log("at disable popup");
+    const response = await fetch(
+      `${
+        import.meta.env.VITE_SERVER_URL
+      }/notification/disabledashboardVideoPopup`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
 
-    // Handle DIY button click
+    if (!response.ok) {
+      throw new Error("Network response is not ok");
+    }
+
+    const data = await response.json();
+    console.log(data);
+    if (data.success) {
+      setVideoModalOpen({ dashboardVideoModal: false });
+      setShowSecondModal(false);
+      alert("Popup disabled");
+    } else {
+      alert("Error while disabling");
+    }
   };
 
   const handleSaveMyWhy = async () => {
@@ -366,6 +393,7 @@ const Dashboard = () => {
       console.error("Error while saving the myWhy data", error);
     }
   };
+
   const handleBuyClick = async () => {
     // Handle Buy button click
     console.log("before checkout");
@@ -389,7 +417,39 @@ const Dashboard = () => {
   return (
     <div>
       <SidebarLayout>
-        <VideoModal isOpen={videoModalOpen} onClose={handleVideoModalClose} />
+        {videoModalOpen.dashboardVideoModal && (
+          <VideoModal
+            isOpen={videoModalOpen.dashboardVideoModal}
+            onClose={handleVideoModalClose}
+          />
+        )}
+        {showSecondModal && (
+          <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-75">
+            <div className="relative bg-white rounded-lg shadow-lg p-4">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold mb-4">
+                  Disable video popup?
+                </h2>
+
+                <button
+                  onClick={handleDisablePopup}
+                  className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setShowSecondModal(false)}
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                >
+                  No
+                </button>
+                <h2 className="text-sm p-3 text-gray-600">
+                  You won't be able to enable it again once disabled
+                </h2>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
           <div
             className="p-6 rounded-2xl"

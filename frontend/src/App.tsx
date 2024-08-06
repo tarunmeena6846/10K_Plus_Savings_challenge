@@ -36,6 +36,7 @@ import {
   SubscriptionData,
   subscriptionState,
   userState,
+  videoModalState,
 } from "./components/store/atoms/user";
 import countAtom from "./components/store/atoms/quickLinkCount";
 import { NewPostWrapper } from "./components/community/NewPostWrapper";
@@ -121,6 +122,7 @@ function App() {
 export function InitUser() {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
+  const [videoModalOpen, setVideoModalOpen] = useRecoilState(videoModalState);
   const navigate = useNavigate();
 
   const [subscription, setSubscripton] =
@@ -160,7 +162,10 @@ export function InitUser() {
               data.userData.myDrafts?.length ?? 0,
               data.userData.bookmarkPosts?.length ?? 0
             );
-
+            setVideoModalOpen({
+              dashboardVideoModal:
+                data.userData.videoModalSettings.dashboardVideoModal,
+            });
             // console.log(
             //   "cunt at appbar",
             //   data.userData.myPosts.length,

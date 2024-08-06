@@ -43,6 +43,8 @@ function Appbar() {
   const [selectedDate, setSelectedDate] = useRecoilState(dateState);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
+  // const [videoModalOpen, setVideoModalOpen] = useRecoilState(videoModalState);
+
   const adminItems = [{ label: "Admin Console", route: "/adminconsole" }];
 
   const swotItems = [{ label: "Tasklist", route: "/swotportal/tasklist" }];
@@ -107,6 +109,7 @@ function Appbar() {
       year: selectedDate.year,
       month: new Date().toLocaleString("en-US", { month: "long" }),
     });
+
     navigate("/");
   };
 

@@ -27,6 +27,12 @@ export const subscriptionState = atom({
   },
 });
 
+export const videoModalState = atom({
+  key: "videoModalState",
+  default: {
+    dashboardVideoModal: true,
+  },
+});
 // actionsState.js
 export const actionsState = atom({
   key: "actionsState",
