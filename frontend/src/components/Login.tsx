@@ -97,7 +97,7 @@ function Login() {
           <br />
           {msg && <div className="message">{msg}</div>}
           <Button variant="contained" color="primary" onClick={handleRegister}>
-            Login
+            {msg === "" ? "Login" : "Resend Email"}
           </Button>
         </Card>
       </div>

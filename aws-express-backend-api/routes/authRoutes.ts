@@ -63,7 +63,7 @@ router.post("/signup", async (req: Request, res: Response) => {
         console.log(newAdmin._id);
         console.log("token", token);
         // await corn.schedule("", async (params: any) => {});
-        await sendEmail(username, "Email Verification", getWelcomeEmail(token));
+        await sendEmail(email, "Email Verification", getWelcomeEmail(token));
         res.status(201).send({
           message: "An Email sent to your account please verify",
           success: true,
@@ -95,7 +95,7 @@ router.get("/verify-email/:token", async (req: Request, res: Response) => {
       const userInfo = jwt.verify(req.params.token, secretKey) as JwtPayload;
       console.log("tarun id", userInfo);
       if (!userInfo) return res.status(400).send({ message: "Invalid token" });
-      const user = await AdminModel.findOne({ username: userInfo.username });
+      const user = await AdminModel.findOne({ email: userInfo.email });
       if (!user) return res.status(400).send({ message: "Invalid link" });
       console.log("user ", user);
 
@@ -286,7 +286,7 @@ router.post("/login", async (req: Request, res: Response) => {
       });
     } else {
       sendEmail(
-        req.headers.username as string,
+        bIsAdminPresent.email,
         "Email Verification",
         getWelcomeEmail(token)
       );

@@ -53,7 +53,7 @@ const EmailVerify = () => {
   return (
     <div>
       {validUrl ? (
-        <div className="">
+        <div className="flex flex-col justify-center items-center mt-20">
           <img
             src="/success.png"
             alt="success_img"
@@ -61,11 +61,15 @@ const EmailVerify = () => {
           />
           <h1>Email verified successfully</h1>
           <Link to="/login">
-            <button>Login</button>
+            <button>
+              Click <span className="text-blue-600">here</span> to Login
+            </button>
           </Link>
         </div>
       ) : (
-        <h1>404 Not Found</h1>
+        <div className="flex flex-col justify-center items-center mt-20">
+          <h1 className="text-red-600 text-2xl">404 Not Found</h1>
+        </div>
       )}
     </div>
   );

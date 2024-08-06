@@ -16,6 +16,7 @@ function Register() {
   const [secretePhrase, setSecretePhase] = useState("");
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [registrationError, setRegistrationError] = useState("");
+  const [verifyEmailPrompt, setVerifyEmailPrompt] = useState("");
 
   const navigate = useNavigate();
 
@@ -54,7 +55,7 @@ function Register() {
         resp.json().then((data) => {
           console.log("before router", data);
           if (data.success) {
-            setRegistrationError(data.message);
+            setVerifyEmailPrompt(data.message);
 
             console.log("email registered successfully", data);
           } else {
@@ -140,6 +141,14 @@ function Register() {
                 }}
                 style={{ marginBottom: "10px" }}
               />
+            )}
+            {verifyEmailPrompt && (
+              <div>
+                <div className="text-red-500 mb-2">{verifyEmailPrompt}</div>
+                {/* <button className="p-3 border rounded-xl mb-2 bg-blue-500 text-white">
+                  Resend email
+                </button> */}
+              </div>
             )}
             {registrationError && (
               <div className="text-red-500 mb-2">{registrationError}</div>
