@@ -154,151 +154,151 @@ const Dashboard = () => {
   };
   console.log("selectedDate at dashboard", selectedDate);
 
-  const handleSaveIncome = async () => {
-    // if (monthlyIncome === 0 || monthlyExpense === 0) {
-    //   alert("Invalid Income or Expenses");
-    //   return;
-    // }
-    console.log("save income is called", monthlyIncome, monthlyExpense);
+  // const handleSaveIncome = async () => {
+  //   // if (monthlyIncome === 0 || monthlyExpense === 0) {
+  //   //   alert("Invalid Income or Expenses");
+  //   //   return;
+  //   // }
+  //   console.log("save income is called", monthlyIncome, monthlyExpense);
 
-    try {
-      await fetch(`${import.meta.env.VITE_SERVER_URL}/data/save-item`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          monthlyExpense: monthlyExpense,
-          monthlyIncome: monthlyIncome,
-          year: selectedDate.year,
-          month: selectedDate.month,
-        }),
-      })
-        .then((resp) => {
-          if (!resp.ok) {
-            throw new Error("Network response is not ok");
-          }
-          resp.json().then((responseData) => {
-            console.log(
-              "response data at save item monthly income",
-              responseData
-            );
+  //   try {
+  //     await fetch(`${import.meta.env.VITE_SERVER_URL}/data/save-item`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: "Bearer " + localStorage.getItem("token"),
+  //       },
+  //       body: JSON.stringify({
+  //         monthlyExpense: monthlyExpense,
+  //         monthlyIncome: monthlyIncome,
+  //         year: selectedDate.year,
+  //         month: selectedDate.month,
+  //       }),
+  //     })
+  //       .then((resp) => {
+  //         if (!resp.ok) {
+  //           throw new Error("Network response is not ok");
+  //         }
+  //         resp.json().then((responseData) => {
+  //           console.log(
+  //             "response data at save item monthly income",
+  //             responseData
+  //           );
 
-            if (responseData.success) {
-              // setItems([]);
-              setCurrentUserState({
-                userEmail: currentUserState.userEmail,
-                isLoading: false,
-                imageUrl: currentUserState.imageUrl,
-                isVerified: currentUserState.isVerified,
-                myWhy: currentUserState.myWhy,
-                isAdmin: currentUserState.isAdmin,
-              });
-              setIncomeDialogOpen(false);
-              fetchData();
-            } else {
-              console.error("Error saving Income:", responseData.error);
-            }
-          });
-        })
-        .catch((error) => {
-          console.error("Error signing in email");
-          setIncomeDialogOpen(false);
-          navigate("/login");
-        });
-    } catch (error: any) {
-      setIncomeDialogOpen(false);
-      console.error("Error saving income:", error.message);
-      navigate("/dashboard");
-    }
-  };
-  const handleResetIncomeDialog = async () => {
-    try {
-      await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/data/reset-monthly-data`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            month: selectedDate.month,
-            year: selectedDate.year,
-          }),
-        }
-      )
-        .then((resp) => {
-          if (!resp.ok) {
-            throw new Error("Network response is not ok");
-          }
-          resp.json().then((responseData) => {
-            if (responseData.success) {
-              if (responseData.deleted) {
-                setIncomeDialogOpen(false);
-                fetchData();
-              } else {
-                setIncomeDialogOpen(false);
+  //           if (responseData.success) {
+  //             // setItems([]);
+  //             setCurrentUserState({
+  //               userEmail: currentUserState.userEmail,
+  //               isLoading: false,
+  //               imageUrl: currentUserState.imageUrl,
+  //               isVerified: currentUserState.isVerified,
+  //               myWhy: currentUserState.myWhy,
+  //               isAdmin: currentUserState.isAdmin,
+  //             });
+  //             setIncomeDialogOpen(false);
+  //             fetchData();
+  //           } else {
+  //             console.error("Error saving Income:", responseData.error);
+  //           }
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error signing in email");
+  //         setIncomeDialogOpen(false);
+  //         navigate("/login");
+  //       });
+  //   } catch (error: any) {
+  //     setIncomeDialogOpen(false);
+  //     console.error("Error saving income:", error.message);
+  //     navigate("/dashboard");
+  //   }
+  // };
+  // const handleResetIncomeDialog = async () => {
+  //   try {
+  //     await fetch(
+  //       `${import.meta.env.VITE_SERVER_URL}/data/reset-monthly-data`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: "Bearer " + localStorage.getItem("token"),
+  //         },
+  //         body: JSON.stringify({
+  //           month: selectedDate.month,
+  //           year: selectedDate.year,
+  //         }),
+  //       }
+  //     )
+  //       .then((resp) => {
+  //         if (!resp.ok) {
+  //           throw new Error("Network response is not ok");
+  //         }
+  //         resp.json().then((responseData) => {
+  //           if (responseData.success) {
+  //             if (responseData.deleted) {
+  //               setIncomeDialogOpen(false);
+  //               fetchData();
+  //             } else {
+  //               setIncomeDialogOpen(false);
 
-                alert("No data for the given Month and Year");
-              }
-            } else {
-              setIncomeDialogOpen(false);
+  //               alert("No data for the given Month and Year");
+  //             }
+  //           } else {
+  //             setIncomeDialogOpen(false);
 
-              console.error(
-                "Error resetting monthly data:",
-                responseData.error
-              );
-              navigate("/login");
-            }
-          });
-        })
-        .catch((error) => {
-          console.error("Error resetting monthly data:", error.message);
-          setIncomeDialogOpen(false);
-        });
-    } catch (error: any) {
-      console.error("Error resetting monthly data:", error.message);
-      setIncomeDialogOpen(false);
-    }
-    console.log("reset called");
-  };
-  const handleSaveSettingsDialog = async () => {
-    console.log("image link", currentUserState.imageUrl);
-    try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/auth/change-user_details`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            username: currentUserState.userEmail,
-            newPassword: userDetails.newPassword,
-            imageUrl: currentUserState.imageUrl,
-          }),
-        }
-      );
+  //             console.error(
+  //               "Error resetting monthly data:",
+  //               responseData.error
+  //             );
+  //             navigate("/login");
+  //           }
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error resetting monthly data:", error.message);
+  //         setIncomeDialogOpen(false);
+  //       });
+  //   } catch (error: any) {
+  //     console.error("Error resetting monthly data:", error.message);
+  //     setIncomeDialogOpen(false);
+  //   }
+  //   console.log("reset called");
+  // };
+  // const handleSaveSettingsDialog = async () => {
+  //   console.log("image link", currentUserState.imageUrl);
+  //   try {
+  //     const resp = await fetch(
+  //       `${import.meta.env.VITE_SERVER_URL}/auth/change-user_details`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: "Bearer " + localStorage.getItem("token"),
+  //         },
+  //         body: JSON.stringify({
+  //           username: currentUserState.userEmail,
+  //           newPassword: userDetails.newPassword,
+  //           imageUrl: currentUserState.imageUrl,
+  //         }),
+  //       }
+  //     );
 
-      if (!resp.ok) {
-        throw new Error("Network response is not ok");
-      }
-      const data = await resp.json();
-      if (data.success) {
-        console.log(data);
-        setSettingsDialogOpen(false);
-        // alert("Password Changed Successfully");
-      }
-    } catch (error) {
-      alert("Error Changing email");
-      setSettingsDialogOpen(false);
-      navigate("/login");
-      console.error("Error signing in email");
-    }
-  };
+  //     if (!resp.ok) {
+  //       throw new Error("Network response is not ok");
+  //     }
+  //     const data = await resp.json();
+  //     if (data.success) {
+  //       console.log(data);
+  //       setSettingsDialogOpen(false);
+  //       // alert("Password Changed Successfully");
+  //     }
+  //   } catch (error) {
+  //     alert("Error Changing email");
+  //     setSettingsDialogOpen(false);
+  //     navigate("/login");
+  //     console.error("Error signing in email");
+  //   }
+  // };
   useEffect(() => {
     const fetchDataAsync = async () => {
       const savingsData = await fetchData(

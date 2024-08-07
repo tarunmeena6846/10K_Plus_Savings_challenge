@@ -104,7 +104,7 @@ const TaskList = ({ setShowPopup }) => {
             type="text"
             className="w-3/4 py-2 px-3 mr-2 border border-gray-300 rounded"
             placeholder="Enter a new task"
-            value={newTask?.title}
+            value={newTask?.title as string}
             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
           />
           <motion.button className="py-2 px-3 mr-2">

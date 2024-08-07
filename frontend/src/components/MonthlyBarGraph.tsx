@@ -51,27 +51,27 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     },
   };
 
-  const data = {
+  const data: any = {
     labels: monthlyData.map((data) => data.month),
     datasets: [
       {
         label: "Target Saving",
         backgroundColor: "#76d6f3",
         // borderColor: "white",
-        data: monthlyData.map((data) => data.target),
+        data: monthlyData.map((data: any) => data.target),
         // borderRadius: 10,
       },
       {
         label: "Actual Saving",
         backgroundColor: "#f377e7",
         // borderColor: "white",
-        data: monthlyData.map((data) => data.actual),
+        data: monthlyData.map((data: any) => data.actual),
       },
       {
         label: "Current Saving",
         backgroundColor: "green",
         // borderColor: "white",
-        data: monthlyData.map((data) => data.current),
+        data: monthlyData.map((data: any) => data.current),
         // borderRadius: 10,
       },
     ],

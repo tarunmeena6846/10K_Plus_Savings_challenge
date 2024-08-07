@@ -20,13 +20,13 @@ import dotenv from "dotenv";
 import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
 dotenv.config();
-
+// console.log("aws access key", process.env.AWS_ACCESS_KEY);
 // Configure the AWS SDK
 const s3 = new S3Client({
   region: "us-east-1",
   credentials: {
-    accessKeyId: `${process.env.AWS_ACCESS_KEY_ID}`,
-    secretAccessKey: `${process.env.AWS_SECRET_ACCESS_KEY}`,
+    accessKeyId: `${process.env.AWS_ACCESS_KEY}`,
+    secretAccessKey: `${process.env.AWS_SECRET_KEY}`,
   },
 });
 

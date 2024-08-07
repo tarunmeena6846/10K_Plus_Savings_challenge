@@ -98,7 +98,7 @@ const SideBar = () => {
                 to={route.path}
                 key={index}
                 className="link"
-                activeClassName="active"
+                // activeClassName="active"
               >
                 <div className="icon">{route.icon}</div>
                 <AnimatePresence>

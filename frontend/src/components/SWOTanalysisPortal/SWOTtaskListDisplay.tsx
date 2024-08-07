@@ -80,7 +80,7 @@ export default function SWOTtasklist() {
     const isChecked = e.target.checked;
     setIsChecked(isChecked);
     if (isChecked) {
-      const allTaskIds = taskList.map((task) => task._id);
+      const allTaskIds = taskList.map((task: any) => task._id);
       setCompletedTasks(allTaskIds);
     } else {
       setCompletedTasks([]);
@@ -114,7 +114,7 @@ export default function SWOTtasklist() {
           {/* <div className="flex-1">Completed</div> */}
           <div className="flex-1">Due Date</div>
         </div>
-        {currentTasks?.map((task) => (
+        {currentTasks?.map((task: any) => (
           <div
             key={task._id}
             className={`flex flex-row border-t border-gray-300 p-2 ${

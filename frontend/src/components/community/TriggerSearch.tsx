@@ -47,6 +47,7 @@ const DiscussionForum = () => {
                 imageContent={post.imageContent}
                 title={post.title}
                 content={post.content}
+                type=""
               />
             ))
           ) : (

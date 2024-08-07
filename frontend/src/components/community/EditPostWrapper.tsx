@@ -9,7 +9,7 @@ import { currentPostState } from "../store/atoms/post";
 
 export const EditPostWrapper = () => {
   const { postId } = useParams();
-  const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  const [currentPost, setCurrentPost] = useRecoilState<any>(currentPostState);
 
   useEffect(() => {
     fetchPosts(postId, setCurrentPost);

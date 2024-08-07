@@ -40,7 +40,7 @@ export default function UserAvatar() {
       setSelectedFile(renamedFile);
       const reader = new FileReader();
       reader.onloadend = () => {
-        const imageUrl: string = reader.result;
+        const imageUrl: string = reader.result as string;
         setCurrentUserState((prev) => ({
           ...prev,
           imageUrl: imageUrl,
