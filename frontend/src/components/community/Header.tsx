@@ -9,6 +9,8 @@ import { useRecoilState } from "recoil";
 import { motion } from "framer-motion";
 import UserAvatar from "../UserAvatar";
 import TriggerSearch from "./TriggerSearch";
+import { QueryClient, QueryClientProvider } from "react-query";
+const queryClient = new QueryClient();
 
 interface HeaderProps {
   title: string;
@@ -26,7 +28,9 @@ const Header: React.FC<HeaderProps> = ({ title, description }) => {
     <div className="flex flex-center flex-col items-center justify-center mt-10 p-4">
       <h2 className="text-4xl">{title}</h2>
       <p>{description}</p>
-      <TriggerSearch />
+      <QueryClientProvider client={queryClient}>
+        <TriggerSearch />
+      </QueryClientProvider>
     </div>
   );
 };

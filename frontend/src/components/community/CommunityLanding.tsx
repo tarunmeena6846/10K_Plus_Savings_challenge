@@ -20,7 +20,7 @@ const CommunityLanding = () => {
     useRecoilState<SubscriptionData>(subscriptionState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
-  const [posts, setPosts] = useRecoilState<PostType[]>(postState);
+  // const [posts, setPosts] = useRecoilState<PostType[]>(postState);
   const [currentOffset, setCurrentOffset] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +31,7 @@ const CommunityLanding = () => {
   };
   console.log("selectedTag navigation after ", currentUserState);
 
-  console.log("posts at infinity", posts);
+  // console.log("posts at infinity", posts);
   return (
     <div>
       <Header

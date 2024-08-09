@@ -633,3 +633,38 @@ export const editComment = async (
     resp.status(500).json({ message: "Server error" });
   }
 };
+
+export const searchPost = async (req: AuthenticatedRequest, resp: Response) => {
+  const query = req.query.query;
+  console.log("search query ", query);
+  try {
+    const posts = await Post.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              $or: [
+                { title: { $regex: query, $options: "i" } },
+                { content: { $regex: query, $options: "i" } },
+              ],
+            },
+            { status: "approved" },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 1, // Exclude _id field, set to 1 if you want to include it
+          title: 1, // Include title field
+          author: 1, // Include author field
+        },
+      },
+      // { status: "approved" },
+    ]);
+    console.log(posts);
+    resp.status(200).json({ success: true, post: posts });
+  } catch (error) {
+    console.error(error);
+    resp.status(500).json({ message: "Server error" });
+  }
+};

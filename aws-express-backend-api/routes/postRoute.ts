@@ -15,6 +15,7 @@ import {
   editOrPublishPost,
   deletePostFromDbOrAdmin,
   approveOrDeclinePost,
+  searchPost,
 } from "../controllers/postController";
 
 import { detokenizeAdmin, isAdmin } from "../middleware";
@@ -25,6 +26,7 @@ router.get("/", detokenizeAdmin, getAllPosts);
 router.get("/userPosts", detokenizeAdmin, getUserPosts);
 router.get("/tags", detokenizeAdmin, getTags);
 router.get("/getBookmarkPosts", detokenizeAdmin, getBookmarkPosts);
+router.get("/search", detokenizeAdmin, searchPost);
 router.get("/tags/:tagId", detokenizeAdmin, getPostByTag);
 router.get("/:id", detokenizeAdmin, getPost);
 router.post("/:id/upvote", detokenizeAdmin, upvoteComment);
