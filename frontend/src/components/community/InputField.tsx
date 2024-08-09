@@ -22,23 +22,37 @@ const TextFieldWithDropdown = ({ setTags, tag }) => {
     fetchTagsFromDB();
   }, []);
   const handleInputChange = (e) => {
+    setShowDropdown(false);
+    console.log(e.target.value);
     setInputValue(e.target.value);
     setTags(e.target.value);
   };
 
-  const handleDropdownClick = (option) => {
-    setInputValue(option);
+  const handleDropdownClick = (option: tagDataType) => {
+    console.log(option);
+    // setInputValue(option.tag);
+    setTags(option.tag);
     setShowDropdown(false);
   };
 
+  const handleInputFocus = () => {
+    setShowDropdown(true);
+  };
+
+  const handleInputBlur = () => {
+    // Delay hiding the dropdown to allow the click event to register
+    setTimeout(() => {
+      setShowDropdown(false);
+    }, 150);
+  };
   return (
     <div className="relative">
       <input
         type="text"
         value={tag}
         onChange={handleInputChange}
-        onFocus={() => setShowDropdown(true)}
-        onBlur={() => setShowDropdown(false)}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
         className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:border-blue-500"
       />
       {showDropdown && (

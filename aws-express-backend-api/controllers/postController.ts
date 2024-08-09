@@ -412,7 +412,7 @@ export const editOrPublishPost = async (
 export const createPost = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside creatapost");
   const { title, content, author, isPublished, tag, imageUrl } = req.body;
-  console.log(title, content, author);
+  console.log(title, content, author, tag);
 
   try {
     const post = new Post({
