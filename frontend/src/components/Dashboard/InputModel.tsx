@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button } from "@mui/material";
+import TextFieldWithDropdown from "../community/InputField";
 
 const AddTransactionModal = ({
   isOpen,
@@ -13,6 +14,27 @@ const AddTransactionModal = ({
   const [newCategory, setNewCategory] = useState("");
   const [newAmount, setNewAmount] = useState(0);
   const [newDate, setNewDate] = useState(Date);
+
+  const expenseCategories = [
+    "Housing",
+    "Transportation",
+    "Food",
+    "Health and Fitness",
+    "Education",
+    "Entertainment",
+    "Personal Care",
+    "Debt Repayment",
+    "Savings and Investments",
+    "Miscellaneous",
+  ];
+
+  const incomeCategories = [
+    "Salary/Wages",
+    "Business Income",
+    "Investment Income",
+    "Government Benefits",
+    "Other Income",
+  ];
 
   const handleAddIncome = () => {
     onAddIncome(newItem, newCategory, newAmount, newDate, type);
@@ -48,16 +70,23 @@ const AddTransactionModal = ({
         <input
           type="text"
           placeholder="Item"
-          style={{
-            marginBottom: "10px",
-            width: "100%",
-            padding: "8px",
-            boxSizing: "border-box",
-          }}
+          className="w-full border border-gray-300 px-4 py-2 my-2 rounded-md focus:outline-none focus:border-blue-500"
+          // style={{
+          //   marginBottom: "10px",
+          //   width: "100%",
+          //   padding: "8px",
+          //   boxSizing: "border-box",
+          // }}
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
         />
-        <input
+        <TextFieldWithDropdown
+          setProp={setNewCategory}
+          prop={newCategory}
+          propValues={activeTab === 0 ? incomeCategories : expenseCategories}
+          placeholder={"Category"}
+        />
+        {/* <input
           type="text"
           placeholder="Category"
           style={{
@@ -68,28 +97,18 @@ const AddTransactionModal = ({
           }}
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
-        />
+        /> */}
         <input
           type="date"
           placeholder="Date"
-          style={{
-            marginBottom: "10px",
-            width: "100%",
-            padding: "8px",
-            boxSizing: "border-box",
-          }}
+          className="w-full border border-gray-300 px-4 py-2 my-2 rounded-md focus:outline-none focus:border-blue-500"
           value={newDate}
           onChange={(e) => setNewDate(e.target.value)}
         />
         <input
           type="number"
           placeholder="Amount"
-          style={{
-            marginBottom: "10px",
-            width: "100%",
-            padding: "8px",
-            boxSizing: "border-box",
-          }}
+          className="w-full border border-gray-300 px-4 py-2 my-2 rounded-md focus:outline-none focus:border-blue-500"
           value={newAmount}
           onChange={(e) => setNewAmount(parseFloat(e.target.value))}
         />

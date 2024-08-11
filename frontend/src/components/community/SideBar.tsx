@@ -11,7 +11,7 @@ import { postState } from "../store/atoms/post";
 import { PostType } from "./InfinitePostScroll";
 import { useRecoilState, useRecoilValue } from "recoil";
 import countAtom from "../store/atoms/quickLinkCount";
-import HandleCreatePost from "./CreatePost";
+
 import { currentEventsState } from "../store/atoms/events";
 import { Tooltip } from "../ToolTip";
 export const fetchTags = async () => {

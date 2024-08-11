@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import TextEditor from "./TextEditor";
 import Button from "../Button";
 import TextFieldWithDropdown from "./InputField";
+import { useEffect, useState } from "react";
+import { fetchTags, tagDataType } from "./SideBar";
 
 const HandleCreatePost = ({
   onSubmit,
@@ -18,6 +20,25 @@ const HandleCreatePost = ({
     console.log("at createpost", title, content, tag);
     onSubmit(isPublished);
   };
+
+  const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
+  // const options = ["Option 1", "Option 2", "Option 3"];
+
+  useEffect(() => {
+    const fetchTagsFromDB = async () => {
+      console.log("here");
+      try {
+        const response = await fetchTags();
+        console.log(response);
+        const tags = response.map((obj) => obj.tag);
+        console.log(tags);
+        setPopularTags(tags);
+      } catch (error) {
+        console.error("Error fetching tags", error);
+      }
+    };
+    fetchTagsFromDB();
+  }, []);
 
   return (
     <div className="flex flex-col h-full items-center justify-center m-20 mb-10">
@@ -40,7 +61,12 @@ const HandleCreatePost = ({
           <label htmlFor="discussion-title" className="block font-semibold">
             Tags
           </label>
-          <TextFieldWithDropdown setTags={setTag} tag={tag} />
+          <TextFieldWithDropdown
+            setProp={setTag}
+            prop={tag}
+            propValues={popularTags}
+            placeholder={""}
+          />
           {/* <motion.button>Show tags</motion.button> */}
         </div>
         <div className="mt-4 mb-4">
