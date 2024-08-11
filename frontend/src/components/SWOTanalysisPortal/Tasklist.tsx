@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TextField } from "@mui/material";
 import CheckBox from "../Checkbox";
+import { useRecoilState } from "recoil";
+import { userState } from "../store/atoms/user";
 export interface taskDetails {
   title: String;
   isComplete: Boolean;
@@ -9,6 +11,10 @@ export interface taskDetails {
 }
 const TaskList = ({ setShowPopup }) => {
   const [tasks, setTasks] = useState<taskDetails[]>([]);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  const [successfulPopup, setSuccessfulPopup] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const [newTask, setNewTask] = useState<taskDetails>({
     title: "",
     isComplete: false,
@@ -19,6 +25,7 @@ const TaskList = ({ setShowPopup }) => {
   const [onCalendarClick, setOnCalendarClick] = useState(false);
   // const handleCalenderClick = async () => {};
   const handleSaveTasks = async () => {
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     console.log("tasks", tasks);
     if (tasks.length === 0) {
       alert("No tasks provided");
@@ -41,7 +48,30 @@ const TaskList = ({ setShowPopup }) => {
         }
         resp.json().then((data) => {
           console.log(data);
-          setTasks([]);
+          if (data.success) {
+            setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
+            setTasks([]);
+            setSuccessfulPopup(true);
+            setProgress(0);
+            // Start the progress bar countdown
+            const interval = setInterval(() => {
+              setProgress((prev) => {
+                if (prev >= 100) {
+                  clearInterval(interval);
+                  return 100;
+                }
+                return prev + 20;
+              });
+            }, 1000);
+            setTimeout(() => {
+              setSuccessfulPopup(false);
+              clearInterval(interval);
+            }, 5000);
+            // clearInterval(interval);
+            // setShowPopup(false);
+          } else {
+            alert("Issue while adding tasks");
+          }
         });
       })
       .catch((error) => {
@@ -70,6 +100,12 @@ const TaskList = ({ setShowPopup }) => {
   const handleResize = (e) => {
     setPopupWidth(e.target.offsetWidth);
     setPopupHeight(e.target.offsetHeight);
+  };
+
+  const getColorForProgress = (progress) => {
+    if (progress < 33) return "bg-red-500";
+    if (progress < 66) return "bg-yellow-500";
+    return "bg-green-800";
   };
   return (
     <div className="max-w-lg mx-auto mt-8 relative">
@@ -186,16 +222,34 @@ const TaskList = ({ setShowPopup }) => {
             </motion.label>
             Set Remider for Accomplishing the Tasks.
           </div> */}
-          <div className="flex ">
-            <motion.button
-              className="bg-black text-white rounded-3xl p-2"
-              onClick={handleSaveTasks}
-            >
-              Save
-            </motion.button>
-          </div>
+          {tasks.length > 0 && (
+            <div className="flex ">
+              <motion.button
+                className={`rounded-3xl p-2 ${
+                  currentUserState.isLoading
+                    ? "bg-gray-400 text-gray-800"
+                    : "bg-black text-white"
+                }`}
+                onClick={handleSaveTasks}
+              >
+                Save
+              </motion.button>
+            </div>
+          )}
         </div>
       </motion.div>
+      {successfulPopup && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg">
+          <div>Save successful!</div>
+          {/* Progress Bar */}
+          <div className="w-full bg-green-700 rounded-full h-1.5 mt-2">
+            <div
+              className={`h-1.5 rounded-full ${getColorForProgress(progress)}`}
+              style={{ width: `${progress}%`, transition: "width 1s linear" }}
+            ></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

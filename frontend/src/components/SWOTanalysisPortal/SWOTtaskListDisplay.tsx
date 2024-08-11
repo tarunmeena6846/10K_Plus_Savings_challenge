@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { taskDetails } from "./Tasklist";
 import { motion } from "framer-motion";
+import { actionsState } from "../store/atoms/user";
+import { useRecoilState } from "recoil";
 export default function SWOTtasklist() {
   const [taskList, setTaskList] = useState<taskDetails[]>();
   const [isChecked, setIsChecked] = useState(false);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [taskPerPage] = useState(10);
+  const [action, setAction] = useRecoilState(actionsState);
   const handleCheckboxChange = (taskId) => {
     setIsChecked(!isChecked);
     if (completedTasks.includes(taskId)) {
@@ -39,6 +42,7 @@ export default function SWOTtasklist() {
         response.json().then((data) => {
           if (data.success) {
             console.log("tasks updated successfully");
+            setAction((prev) => prev + 1);
           }
         });
       })
@@ -72,15 +76,17 @@ export default function SWOTtasklist() {
       .catch((error) => {
         console.error("Error fetching the tasklist");
       });
-  }, []);
+  }, [action]);
   const currentTasks = taskList?.slice(indexOfFirstStock, indexOfLastStock);
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
+  console.log(currentPage);
   const handleSelectAll = (e) => {
     const isChecked = e.target.checked;
+    console.log(currentPage);
     setIsChecked(isChecked);
     if (isChecked) {
       const allTaskIds = taskList.map((task: any) => task._id);
+      console.log(allTaskIds);
       setCompletedTasks(allTaskIds);
     } else {
       setCompletedTasks([]);
@@ -143,7 +149,7 @@ export default function SWOTtasklist() {
               (_, index) => (
                 <button
                   key={index}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  className="px-4 mr-2 py-2 bg-blue-500 text-white rounded-md"
                   onClick={() => paginate(index + 1)}
                 >
                   {index + 1}
