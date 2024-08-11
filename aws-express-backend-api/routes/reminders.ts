@@ -178,8 +178,9 @@ export const sendAdminPostNotification = async (
 };
 
 // const scheduleWeeklyReminderEmail = async () => {
-console.log("schedular called");
-const weeklyReminderTask = cron.schedule("* * * * 0", async (params: any) => {
+console.log("cron schedular called");
+const weeklyReminderTask = cron.schedule("13 18 * * 0", async (params: any) => {
+  console.log("here at weekly scheduler");
   const subscribedUserArray = await NotificationModel.aggregate([
     {
       $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true

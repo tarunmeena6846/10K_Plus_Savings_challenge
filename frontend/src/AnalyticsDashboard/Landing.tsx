@@ -3,6 +3,9 @@ import SidebarLayout from "../components/SidebarLayout";
 import { months } from "../components/MonthlyIncome";
 import AnalyticsTable from "./AnalyticsTable";
 import { fetchData } from "../components/Dashboard/fetchIncomeAndExpenseData";
+import { useRecoilState } from "recoil";
+import { userState } from "../components/store/atoms/user";
+import Loader from "../components/community/Loader";
 
 const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
 const types = ["Current", "Actual", "Target"];
@@ -18,7 +21,8 @@ const AnalyticsLanding = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpense, setMonthlyExpense] = useState(0);
   const [monthlyItems, setMonthlyItems] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  // const [loading, setLoading] = useState(false);
   //   const [error, setError] = useState(null);
 
   const handleChange = (e: any) => {
@@ -26,7 +30,7 @@ const AnalyticsLanding = () => {
   };
 
   const fetchAnalyticsData = async () => {
-    setLoading(true); // Set loading state to true before fetching data
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     // setError(null); // Reset the error state
 
     try {
@@ -65,6 +69,7 @@ const AnalyticsLanding = () => {
           ? fetchedData.actualData.items
           : fetchedData.currentData.items
       );
+      // setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
     } catch (error) {
       setMonthlyIncome(0);
       setMonthlyExpense(0);
@@ -72,7 +77,7 @@ const AnalyticsLanding = () => {
       console.error("Failed to fetch analytics data:", error);
       //   setError("Failed to fetch analytics data.");
     } finally {
-      setLoading(false); // Set loading state to false after data is fetched or an error occurs
+      setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -80,30 +85,30 @@ const AnalyticsLanding = () => {
     fetchAnalyticsData();
   }, [selectedMonth, selectedYear, selectedPortal, selectedType]);
 
-  useEffect(() => {
-    console.log("Updated state:", {
-      selectedMonth,
-      selectedYear,
-      selectedType,
-      selectedPortal,
-      monthlyIncome,
-      monthlyExpense,
-      monthlyItems,
-    });
-  }, [
-    selectedMonth,
-    selectedYear,
-    selectedType,
-    selectedPortal,
-    monthlyIncome,
-    monthlyExpense,
-    monthlyItems,
-  ]);
+  // useEffect(() => {
+  //   console.log("Updated state:", {
+  //     selectedMonth,
+  //     selectedYear,
+  //     selectedType,
+  //     selectedPortal,
+  //     monthlyIncome,
+  //     monthlyExpense,
+  //     monthlyItems,
+  //   });
+  // }, [
+  //   selectedMonth,
+  //   selectedYear,
+  //   selectedType,
+  //   selectedPortal,
+  //   monthlyIncome,
+  //   monthlyExpense,
+  //   monthlyItems,
+  // ]);
 
   return (
     <SidebarLayout>
-      {loading ? (
-        <p>Loading...</p>
+      {currentUserState.isLoading ? (
+        <Loader />
       ) : (
         <>
           <div className="flex gap-4">
