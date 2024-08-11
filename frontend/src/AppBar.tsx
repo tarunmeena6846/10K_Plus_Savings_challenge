@@ -119,7 +119,7 @@ function Appbar() {
   const manageSubscription = async () => {
     setLogoutModalOpen(false);
   };
-  console.log(currentUserState.isAdmin);
+  console.log(currentUserState);
   return (
     <div>
       <Toolbar
@@ -250,7 +250,7 @@ function Appbar() {
           </div>
         </div>
         <div>
-          {!currentUserState.userEmail ? (
+          {!currentUserState.userEmail && !currentUserState.isLoading ? (
             <div className="hidden md:flex space-x-4">
               <motion.button
                 className={

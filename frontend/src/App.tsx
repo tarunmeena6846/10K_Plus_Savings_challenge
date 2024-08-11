@@ -128,6 +128,7 @@ export function InitUser() {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
   const Init = async () => {
+    // setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     console.log("inside inti");
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
