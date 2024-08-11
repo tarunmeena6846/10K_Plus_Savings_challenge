@@ -16,13 +16,8 @@ import useFetchPosts from "./fetchPosts";
 import { selectedTagIdState } from "../store/atoms/selectedTag";
 
 const CommunityLanding = () => {
-  const [subscription, setSubscription] =
-    useRecoilState<SubscriptionData>(subscriptionState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
-  // const [posts, setPosts] = useRecoilState<PostType[]>(postState);
-  const [currentOffset, setCurrentOffset] = useState(0);
-  const [loading, setLoading] = useState(false);
 
   // Render popular tags
   const handleSelectTag = (tagId: string) => {

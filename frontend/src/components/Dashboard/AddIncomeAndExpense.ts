@@ -3,7 +3,8 @@ export const handleAddIncome = async (
   category: string,
   amount: number,
   date: Date,
-  type: String
+  type: String,
+  setAction
 ) => {
   console.log("item", item, type);
   // Add logic to handle adding income
@@ -33,6 +34,9 @@ export const handleAddIncome = async (
 
   respose.json().then((data) => {
     console.log("data at add income", data);
+    if (data.success) {
+      setAction((prev) => prev + 1);
+    }
   });
   console.log("Add income logic here");
 };
@@ -42,7 +46,8 @@ export const handleAddExpense = async (
   category: string,
   amount: number,
   date: Date,
-  type: String
+  type: String,
+  setAction
 ) => {
   // Handle adding expense here
   const respose = await fetch(
@@ -71,6 +76,9 @@ export const handleAddExpense = async (
 
   respose.json().then((data) => {
     console.log("data at add income", data);
+    if (data.success) {
+      setAction((prev) => prev + 1);
+    }
   });
   // console.log("Adding expense:", newItem, newCategory, newAmount, newDate);
 };

@@ -5,12 +5,15 @@ import AddTransactionModal from "./InputModel";
 import { monthIncExpInfo } from "../Dashboard";
 import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
 import { fetchData } from "./fetchIncomeAndExpenseData";
+import { useRecoilState } from "recoil";
+import { actionsState } from "../store/atoms/user";
 export default function ActualDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
   const [actualItemList, setActualItemList] = useState([]);
   const [actualIncome, setActualIncome] = useState(0);
   const [actualExpense, setActualExpense] = useState(0);
+  const [action, setActions] = useRecoilState(actionsState);
   const openModal = (tab) => {
     setActiveTab(tab);
     setIsModalOpen(true);
@@ -34,7 +37,7 @@ export default function ActualDashboard() {
       }
     };
     fetchDataAsync();
-  }, []); // Run this effect only once when the component mounts
+  }, [action]); // Run this effect only once when the component mounts
 
   return (
     <div>
@@ -184,6 +187,7 @@ export default function ActualDashboard() {
         onAddExpense={handleAddExpense}
         activeTab={activeTab}
         type="Actual" // Pass active tab to the modal
+        setAction={setActions}
       />
     </div>
   );

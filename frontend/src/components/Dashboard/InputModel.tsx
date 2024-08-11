@@ -9,6 +9,7 @@ const AddTransactionModal = ({
   onAddExpense,
   activeTab,
   type,
+  setAction,
 }) => {
   const [newItem, setNewItem] = useState("");
   const [newCategory, setNewCategory] = useState("");
@@ -37,14 +38,21 @@ const AddTransactionModal = ({
   ];
 
   const handleAddIncome = () => {
-    onAddIncome(newItem, newCategory, newAmount, newDate, type);
+    onAddIncome(newItem, newCategory, newAmount, newDate, type, setAction);
+    setNewItem("");
+    setNewCategory("");
+    setNewAmount(0);
+    setNewDate(null);
     onClose();
   };
 
   const handleAddExpense = () => {
     console.log(newItem, newAmount);
-    onAddExpense(newItem, newCategory, newAmount, newDate, type);
-
+    onAddExpense(newItem, newCategory, newAmount, newDate, type, setAction);
+    setNewItem("");
+    setNewCategory("");
+    setNewAmount(0);
+    setNewDate(null);
     onClose();
   };
 

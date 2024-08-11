@@ -5,6 +5,8 @@ import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
 import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
 import { fetchData } from "./fetchIncomeAndExpenseData";
+import { actionsState } from "../store/atoms/user";
+import { useRecoilState } from "recoil";
 
 export default function TargetDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,6 +14,7 @@ export default function TargetDashboard() {
   const [targetItemList, setTargetItemList] = useState([]);
   const [targetIncome, setTargetIncome] = useState(0);
   const [targetExpense, setTargetExpense] = useState(0);
+  const [action, setActions] = useRecoilState(actionsState);
   const openModal = (tab) => {
     setActiveTab(tab);
     setIsModalOpen(true);
@@ -34,7 +37,7 @@ export default function TargetDashboard() {
       }
     };
     fetchDataAsync();
-  }, []); // Run this effect only once when the component mounts
+  }, [action]); // Run this effect only once when the component mounts
 
   // const handleAddIncome = () => {
   //   // Add logic to handle adding income
@@ -199,6 +202,7 @@ export default function TargetDashboard() {
         onAddExpense={handleAddExpense}
         activeTab={activeTab}
         type="Target" // Pass active tab to the modal
+        setAction={setActions}
       />
     </div>
   );

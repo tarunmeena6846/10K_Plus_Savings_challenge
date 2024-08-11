@@ -5,12 +5,15 @@ import { Button } from "@mui/material";
 import AddTransactionModal from "./InputModel";
 import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
 import { fetchData } from "./fetchIncomeAndExpenseData";
+import { useRecoilState } from "recoil";
+import { actionsState } from "../store/atoms/user";
 export default function CurrentDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
   const [currentItemList, setCurrentItemList] = useState([]);
   const [currentIncome, setCurrentIncome] = useState(0);
   const [currentExpense, setCurrentExpense] = useState(0);
+  const [action, setActions] = useRecoilState(actionsState);
   const openModal = (tab) => {
     setActiveTab(tab);
     setIsModalOpen(true);
@@ -36,7 +39,7 @@ export default function CurrentDashboard() {
       }
     };
     fetchDataAsync();
-  }, []); // Run this effect only once when the component mounts
+  }, [action]); // Run this effect only once when the component mounts
 
   return (
     <div>
@@ -187,6 +190,7 @@ export default function CurrentDashboard() {
         onAddExpense={handleAddExpense}
         activeTab={activeTab} // Pass active tab to the modal
         type="Current"
+        setAction={setActions}
       />
     </div>
   );
