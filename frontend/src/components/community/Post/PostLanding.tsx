@@ -6,9 +6,12 @@ import Postdetails from "./PostRetrieval";
 import CommentDetails from "./RenderComments";
 import { useRecoilState } from "recoil";
 import { selectedTagIdState } from "../../store/atoms/selectedTag";
+import { userState } from "../../store/atoms/user";
+import Loader from "../Loader";
 
 const PostLanding = () => {
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   // Render popular tags
   const handleSelectTag = (tagId: string) => {
     setSelectedTagId(tagId);
@@ -17,6 +20,11 @@ const PostLanding = () => {
   return (
     <div>
       <div className="p-4">
+        {/* {currentUserState.isLoading ? (
+          <>
+            <Loader />
+          </>
+        ) : ( */}
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
             <CommentDetails></CommentDetails>
@@ -25,6 +33,7 @@ const PostLanding = () => {
             <SideBar onSelectTag={handleSelectTag}></SideBar>
           </div>
         </div>
+        {/* )} */}
       </div>
     </div>
   );

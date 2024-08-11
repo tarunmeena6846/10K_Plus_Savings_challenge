@@ -13,6 +13,7 @@ import { actionsState, userState } from "../../store/atoms/user";
 import Postdetails from "./PostRetrieval";
 import { error } from "console";
 import MarkdownPreview from "./MarkdownPreview";
+import Loader from "../Loader";
 
 export type CommentType = {
   _id: string;
@@ -56,6 +57,7 @@ const CommentDetails = () => {
       console.log("currentposts length 0");
       return;
     }
+    // setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     const sortedComments = [...currentPost.comments].sort(
       (a: CommentType, b: CommentType) => {
         if (sortBy === "createdAt") {
@@ -69,6 +71,7 @@ const CommentDetails = () => {
       }
     );
     setSortedComments(sortedComments);
+    // setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
   }, [sortBy, currentPost]);
 
   const toggleCommentClicked = (commentId: string) => {
@@ -340,9 +343,13 @@ const CommentDetails = () => {
         </div>
       ));
   };
-  console.log("currentposts sortedCOmments", sortedComments);
+  console.log("currentposts sortedCOmments", currentUserState.isLoading);
   return (
     <div>
+      {/* {currentUserState.isLoading ? (
+        <Loader />
+      ) : (
+        <> */}
       <Postdetails></Postdetails>
       <br />
       <hr className="" />
@@ -360,6 +367,8 @@ const CommentDetails = () => {
       ) : (
         <p>No comments yet</p>
       )}
+      {/* </>
+      )} */}
     </div>
   );
 };

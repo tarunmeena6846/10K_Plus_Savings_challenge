@@ -14,6 +14,7 @@ import { postState } from "../store/atoms/post";
 import fetchPosts, { fetchTenPosts } from "./fetchPosts";
 import useFetchPosts from "./fetchPosts";
 import { selectedTagIdState } from "../store/atoms/selectedTag";
+import Loader from "./Loader";
 
 const CommunityLanding = () => {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
@@ -34,6 +35,9 @@ const CommunityLanding = () => {
         description="Together, let's turn small steps into significant savings and celebrate the power of collective progress in the 10K Savings Challenge Community."
       />
       <div className="p-4">
+        {/* {currentUserState.isLoading ? (
+          <Loader />
+        ) : ( */}
         <div className="flex flex-col-reverse md:flex-row">
           <div className="md:w-3/4">
             <InfinitePostScroll
@@ -45,6 +49,7 @@ const CommunityLanding = () => {
             <SideBar onSelectTag={handleSelectTag}></SideBar>
           </div>
         </div>
+        {/* )} */}
       </div>
     </div>
   );

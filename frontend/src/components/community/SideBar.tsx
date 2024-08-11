@@ -14,6 +14,7 @@ import countAtom from "../store/atoms/quickLinkCount";
 
 import { currentEventsState } from "../store/atoms/events";
 import { Tooltip } from "../ToolTip";
+import { userState } from "../store/atoms/user";
 export const fetchTags = async () => {
   try {
     const response = await fetch(
@@ -47,6 +48,7 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   const [loading, setLoading] = useState(true); // New state to track loading
   const [count, setCount] = useRecoilState(countAtom);
   const currentEvents = useRecoilValue(currentEventsState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
   console.log("count", count);
   console.log(currentEvents);
@@ -58,12 +60,14 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
   ];
   useEffect(() => {
     const fetchTagsFromDB = async () => {
+      // setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
       console.log("here");
       try {
         const response = await fetchTags();
         console.log(response);
         console.log(response);
         setPopularTags(response);
+        setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
       } catch (error) {
         console.error("Error fetching tags", error);
       }
@@ -139,18 +143,24 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
           >
             All Tags
           </motion.button>
+
           {popularTags?.map((tag: tagDataType, index) => (
-            <div key={index}>
-              <motion.button
-                whileHover={{ scale: 1.1 }} // Define hover animation
-                whileTap={{ scale: 1 }} // Define hover animation
-                className="bg-gray-400 rounded-2xl px-2 "
-                onClick={() => handleTagClick(tag._id)}
-              >
-                {tag.tag}
-              </motion.button>
-            </div>
+            <>
+              {/* {!currentUserState.isLoading && ( */}
+              <div key={index}>
+                <motion.button
+                  whileHover={{ scale: 1.1 }} // Define hover animation
+                  whileTap={{ scale: 1 }} // Define hover animation
+                  className="bg-gray-400 rounded-2xl px-2 "
+                  onClick={() => handleTagClick(tag._id)}
+                >
+                  {tag.tag}
+                </motion.button>
+              </div>
+              {/* )} */}
+            </>
           ))}
+
           {/*           
           {currentEvents.map((event, index) => (
             <div key={index}>
