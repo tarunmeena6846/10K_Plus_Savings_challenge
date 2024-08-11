@@ -6,9 +6,10 @@ import AddTransactionModal from "./InputModel";
 import { handleAddIncome, handleAddExpense } from "./AddIncomeAndExpense";
 import { fetchData } from "./fetchIncomeAndExpenseData";
 import { useRecoilState } from "recoil";
-import { actionsState } from "../store/atoms/user";
+import { actionsState, userState } from "../store/atoms/user";
 export default function CurrentDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
   const [currentItemList, setCurrentItemList] = useState([]);
   const [currentIncome, setCurrentIncome] = useState(0);

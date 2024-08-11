@@ -7,10 +7,12 @@ import { useRecoilState } from "recoil";
 
 const ProjectedData = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [monthlyExpense, setMonthlyExpense] =
-    useRecoilState<number>(monthlyExpenseState);
-  const [monthlyIncome, setMonthlyIncome] =
-    useRecoilState<number>(monthlyIncomeState);
+  // const [monthlyExpense, setMonthlyExpense] =
+  //   useRecoilState<number>(monthlyExpenseState);
+  // const [monthlyIncome, setMonthlyIncome] =
+  //   useRecoilState<number>(monthlyIncomeState);
+  const [monthlyExpense, setMonthlyExpense] = useState<number>(0);
+  const [monthlyIncome, setMonthlyIncome] = useState<number>(0);
   const navigate = useNavigate();
   const handleContinue = () => {
     setIsOpen(true);
@@ -90,19 +92,22 @@ const ProjectedData = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="mb-4 p-2 rounded"
+                value={monthlyIncome}
                 onChange={(e) => {
-                  setMonthlyIncome(parseFloat(e.target.value));
-                  localStorage.setItem("monthlyincome", e.target.value);
+                  const value = e.target.value;
+                  setMonthlyIncome(value === "" ? 0 : parseInt(value));
                 }}
               />
               <label className="text-white mb-2">Last Month's Expense</label>
               <motion.input
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                value={monthlyExpense}
                 className="mb-4 p-2 rounded"
                 onChange={(e) => {
-                  setMonthlyExpense(parseFloat(e.target.value));
-                  localStorage.setItem("monthlyexpense", e.target.value);
+                  const value = e.target.value;
+                  setMonthlyExpense(value === "" ? 0 : parseInt(value));
+                  // localStorage.setItem("monthlyexpense", e.target.value);
                 }}
               />
               <motion.button
