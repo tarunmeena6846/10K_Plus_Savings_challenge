@@ -19,7 +19,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 let cachedDb: Connection | null = null;
 
-const connectDB = async () => {
+export const connectDB = async () => {
   if (cachedDb && cachedDb.readyState === 1) {
     console.log("Using existing MongoDB connection");
     return cachedDb;

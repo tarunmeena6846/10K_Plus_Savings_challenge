@@ -19,6 +19,7 @@ const router: Router = express.Router();
 import dotenv from "dotenv";
 import Post from "../models/postSchema";
 import Comment from "../models/commentSchema";
+import { connectDB } from "../handler";
 dotenv.config();
 // console.log("aws access key", process.env.AWS_ACCESS_KEY);
 // Configure the AWS SDK
@@ -179,42 +180,63 @@ export const sendAdminPostNotification = async (
 
 // const scheduleWeeklyReminderEmail = async () => {
 console.log("cron schedular called");
-const weeklyReminderTask = cron.schedule("13 18 * * 0", async (params: any) => {
+const weeklyReminderTask = cron.schedule("0 0 * * 0", async (params: any) => {
   console.log("here at weekly scheduler");
-  const subscribedUserArray = await NotificationModel.aggregate([
-    {
-      $match: { "type.taskListReminder": true }, // Match documents where weeklyReminder is true
-    },
-    {
-      $group: {
-        _id: null,
-        emails: { $addToSet: "$userEmail" },
+  try {
+    await connectDB();
+    // next();
+  } catch (err) {
+    console.error("Error connection to db for reminder:", err);
+  }
+  try {
+    const subscribedUserArray = await NotificationModel.aggregate([
+      {
+        $match: { "type.taskListReminder": true },
       },
-    },
-    {
-      $project: {
-        _id: 0, // Exclude the _id field from the output
-        emails: 1, // Include the emails field in the output
+      {
+        $group: {
+          _id: null,
+          emails: { $addToSet: "$userEmail" },
+        },
       },
-    },
-  ]);
+      {
+        $project: {
+          _id: 0,
+          emails: 1,
+        },
+      },
+    ]);
 
-  console.log("subscribedUserArray", subscribedUserArray);
-  console.log("weekly schedular called");
+    console.log("subscribedUserArray", subscribedUserArray);
 
-  sendEmail(
-    subscribedUserArray[0].emails,
-    "10K SAVINGS CHALLENGE: Task List Reminder ",
-    weeklyPortalReminder()
-  );
-
-  // await sendEmail();
+    if (
+      subscribedUserArray.length > 0 &&
+      subscribedUserArray[0].emails.length > 0
+    ) {
+      sendEmail(
+        subscribedUserArray[0].emails,
+        "10K SAVINGS CHALLENGE: Task List Reminder",
+        weeklyPortalReminder()
+      );
+    } else {
+      console.log("No subscribed users found.");
+    }
+  } catch (error) {
+    console.error("Error in aggregation:", error);
+  }
+  console.log("weekly scheduler completed");
 });
 // };
 
 // const scheduleMonthlySWOTEmail = async () => {
 console.log("schedular called");
 const monthlySwotTask = cron.schedule("0 0 1 * *", async (params: any) => {
+  try {
+    await connectDB();
+    // next();
+  } catch (err) {
+    console.error("Error connection to db for reminder:", err);
+  }
   const subscribedUserArray = await NotificationModel.aggregate([
     {
       $match: { "type.monthlySwot": true }, // Match documents where weeklyReminder is true
