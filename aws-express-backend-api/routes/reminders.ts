@@ -228,12 +228,9 @@ const weeklyReminderTask = cron.schedule("0 0 * * 0", async (params: any) => {
 });
 // };
 
-// const scheduleMonthlySWOTEmail = async () => {
-console.log("schedular called");
 const monthlySwotTask = cron.schedule("0 0 1 * *", async (params: any) => {
   try {
     await connectDB();
-    // next();
   } catch (err) {
     console.error("Error connection to db for reminder:", err);
   }
@@ -263,10 +260,7 @@ const monthlySwotTask = cron.schedule("0 0 1 * *", async (params: any) => {
     "10K SAVINGS CHALLENGE: Monthly SWOT Analysis ",
     getSWOTAnalysisTemp()
   );
-
-  // await sendEmail();
 });
-// };
 
 monthlySwotTask.start();
 weeklyReminderTask.start();

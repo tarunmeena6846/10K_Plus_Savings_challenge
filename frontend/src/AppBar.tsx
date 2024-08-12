@@ -136,7 +136,8 @@ function Appbar() {
           to={currentUserState.userEmail ? "/dashboard" : "/"}
           sx={{ textDecoration: "none", color: "black" }}
         >
-          10K Savings Challenge
+          <img src="./10ksc.png" className="w-20 h-20"></img>
+          {/* 10K Savings Challenge */}
         </Typography>
         <div
           // className={"rounded-3xl "}
