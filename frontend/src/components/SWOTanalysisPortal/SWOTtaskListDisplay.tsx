@@ -10,8 +10,12 @@ export default function SWOTtasklist() {
   const [currentPage, setCurrentPage] = useState(1);
   const [taskPerPage] = useState(10);
   const [action, setAction] = useRecoilState(actionsState);
+  const [selectAllEnabled, setSelectAllEnabled] = useState(false);
   const handleCheckboxChange = (taskId) => {
-    setIsChecked(!isChecked);
+    setIsChecked(true);
+    if (selectAllEnabled) {
+      setSelectAllEnabled(false);
+    }
     if (completedTasks.includes(taskId)) {
       // If task is already marked as completed, remove it from the array
       setCompletedTasks(completedTasks.filter((id) => id !== taskId));
@@ -25,7 +29,8 @@ export default function SWOTtasklist() {
 
   const handleBulkUpdate = (type: string) => {
     console.log(completedTasks, type);
-    // setIsChecked(!isChecked);
+    setIsChecked(false);
+    // setSelectAllEnabled(false);
     // Send a request to your backend server to update tasks in bulk
     fetch(`${import.meta.env.VITE_SERVER_URL}/swot/bulk-update`, {
       method: "PUT",
@@ -43,6 +48,8 @@ export default function SWOTtasklist() {
           if (data.success) {
             console.log("tasks updated successfully");
             setAction((prev) => prev + 1);
+            setCompletedTasks([]);
+            setSelectAllEnabled(false);
           }
         });
       })
@@ -79,20 +86,24 @@ export default function SWOTtasklist() {
   }, [action]);
   const currentTasks = taskList?.slice(indexOfFirstStock, indexOfLastStock);
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  console.log(currentPage);
+  console.log(currentPage, currentTasks);
   const handleSelectAll = (e) => {
     const isChecked = e.target.checked;
-    console.log(currentPage);
+    console.log(currentPage, isChecked);
     setIsChecked(isChecked);
+    setSelectAllEnabled(!selectAllEnabled);
     if (isChecked) {
-      const allTaskIds = taskList.map((task: any) => task._id);
+      const allTaskIds = currentTasks
+        // .filter((task) => task.isComplete === false)
+        .map((task: any) => task._id);
+
       console.log(allTaskIds);
       setCompletedTasks(allTaskIds);
     } else {
       setCompletedTasks([]);
     }
   };
-  console.log(taskList);
+  console.log(completedTasks);
   return (
     <div className="pt-10">
       {isChecked && (
@@ -114,7 +125,11 @@ export default function SWOTtasklist() {
       <div className="flex flex-col">
         <div className="flex flex-row bg-gray-200 p-2">
           <div className="flex-1">
-            <input type="checkbox" onChange={handleSelectAll} />
+            <input
+              type="checkbox"
+              checked={selectAllEnabled}
+              onChange={handleSelectAll}
+            />
           </div>
           <div className="flex-1">Title</div>
           {/* <div className="flex-1">Completed</div> */}
@@ -129,7 +144,7 @@ export default function SWOTtasklist() {
           >
             <div className="flex-1">
               <input
-                disabled={task.isComplete}
+                // disabled={task.isComplete}
                 type="checkbox"
                 id={`task-${task._id}`}
                 checked={completedTasks.includes(task._id)}
@@ -150,7 +165,11 @@ export default function SWOTtasklist() {
                 <button
                   key={index}
                   className="px-4 mr-2 py-2 bg-blue-500 text-white rounded-md"
-                  onClick={() => paginate(index + 1)}
+                  onClick={() => {
+                    paginate(index + 1);
+                    setSelectAllEnabled(false);
+                    setIsChecked(false);
+                  }}
                 >
                   {index + 1}
                 </button>
