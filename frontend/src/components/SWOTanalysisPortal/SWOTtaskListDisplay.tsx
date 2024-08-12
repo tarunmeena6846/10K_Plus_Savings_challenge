@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { taskDetails } from "./Tasklist";
 import { motion } from "framer-motion";
-import { actionsState } from "../store/atoms/user";
+import { actionsState, userState } from "../store/atoms/user";
 import { useRecoilState } from "recoil";
+import Loader from "../community/Loader";
+import SuccessPopup from "./SuccessfulPopup";
 export default function SWOTtasklist() {
   const [taskList, setTaskList] = useState<taskDetails[]>();
   const [isChecked, setIsChecked] = useState(false);
@@ -11,6 +13,8 @@ export default function SWOTtasklist() {
   const [taskPerPage] = useState(10);
   const [action, setAction] = useRecoilState(actionsState);
   const [selectAllEnabled, setSelectAllEnabled] = useState(false);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  // const [successfulPopup, setSuccessfulPopup] = useState(false);
   const handleCheckboxChange = (taskId) => {
     setIsChecked(true);
     if (selectAllEnabled) {
@@ -30,6 +34,7 @@ export default function SWOTtasklist() {
   const handleBulkUpdate = (type: string) => {
     console.log(completedTasks, type);
     setIsChecked(false);
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     // setSelectAllEnabled(false);
     // Send a request to your backend server to update tasks in bulk
     fetch(`${import.meta.env.VITE_SERVER_URL}/swot/bulk-update`, {
@@ -47,6 +52,8 @@ export default function SWOTtasklist() {
         response.json().then((data) => {
           if (data.success) {
             console.log("tasks updated successfully");
+            setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
+            // setSuccessfulPopup(true);
             setAction((prev) => prev + 1);
             setCompletedTasks([]);
             setSelectAllEnabled(false);
@@ -59,6 +66,7 @@ export default function SWOTtasklist() {
   };
 
   useEffect(() => {
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     fetch(`${import.meta.env.VITE_SERVER_URL}/swot/get-task-list`, {
       method: "GET",
       headers: {
@@ -74,6 +82,7 @@ export default function SWOTtasklist() {
         resp.json().then((data) => {
           if (data.success) {
             console.log(data.data);
+            setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
             setTaskList(data.data.tasks);
           } else {
             console.error("TaskList empty");
@@ -109,13 +118,17 @@ export default function SWOTtasklist() {
       {isChecked && (
         <div className="flex justify-end p-2">
           <motion.button
-            className="p-2 bg-green-500 text-white rounded-md mr-2"
+            className={`p-2 ${
+              currentUserState.isLoading ? "bg-green-200" : "bg-green-500"
+            } text-white rounded-md mr-2`}
             onClick={() => handleBulkUpdate("complete")}
           >
             Complete
           </motion.button>
           <motion.button
-            className="p-2 bg-red-500 text-white rounded-md"
+            className={`p-2 ${
+              currentUserState.isLoading ? "bg-red-200" : "bg-red-500"
+            } text-white rounded-md`}
             onClick={() => handleBulkUpdate("delete")}
           >
             Delete
@@ -135,27 +148,29 @@ export default function SWOTtasklist() {
           {/* <div className="flex-1">Completed</div> */}
           <div className="flex-1">Due Date</div>
         </div>
-        {currentTasks?.map((task: any) => (
-          <div
-            key={task._id}
-            className={`flex flex-row border-t border-gray-300 p-2 ${
-              task.isComplete ? `text-gray-400` : ``
-            }`}
-          >
-            <div className="flex-1">
-              <input
-                // disabled={task.isComplete}
-                type="checkbox"
-                id={`task-${task._id}`}
-                checked={completedTasks.includes(task._id)}
-                onChange={() => handleCheckboxChange(task._id)}
-              />
+        {currentTasks?.map((task: any) =>
+          currentUserState.isLoading ? (
+            <Loader key={task._id} />
+          ) : (
+            <div
+              key={task._id}
+              className={`flex flex-row border-t border-gray-300 p-2 ${
+                task.isComplete ? `text-gray-400` : ``
+              }`}
+            >
+              <div className="flex-1">
+                <input
+                  type="checkbox"
+                  id={`task-${task._id}`}
+                  checked={completedTasks.includes(task._id)}
+                  onChange={() => handleCheckboxChange(task._id)}
+                />
+              </div>
+              <div className="flex-1">{task.title}</div>
+              <div className="flex-1">{task.dueDate ? task.dueDate : "NA"}</div>
             </div>
-            <div className="flex-1">{task.title}</div>
-            {/* <div className="flex-1">{task.isComplete.toString()}</div> */}
-            <div className="flex-1">{task.dueDate ? task.dueDate : "NA"}</div>
-          </div>
-        ))}
+          )
+        )}
       </div>
       <div className="flex justify-center items-center mt-4 space-x-2">
         {taskList && (
@@ -178,6 +193,13 @@ export default function SWOTtasklist() {
           </div>
         )}
       </div>
+      {/* {successfulPopup && (
+        <SuccessPopup
+          message="Deletion successful!"
+          duration={5000}
+          onClose={() => setSuccessfulPopup(false)}
+        />
+      )} */}
     </div>
   );
 }

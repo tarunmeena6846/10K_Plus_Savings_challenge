@@ -4,6 +4,7 @@ import { TextField } from "@mui/material";
 import CheckBox from "../Checkbox";
 import { useRecoilState } from "recoil";
 import { userState } from "../store/atoms/user";
+import SuccessPopup from "./SuccessfulPopup";
 export interface taskDetails {
   title: String;
   isComplete: Boolean;
@@ -52,21 +53,21 @@ const TaskList = ({ setShowPopup }) => {
             setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
             setTasks([]);
             setSuccessfulPopup(true);
-            setProgress(0);
-            // Start the progress bar countdown
-            const interval = setInterval(() => {
-              setProgress((prev) => {
-                if (prev >= 100) {
-                  clearInterval(interval);
-                  return 100;
-                }
-                return prev + 20;
-              });
-            }, 1000);
-            setTimeout(() => {
-              setSuccessfulPopup(false);
-              clearInterval(interval);
-            }, 5000);
+            // setProgress(0);
+            // // Start the progress bar countdown
+            // const interval = setInterval(() => {
+            //   setProgress((prev) => {
+            //     if (prev >= 100) {
+            //       clearInterval(interval);
+            //       return 100;
+            //     }
+            //     return prev + 20;
+            //   });
+            // }, 1000);
+            // setTimeout(() => {
+            //   setSuccessfulPopup(false);
+            //   clearInterval(interval);
+            // }, 5000);
             // clearInterval(interval);
             // setShowPopup(false);
           } else {
@@ -239,16 +240,11 @@ const TaskList = ({ setShowPopup }) => {
         </div>
       </motion.div>
       {successfulPopup && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg">
-          <div>Save successful!</div>
-          {/* Progress Bar */}
-          <div className="w-full bg-green-700 rounded-full h-1.5 mt-2">
-            <div
-              className={`h-1.5 rounded-full ${getColorForProgress(progress)}`}
-              style={{ width: `${progress}%`, transition: "width 1s linear" }}
-            ></div>
-          </div>
-        </div>
+        <SuccessPopup
+          message="Save successful!"
+          duration={5000}
+          onClose={() => setSuccessfulPopup(false)}
+        />
       )}
     </div>
   );
