@@ -202,27 +202,6 @@ const TaskList = ({ setShowPopup }) => {
           ))}
         </ul>
         <div className="mt-2 flex justify-between">
-          {/* <div className="pt-2">
-            <motion.label
-              className="checkbox-container mr-3"
-              whileHover={{ scale: 1.1 }}
-              // whileTap={{ scale: 0.9 }}
-            >
-              <CheckBox isChecked={isChecked} setIsChecked={setIsChecked} />
-
-              <motion.span
-                className="checkmark"
-                variants={{
-                  checked: { scaleX: 1, opacity: 1 },
-                  unchecked: { scaleX: 0, opacity: 0 },
-                }}
-                initial={isChecked ? "checked" : "unchecked"}
-                animate={isChecked ? "checked" : "unchecked"}
-                // transition={{ duration: 0.2 }}
-              />
-            </motion.label>
-            Set Remider for Accomplishing the Tasks.
-          </div> */}
           {tasks.length > 0 && (
             <div className="flex ">
               <motion.button

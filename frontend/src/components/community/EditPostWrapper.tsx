@@ -9,16 +9,17 @@ import { currentPostState } from "../store/atoms/post";
 
 export const EditPostWrapper = () => {
   const { postId } = useParams();
-  const [currentPost, setCurrentPost] = useRecoilState<any>(currentPostState);
 
+  const [currentPost, setCurrentPost] = useRecoilState<any>(currentPostState);
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   useEffect(() => {
-    fetchPosts(postId, setCurrentPost);
+    fetchPosts(postId, setCurrentPost, setCurrentUserState);
   }, [postId]);
 
   console.log("currentpost in editpost", currentPost);
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
-  const currentUserState = useRecoilValue(userState);
+
   const navigate = useNavigate();
   const handleCancel = () => {
     navigate("/community/drafts");
