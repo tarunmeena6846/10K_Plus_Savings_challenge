@@ -6,7 +6,7 @@ const Dropdown = ({ items, isOpen, onMouseEnter, onMouseLeave, navigate }) => {
   return (
     isOpen && (
       <motion.div
-        className="dropdown bg-gray-100 p-4 rounded-2xl border"
+        className="dropdown bg-[#1d2f4f] p-4 rounded-2xl border-b border-r border-l"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
@@ -18,9 +18,9 @@ const Dropdown = ({ items, isOpen, onMouseEnter, onMouseLeave, navigate }) => {
         {items.map((item, index) => (
           <motion.button
             key={index}
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
+            whileHover={{ scale: 1.3 }}
             whileTap={{ scale: 1 }}
-            className="rounded-3xl text-black pr-3 p-2 mb-2"
+            className="rounded-3xl text-white pr-3 p-2 mb-2"
             onClick={() => navigate(item.route)}
           >
             {item.label}

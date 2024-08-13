@@ -38,7 +38,7 @@ const Hero = () => {
       <motion.span
         ref={ref}
         className={classNames(
-          `font-heading text-7xl ${isInView ? "text-black" : "text-gray-500"}`
+          `font-heading text-7xl ${isInView ? "text-white" : "text-gray-400"}`
         )}
         transition={{ duration: 0.5 }}
         style={{ marginTop: "60px" }} // Add margin to the second line

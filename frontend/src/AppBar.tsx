@@ -123,7 +123,7 @@ function Appbar() {
   return (
     <div>
       <Toolbar
-        className="mx-auto px-4 mt-6 rounded-3xl"
+        className="mx-auto mt-6 mx-3 rounded-3xl bg-[#1d2f4f] border "
         style={{
           display: "flex",
           alignItems: "center",
@@ -134,58 +134,41 @@ function Appbar() {
           variant="h6"
           component={Link}
           to={currentUserState.userEmail ? "/dashboard" : "/"}
-          sx={{ textDecoration: "none", color: "black" }}
+          sx={{ textDecoration: "none", color: "white" }}
         >
-          <img src="./10ksc.png" className="w-20 h-20"></img>
+          <img src="./10ksc.png" className="w-20 h-20" alt="10KSC Logo"></img>
           {/* 10K Savings Challenge */}
         </Typography>
-        <div
-          // className={"rounded-3xl "}
-          className="hidden md:flex space-x-4 rounded-3xl justify-between item-center"
-          style={{
-            border: "2px solid black",
-            // gap: "10px",
-            padding: "10px",
-            width: "auto",
-            // display: "flex",
-            // justifyContent: "center",
-          }}
-        >
+        <div className="hidden md:flex space-x-4 rounded-3xl justify-between items-center  text-white p-2">
           <motion.button
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black pl-3 pr-3 mr-1 ml-1"
+            whileHover={{ scale: 1.3 }}
+            whileTap={{ scale: 1 }}
+            className="rounded-3xl text-white pl-3 pr-3 mr-1 ml-1"
             onClick={() =>
               navigate(currentUserState.userEmail ? "/dashboard" : "/")
             }
           >
             Home
           </motion.button>
-
           <motion.button
-            whileHover={{ background: "black", color: "white", scale: 1.1 }}
-            whileTap={{ scale: 1 }} // Define hover animation
-            className="rounded-3xl text-black p-2"
-            onClick={() => {
-              navigate("/pricing");
-            }}
+            whileHover={{ scale: 1.3 }}
+            whileTap={{ scale: 1 }}
+            className="rounded-3xl text-white p-2"
+            onClick={() => navigate("/pricing")}
           >
             Pricing
           </motion.button>
           <div>
             <motion.button
-              whileHover={{ background: "black", color: "white", scale: 1.1 }}
-              whileTap={{ scale: 1 }} // Define hover animation
+              whileHover={{ scale: 1.3 }}
+              whileTap={{ scale: 1 }}
               onMouseEnter={handleAdminMouseEnter}
               onMouseLeave={handleAdminMouseLeave}
-              className="rounded-3xl text-black p-2"
-              onClick={() => {
-                navigate("/community");
-              }}
+              className="rounded-3xl text-white p-2"
+              onClick={() => navigate("/community")}
             >
               Community
             </motion.button>
-            {/* {currentUserState.isAdmin && <p>hello</p>} */}
             <Dropdown
               items={adminItems}
               isOpen={isAdminDropdownOpen}
@@ -194,50 +177,14 @@ function Appbar() {
               navigate={navigate}
             />
           </div>
-          {/* <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-50 h-10"
-            }
-            whileHover={{
-              background: "black",
-              color: "white",
-              width: "120px",
-              scale: 1.1,
-            }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              navigate("/savingportal");
-            }}
-          >
-            Saving Portal
-          </motion.button>
-          <motion.button
-            className={
-              "login-button rounded-3xl bg-transparent text-black w-50 h-10"
-            }
-            whileHover={{
-              background: "black",
-              width: "120px",
-              color: "white",
-              scale: 1.1,
-            }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              navigate("/incomeportal");
-            }}
-          >
-            Income Portal
-          </motion.button> */}
           <div>
             <motion.button
-              whileHover={{ background: "black", color: "white", scale: 1.1 }}
-              whileTap={{ scale: 1 }} // Define hover animation
-              className="rounded-3xl text-black pr-3 p-2"
+              whileHover={{ scale: 1.3 }}
+              whileTap={{ scale: 1 }}
+              className="rounded-3xl text-white pr-3 p-2"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              onClick={() => {
-                navigate("/swotportal");
-              }}
+              onClick={() => navigate("/swotportal")}
             >
               SWOT Portal
             </motion.button>
@@ -254,10 +201,8 @@ function Appbar() {
           {!currentUserState.userEmail && !currentUserState.isLoading ? (
             <div className="hidden md:flex space-x-4">
               <motion.button
-                className={
-                  "login-button rounded-3xl bg-black text-white shadow-lg w-20 h-10"
-                }
-                whileHover={{ scale: 1.1 }}
+                className="login-button rounded-3xl  text-white  w-20 h-10"
+                whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => navigate("/login")}
               >
@@ -266,23 +211,15 @@ function Appbar() {
             </div>
           ) : (
             <>
-              <IconButton
-                aria-label="menu"
-                onClick={handleLogout}
-                // color="inherit"
-              >
-                <MenuIcon />
+              <IconButton aria-label="menu" onClick={handleLogout}>
+                <MenuIcon className="text-white" />
               </IconButton>
             </>
           )}
         </div>
         <div className="md:hidden md:flex">
-          <IconButton
-            aria-label="menu"
-            onClick={handleMenuClick}
-            // color="inherit"
-          >
-            <MenuIcon />
+          <IconButton aria-label="menu" onClick={handleMenuClick}>
+            <MenuIcon className="text-white" />
           </IconButton>
         </div>
         <Menu
@@ -306,63 +243,46 @@ function Appbar() {
           </MenuItem>
         </Menu>
       </Toolbar>
-      {/* </AppBar> */}
-      {/* Drawer for menu options */}
-      {/* {currentUserState.userEmail} */}
-      {currentUserState.userEmail ? (
-        <div>
-          {/* Logout modal */}
-          <Modal
-            open={isLogoutModalOpen}
-            onClose={handleLogoutCancel}
-            style={{
+      {currentUserState.userEmail && (
+        <Modal
+          open={isLogoutModalOpen}
+          onClose={handleLogoutCancel}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: "background.paper",
+              p: 4,
+              borderRadius: "10px",
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
             }}
           >
-            <Box
-              sx={{
-                bgcolor: "background.paper",
-                p: 4,
-                borderRadius: "10px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+            <Avatar
+              alt="User Avatar"
+              src={currentUserState.imageUrl}
+              style={{
+                width: "90px",
+                height: "90px",
+                marginBottom: "16px",
               }}
-            >
-              <Avatar
-                alt="Edit Avatar"
-                src={currentUserState.imageUrl}
-                style={{
-                  width: "90px",
-                  height: "90px",
-                  marginBottom: "16px", // Add margin to separate Avatar and buttons
-                }}
-              />
-              {currentUserState.userEmail}
-              <br />
-              <br />
-
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <Button onClick={handleLogoutConfirm}>Logout</Button>
-                <Button onClick={handleLogoutCancel}>Cancel</Button>
-                {/* <Button
-                  onClick={() => handleBuyClick(currentUserState.userEmail)}
-                >
-                  Book SWOT Session
-                </Button>
-
-                <ManageBillingForm></ManageBillingForm> */}
-              </Box>
+            />
+            {currentUserState.userEmail}
+            <br />
+            <br />
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button onClick={handleLogoutConfirm}>Logout</Button>
+              <Button onClick={handleLogoutCancel}>Cancel</Button>
             </Box>
-          </Modal>
-        </div>
-      ) : (
-        <div></div>
+          </Box>
+        </Modal>
       )}
     </div>
   );
 }
-
 export default Appbar;
