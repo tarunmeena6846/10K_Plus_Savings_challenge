@@ -20,57 +20,57 @@ import Footer from "./Footer";
 import { useRef } from "react";
 import { motion, useScroll } from "framer-motion";
 import ScrollEffectComponent from "./features/scrollEffect";
-const features = [
-  {
-    title: "Unleash the Master Saver within",
-    id: "colors",
-    card: Colors,
-    visual: OtherVisual,
-  },
-  {
-    title: "Manifest your ideal life and purpose",
-    id: "availability",
-    card: Availability,
-    visual: OtherVisual,
-  },
-  {
-    title: "Commit to a savings goal",
-    id: "todo-list1",
-    card: Todo,
-    visual: OtherVisual,
-  },
-  {
-    title: "Implement our proven savings mastery strategies",
-    id: "music",
-    card: Music,
-    visual: MusicVisual,
-  },
+// const features = [
+//   {
+//     title: "Unleash the Master Saver within",
+//     id: "colors",
+//     card: Colors,
+//     visual: OtherVisual,
+//   },
+//   {
+//     title: "Manifest your ideal life and purpose",
+//     id: "availability",
+//     card: Availability,
+//     visual: OtherVisual,
+//   },
+//   {
+//     title: "Commit to a savings goal",
+//     id: "todo-list1",
+//     card: Todo,
+//     visual: OtherVisual,
+//   },
+//   {
+//     title: "Implement our proven savings mastery strategies",
+//     id: "music",
+//     card: Music,
+//     visual: MusicVisual,
+//   },
 
-  {
-    title: "Develop a plan",
-    id: "scheduling-links",
-    card: SchedulingLinks,
-    visual: OtherVisual,
-  },
-  {
-    title: "Eliminate unhealthy spending habits",
-    id: "price",
-    card: SchedulingLinks,
-    visual: OtherVisual,
-  },
-  {
-    title: "  Receive reminders, alerts and rewards",
-    id: "price1",
-    card: SchedulingLinks,
-    visual: OtherVisual,
-  },
-  //   {
-  //     title: "At end...",
-  //     id: "end",
-  //     card: Team,
-  //     visual: OtherVisual,
-  //   },
-];
+//   {
+//     title: "Develop a plan",
+//     id: "scheduling-links",
+//     card: SchedulingLinks,
+//     visual: OtherVisual,
+//   },
+//   {
+//     title: "Eliminate unhealthy spending habits",
+//     id: "price",
+//     card: SchedulingLinks,
+//     visual: OtherVisual,
+//   },
+//   {
+//     title: "  Receive reminders, alerts and rewards",
+//     id: "price1",
+//     card: SchedulingLinks,
+//     visual: OtherVisual,
+//   },
+//   //   {
+//   //     title: "At end...",
+//   //     id: "end",
+//   //     card: Team,
+//   //     visual: OtherVisual,
+//   //   },
+// ];
 
 function Landing() {
   const [scope, animate] = useAnimate();

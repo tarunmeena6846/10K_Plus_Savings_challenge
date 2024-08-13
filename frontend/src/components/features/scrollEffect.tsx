@@ -1,6 +1,58 @@
 import React, { useEffect, useRef } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
+import { Availability, Colors, Music, SchedulingLinks, Todo } from "./card";
 
+const features = [
+  {
+    title: "Unleash the Master Saver within",
+    id: "colors",
+    color: "#6d94ff",
+    // visual: OtherVisual,
+  },
+  {
+    title: "Manifest your ideal life and purpose",
+    id: "availability",
+    color: "#b3f5a0",
+    // visual: OtherVisual,
+  },
+  {
+    title: "Commit to a savings goal",
+    id: "todo-list1",
+    card: Todo,
+    // visual: OtherVisual,
+  },
+  {
+    title: "Implement our proven savings mastery strategies",
+    id: "music",
+    color: "#99a3f0",
+    // visual: MusicVisual,
+  },
+
+  {
+    title: "Develop a plan",
+    id: "scheduling-links",
+    color: "#fee1d1",
+    // visual: OtherVisual,
+  },
+  {
+    title: "Eliminate unhealthy spending habits",
+    id: "price",
+    color: "#ccf3f7",
+    // visual: OtherVisual,
+  },
+  {
+    title: "  Receive reminders, alerts and rewards",
+    id: "price1",
+    color: "#f7ccf2",
+    // visual: OtherVisual,
+  },
+  //   {
+  //     title: "At end...",
+  //     id: "end",
+  //     card: Team,
+  //     visual: OtherVisual,
+  //   },
+];
 const ScrollEffectComponent = () => {
   const controls = useAnimation();
   const ref = useRef(null);
@@ -55,20 +107,19 @@ const ScrollEffectComponent = () => {
 
       {/* Scrollable sub-divs */}
       <div className=" w-1/2 h-full flex flex-col space-y-8" ref={ref}>
-        {["Sub Div 1", "Sub Div 2", "Sub Div 3", "Sub Div 4", "Sub Div 5"].map(
-          (item, index) => (
-            <motion.div
-              key={index}
-              className="bg-gray-200 p-4 rounded-lg shadow-lg"
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <h2 className="text-xl font-semibold">{item}</h2>
-              <p>This is content for {item}.</p>
-            </motion.div>
-          )
-        )}
+        {features.map((item, index) => (
+          <motion.div
+            key={index}
+            className={`p-4 rounded-lg shadow-lg`}
+            style={{ background: `${item.color}` }}
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <h2 className="text-xl font-semibold">{item.title}</h2>
+            {/* {item.color} */}
+          </motion.div>
+        ))}
       </div>
     </div>
   );
