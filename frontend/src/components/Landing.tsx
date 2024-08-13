@@ -136,35 +136,37 @@ function Landing() {
   }, [animate, fullscreenFeature, lastFullscreenFeature]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4">
-      <Hero />
-      <div ref={scope}>
-        {/* {features.map((feature) => (
+    <>
+      <div className="mx-auto max-w-7xl px-4">
+        <Hero />
+        <div ref={scope}>
+          {/* {features.map((feature) => (
           <feature.visual id={feature.id} key={feature.id} />
         ))} */}
-        <div className="flex w-full items-start gap-20">
-          <div className="w-full py-[50vh]">
-            <ul ref={ref}>
-              {features.map((feature) => (
-                <li key={feature.id}>
-                  <FeatureTitle id={feature.id}>{feature.title}</FeatureTitle>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="sticky top-0 flex h-screen m-10 w-full items-center">
-            <div className="relative aspect-square w-full rounded-3xl bg-gray-100 [&:has(>_.active-card)]:bg-transparent">
-              {features.map((feature) => (
-                <feature.card id={feature.id} key={feature.id} />
-              ))}
+          <div className="flex w-full items-start gap-20">
+            <div className="w-full py-[50vh]">
+              <ul ref={ref}>
+                {features.map((feature) => (
+                  <li key={feature.id}>
+                    <FeatureTitle id={feature.id}>{feature.title}</FeatureTitle>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="sticky top-0 flex h-screen m-10 w-full items-center">
+              <div className="relative aspect-square w-full rounded-3xl bg-gray-100 [&:has(>_.active-card)]:bg-transparent">
+                {features.map((feature) => (
+                  <feature.card id={feature.id} key={feature.id} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
+        {/* <FeatureTitle id={"end"}>{"At end..."}</FeatureTitle> */}
+        <ProjectedData />
       </div>
-      {/* <FeatureTitle id={"end"}>{"At end..."}</FeatureTitle> */}
-      <ProjectedData />
       <Footer />
-    </div>
+    </>
   );
 }
 
