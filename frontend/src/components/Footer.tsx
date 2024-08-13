@@ -71,7 +71,9 @@ const Footer = () => {
         <div className="mr-4">
           <h1 className="text-xl">RESOURCES</h1>
           <ul className="pt-5">
-            <li>Community</li>
+            <li>
+              <a href="/community">Community</a>
+            </li>
             <li>Support</li>
           </ul>
         </div>
