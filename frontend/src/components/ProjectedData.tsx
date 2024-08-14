@@ -36,27 +36,43 @@ const ProjectedData = () => {
       //     opacity: isInView ? "1" : "0",
       //   }}
     >
-      <p
-        ref={ref}
-        className={classNames(
-          "feature-title py-16 font-heading text-7xl transition-colors",
-          isInView ? "text-black" : "text-gray-300"
-        )}
-      >
-        Let’s calculate your current year-end savings trajectory.
-      </p>
+      <div className="flex">
+        <p
+          ref={ref}
+          className={classNames(
+            "feature-title py-16 font-heading text-7xl transition-colors text-center flex-wrap",
+            isInView ? "text-black" : "text-gray-300"
+          )}
+        >
+          Your current year-end savings trajectory.
+        </p>
+        <motion.img
+          src="./circle.svg"
+          animate={{
+            // x: [0, , 100, 50, 0], // X-axis positions for circular motion
+            // y: [0, 50, 0, -50, 0], // Y-axis positions for circular motion
+            rotate: 360, // Rotate the image to complete the circle
+          }}
+          transition={{
+            duration: 7, // Duration of one full circle
+            ease: "linear", // Smooth motion
+            repeat: Infinity, // Infinite loop
+          }}
+        />
+      </div>
       {!isOpen ? (
         <motion.div
           ref={ref}
-          className="projected-input"
+          className="projected-input border-[7px]"
           //   transition={{ layout: { duration: 1, type: "spring" } }}
           layout
           style={{
             borderRadius: "20px",
             background: isInView
-              ? "linear-gradient(360deg, #1C1C1C 10%, #494949 360%)"
+              ? // ? "linear-gradient(360deg, #1C1C1C 10%, #494949 360%)"
+                "#111f36"
               : "grey",
-            width: "50%",
+            width: "40%",
             // margin: "50px 0",
             marginBottom: "50px",
             cursor: "pointer",
@@ -64,52 +80,53 @@ const ProjectedData = () => {
             padding: "20px",
           }}
         >
-          <motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2 }}
-              style={{
-                width: "70%",
-                margin: "auto",
-                display: "flex",
-                flexDirection: "column",
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2 }}
+            style={{
+              // width: "70%",
+              margin: "auto",
+              display: "flex",
+              flexDirection: "column",
+              // alignItems: "center",
+            }}
+          >
+            {/* <label className="text-white mb-2">Monthly Income</label> */}
+            <motion.input
+              // initial={{ opacity: 0 }}
+              // animate={{ opacity: 1 }}
+              placeholder="Monthly Income"
+              className="mb-4 p-2 rounded "
+              // value={monthlyIncome}
+              onChange={(e) => {
+                const value = e.target.value;
+                setMonthlyIncome(value === "" ? 0 : parseInt(value));
               }}
+            />
+            {/* <label className="text-white mb-2">Monthly Expense</label> */}
+            <motion.input
+              // initial={{ opacity: 0 }}
+              // animate={{ opacity: 1 }}
+              placeholder="Monthly Expenses"
+              // value={monthlyExpense}
+              className="mb-4 p-2 rounded"
+              onChange={(e) => {
+                const value = e.target.value;
+                setMonthlyExpense(value === "" ? 0 : parseInt(value));
+                // localStorage.setItem("monthlyexpense", e.target.value);
+              }}
+            />
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleContinue}
+              className={
+                "show-me-btn rounded-xl bg-white px-2 py-1 mt-5 mb-5 text-black shadow-lg self-center w-1/2"
+              }
             >
-              <label className="text-white mb-2">Last Month's Income</label>
-              <motion.input
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mb-4 p-2 rounded"
-                value={monthlyIncome}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setMonthlyIncome(value === "" ? 0 : parseInt(value));
-                }}
-              />
-              <label className="text-white mb-2">Last Month's Expense</label>
-              <motion.input
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                value={monthlyExpense}
-                className="mb-4 p-2 rounded"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setMonthlyExpense(value === "" ? 0 : parseInt(value));
-                  // localStorage.setItem("monthlyexpense", e.target.value);
-                }}
-              />
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handleContinue}
-                className={
-                  "show-me-btn rounded-xl bg-white px-2 py-1 mt-5 mb-5 text-black shadow-lg"
-                }
-              >
-                Calculate
-              </motion.button>
-            </motion.div>
+              Calculate
+            </motion.button>
           </motion.div>
         </motion.div>
       ) : (
