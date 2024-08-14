@@ -31,7 +31,7 @@ const ProjectedData = () => {
   return (
     <motion.div
       //   ref={ref}
-      className="flex flex-col pb-4 justify-center items-center"
+      className="flex flex-col px-20  justify-center items-center bg-[#eaeaea]"
       //   style={{
       //     opacity: isInView ? "1" : "0",
       //   }}
@@ -40,7 +40,7 @@ const ProjectedData = () => {
         ref={ref}
         className={classNames(
           "feature-title py-16 font-heading text-7xl transition-colors",
-          isInView ? "text-white" : "text-gray-300"
+          isInView ? "text-black" : "text-gray-300"
         )}
       >
         Let’s calculate your current year-end savings trajectory.

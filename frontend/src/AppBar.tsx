@@ -123,7 +123,7 @@ function Appbar() {
   return (
     <div className="">
       <Toolbar
-        className="mx-auto mt-6 mx-3 rounded-3xl bg-[#1d2f4f] border"
+        className="mx-auto mt-6 mx-4 rounded-3xl bg-[#eaeaea] border "
         style={{
           display: "flex",
           alignItems: "center",
@@ -136,14 +136,18 @@ function Appbar() {
           to={currentUserState.userEmail ? "/dashboard" : "/"}
           sx={{ textDecoration: "none", color: "white" }}
         >
-          <img src="./10ksc.png" className="w-20 h-20" alt="10KSC Logo"></img>
+          <img
+            src="./10ksc.png"
+            className="w-20 h-20  rounded-3xl"
+            alt="10KSC Logo"
+          ></img>
           {/* 10K Savings Challenge */}
         </Typography>
         <div className="hidden md:flex space-x-4 rounded-3xl justify-between items-center  text-white p-2">
           <motion.button
             whileHover={{ scale: 1.3 }}
             whileTap={{ scale: 1 }}
-            className="rounded-3xl text-white pl-3 pr-3 mr-1 ml-1"
+            className="rounded-3xl text-black pl-3 pr-3 mr-1 ml-1"
             onClick={() =>
               navigate(currentUserState.userEmail ? "/dashboard" : "/")
             }
@@ -153,7 +157,7 @@ function Appbar() {
           <motion.button
             whileHover={{ scale: 1.3 }}
             whileTap={{ scale: 1 }}
-            className="rounded-3xl text-white p-2"
+            className="rounded-3xl text-black p-2"
             onClick={() => navigate("/pricing")}
           >
             Pricing
@@ -164,7 +168,7 @@ function Appbar() {
               whileTap={{ scale: 1 }}
               onMouseEnter={handleAdminMouseEnter}
               onMouseLeave={handleAdminMouseLeave}
-              className="rounded-3xl text-white p-2"
+              className="rounded-3xl text-black p-2"
               onClick={() => navigate("/community")}
             >
               Community
@@ -181,7 +185,7 @@ function Appbar() {
             <motion.button
               whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 1 }}
-              className="rounded-3xl text-white pr-3 p-2"
+              className="rounded-3xl text-black pr-3 p-2"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onClick={() => navigate("/swotportal")}
@@ -201,7 +205,7 @@ function Appbar() {
           {!currentUserState.userEmail && !currentUserState.isLoading ? (
             <div className="hidden md:flex space-x-4">
               <motion.button
-                className="login-button rounded-3xl  text-white  w-20 h-10"
+                className="login-button rounded-3xl  text-black  w-20 h-10"
                 whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => navigate("/login")}

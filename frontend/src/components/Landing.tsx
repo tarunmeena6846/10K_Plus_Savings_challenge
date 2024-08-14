@@ -20,6 +20,7 @@ import Footer from "./Footer";
 import { useRef } from "react";
 import { motion, useScroll } from "framer-motion";
 import ScrollEffectComponent from "./features/scrollEffect";
+import { AboutUsSection } from "./AboutUsComponent";
 // const features = [
 //   {
 //     title: "Unleash the Master Saver within",
@@ -138,7 +139,7 @@ function Landing() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 text-white">
+      <div className="mx-auto max-w-7xl px-4 py-6 text-white">
         <Hero />
         <ScrollEffectComponent />
         {/* <div ref={scope}>
@@ -162,8 +163,10 @@ function Landing() {
           </div>
         </div> */}
         {/* <FeatureTitle id={"end"}>{"At end..."}</FeatureTitle> */}
-        <ProjectedData />
+        {/* <ProjectedData /> */}
       </div>
+      <AboutUsSection />
+      <ProjectedData />
       <Footer />
     </>
   );
