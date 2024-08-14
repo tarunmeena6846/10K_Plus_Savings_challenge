@@ -121,9 +121,9 @@ function Appbar() {
   };
   console.log(currentUserState);
   return (
-    <div>
+    <div className="">
       <Toolbar
-        className="mx-auto mt-6 mx-3 rounded-3xl bg-[#1d2f4f] border "
+        className="mx-auto mt-6 mx-3 rounded-3xl bg-[#1d2f4f] border"
         style={{
           display: "flex",
           alignItems: "center",
