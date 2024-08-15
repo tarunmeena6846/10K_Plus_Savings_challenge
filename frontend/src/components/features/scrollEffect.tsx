@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
-import { Availability, Colors, Music, SchedulingLinks, Todo } from "./card";
+import Home from "./parallax";
+// import { Availability, Colors, Music, SchedulingLinks, Todo } from "./card";
 
-const features = [
+export const features = [
   {
     title: "Personalized Financial Planning",
     subtitle: "Custom Plans for Unique Needs",
@@ -68,6 +69,7 @@ const features = [
   //     visual: OtherVisual,
   //   },
 ];
+
 const ScrollEffectComponent = () => {
   const controls = useAnimation();
   const ref = useRef(null);
@@ -125,23 +127,56 @@ const ScrollEffectComponent = () => {
           </div>
         </motion.div>
       </div>
-
       {/* Scrollable sub-divs */}
-      <div className=" w-1/2 flex flex-col space-y-8" ref={ref}>
-        {features.map((item, index) => (
-          <motion.div
-            key={index}
-            className={`p-20 rounded-3xl shadow-lg h-full text-black`}
-            style={{ background: `${item.color}` }}
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <h2 className="text-3xl  ">{item.title}</h2>
-            <h2 className="">{item.subtitle}</h2>
-            {/* {item.color} */}
-          </motion.div>
-        ))}
+      <div className="w-1/2 space-y-8" ref={ref}>
+        <Home />
+        {/* {features.map((item, index) => {
+          // const divRef = useRef(null);
+
+          // const isDivInView = useInView(divRef, { amount: 1 });
+          // const controls = useAnimation();
+
+          // useEffect(() => {
+          //   console.log(isDivInView);
+          //   if (isDivInView) {
+          //     // controls.start("unfolded");
+          //   } else {
+          //     controls.start("folded");
+          //   }
+          // }, [isDivInView, controls]);
+          // console.log(isDivInView);
+          return (
+            <motion.div
+              key={index}
+              className="p-20 rounded-3xl shadow-lg h-full text-black cursor-pointer"
+              style={{ background: `${item.color}` }}
+              // ref={divRef}
+              // initial="folded"
+              animate={controls}
+              variants={{
+                folded: {
+                  y: 50,
+                  opacity: 1,
+                  rotateX: 180,
+                  // rotateX: 0,
+                  scaleY: 1,
+                },
+                // unfolded: {
+                //   // y: 1,
+                //   opacity: 1,
+                //   rotateX: 0,
+                //   // scaleY: 1,
+                // },
+              }}
+              transition={{ duration: 1, delay: index * 0.1 }}
+            >
+            
+              <h2 className="text-3xl">{item.title}</h2>
+              <h2 className="">{item.subtitle}</h2>
+
+            </motion.div>
+          );
+        })} */}
       </div>
     </div>
   );

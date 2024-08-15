@@ -40,8 +40,8 @@ const ProjectedData = () => {
         <p
           ref={ref}
           className={classNames(
-            "feature-title py-16 font-heading text-7xl transition-colors text-center flex-wrap",
-            isInView ? "text-black" : "text-gray-300"
+            "feature-title py-16 font-heading text-7xl transition-colors text-center flex-wrap font-bold",
+            isInView ? "text-gray-800" : "text-gray-300"
           )}
         >
           Your current year-end savings trajectory.
