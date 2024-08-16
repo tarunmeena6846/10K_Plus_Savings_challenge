@@ -27,9 +27,10 @@ export default function Home() {
   });
 
   return (
-    <main ref={container} className="">
+    <div ref={container} className="sticky top-2">
       {features.map((project, i) => {
         const targetScale = 1 - (features.length - i) * 0.05;
+        console.log(targetScale);
         return (
           <div>
             <Card
@@ -43,6 +44,6 @@ export default function Home() {
           </div>
         );
       })}
-    </main>
+    </div>
   );
 }

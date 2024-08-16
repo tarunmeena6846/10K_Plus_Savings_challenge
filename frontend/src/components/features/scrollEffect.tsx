@@ -128,55 +128,8 @@ const ScrollEffectComponent = () => {
         </motion.div>
       </div>
       {/* Scrollable sub-divs */}
-      <div className="w-1/2 space-y-8" ref={ref}>
+      <div className="w-1/2 h-1/4 space-y-8" ref={ref}>
         <Home />
-        {/* {features.map((item, index) => {
-          // const divRef = useRef(null);
-
-          // const isDivInView = useInView(divRef, { amount: 1 });
-          // const controls = useAnimation();
-
-          // useEffect(() => {
-          //   console.log(isDivInView);
-          //   if (isDivInView) {
-          //     // controls.start("unfolded");
-          //   } else {
-          //     controls.start("folded");
-          //   }
-          // }, [isDivInView, controls]);
-          // console.log(isDivInView);
-          return (
-            <motion.div
-              key={index}
-              className="p-20 rounded-3xl shadow-lg h-full text-black cursor-pointer"
-              style={{ background: `${item.color}` }}
-              // ref={divRef}
-              // initial="folded"
-              animate={controls}
-              variants={{
-                folded: {
-                  y: 50,
-                  opacity: 1,
-                  rotateX: 180,
-                  // rotateX: 0,
-                  scaleY: 1,
-                },
-                // unfolded: {
-                //   // y: 1,
-                //   opacity: 1,
-                //   rotateX: 0,
-                //   // scaleY: 1,
-                // },
-              }}
-              transition={{ duration: 1, delay: index * 0.1 }}
-            >
-            
-              <h2 className="text-3xl">{item.title}</h2>
-              <h2 className="">{item.subtitle}</h2>
-
-            </motion.div>
-          );
-        })} */}
       </div>
     </div>
   );

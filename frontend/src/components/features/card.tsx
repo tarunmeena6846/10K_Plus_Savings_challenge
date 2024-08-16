@@ -15,26 +15,26 @@ const Card = ({
   targetScale,
 }) => {
   const container = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ["start end", "start start"],
-  });
+  // const { scrollYProgress } = useScroll({
+  //   target: container,
+  //   offset: ["start end", "start start"],
+  // });
 
-  const imageScale = useTransform(scrollYProgress, [0, 1], [2, 1]);
+  // const imageScale = useTransform(scrollYProgress, [0, 1], [2, 1]);
   const scale = useTransform(progress, range, [1, targetScale]);
-  console.log(project);
+  // console.log(scale);
   return (
     <div
       ref={container}
-      className="h-[250px] flex items-center justify-center sticky top-0 text-black "
+      className="h-[250px] flex items-center justify-center  text-black sticky top-[0px]"
     >
       <motion.div
         style={{
           backgroundColor: project.color,
           scale,
-          // top: `calc(-5vh + ${i * 25}px)`,
+          top: `calc(-5vh + ${i * 25}px)`,
         }}
-        className="flex flex-col h-[200px] w-[1000px] rounded-[25px] justify-center text-center origin-top"
+        className="flex flex-col h-[200px] w-[1000px]  rounded-[25px] justify-center text-center origin-top"
       >
         <h2 className=" m-0 text-3xl">{project.title}</h2>
         {/* <div className="flex h-full mt-[50px] gap-[50px]"> */}
