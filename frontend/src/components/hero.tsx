@@ -7,9 +7,11 @@ const Hero = () => {
   const ref = useRef<HTMLParagraphElement>(null);
   const documentRef = useRef(document);
   const isInView = useInView(ref, {
-    margin: "-50% 0px -50% 0px",
+    margin: "0% 0px -50% 0px",
+    // once: true,
     // @ts-ignore
     root: documentRef,
+    // amount: 0,
   });
   // useEffect(() => {
   //   const handleScroll = () => {
