@@ -25,7 +25,7 @@ const ProjectedData = () => {
 
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ["150px end", "end start"],
+    offset: ["300px end", "end start"],
   });
 
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
@@ -43,7 +43,7 @@ const ProjectedData = () => {
         <p
           ref={ref}
           className={classNames(
-            "feature-title py-16 font-heading text-7xl transition-colors text-center flex-wrap font-bold",
+            "feature-title py-16 font-heading text-7xl  text-center font-bold",
             isInView ? "text-gray-800" : "text-gray-300"
           )}
         >
