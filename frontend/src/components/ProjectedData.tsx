@@ -135,6 +135,7 @@ const ProjectedData = () => {
       ) : (
         <motion.div
           style={{
+            scale,
             borderRadius: "20px",
             background: "linear-gradient(360deg, #1C1C1C 10%, #494949 360%)",
             width: "70%",
