@@ -84,7 +84,7 @@ const ScrollEffectComponent = () => {
   }, [controls, isInView]);
 
   return (
-    <div className="flex p-8">
+    <div className="flex">
       {/* Sticky "What We Do" section */}
       <div className="sticky top-2 h-1/4 w-1/2 ">
         <motion.div

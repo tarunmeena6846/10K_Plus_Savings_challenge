@@ -26,7 +26,7 @@ const Card = ({
   return (
     <div
       ref={container}
-      className="h-[250px] flex items-center justify-center  text-black sticky top-[0px]"
+      className="h-[250px] flex items-center justify-center text-black sticky top-[0px]"
     >
       <motion.div
         style={{
@@ -34,6 +34,7 @@ const Card = ({
           scale,
           top: `calc(-5vh + ${i * 25}px)`,
         }}
+        // viewport={{ root: container }}
         className="flex flex-col h-[200px] w-[1000px]  rounded-[25px] justify-center text-center origin-top"
       >
         <h2 className=" m-0 text-3xl">{project.title}</h2>
