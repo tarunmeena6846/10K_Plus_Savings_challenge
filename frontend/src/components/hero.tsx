@@ -1,11 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+// import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
-const getRandomPosition = (maxWidth, maxHeight) => {
-  const left = Math.floor(Math.random() * maxWidth);
-  const top = Math.floor(Math.random() * maxHeight);
-  return { left, top };
-};
 const Hero = () => {
   return (
     <div className="flex flex-row justify-center py-20 gap-10">
