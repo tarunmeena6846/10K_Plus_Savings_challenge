@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
-import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
-import { useRecoilState } from "recoil";
+// import { monthlyExpenseState, monthlyIncomeState } from "./store/atoms/total";
+// import { useRecoilState } from "recoil";
 
 const ProjectedData = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,8 +53,6 @@ const ProjectedData = () => {
         <motion.img
           src="./circle.svg"
           animate={{
-            // x: [0, , 100, 50, 0], // X-axis positions for circular motion
-            // y: [0, 50, 0, -50, 0], // Y-axis positions for circular motion
             rotate: 360, // Rotate the image to complete the circle
           }}
           transition={{
@@ -67,9 +65,6 @@ const ProjectedData = () => {
       {!isOpen ? (
         <motion.div
           className="projected-input border-[7px] flex flex-col"
-          // transition={{ duration: 2 }}
-          // animate={{ marginTop: "0px" }}
-          //   transition={{ layout: { duration: 1, type: "spring" } }}
           style={{
             scale,
             marginTop,
@@ -83,22 +78,7 @@ const ProjectedData = () => {
             padding: "20px",
           }}
         >
-          {/* <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2 }}
-            style={{
-              // width: "70%",
-              margin: "auto",
-              display: "flex",
-              flexDirection: "column",
-              // alignItems: "center",
-            }}
-          > */}
-          {/* <label className="text-white mb-2">Monthly Income</label> */}
           <motion.input
-            // initial={{ opacity: 0 }}
-            // animate={{ opacity: 1 }}
             placeholder="Monthly Income"
             className="mb-4 p-2 rounded "
             // value={monthlyIncome}
@@ -107,7 +87,6 @@ const ProjectedData = () => {
               setMonthlyIncome(value === "" ? 0 : parseInt(value));
             }}
           />
-          {/* <label className="text-white mb-2">Monthly Expense</label> */}
           <motion.input
             // initial={{ opacity: 0 }}
             // animate={{ opacity: 1 }}
@@ -161,17 +140,6 @@ const ProjectedData = () => {
               You will save $
               {(monthlyIncome - monthlyExpense) * (12 - new Date().getMonth())}
             </h1>
-            {/* <motion.input
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mb-4 p-2 rounded"
-              />
-              <label className="text-white mb-2">Expense</label>
-              <motion.input
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mb-4 p-2 rounded"
-              /> */}
             <h1 className="mb-4 text-white font-heading text-5xl">
               Do you know ?
             </h1>
