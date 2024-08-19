@@ -139,7 +139,7 @@ function Landing() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 py-6 text-white">
+      <div className="mx-auto max-w-7xl p-8 text-white">
         <Hero />
         <ScrollEffectComponent />
         {/* <div ref={scope}>
