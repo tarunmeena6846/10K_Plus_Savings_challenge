@@ -33,6 +33,8 @@ import Button from "./components/Button";
 import handleBuyClick from "./stripe/SwotCheckout";
 import countAtom from "./components/store/atoms/quickLinkCount";
 import Dropdown from "./Dropdown";
+import Loader from "./components/community/Loader";
+import { Spinner } from "./components/Loader/Spinner";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
@@ -202,23 +204,31 @@ function Appbar() {
           </div>
         </div>
         <div>
-          {!currentUserState.userEmail && !currentUserState.isLoading ? (
-            <div className="hidden md:flex space-x-4">
-              <motion.button
-                className="login-button rounded-3xl  text-black  w-20 h-10"
-                whileHover={{ scale: 1.3 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </motion.button>
-            </div>
-          ) : (
+          {currentUserState.isLoading ? (
             <>
-              <IconButton aria-label="menu" onClick={handleLogout}>
-                <MenuIcon className="text-white" />
-              </IconButton>
+              <Spinner />
             </>
+          ) : (
+            <div>
+              {currentUserState.userEmail === "" ? (
+                <div className="hidden md:flex space-x-4">
+                  <motion.button
+                    className="login-button rounded-3xl  text-black  w-20 h-10"
+                    whileHover={{ scale: 1.3 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </motion.button>
+                </div>
+              ) : (
+                <>
+                  <IconButton aria-label="menu" onClick={handleLogout}>
+                    <MenuIcon className="text-white" />
+                  </IconButton>
+                </>
+              )}
+            </div>
           )}
         </div>
         <div className="md:hidden md:flex">
@@ -241,7 +251,9 @@ function Appbar() {
           <MenuItem onClick={() => handleMenuItemClick("/expenses")}>
             Expenses
           </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("/blog")}>Blog</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("/community")}>
+            Community
+          </MenuItem>
           <MenuItem onClick={() => handleMenuItemClick("/login")}>
             Login
           </MenuItem>
