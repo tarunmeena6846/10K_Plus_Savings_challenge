@@ -13,34 +13,26 @@ import Footer from "./Footer";
 
 import ScrollEffectComponent from "./features/scrollEffect";
 import { AboutUsSection } from "./AboutUsComponent";
+import { useRef } from "react";
 
 function Landing() {
-  // const fullscreenFeature = useFeatureStore((state) => state.fullscreenFeature);
-  // const lastFullscreenFeature = useFeatureStore(
-  //   (state) => state.lastFullscreenFeature
-  // );
-  // const ref = useRef(null);
-  // const { scrollXProgress } = useScroll({ container: ref });
+  const projectedDataRef = useRef(null); // Create a reference
 
-  // const setFullscreenFeature = useFeatureStore(
-  //   (state) => state.setFullscreenFeature
-  // );
-
-  // const onEscapePress = () => {
-  //   if (fullscreenFeature) setFullscreenFeature(null);
-  // };
-
-  // useEscapePress(onEscapePress);
-  // useHidePageOverflow(!!fullscreenFeature);
-
+  const scrollToProjectedSection = () => {
+    if (projectedDataRef.current) {
+      projectedDataRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <>
       <div className="mx-auto max-w-7xl p-8 text-white">
-        <Hero />
+        <Hero scrollProjectedDataSection={scrollToProjectedSection} />
         <ScrollEffectComponent />
       </div>
       <AboutUsSection />
-      <ProjectedData />
+      <div ref={projectedDataRef}>
+        <ProjectedData />
+      </div>
       <Footer />
     </>
   );

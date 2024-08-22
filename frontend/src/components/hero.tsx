@@ -1,7 +1,7 @@
 // import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
-const Hero = () => {
+const Hero = ({ scrollProjectedDataSection }) => {
   return (
     <div className="flex flex-row justify-center py-20 gap-10">
       <div className="w-1/2 mt-30">
@@ -22,6 +22,7 @@ const Hero = () => {
           whileHover={{ background: "#b3f5a0" }}
           className="p-4  text-black rounded-3xl mt-3"
           style={{ background: "#6d94ff" }}
+          onClick={scrollProjectedDataSection}
         >
           Get Started
         </motion.button>
