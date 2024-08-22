@@ -9,6 +9,7 @@ import {
   userState,
 } from "./store/atoms/user";
 import { useRecoilState } from "recoil";
+import { Spinner } from "./Loader/Spinner";
 
 /// File is incomplete. You need to add input boxes to take input for users to login.
 function Login() {
@@ -30,6 +31,8 @@ function Login() {
       alert("Email and Password are Required");
       return;
     }
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
+
     const headers = new Headers();
     headers.append("email", email);
     headers.append("Password", password);
@@ -62,6 +65,7 @@ function Login() {
         });
       })
       .catch((error) => {
+        setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
         alert("Invalid Username or Password");
         console.error("Error signing in email");
       });
@@ -131,13 +135,26 @@ function Login() {
                         </div>
                       )}
                       <div className="pt-1 mb-4">
-                        <button
-                          className="btn btn-dark btn-lg w-full py-3 bg-[#ef85a5] text-black rounded-lg"
-                          type="button"
-                          onClick={handleRegister}
-                        >
-                          Login
-                        </button>
+                        {currentUserState.isLoading ? (
+                          <button
+                            className="btn btn-dark btn-lg w-full py-3 bg-[#ef85a5] text-black rounded-lg"
+                            type="button"
+                            onClick={handleRegister}
+                          >
+                            <Spinner />
+                            {/* {currentUserState.isLoading ? <Spinner /> : Login} */}
+                            {/* Login */}
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-dark btn-lg w-full py-3 bg-[#ef85a5] text-black rounded-lg"
+                            type="button"
+                            onClick={handleRegister}
+                          >
+                            {/* {currentUserState.isLoading ? <Spinner /> : Login} */}
+                            Login
+                          </button>
+                        )}
                       </div>
                       <a
                         className="text-sm text-gray-500"

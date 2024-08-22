@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import { userState } from "./store/atoms/user";
 import { useNavigate } from "react-router-dom";
 import { validateEmail } from "./validator/emailValidator";
+import { Spinner } from "./Loader/Spinner";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -32,6 +33,8 @@ function Register() {
       return;
     }
 
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
+
     fetch(`${import.meta.env.VITE_SERVER_URL}/auth/signup`, {
       method: "POST",
       body: JSON.stringify({
@@ -52,6 +55,7 @@ function Register() {
         resp.json().then((data) => {
           if (data.success) {
             setVerifyEmailPrompt(data.message);
+            setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
           } else {
             setVerifyEmailPrompt("");
             setRegistrationError(
@@ -61,6 +65,8 @@ function Register() {
         });
       })
       .catch((error) => {
+        setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
+
         setRegistrationError("Error registering email");
       });
   };
@@ -180,13 +186,33 @@ function Register() {
                         </div>
                       )}
                       <div className="pt-1 mb-4">
-                        <button
+                        {/* <button
                           className="btn btn-dark btn-lg w-full py-3 bg-[#ef85a5] text-black rounded-lg"
                           type="button"
                           onClick={handleRegister}
                         >
                           Register
-                        </button>
+                        </button> */}
+                        {currentUserState.isLoading ? (
+                          <button
+                            className="btn btn-dark btn-lg w-full py-3 bg-[#ef85a5] text-black rounded-lg"
+                            type="button"
+                            onClick={handleRegister}
+                          >
+                            <Spinner />
+                            {/* {currentUserState.isLoading ? <Spinner /> : Login} */}
+                            {/* Login */}
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-dark btn-lg w-full py-3 bg-[#ef85a5] text-black rounded-lg"
+                            type="button"
+                            onClick={handleRegister}
+                          >
+                            {/* {currentUserState.isLoading ? <Spinner /> : Login} */}
+                            Resister
+                          </button>
+                        )}
                       </div>
                       <p className="mb-5 pb-lg-2 text-gray-600">
                         Already have an account?

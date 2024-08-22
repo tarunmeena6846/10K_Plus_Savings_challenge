@@ -242,7 +242,7 @@ const Dashboard = () => {
     setCurrentUserState,
   ]);
   return (
-    <div>
+    <div className=" h-screen bg-[#eaeaea]">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -286,24 +286,24 @@ const Dashboard = () => {
                 className="p-6 rounded-2xl"
                 style={{ background: "#ffcbfb", overflow: "hidden" }}
               >
-                <h2>Current Savings</h2>
+                <h2>Current Annual Savings</h2>
                 <h2 className="text-4xl">${annualCurrentSavings}</h2>
               </div>
               <div
                 className="p-6 rounded-2xl"
                 style={{ background: "#b2edff", overflow: "hidden" }}
               >
-                <h2>Target Savings</h2>
+                <h2>Target Annual Savings</h2>
                 <h2 className="text-4xl">${annualTargetSavings}</h2>
               </div>
               <div
                 className="p-6 rounded-2xl"
                 style={{ background: "#ceffae", overflow: "hidden" }}
               >
-                <h2>Actual Savings</h2>
+                <h2>Actual Annual Savings</h2>
                 <h2 className="text-4xl">${annualActualSavings}</h2>
               </div>
-              <div className="col-span-3 md:row-span-2">
+              <div className="col-span-2 md:row-span-2">
                 <div
                   className="h-full w-full rounded-2xl"
                   // style={{ maxHeight: "200px" }}
