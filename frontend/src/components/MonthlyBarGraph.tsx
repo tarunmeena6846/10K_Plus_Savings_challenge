@@ -78,7 +78,7 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
   };
 
   return (
-    <div style={{ maxHeight: "350px" }}>
+    <div className="bg-white rounded-3xl p-3">
       <Bar options={options} data={data} />
     </div>
   );

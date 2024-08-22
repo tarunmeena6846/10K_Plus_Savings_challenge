@@ -24,6 +24,7 @@ import SideBar from "./Sidebar/SideBar";
 import SidebarLayout from "./SidebarLayout";
 import { fetchData } from "./Dashboard/fetchIncomeAndExpenseData";
 import Loader from "./community/Loader";
+import DoughnutData from "./DoughnutChart";
 
 export const monthIncExpInfo = [
   { name: "Rent", amount: 1000, type: "expense" },
@@ -305,11 +306,25 @@ const Dashboard = () => {
               </div>
               <div className="col-span-2 md:row-span-2">
                 <div
-                  className="h-full w-full rounded-2xl"
+                  className=" h-full rounded-2xl mt-10"
                   // style={{ maxHeight: "200px" }}
                 >
                   {isMonthlyDataReady && (
                     <MonthlyBarGraph monthlyData={monthlyData} />
+                  )}
+                </div>
+              </div>
+              <div className="col-span-1 md:row-span-2">
+                <div
+                  className="rounded-2xl mt-10"
+                  // style={{ maxHeight: "200px" }}
+                >
+                  {isMonthlyDataReady && (
+                    <DoughnutData
+                      annualTargetSavings={annualTargetSavings}
+                      annualCurrentSavings={annualCurrentSavings}
+                      annualActualSavings={annualActualSavings}
+                    />
                   )}
                 </div>
               </div>
