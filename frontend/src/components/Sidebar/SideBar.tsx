@@ -78,7 +78,7 @@ const SideBar = () => {
   const isMobile = windowWidth <= 768;
 
   return (
-    <div className="fixed top-0 left-0 h-screen bg-gray-600 z-50">
+    <div className="fixed top-0 left-0 h-screen bg-[#111f36] z-50">
       <motion.div
         animate={{
           overflow: "auto",

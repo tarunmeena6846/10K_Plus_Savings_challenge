@@ -6,7 +6,9 @@ Chart.register(ArcElement, Tooltip, Legend, Title);
 Chart.defaults.plugins.tooltip.backgroundColor = "black";
 // Chart.defaults.plugins.legend.position = "right";
 Chart.defaults.plugins.legend.title.display = true;
-// Chart.defaults.plugins.legend.title.text = "60 of 100 Done";
+// Chart.defaults.plugins.legend.title.text =
+//   "Savings Progress: Target vs. Actual";
+// Chart.defaults.plugins.legend.title.color = "black";
 // Chart.defaults.plugins.legend.title.font = "Helvetica Neue";
 
 function DoughnutData({
@@ -37,6 +39,14 @@ function DoughnutData({
   const options = {
     cutout: "70%", // Creates the donut hole effect
     plugins: {
+      title: {
+        display: true,
+        text: "Savings Progress: Target vs. Actual",
+        padding: {
+          top: 10,
+          // bottom: 50, // Adjust the top padding for the title
+        },
+      },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
@@ -48,7 +58,7 @@ function DoughnutData({
   };
 
   return (
-    <div className="flex flex-col items-center bg-white rounded-3xl py-5">
+    <div className="flex flex-col  items-center bg-white rounded-3xl py-3">
       {/* <h3 className="text-xl font-semibold mb-4">Savings Progress</h3> */}
       <Doughnut data={data} options={options} />
       {/* <div className="absolute text-center mt-4"> */}

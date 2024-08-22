@@ -186,6 +186,7 @@ export default function UserAvatar() {
   return (
     <>
       <Dropdown
+        // className="bg-white"
         label={
           <div className="relative">
             <Avatar
@@ -201,6 +202,7 @@ export default function UserAvatar() {
           </div>
         }
         inline
+        theme={{ arrowIcon: "text-white" }}
       >
         <Dropdown.Header>
           <span className="block text-sm">{currentUserState.userEmail}</span>
