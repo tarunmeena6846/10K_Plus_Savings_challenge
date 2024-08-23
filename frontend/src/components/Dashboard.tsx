@@ -24,6 +24,7 @@ import SideBar from "./Sidebar/SideBar";
 import SidebarLayout from "./SidebarLayout";
 import { fetchData } from "./Dashboard/fetchIncomeAndExpenseData";
 import Loader from "./community/Loader";
+import DoughnutData from "./DoughnutChart";
 
 export const monthIncExpInfo = [
   { name: "Rent", amount: 1000, type: "expense" },
@@ -242,7 +243,7 @@ const Dashboard = () => {
     setCurrentUserState,
   ]);
   return (
-    <div>
+    <div className=" h-screen bg-[#eaeaea] ">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -281,35 +282,49 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4">
               <div
                 className="p-6 rounded-2xl"
-                style={{ background: "#ffcbfb", overflow: "hidden" }}
+                style={{ background: "#ffa540", overflow: "hidden" }}
               >
-                <h2>Current Savings</h2>
+                <h2>Current Annual Savings</h2>
                 <h2 className="text-4xl">${annualCurrentSavings}</h2>
               </div>
               <div
                 className="p-6 rounded-2xl"
-                style={{ background: "#b2edff", overflow: "hidden" }}
+                style={{ background: "#51d9a8", overflow: "hidden" }}
               >
-                <h2>Target Savings</h2>
+                <h2>Target Annual Savings</h2>
                 <h2 className="text-4xl">${annualTargetSavings}</h2>
               </div>
               <div
                 className="p-6 rounded-2xl"
-                style={{ background: "#ceffae", overflow: "hidden" }}
+                style={{ background: "#96c9dd", overflow: "hidden" }}
               >
-                <h2>Actual Savings</h2>
+                <h2>Actual Annual Savings</h2>
                 <h2 className="text-4xl">${annualActualSavings}</h2>
               </div>
-              <div className="col-span-3 md:row-span-2">
+              <div className="col-span-2 md:row-span-2">
                 <div
-                  className="h-full w-full rounded-2xl"
+                  className=" h-full rounded-2xl"
                   // style={{ maxHeight: "200px" }}
                 >
                   {isMonthlyDataReady && (
                     <MonthlyBarGraph monthlyData={monthlyData} />
+                  )}
+                </div>
+              </div>
+              <div className="col-span-1 md:row-span-2">
+                <div
+                  className="h-full rounded-2xl"
+                  // style={{ maxHeight: "200px" }}
+                >
+                  {isMonthlyDataReady && (
+                    <DoughnutData
+                      annualTargetSavings={annualTargetSavings}
+                      annualCurrentSavings={annualCurrentSavings}
+                      annualActualSavings={annualActualSavings}
+                    />
                   )}
                 </div>
               </div>

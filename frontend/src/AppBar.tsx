@@ -33,6 +33,8 @@ import Button from "./components/Button";
 import handleBuyClick from "./stripe/SwotCheckout";
 import countAtom from "./components/store/atoms/quickLinkCount";
 import Dropdown from "./Dropdown";
+import Loader from "./components/community/Loader";
+import { Spinner } from "./components/Loader/Spinner";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
@@ -121,7 +123,7 @@ function Appbar() {
   };
   console.log(currentUserState);
   return (
-    <div className="">
+    <div className="px-4">
       <Toolbar
         className="mx-auto mt-6 mx-4 rounded-3xl bg-[#eaeaea] border "
         style={{
@@ -145,9 +147,9 @@ function Appbar() {
         </Typography>
         <div className="hidden md:flex space-x-4 rounded-3xl justify-between items-center  text-white p-2">
           <motion.button
-            whileHover={{ scale: 1.3 }}
+            whileHover={{ scale: 1.3, background: "black", color: "white" }}
             whileTap={{ scale: 1 }}
-            className="rounded-3xl text-black pl-3 pr-3 mr-1 ml-1"
+            className="rounded-3xl text-black p-2"
             onClick={() =>
               navigate(currentUserState.userEmail ? "/dashboard" : "/")
             }
@@ -155,7 +157,7 @@ function Appbar() {
             Home
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.3 }}
+            whileHover={{ scale: 1.3, background: "black", color: "white" }}
             whileTap={{ scale: 1 }}
             className="rounded-3xl text-black p-2"
             onClick={() => navigate("/pricing")}
@@ -164,7 +166,7 @@ function Appbar() {
           </motion.button>
           <div>
             <motion.button
-              whileHover={{ scale: 1.3 }}
+              whileHover={{ scale: 1.3, background: "black", color: "white" }}
               whileTap={{ scale: 1 }}
               onMouseEnter={handleAdminMouseEnter}
               onMouseLeave={handleAdminMouseLeave}
@@ -183,7 +185,7 @@ function Appbar() {
           </div>
           <div>
             <motion.button
-              whileHover={{ scale: 1.3 }}
+              whileHover={{ scale: 1.3, background: "black", color: "white" }}
               whileTap={{ scale: 1 }}
               className="rounded-3xl text-black pr-3 p-2"
               onMouseEnter={handleMouseEnter}
@@ -202,23 +204,35 @@ function Appbar() {
           </div>
         </div>
         <div>
-          {!currentUserState.userEmail && !currentUserState.isLoading ? (
-            <div className="hidden md:flex space-x-4">
-              <motion.button
-                className="login-button rounded-3xl  text-black  w-20 h-10"
-                whileHover={{ scale: 1.3 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </motion.button>
-            </div>
-          ) : (
+          {currentUserState.isLoading ? (
             <>
-              <IconButton aria-label="menu" onClick={handleLogout}>
-                <MenuIcon className="text-white" />
-              </IconButton>
+              <Spinner />
             </>
+          ) : (
+            <div>
+              {currentUserState.userEmail === "" ? (
+                <div className="hidden md:flex space-x-4">
+                  <motion.button
+                    className="login-button rounded-3xl  text-black  w-20 h-10"
+                    whileHover={{
+                      scale: 1.3,
+                      background: "black",
+                      color: "white",
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </motion.button>
+                </div>
+              ) : (
+                <>
+                  <IconButton aria-label="menu" onClick={handleLogout}>
+                    <MenuIcon className="text-white" />
+                  </IconButton>
+                </>
+              )}
+            </div>
           )}
         </div>
         <div className="md:hidden md:flex">
@@ -241,7 +255,9 @@ function Appbar() {
           <MenuItem onClick={() => handleMenuItemClick("/expenses")}>
             Expenses
           </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("/blog")}>Blog</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("/community")}>
+            Community
+          </MenuItem>
           <MenuItem onClick={() => handleMenuItemClick("/login")}>
             Login
           </MenuItem>

@@ -34,19 +34,38 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
       title: {
         display: true,
         text: "Projected Savings Vs Actual Savings Vs Current Savings",
+        color: "white",
         padding: {
           top: 10,
-          // bottom: 50, // Adjust the top padding for the title
         },
       },
+      legend: {
+        labels: {
+          color: "white",
+        },
+      },
+      backgroundColor: "white",
     },
     responsive: true,
     scales: {
+      // color: "white",
       x: {
         stacked: false, // Disable stacking for grouped bars
+        grid: {
+          color: "rgba(255, 255, 255, 0.2)", // Grid lines color
+        },
+        ticks: {
+          color: "white", // X-axis labels color
+        },
       },
       y: {
         stacked: false,
+        grid: {
+          color: "rgba(255, 255, 255, 0.2)", // Grid lines color
+        },
+        ticks: {
+          color: "white", // X-axis labels color
+        },
       },
     },
   };
@@ -56,20 +75,21 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     datasets: [
       {
         label: "Target Saving",
-        backgroundColor: "#76d6f3",
+        backgroundColor: "#51d9a8",
         // borderColor: "white",
         data: monthlyData.map((data: any) => data.target),
+        // color: "white",
         // borderRadius: 10,
       },
       {
         label: "Actual Saving",
-        backgroundColor: "#f377e7",
+        backgroundColor: "#96c9dd",
         // borderColor: "white",
         data: monthlyData.map((data: any) => data.actual),
       },
       {
         label: "Current Saving",
-        backgroundColor: "green",
+        backgroundColor: "#ffa540",
         // borderColor: "white",
         data: monthlyData.map((data: any) => data.current),
         // borderRadius: 10,
@@ -78,7 +98,7 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
   };
 
   return (
-    <div style={{ maxHeight: "350px" }}>
+    <div className=" rounded-3xl bg-[#111f36] p-3">
       <Bar options={options} data={data} />
     </div>
   );
