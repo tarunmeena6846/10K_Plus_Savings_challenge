@@ -4,12 +4,7 @@ import { Doughnut } from "react-chartjs-2";
 
 Chart.register(ArcElement, Tooltip, Legend, Title);
 Chart.defaults.plugins.tooltip.backgroundColor = "black";
-// Chart.defaults.plugins.legend.position = "right";
 Chart.defaults.plugins.legend.title.display = true;
-// Chart.defaults.plugins.legend.title.text =
-//   "Savings Progress: Target vs. Actual";
-// Chart.defaults.plugins.legend.title.color = "black";
-// Chart.defaults.plugins.legend.title.font = "Helvetica Neue";
 
 function DoughnutData({
   annualTargetSavings,
@@ -20,8 +15,10 @@ function DoughnutData({
   const actualPercentage = (annualActualSavings / annualTargetSavings) * 100;
   const currentPercentage = (annualCurrentSavings / annualTargetSavings) * 100;
 
+  //TODO make the border lines overlap
   const data = {
     labels: ["Actual Savings", "Current Savings", "Remaining Target"],
+    color: "white",
     datasets: [
       {
         data: [
@@ -30,8 +27,12 @@ function DoughnutData({
           //   100 - actualPercentage - currentPercentage,
           annualActualSavings - annualCurrentSavings,
         ],
-        backgroundColor: ["#4CAF50", "#FFCE56", "#FF6384"],
-        hoverBackgroundColor: ["#45A049", "#FFBC43", "#FF4365"],
+        backgroundColor: ["#96c9dd", "#ffa540", "#51d9a8"],
+        // hoverBackgroundColor: ["#45A049", "#FFBC43", "#FF4365"],
+        borderWidth: 0, // Removes borders
+        borderRadius: 10,
+        // lineJoin: 10,
+        // borderAlign: "inner", // Aligns the border to overlap the segments
       },
     ],
   };
@@ -41,6 +42,7 @@ function DoughnutData({
     plugins: {
       title: {
         display: true,
+        color: "white",
         text: "Savings Progress: Target vs. Actual",
         padding: {
           top: 10,
@@ -54,11 +56,17 @@ function DoughnutData({
           },
         },
       },
+      legend: {
+        labels: {
+          color: "white", // Label text color
+          //   bord
+        },
+      },
     },
   };
 
   return (
-    <div className="flex flex-col  items-center bg-white rounded-3xl py-3">
+    <div className="flex flex-col items-center bg-[#111f36] rounded-3xl py-3">
       {/* <h3 className="text-xl font-semibold mb-4">Savings Progress</h3> */}
       <Doughnut data={data} options={options} />
       {/* <div className="absolute text-center mt-4"> */}
