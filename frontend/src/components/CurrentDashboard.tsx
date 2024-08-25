@@ -13,7 +13,8 @@ import Loader from "./community/Loader";
 import { DropDownButton } from "./DropDown/button";
 
 import IncomeGraph from "./SpendingBarGraph";
-import LineGraph from "./LineGraph";
+import MonthwiseDataGraph from "./LineGraph";
+import IncomeVsExpenseGraph from "./IncomeVsExpense";
 
 function getIconForCategory(category) {
   // Define your category-to-icon mapping here
@@ -24,7 +25,7 @@ function getIconForCategory(category) {
     Housing: "./houseing.svg",
     Entertainment: "./entertainment.svg",
     Food: "./food.svg",
-    
+
     // Add more categories and their corresponding icons
   };
   return icons[category] || "./expense.svg"; // Default icon if the category is not found
@@ -141,7 +142,7 @@ export default function CurrentDashboard() {
   //   return <Loader />;
   // }
 
-  console.log(categoryWiseSpendings);
+  console.log(currentItemList);
   return (
     <div className="min-h-screen bg-[#eaeaea]">
       <SidebarLayout>
@@ -156,7 +157,7 @@ export default function CurrentDashboard() {
               <h2 className="text-3xl">Current Savings Portal</h2>
               <DropDownButton openModal={openModal} />
             </div>
-            <div className="grid grid-cols-1 md:grid-rows-7 md:grid-cols-3 gap-4 ">
+            <div className="grid grid-cols-1 md:grid-rows-4 md:grid-cols-3 gap-4 ">
               <div
                 className="p-6  flex items-center flex-col justify-center rounded-2xl bg-gradient-to-r from-orange-500  to-pink-500 text-white"
                 style={{ overflow: "hidden" }}
@@ -217,25 +218,26 @@ export default function CurrentDashboard() {
                 <h2>Current Income</h2>
                 <h2 className="text-4xl">${currentIncome}</h2>
               </div>
+
               <div
-                className="p-6 rounded-2xl col-span-2 row-span-1"
-                style={{ background: "#ffcbfb", overflow: "hidden" }}
+                className=" rounded-2xl col-span-1 row-span-1"
+                style={{ background: "", overflow: "hidden" }}
               >
-                <LineGraph
-                  spendings={categoryWiseSpendings}
-                  income={categoryWiseIncome}
+                <IncomeVsExpenseGraph
+                  income={currentIncome}
+                  expense={currentExpense}
                 />
-                {/* <h2>Line graph</h2>
+                {/* <h2>Current Income</h2>
                 <h2 className="text-4xl">${currentIncome}</h2> */}
               </div>
               <div
-                className="p-6 rounded-2xl col-span-1 row-span-1"
-                style={{ background: "#ffcbfb", overflow: "hidden" }}
+                className=" rounded-2xl col-span-2 row-span-1"
+                style={{ background: "", overflow: "hidden" }}
               >
-                <h2>Current Income</h2>
-                <h2 className="text-4xl">${currentIncome}</h2>
+                <MonthwiseDataGraph expenseAndIncome={currentItemList} />
+                {/* <h2>Line graph</h2>
+                <h2 className="text-4xl">${currentIncome}</h2> */}
               </div>
-
               {/* <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4"></div> */}
               {/* <div
                 className="p-6 rounded-2xl"

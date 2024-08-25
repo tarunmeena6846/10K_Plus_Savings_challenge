@@ -1,78 +1,113 @@
 import React from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-
-// Register necessary Chart.js components
-ChartJS.register(
+  BarElement,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+} from "chart.js";
+
+ChartJS.register(
   Title,
   Tooltip,
-  Legend
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
 );
-const LineGraph = ({ spendings, income }) => {
-  // Data and options for the chart
-  const chartData = {
-    labels: spendings.map((data) => data.category), // Array of labels (e.g., months or days)
+
+const MonthwiseDataGraph = ({ expenseAndIncome }) => {
+  // Process data
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  // Initialize empty data structure
+  const dailyData = Array.from({ length: 31 }, (_, i) => ({
+    date: `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(
+      i + 1
+    ).padStart(2, "0")}`,
+    income: 0,
+    expense: 0,
+  }));
+
+  // Fill daily data with values from expenseAndIncome
+  expenseAndIncome.forEach((item) => {
+    const date = new Date(item.date).getDate() - 1; // Zero-based index
+    if (item.type === "Income") {
+      dailyData[date].income += item.amount;
+    } else if (item.type === "Expense") {
+      dailyData[date].expense += item.amount;
+    }
+  });
+
+  // Chart data preparation
+  const labels = dailyData.map((data) => data.date.split("-").pop()); // Extract day from date
+  const incomeData = dailyData.map((data) => data.income);
+  const expenseData = dailyData.map((data) => data.expense);
+
+  const data = {
+    labels,
     datasets: [
       {
-        label: "My Data",
-        data: spendings.map((data) => data.amount), // Array of data points
-        borderColor: "rgba(75,192,192,1)", // Line color
-        backgroundColor: "rgba(75,192,192,0.2)", // Background color of the line
-        fill: true, // Whether to fill the area under the line
-        tension: 0.1, // Curvature of the line
+        label: "Income",
+        backgroundColor: "#51d9a8",
+        data: incomeData,
+      },
+      {
+        label: "Expense",
+        backgroundColor: "#96c9dd",
+        data: expenseData,
       },
     ],
   };
 
   const options = {
-    responsive: true,
     plugins: {
-      // legend: {
-      //   position: "top",
-      // },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            return `${tooltipItem.dataset.label}: $${tooltipItem.raw}`;
-          },
+      title: {
+        display: true,
+        text: "Income and Expenses by Day",
+        color: "white",
+        padding: {
+          top: 10,
+        },
+      },
+      legend: {
+        labels: {
+          color: "white",
         },
       },
     },
+    responsive: true,
     scales: {
       x: {
-        title: {
-          display: true,
-          text: "X Axis Label",
+        stacked: false,
+        grid: {
+          color: "rgba(255, 255, 255, 0.2)",
+        },
+        ticks: {
+          color: "white",
         },
       },
       y: {
-        title: {
-          display: true,
-          text: "Y Axis Label",
+        stacked: false,
+        grid: {
+          color: "rgba(255, 255, 255, 0.2)",
         },
-        beginAtZero: true,
+        ticks: {
+          color: "white",
+        },
       },
     },
   };
 
   return (
-    <div>
-      <Line data={chartData} options={options} />
+    <div className="rounded-3xl p-2 bg-[#111f36] h-full w-full ">
+      <Bar options={options} data={data} />
     </div>
   );
 };
 
-export default LineGraph;
+export default MonthwiseDataGraph;
