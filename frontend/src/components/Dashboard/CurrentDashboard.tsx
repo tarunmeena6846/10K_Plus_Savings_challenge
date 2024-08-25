@@ -8,6 +8,7 @@ import { useRecoilState } from "recoil";
 import { actionsState, userState } from "../store/atoms/user";
 import Loader from "../community/Loader";
 import { DropDownButton } from "../DropDown/button";
+import SpendingGraph from "../SpendingBarGraph";
 
 export default function CurrentDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +23,8 @@ export default function CurrentDashboard() {
   const [currentIncome, setCurrentIncome] = useState(0);
   const [currentExpense, setCurrentExpense] = useState(0);
   const [action, setActions] = useRecoilState(actionsState);
-
+  const [categoryWiseSpendings, setCategoryWiseSpendings] = useState({});
+  const [categoryWiseIncome, setCategoryWiseIncome] = useState({});
   const openModal = (tab) => {
     setActiveTab(tab);
     setIsModalOpen(true);
@@ -48,9 +50,61 @@ export default function CurrentDashboard() {
         "Current"
       );
       if (currentData.success) {
+        console.log(currentData);
         setCurrentIncome(currentData.currentData.income);
         setCurrentExpense(currentData.currentData.expense);
         setCurrentItemList(currentData.currentData.items);
+
+        if (currentData.currentData.items.length > 0) {
+          // console.log(currentItemList);
+          const categorySpendingsObj = currentData.currentData.items.reduce(
+            (acc, item) => {
+              if (item.type === "Expense") {
+                if (!acc[item.category]) {
+                  acc[item.category] = 0;
+                }
+                acc[item.category] += item.amount;
+              }
+              return acc;
+            },
+            {}
+          );
+
+          const categoryIncomeObj = currentData.currentData.items.reduce(
+            (acc, item) => {
+              if (item.type === "Income") {
+                if (!acc[item.category]) {
+                  acc[item.category] = 0;
+                }
+                acc[item.category] += item.amount;
+              }
+              return acc;
+            },
+            {}
+          );
+          // .sort((a, b) => b[1] - a[1]);
+
+          // Convert to an array of [category, amount] pairs and sort by amount in descending order
+          const sortedExpense = Object.entries(categorySpendingsObj).sort(
+            (a: any, b: any) => b[1] - a[1]
+          );
+
+          console.log(sortedExpense);
+          // Convert the sorted array back to an object
+          const sortedExpenseObject = Object.fromEntries(sortedExpense);
+
+          // Convert to an array of [category, amount] pairs and sort by amount in descending order
+          const sortedIncome = Object.entries(categoryIncomeObj).sort(
+            (a: any, b: any) => b[1] - a[1]
+          );
+
+          // Convert the sorted array back to an object
+          const sortedIncomeObject = Object.fromEntries(sortedIncome);
+
+          console.log(sortedIncomeObject);
+          setCategoryWiseSpendings(sortedExpenseObject);
+          setCategoryWiseIncome(sortedIncomeObject);
+        }
       }
       setCurrentUserState((prev) => ({
         ...prev,
@@ -64,9 +118,9 @@ export default function CurrentDashboard() {
   // if (currentUserState.isLoading) {
   //   return <Loader />;
   // }
-
+  console.log(categoryWiseIncome);
   return (
-    <div className="h-screen bg-[#eaeaea]">
+    <div className="min-h-screen bg-[#eaeaea]">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <>
@@ -78,34 +132,74 @@ export default function CurrentDashboard() {
               <h2 className="text-3xl">Current Savings Portal</h2>
               <DropDownButton openModal={openModal} />
             </div>
-            <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-rows-7 md:grid-cols-3 gap-4 ">
               <div
-                className="p-6 rounded-2xl"
+                className="p-6  rounded-2xl bg-gradient-to-r from-orange-500  to-pink-500 text-white"
+                style={{ overflow: "hidden" }}
+              >
+                <h2>Current Savings</h2>
+                <h2 className="text-4xl">${currentIncome - currentExpense}</h2>
+              </div>
+              <div
+                className="p-6 rounded-2xl text-white"
+                style={{ background: "#111f36", overflow: "hidden" }}
+              >
+                <h2>Current Expenses</h2>
+                <h2 className="text-4xl">${currentExpense}</h2>
+              </div>
+              <div
+                style={{ background: "", overflow: "hidden" }}
+                className=" rounded-2xl col-span-1 row-span-2"
+              >
+                <SpendingGraph spendingData={categoryWiseIncome} />
+
+                {/* <h2>Current Expense</h2>
+                <h2 className="text-4xl">${currentExpense}</h2> */}
+              </div>
+              <div
+                className="p-6 bg-pink-400 rounded-2xl w-full"
+                style={{ overflow: "hidden" }}
+              >
+                <h2>Top Income source </h2>
+                <h2 className="text-4xl">${currentIncome}</h2>
+                {/* <SpendingGraph spendingData={categoryWiseIncome} /> */}
+              </div>
+              <div
+                className="p-6 rounded-2xl text-white"
+                style={{ background: "#111f36", overflow: "hidden" }}
+              >
+                <h2>Income</h2>
+                <h2 className="text-4xl">${currentIncome}</h2>
+              </div>
+              <div
+                className="p-6 rounded-2xl col-span-2 row-span-2"
+                style={{ background: "#ffcbfb", overflow: "hidden" }}
+              >
+                <h2>Line graph</h2>
+                <h2 className="text-4xl">${currentIncome}</h2>
+              </div>
+              <div
+                className="p-6 rounded-2xl col-span-1 row-span-2"
                 style={{ background: "#ffcbfb", overflow: "hidden" }}
               >
                 <h2>Current Income</h2>
                 <h2 className="text-4xl">${currentIncome}</h2>
               </div>
-              <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#b2edff", overflow: "hidden" }}
-              >
-                <h2>Current Expense</h2>
-                <h2 className="text-4xl">${currentExpense}</h2>
-              </div>
-              <div
+
+              {/* <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4"></div> */}
+              {/* <div
                 className="p-6 rounded-2xl"
                 style={{ background: "#ceffae", overflow: "hidden" }}
               >
                 <h2>Current Savings</h2>
                 <h2 className="text-4xl">${currentIncome - currentExpense}</h2>
-              </div>
-              <div className="md:col-span-3 grid grid-cols-4 row-span-2 gap-4">
+              </div> */}
+              <div className="md:col-span-3 grid grid-cols-4 row-span-5 gap-4 h-full">
                 <div
                   className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
                   style={{ background: "white", overflow: "hidden" }}
                 >
-                  <h2 className="mb-4 text-center">Current Income</h2>
+                  {/* <h2 className="mb-4 text-center">Current Income</h2>
                   <Button
                     style={{
                       minWidth: "100px",
@@ -119,8 +213,8 @@ export default function CurrentDashboard() {
                     onClick={() => openModal(0)} // Open modal when button is clicked
                   >
                     + Add Income
-                  </Button>
-                  {/* Render the updated items */}
+                  </Button> */}
+
                   {currentItemList.length > 0 ? (
                     <div style={{ padding: "10px", width: "100%" }}>
                       {currentItemList
@@ -158,7 +252,7 @@ export default function CurrentDashboard() {
                   className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
                   style={{ background: "white", overflow: "hidden" }}
                 >
-                  <h2 className="mb-4 text-center">Current Expenses</h2>
+                  {/* <h2 className="mb-4 text-center">Current Expenses</h2>
                   <Button
                     style={{
                       minWidth: "100px",
@@ -172,8 +266,7 @@ export default function CurrentDashboard() {
                     onClick={() => openModal(1)} // Open modal when button is clicked
                   >
                     + Add Expenses
-                  </Button>
-                  {/* Render the updated items */}
+                  </Button> */}
                   {currentItemList.length > 0 ? (
                     <div
                       style={{

@@ -66,6 +66,7 @@ const AddTransactionModal = ({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
+        // margin: "4px",
       }}
     >
       <div className="flex flex-col bg-white rounded-3xl w-[900px]">
