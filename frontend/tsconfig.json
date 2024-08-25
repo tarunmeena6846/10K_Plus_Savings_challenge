@@ -17,5 +17,5 @@
     "noEmit": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["src", "public/CurrentDashboard.tsx"]
+  "include": ["src", "src/components/CurrentDashboard.tsx"]
 }

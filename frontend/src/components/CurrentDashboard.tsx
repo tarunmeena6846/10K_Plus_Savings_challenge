@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import SidebarLayout from "../src/components/SidebarLayout";
+import SidebarLayout from "./SidebarLayout";
 import { Button } from "@mui/material";
-import AddTransactionModal from "../src/components/Dashboard/InputModel";
+import AddTransactionModal from "./Dashboard/InputModel";
 import {
   handleAddIncome,
   handleAddExpense,
-} from "../src/components/Dashboard/AddIncomeAndExpense";
-import { fetchData } from "../src/components/Dashboard/fetchIncomeAndExpenseData";
+} from "./Dashboard/AddIncomeAndExpense";
+import { fetchData } from "./Dashboard/fetchIncomeAndExpenseData";
 import { useRecoilState } from "recoil";
-import { actionsState, userState } from "../src/components/store/atoms/user";
-import Loader from "../src/components/community/Loader";
-import { DropDownButton } from "../src/components/DropDown/button";
+import { actionsState, userState } from "./store/atoms/user";
+import Loader from "./community/Loader";
+import { DropDownButton } from "./DropDown/button";
 
-import IncomeGraph from "../src/components/SpendingBarGraph";
+import IncomeGraph from "./SpendingBarGraph";
+import LineGraph from "./LineGraph";
 
 function getIconForCategory(category) {
   // Define your category-to-icon mapping here
@@ -23,9 +24,10 @@ function getIconForCategory(category) {
     Housing: "./houseing.svg",
     Entertainment: "./entertainment.svg",
     Food: "./food.svg",
+    
     // Add more categories and their corresponding icons
   };
-  return icons[category] || "❓"; // Default icon if the category is not found
+  return icons[category] || "./expense.svg"; // Default icon if the category is not found
 }
 
 export default function CurrentDashboard() {
@@ -138,6 +140,7 @@ export default function CurrentDashboard() {
   // if (currentUserState.isLoading) {
   //   return <Loader />;
   // }
+
   console.log(categoryWiseSpendings);
   return (
     <div className="min-h-screen bg-[#eaeaea]">
@@ -189,62 +192,44 @@ export default function CurrentDashboard() {
                 ) : (
                   <div>
                     <h2>Top Spendings </h2>
-                    <div className="flex items-center py-2 gap-2">
-                      <img
-                        src={categoryWiseSpendings[0].icon}
-                        alt="Icon"
-                        // className="w-[5px] h-[5px]"
-                      />
-                      <div>
-                        <h2> {categoryWiseSpendings[0].category}</h2>
-                        <h2> ${categoryWiseSpendings[0].amount}</h2>
-                      </div>
+                    <div className="flex flex-col ">
+                      {categoryWiseSpendings.map((item, index) => (
+                        <div key={index} className="flex  py-2 gap-2">
+                          <img
+                            src={item.icon}
+                            alt="Icon"
+                            // className="" // Adjust the size as needed
+                          />
+                          <div>
+                            <h2>{item.category}</h2>
+                            <h2>${item.amount.toLocaleString()}</h2>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center  py-2 gap-2">
-                      <img
-                        src={categoryWiseSpendings[1].icon}
-                        alt="Icon"
-                        // className="w-5 h-5"
-                      />
-                      <div>
-                        <h2> {categoryWiseSpendings[1].category}</h2>
-                        <h2> ${categoryWiseSpendings[1].amount}</h2>
-                      </div>
-                    </div>
-                    <div className="flex items-center  py-2 gap-2">
-                      <img
-                        src={categoryWiseSpendings[2].icon}
-                        alt="Icon"
-                        // className="w-5 h-5"
-                      />
-                      <div>
-                        <h2> {categoryWiseSpendings[2].category}</h2>
-                        <h2> ${categoryWiseSpendings[2].amount}</h2>
-                      </div>
-                    </div>
-                    {/* {categoryWiseSpendings[0].icon} */}
-                    {/* {categoryWiseSpendings[0].category} */}
                   </div>
                 )}
-                {/* <h2 className="text-4xl">${currentIncome}</h2> */}
-                {/* <SpendingGraph spendingData={categoryWiseIncome} /> */}
               </div>
               <div
                 className="p-6 rounded-2xl text-white"
                 style={{ background: "#111f36", overflow: "hidden" }}
               >
-                <h2>Income</h2>
+                <h2>Current Income</h2>
                 <h2 className="text-4xl">${currentIncome}</h2>
               </div>
               <div
-                className="p-6 rounded-2xl col-span-2 row-span-2"
+                className="p-6 rounded-2xl col-span-2 row-span-1"
                 style={{ background: "#ffcbfb", overflow: "hidden" }}
               >
-                <h2>Line graph</h2>
-                <h2 className="text-4xl">${currentIncome}</h2>
+                <LineGraph
+                  spendings={categoryWiseSpendings}
+                  income={categoryWiseIncome}
+                />
+                {/* <h2>Line graph</h2>
+                <h2 className="text-4xl">${currentIncome}</h2> */}
               </div>
               <div
-                className="p-6 rounded-2xl col-span-1 row-span-2"
+                className="p-6 rounded-2xl col-span-1 row-span-1"
                 style={{ background: "#ffcbfb", overflow: "hidden" }}
               >
                 <h2>Current Income</h2>
@@ -259,7 +244,7 @@ export default function CurrentDashboard() {
                 <h2>Current Savings</h2>
                 <h2 className="text-4xl">${currentIncome - currentExpense}</h2>
               </div> */}
-              <div className="md:col-span-3 grid grid-cols-4 row-span-5 gap-4 h-full">
+              <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4 h-full">
                 <div
                   className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
                   style={{ background: "white", overflow: "hidden" }}
