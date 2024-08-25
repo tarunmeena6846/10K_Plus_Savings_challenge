@@ -10,15 +10,14 @@ import { Pie } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-const SpendingPieChart = ({ spendingData }) => {
+const IncomeGraph = ({ spendingData }) => {
   console.log(spendingData);
   // Format the data for the Pie chart
-  const formattedData = Object.keys(spendingData)
-    .slice(0, 4)
-    .map((key) => ({
-      category: key,
-      amount: spendingData[key],
-    }));
+  const formattedData = spendingData.slice(0, 4);
+  //     .map((key) => ({
+  //       category: key,
+  //       amount: spendingData[key],
+  //     }));
 
   const data = {
     labels: formattedData.map((item) => item.category),
@@ -36,22 +35,22 @@ const SpendingPieChart = ({ spendingData }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "top",
-      },
       title: {
         display: true,
         // color: "white",
         text: "Top Income Sources",
+        margin: {
+          //   top: 30,
+        },
         padding: {
-          top: 10,
+          //   top: 10,
           // bottom: 50, // Adjust the top padding for the title
         },
       },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            return `${tooltipItem.label}: ${tooltipItem.raw}`;
+            return `${tooltipItem.label}: $${tooltipItem.raw}`;
           },
         },
       },
@@ -59,10 +58,10 @@ const SpendingPieChart = ({ spendingData }) => {
   };
 
   return (
-    <div className="bg-white h-full w-full p-4">
+    <div className="bg-white h-full w-full p-4 flex items-center">
       <Pie data={data} options={options} />
     </div>
   );
 };
 
-export default SpendingPieChart;
+export default IncomeGraph;
