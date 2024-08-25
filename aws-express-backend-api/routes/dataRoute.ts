@@ -87,6 +87,7 @@ router.post(
               title: item,
               amount: income,
               type: itemType,
+              date: date,
             });
           } else {
             monthData.actual.expense += expense;
@@ -96,6 +97,7 @@ router.post(
               title: item,
               amount: expense,
               type: itemType,
+              date: date,
             });
           }
           // monthData.actual.items.push({category:category,title:itemName,amount:})
@@ -108,6 +110,7 @@ router.post(
               category: category,
               title: item,
               amount: income,
+              date: date,
               type: itemType,
             });
           } else {
@@ -118,6 +121,7 @@ router.post(
               category: category,
               title: item,
               amount: expense,
+              date: date,
               type: itemType,
             });
           }
@@ -130,6 +134,7 @@ router.post(
               title: item,
               amount: income,
               type: itemType,
+              date: date,
             });
           } else {
             monthData.target.expense += expense;
@@ -139,6 +144,7 @@ router.post(
               title: item,
               amount: expense,
               type: itemType,
+              date: date,
             });
           }
         }
@@ -157,6 +163,7 @@ router.post(
                       title: item,
                       amount: itemType === "Income" ? income : expense,
                       type: itemType,
+                      date: date,
                     },
                   ],
                 }
@@ -172,6 +179,7 @@ router.post(
                       title: item,
                       amount: itemType === "Income" ? income : expense,
                       type: itemType,
+                      date: date,
                     },
                   ],
                 }
@@ -187,6 +195,7 @@ router.post(
                       title: item,
                       amount: itemType === "Income" ? income : expense,
                       type: itemType,
+                      date: date,
                     },
                   ],
                 }

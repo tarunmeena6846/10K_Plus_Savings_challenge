@@ -27,7 +27,7 @@ import MyBookmarked from "./components/community/UserPosts/MyBookmarked";
 import BookSession from "./components/scheduler/BookSession";
 import SideBar from "./components/Sidebar/SideBar";
 import "./App.css";
-import CurrentDashboard from "./components/Dashboard/CurrentDashboard";
+import CurrentDashboard from "./components/CurrentDashboard";
 import TargetDashboard from "./components/Dashboard/TargetDashboard";
 import ActualDashboard from "./components/Dashboard/ActualDashboard";
 import SWOTtasklist from "./components/SWOTanalysisPortal/SWOTtaskListDisplay";

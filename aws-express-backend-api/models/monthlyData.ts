@@ -5,6 +5,7 @@ interface Item {
   title: string;
   amount: number;
   type: string;
+  date: Date;
 }
 
 export interface MonthlyData {
@@ -47,6 +48,7 @@ const itemSchema = new Schema<Item>({
   title: { type: String, required: true },
   amount: { type: Number, required: true },
   type: { type: String, required: true },
+  date: { type: Date },
 });
 
 const monthlyDataSchema = new Schema<MonthlyDataSchemaDocument>({

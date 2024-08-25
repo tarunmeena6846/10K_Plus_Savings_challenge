@@ -67,37 +67,9 @@ function DoughnutData({
 
   return (
     <div className="flex flex-col items-center bg-[#111f36] rounded-3xl py-3">
-      {/* <h3 className="text-xl font-semibold mb-4">Savings Progress</h3> */}
       <Doughnut data={data} options={options} />
-      {/* <div className="absolute text-center mt-4"> */}
-      {/* <h2 className="text-4xl font-bold">{actualPercentage}%</h2> */}
-      {/* <p className="text-gray-600">of Target Savings</p> */}
-      {/* </div> */}
     </div>
   );
 }
-//   const data = {
-//     labels: ["Target Savings", "Actual Savings", "Current Savings"],
-//     datasets: [
-//       {
-//         data: [annualTargetSavings, annualCurrentSavings, annualActualSavings],
-//         backgroundColor: [
-//           "rgb(255, 99, 132)",
-//           "rgb(54, 162, 235)",
-//           "rgb(255, 205, 86)",
-//         ],
-//         borderWidth: 2,
-//         radius: "90%",
-//       },
-//     ],
-//   };
-
-//   return (
-//     <div>
-//       {/* <h2>Requests Summary Widget</h2> */}
-//       <Doughnut data={data} />
-//     </div>
-//   );
-// }
 
 export default DoughnutData;
