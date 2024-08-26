@@ -7,6 +7,8 @@ import { useRecoilState } from "recoil";
 import { userState } from "../components/store/atoms/user";
 import Loader from "../components/community/Loader";
 import { useLocation } from "react-router-dom";
+import { Modal } from "flowbite-react";
+import PopupModal from "../components/DeletePopup";
 
 export const formatAmount = (amount: number) => {
   return amount.toLocaleString(); // Formats number with commas
@@ -41,6 +43,7 @@ const AnalyticsLanding = () => {
   //   const [error, setError] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState([]);
+  const [showDeleteModal, setShowDeleteConfirmModal] = useState(false);
 
   const handleChange = (e: any) => {
     setSelectedMonth(e.target.value);
@@ -118,6 +121,7 @@ const AnalyticsLanding = () => {
   };
 
   const handleDelete = () => {
+    setShowDeleteConfirmModal(false);
     console.log(selectedEntry);
   };
   useEffect(() => {
@@ -255,7 +259,10 @@ const AnalyticsLanding = () => {
               </div>
               {isChecked && (
                 <div className="">
-                  <button className="flex items-end" onClick={handleDelete}>
+                  <button
+                    className="flex items-end"
+                    onClick={() => setShowDeleteConfirmModal(true)}
+                  >
                     <img src="./delete.svg"></img>
                     <h2 className="text-red-500">Delete</h2>
                   </button>
@@ -264,8 +271,8 @@ const AnalyticsLanding = () => {
             </div>
             <hr className="h-0.5 bg-gray-600" />
             <AnalyticsTable
-              items={monthlyItems}
-              type={selectedType}
+              items={monthlyItems.filter((item) => item.type === selectedType)}
+              // type={selectedType}
               setIsChecked={setIsChecked}
               selectedEntry={selectedEntry}
               setSelectedEntry={setSelectedEntry}
@@ -273,6 +280,13 @@ const AnalyticsLanding = () => {
           </>
         )}
       </SidebarLayout>
+      {showDeleteModal && (
+        <PopupModal
+          isModalOpen={showDeleteModal}
+          setIsModalOpen={setShowDeleteConfirmModal}
+          handleDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

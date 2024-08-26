@@ -3,7 +3,7 @@ import { formatAmount } from "./Landing";
 
 const AnalyticsTable: React.FC<any> = ({
   items,
-  type,
+  // type,
   setIsChecked,
   selectedEntry,
   setSelectedEntry,
@@ -14,7 +14,7 @@ const AnalyticsTable: React.FC<any> = ({
   const [selectAllEnabled, setSelectAllEnabled] = useState(false);
   // const [selectedEntry, setSelectedEntry] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(2);
+  const [itemsPerPage] = useState(8);
   const handleCheckboxChange = (taskId, titile) => {
     console.log(titile);
     setIsChecked(true);
@@ -45,7 +45,7 @@ const AnalyticsTable: React.FC<any> = ({
     setSelectAllEnabled(!selectAllEnabled);
     if (isChecked) {
       const allItemsId = currentItems
-        .filter((task) => task.type === type)
+        // .filter((task) => task.type === type)
         .map((task: any) => task._id);
 
       console.log(allItemsId);
@@ -57,7 +57,7 @@ const AnalyticsTable: React.FC<any> = ({
 
   console.log(selectedEntry);
   return (
-    <div className="mt-4 " style={{ overflowY: "auto", maxHeight: "350px" }}>
+    <div className="mt-4 ">
       <table className="table-auto w-full">
         <thead className="bg-[#111f36] text-white">
           <tr>
@@ -82,7 +82,7 @@ const AnalyticsTable: React.FC<any> = ({
         </thead>
         <tbody>
           {currentItems
-            .filter((item: any) => item.type === type)
+            // .filter((item: any) => item.type === type)
             .map((item: any, index: any) => (
               <tr key={index} className="bg-white border-b border-gray-200">
                 <td className="py-2 px-4">
@@ -101,6 +101,7 @@ const AnalyticsTable: React.FC<any> = ({
         </tbody>
       </table>
       <div className="flex justify-center items-center mt-4 space-x-2">
+        {/* {items.length} */}
         {items && (
           <div>
             {[...Array(Math.ceil(items.length / itemsPerPage))].map(
