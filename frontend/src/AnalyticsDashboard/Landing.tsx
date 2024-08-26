@@ -6,18 +6,29 @@ import { fetchData } from "../components/Dashboard/fetchIncomeAndExpenseData";
 import { useRecoilState } from "recoil";
 import { userState } from "../components/store/atoms/user";
 import Loader from "../components/community/Loader";
+import { useLocation } from "react-router-dom";
 
 const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
 const types = ["Current", "Actual", "Target"];
 const options = ["Income", "Expense"];
 
 const AnalyticsLanding = () => {
+  const location: any = useLocation();
+  const { type, option } = location.state || {
+    type: types[0],
+    option: options[0],
+  };
+  console.log(type, option);
+
   const [selectedMonth, setSelectedMonth] = useState(
     months[new Date().getMonth()]
   );
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedType, setSelectedType] = useState(options[0]);
-  const [selectedPortal, setSelectedPortal] = useState(types[0]);
+  // // const [selectedType, setSelectedType] = useState(options[0]);
+  const [selectedType, setSelectedType] = useState(option);
+
+  const [selectedPortal, setSelectedPortal] = useState(type);
+
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpense, setMonthlyExpense] = useState(0);
   const [monthlyItems, setMonthlyItems] = useState([]);

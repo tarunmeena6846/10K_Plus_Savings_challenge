@@ -43,8 +43,9 @@ const MonthwiseDataGraph = ({ expenseAndIncome }) => {
     }
   });
 
+  console.log(dailyData[0].date.substring(5));
   // Chart data preparation
-  const labels = dailyData.map((data) => data.date.split("-").pop()); // Extract day from date
+  const labels = dailyData.map((data) => data.date.substring(5)); // Extract day from date
   const incomeData = dailyData.map((data) => data.income);
   const expenseData = dailyData.map((data) => data.expense);
 

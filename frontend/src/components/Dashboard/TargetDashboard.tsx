@@ -8,9 +8,11 @@ import { fetchData } from "./fetchIncomeAndExpenseData";
 import { actionsState, userState } from "../store/atoms/user";
 import { useRecoilState } from "recoil";
 import Loader from "../community/Loader";
+import { useNavigate } from "react-router-dom";
 
 export default function TargetDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
   const [targetItemList, setTargetItemList] = useState([]);
   const [targetIncome, setTargetIncome] = useState(0);
@@ -70,6 +72,19 @@ export default function TargetDashboard() {
               <h2>Target Income</h2>
               <h2 className="text-4xl">${targetIncome}</h2>
             </div>
+            <button
+              className="bg-green-500 px-5 py-2.5 text-sm rounded-3xl text-white hover:bg-green-800"
+              onClick={() => {
+                navigate("/analytics", {
+                  state: {
+                    type: "Target",
+                    option: "Income",
+                  },
+                });
+              }}
+            >
+              View Analytics
+            </button>
             <div
               className="p-6 rounded-2xl"
               style={{

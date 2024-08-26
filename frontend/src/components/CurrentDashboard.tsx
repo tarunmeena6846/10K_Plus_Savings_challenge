@@ -15,6 +15,7 @@ import { DropDownButton } from "./DropDown/button";
 import IncomeGraph from "./SpendingBarGraph";
 import MonthwiseDataGraph from "./LineGraph";
 import IncomeVsExpenseGraph from "./IncomeVsExpense";
+import { useNavigate } from "react-router-dom";
 
 function getIconForCategory(category) {
   // Define your category-to-icon mapping here
@@ -32,6 +33,8 @@ function getIconForCategory(category) {
 }
 
 export default function CurrentDashboard() {
+  const navigate = useNavigate();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   console.log(currentUserState);
@@ -155,9 +158,24 @@ export default function CurrentDashboard() {
           <>
             <div className="flex justify-between my-3 ">
               <h2 className="text-3xl">Current Savings Portal</h2>
-              <DropDownButton openModal={openModal} />
+              <div className="flex gap-2">
+                <DropDownButton openModal={openModal} />
+                <button
+                  className="bg-green-500 px-5 py-2.5 text-sm rounded-3xl text-white hover:bg-green-800"
+                  onClick={() => {
+                    navigate("/analytics", {
+                      state: {
+                        type: "Current",
+                        option: "Income",
+                      },
+                    });
+                  }}
+                >
+                  View Analytics
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-rows-4 md:grid-cols-3 gap-4 ">
+            <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4 ">
               <div
                 className="p-6  flex items-center flex-col justify-center rounded-2xl bg-gradient-to-r from-orange-500  to-pink-500 text-white"
                 style={{ overflow: "hidden" }}
@@ -238,34 +256,14 @@ export default function CurrentDashboard() {
                 {/* <h2>Line graph</h2>
                 <h2 className="text-4xl">${currentIncome}</h2> */}
               </div>
-              {/* <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4"></div> */}
-              {/* <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#ceffae", overflow: "hidden" }}
-              >
-                <h2>Current Savings</h2>
-                <h2 className="text-4xl">${currentIncome - currentExpense}</h2>
-              </div> */}
-              <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4 h-full">
+              {/* <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4 h-full">
                 <div
                   className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
                   style={{ background: "white", overflow: "hidden" }}
                 >
-                  {/* <h2 className="mb-4 text-center">Current Income</h2>
-                  <Button
-                    style={{
-                      minWidth: "100px",
-                      color: "green",
-                      border: "2px dotted green",
-                      borderRadius: "20px",
-                      margin: "10px",
-                      textTransform: "none",
-                    }}
-                    variant="outlined"
-                    onClick={() => openModal(0)} // Open modal when button is clicked
-                  >
-                    + Add Income
-                  </Button> */}
+                  <h2 className="mb-4 text-2xl text-center">
+                    Current Income List
+                  </h2>
 
                   {currentItemList.length > 0 ? (
                     <div style={{ padding: "10px", width: "100%" }}>
@@ -304,21 +302,10 @@ export default function CurrentDashboard() {
                   className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
                   style={{ background: "white", overflow: "hidden" }}
                 >
-                  {/* <h2 className="mb-4 text-center">Current Expenses</h2>
-                  <Button
-                    style={{
-                      minWidth: "100px",
-                      color: "green",
-                      border: "2px dotted green",
-                      borderRadius: "20px",
-                      margin: "10px",
-                      textTransform: "none",
-                    }}
-                    variant="outlined"
-                    onClick={() => openModal(1)} // Open modal when button is clicked
-                  >
-                    + Add Expenses
-                  </Button> */}
+                  <h2 className="mb-4 text-2xl text-center">
+                    Current Expenses List
+                  </h2>
+
                   {currentItemList.length > 0 ? (
                     <div
                       style={{
@@ -358,7 +345,7 @@ export default function CurrentDashboard() {
                     <>No records to show</>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           </>
         )}
