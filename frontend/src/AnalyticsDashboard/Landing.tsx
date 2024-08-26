@@ -8,6 +8,10 @@ import { userState } from "../components/store/atoms/user";
 import Loader from "../components/community/Loader";
 import { useLocation } from "react-router-dom";
 
+export const formatAmount = (amount: number) => {
+  return amount.toLocaleString(); // Formats number with commas
+};
+
 const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
 const types = ["Current", "Actual", "Target"];
 const options = ["Income", "Expense"];
@@ -35,11 +39,32 @@ const AnalyticsLanding = () => {
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   // const [loading, setLoading] = useState(false);
   //   const [error, setError] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState([]);
 
   const handleChange = (e: any) => {
     setSelectedMonth(e.target.value);
   };
 
+  // const currentTasks = taskList?.slice(indexOfFirstStock, indexOfLastStock);
+  // const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  // const handleSelectAll = (e) => {
+  //   const isChecked = e.target.checked;
+  //   // console.log(currentPage, isChecked);
+  //   setIsChecked(isChecked);
+  //   setSelectAllEnabled(!selectAllEnabled);
+  //   if (isChecked) {
+  //     const allTaskIds = currentTasks
+  //       // .filter((task) => task.isComplete === false)
+  //       .map((task: any) => task._id);
+
+  //     console.log(allTaskIds);
+  //     setCompletedTasks(allTaskIds);
+  //   } else {
+  //     setCompletedTasks([]);
+  //   }
+  // };
   const fetchAnalyticsData = async () => {
     setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     // setError(null); // Reset the error state
@@ -92,127 +117,163 @@ const AnalyticsLanding = () => {
     }
   };
 
+  const handleDelete = () => {
+    console.log(selectedEntry);
+  };
   useEffect(() => {
     fetchAnalyticsData();
   }, [selectedMonth, selectedYear, selectedPortal, selectedType]);
-
-  // useEffect(() => {
-  //   console.log("Updated state:", {
-  //     selectedMonth,
-  //     selectedYear,
-  //     selectedType,
-  //     selectedPortal,
-  //     monthlyIncome,
-  //     monthlyExpense,
-  //     monthlyItems,
-  //   });
-  // }, [
-  //   selectedMonth,
-  //   selectedYear,
-  //   selectedType,
-  //   selectedPortal,
-  //   monthlyIncome,
-  //   monthlyExpense,
-  //   monthlyItems,
-  // ]);
-
+  console.log(monthlyItems);
   return (
-    <SidebarLayout>
-      {currentUserState.isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="flex gap-4">
-            <div className="flex">
-              <img src="./calender1.svg" alt="Calendar" />
-              <select
-                onChange={handleChange}
-                value={selectedMonth}
-                className="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+    <div className="min-h-screen bg-[#eaeaea]">
+      <SidebarLayout>
+        {currentUserState.isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-rows-1 md:grid-cols-3 gap-4 my-4">
+              <div
+                className="p-6 rounded-2xl border-4 border-pink-400 bg-white"
+                style={{ background: "", overflow: "hidden" }}
               >
-                {months.map((month, index) => (
-                  <option key={index} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+                <h2>{selectedPortal} Income</h2>
+                <h2 className="text-4xl">${formatAmount(monthlyIncome)}</h2>
+              </div>
+              <div
+                className="p-6 rounded-2xl border-4 border-blue-500 bg-white"
+                style={{ background: "#", overflow: "hidden" }}
+              >
+                <h2>{selectedPortal} Expense</h2>
+                <h2 className="text-4xl">${formatAmount(monthlyExpense)}</h2>
+              </div>
+              <div
+                className="p-6 rounded-2xl border-4 border-green-400 bg-white"
+                style={{ background: "", overflow: "hidden" }}
+              >
+                <h2>{selectedPortal} Savings</h2>
+                <h2 className="text-4xl">
+                  ${formatAmount(monthlyIncome - monthlyExpense)}
+                </h2>
+              </div>
+            </div>
+            <div className="flex gap-4 mb-3">
+              <div className="flex">
+                {/* <img src="./calender1.svg" alt="Calendar" /> */}
+                <select
+                  onChange={handleChange}
+                  value={selectedMonth}
+                  className="bg-white px-4 py-2 rounded-3xl appearance-none"
+                  style={{
+                    backgroundImage: `
+            url('./calender1.svg'), 
+            url('data:image/svg+xml;utf8,<svg fill="%23111f36" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>')
+          `,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "left 12px center, right 12px center",
+                    paddingRight: "40px",
+                    paddingLeft: "40px",
+                  }}
+                >
+                  {months.map((month, index) => (
+                    <option key={index} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
 
-              <select
-                onChange={(e: any) => {
-                  setSelectedYear(e.target.value);
-                }}
-                value={selectedYear}
-                className="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-              >
-                {years.map((year, index) => (
-                  <option key={index} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                <select
+                  onChange={(e: any) => {
+                    setSelectedYear(e.target.value);
+                  }}
+                  value={selectedYear}
+                  className="bg-white px-4 py-2 rounded-3xl appearance-none"
+                  style={{
+                    backgroundImage: `url('data:image/svg+xml;utf8,<svg fill="%23111f36" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>')`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 12px center",
+                    paddingRight: "40px",
+                  }}
+                >
+                  {years.map((year, index) => (
+                    <option key={index} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex">
+                {/* <img src="./calender1.svg" alt="Calendar" /> */}
+                <select
+                  onChange={(e) => {
+                    setSelectedPortal(e.target.value);
+                  }}
+                  value={selectedPortal}
+                  className="bg-white px-4 py-2 rounded-3xl appearance-none"
+                  style={{
+                    backgroundImage: `
+            url('./category.svg'), 
+            url('data:image/svg+xml;utf8,<svg fill="%23111f36" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>')
+          `,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "left 12px center, right 12px center",
+                    paddingRight: "40px",
+                    paddingLeft: "40px",
+                  }}
+                >
+                  {types.map((type, index) => (
+                    <option key={index} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex">
+                {/* <img src="./calender1.svg" alt="Calendar" /> */}
+                <select
+                  onChange={(e) => {
+                    setSelectedType(e.target.value);
+                  }}
+                  value={selectedType}
+                  className="bg-white px-4 py-2 rounded-3xl appearance-none"
+                  style={{
+                    backgroundImage: `
+            url('./incomeandexpense.svg'), 
+            url('data:image/svg+xml;utf8,<svg fill="%23111f36" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>')
+          `,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "left 12px center, right 12px center",
+                    paddingRight: "40px",
+                    paddingLeft: "40px",
+                  }}
+                >
+                  {options.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {isChecked && (
+                <div className="">
+                  <button className="flex items-end" onClick={handleDelete}>
+                    <img src="./delete.svg"></img>
+                    <h2 className="text-red-500">Delete</h2>
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="flex">
-              <img src="./calender1.svg" alt="Calendar" />
-              <select
-                onChange={(e) => {
-                  setSelectedPortal(e.target.value);
-                }}
-                value={selectedPortal}
-                className="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-              >
-                {types.map((type, index) => (
-                  <option key={index} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex">
-              <img src="./calender1.svg" alt="Calendar" />
-              <select
-                onChange={(e) => {
-                  setSelectedType(e.target.value);
-                }}
-                value={selectedType}
-                className="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-              >
-                {options.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-rows-1 md:grid-cols-3 gap-4 my-4">
-            <div
-              className="p-6 rounded-2xl"
-              style={{ background: "#ffcbfb", overflow: "hidden" }}
-            >
-              <h2>Current Income</h2>
-              <h2 className="text-4xl">${monthlyIncome}</h2>
-            </div>
-            <div
-              className="p-6 rounded-2xl"
-              style={{ background: "#b2edff", overflow: "hidden" }}
-            >
-              <h2>Current Expense</h2>
-              <h2 className="text-4xl">${monthlyExpense}</h2>
-            </div>
-            <div
-              className="p-6 rounded-2xl"
-              style={{ background: "#ceffae", overflow: "hidden" }}
-            >
-              <h2>Current Savings</h2>
-              <h2 className="text-4xl">${monthlyIncome - monthlyExpense}</h2>
-            </div>
-          </div>
-          <hr className="h-0.5 bg-gray-600" />
-          <AnalyticsTable items={monthlyItems} type={selectedType} />
-        </>
-      )}
-    </SidebarLayout>
+            <hr className="h-0.5 bg-gray-600" />
+            <AnalyticsTable
+              items={monthlyItems}
+              type={selectedType}
+              setIsChecked={setIsChecked}
+              selectedEntry={selectedEntry}
+              setSelectedEntry={setSelectedEntry}
+            />
+          </>
+        )}
+      </SidebarLayout>
+    </div>
   );
 };
 

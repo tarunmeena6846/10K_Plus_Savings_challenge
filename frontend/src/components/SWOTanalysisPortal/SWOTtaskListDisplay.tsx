@@ -14,7 +14,7 @@ export default function SWOTtasklist() {
   const [action, setAction] = useRecoilState(actionsState);
   const [selectAllEnabled, setSelectAllEnabled] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  // const [successfulPopup, setSuccessfulPopup] = useState(false);
+
   const handleCheckboxChange = (taskId) => {
     setIsChecked(true);
     if (selectAllEnabled) {

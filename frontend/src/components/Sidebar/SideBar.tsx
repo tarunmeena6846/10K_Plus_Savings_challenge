@@ -78,7 +78,7 @@ const SideBar = () => {
   const isMobile = windowWidth <= 768;
 
   return (
-    <div className="fixed top-0 left-0 h-screen bg-[#111f36] z-50">
+    <div className="fixed top-0 left-0 h-screen bg-[#111f36] z-50 flex flex-col justify-between">
       <motion.div
         animate={{
           overflow: "auto",
@@ -119,6 +119,10 @@ const SideBar = () => {
           })}
         </section>
       </motion.div>
+      <div className="w-full flex items-center text-white m-3">
+        <img src="./10ksc.png" className="w-[80px] bg-white  rounded-3xl" />
+        <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
+      </div>
     </div>
   );
 };
