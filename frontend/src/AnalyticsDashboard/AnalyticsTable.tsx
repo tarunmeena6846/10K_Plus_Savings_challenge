@@ -17,17 +17,18 @@ const AnalyticsTable: React.FC<any> = ({
   const [itemsPerPage] = useState(8);
   const handleCheckboxChange = (taskId, titile) => {
     console.log(titile);
-    setIsChecked(true);
+    // setIsChecked(true);
     if (selectAllEnabled) {
       setSelectAllEnabled(false);
     }
-    if (selectedEntry.includes(taskId)) {
-      // If task is already marked as completed, remove it from the array
-      setSelectedEntry(selectedEntry.filter((id) => id !== taskId));
-    } else {
-      // If task is not marked as completed, add it to the array
-      setSelectedEntry([...selectedEntry, taskId]);
-    }
+    const updatedCompletedTasks = selectedEntry.includes(taskId)
+      ? selectedEntry.filter((id) => id !== taskId)
+      : [...selectedEntry, taskId];
+
+    setSelectedEntry(updatedCompletedTasks);
+
+    // Update `isChecked` based on whether any tasks are selected
+    setIsChecked(updatedCompletedTasks.length > 0);
   };
   // const handleChange = (e: any) => {
   //   setSelectedMonth(e.target.value);
@@ -113,6 +114,7 @@ const AnalyticsTable: React.FC<any> = ({
                     paginate(index + 1);
                     setSelectAllEnabled(false);
                     setIsChecked(false);
+                    setSelectedEntry([]);
                   }}
                 >
                   {index + 1}

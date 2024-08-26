@@ -52,28 +52,8 @@ const AnalyticsLanding = () => {
     setSelectedMonth(e.target.value);
   };
 
-  // const currentTasks = taskList?.slice(indexOfFirstStock, indexOfLastStock);
-  // const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  // const handleSelectAll = (e) => {
-  //   const isChecked = e.target.checked;
-  //   // console.log(currentPage, isChecked);
-  //   setIsChecked(isChecked);
-  //   setSelectAllEnabled(!selectAllEnabled);
-  //   if (isChecked) {
-  //     const allTaskIds = currentTasks
-  //       // .filter((task) => task.isComplete === false)
-  //       .map((task: any) => task._id);
-
-  //     console.log(allTaskIds);
-  //     setCompletedTasks(allTaskIds);
-  //   } else {
-  //     setCompletedTasks([]);
-  //   }
-  // };
   const fetchAnalyticsData = async () => {
     setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
-    // setError(null); // Reset the error state
 
     try {
       console.log(
