@@ -4,11 +4,13 @@ import { months } from "../components/MonthlyIncome";
 import AnalyticsTable from "./AnalyticsTable";
 import { fetchData } from "../components/Dashboard/fetchIncomeAndExpenseData";
 import { useRecoilState } from "recoil";
-import { userState } from "../components/store/atoms/user";
+import { actionsState, userState } from "../components/store/atoms/user";
 import Loader from "../components/community/Loader";
 import { useLocation } from "react-router-dom";
 import { Modal } from "flowbite-react";
 import PopupModal from "../components/DeletePopup";
+import { response } from "express";
+import SuccessPopup from "../components/SWOTanalysisPortal/SuccessfulPopup";
 
 export const formatAmount = (amount: number) => {
   return amount.toLocaleString(); // Formats number with commas
@@ -44,7 +46,8 @@ const AnalyticsLanding = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState([]);
   const [showDeleteModal, setShowDeleteConfirmModal] = useState(false);
-
+  const [successfulPopup, setSuccessfulPopup] = useState(false);
+  const [action, setAction] = useRecoilState(actionsState);
   const handleChange = (e: any) => {
     setSelectedMonth(e.target.value);
   };
@@ -120,13 +123,52 @@ const AnalyticsLanding = () => {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setShowDeleteConfirmModal(false);
     console.log(selectedEntry);
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/data/deleteItem`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            selectedEntry,
+            selectedMonth,
+            selectedYear,
+            selectedType,
+            selectedPortal,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response is not ok");
+      }
+      const data = await response.json();
+      if (data.success) {
+        setAction((prev) => prev + 1);
+        setSuccessfulPopup(true);
+      }
+      setCurrentUserState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+    } catch (error) {
+      alert("Issue while deleting");
+      setCurrentUserState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+    }
   };
   useEffect(() => {
     fetchAnalyticsData();
-  }, [selectedMonth, selectedYear, selectedPortal, selectedType]);
+  }, [selectedMonth, selectedYear, selectedPortal, selectedType, action]);
   console.log(monthlyItems);
   return (
     <div className="min-h-screen bg-[#eaeaea]">
@@ -285,6 +327,14 @@ const AnalyticsLanding = () => {
           isModalOpen={showDeleteModal}
           setIsModalOpen={setShowDeleteConfirmModal}
           handleDelete={handleDelete}
+        />
+      )}
+
+      {successfulPopup && (
+        <SuccessPopup
+          message="Delete successful!"
+          duration={5000}
+          onClose={() => setSuccessfulPopup(false)}
         />
       )}
     </div>
