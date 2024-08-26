@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const DropDownButton = ({ openModal }) => {
+export const DropDownButton = ({ openModal, type }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -48,7 +48,7 @@ export const DropDownButton = ({ openModal }) => {
                 onClick={() => openModal(0)}
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
               >
-                Current Income
+                {`${type} Income`}
               </div>
             </li>
             <li>
@@ -56,7 +56,7 @@ export const DropDownButton = ({ openModal }) => {
                 onClick={() => openModal(1)}
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
               >
-                Current Expense
+                {`${type} Expense`}
               </a>
             </li>
           </ul>

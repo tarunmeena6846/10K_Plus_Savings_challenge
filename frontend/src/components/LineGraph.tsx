@@ -69,7 +69,7 @@ const MonthwiseDataGraph = ({ expenseAndIncome }) => {
     plugins: {
       title: {
         display: true,
-        text: "Income and Expenses by Day",
+        text: `Income and Expenses by Day (${currentYear})`,
         color: "white",
         padding: {
           top: 10,
