@@ -5,6 +5,7 @@ export const userState = atom({
   default: {
     isLoading: true,
     userEmail: "",
+    userName: "",
     imageUrl: "",
     isVerified: false,
     myWhy: "",

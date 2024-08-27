@@ -229,14 +229,23 @@ export default function UserAvatar() {
         <Dropdown.Item
           onClick={() => {
             localStorage.removeItem("token");
-            setCurrentUserState({
+            // setCurrentUserState({
+            //   userEmail: "",
+            //   isLoading: false,
+            //   imageUrl: currentUserState.imageUrl,
+            //   isVerified: currentUserState.isVerified,
+            //   myWhy: currentUserState.myWhy,
+            //   isAdmin: currentUserState.isAdmin,
+            // });
+            setCurrentUserState((prev) => ({
+              ...prev,
               userEmail: "",
               isLoading: false,
-              imageUrl: currentUserState.imageUrl,
-              isVerified: currentUserState.isVerified,
-              myWhy: currentUserState.myWhy,
-              isAdmin: currentUserState.isAdmin,
-            });
+              // imageUrl: "",
+              // isVerified: currentUserState.isVerified,
+              // myWhy: currentUserState.myWhy,
+              // isAdmin: currentUserState.isAdmin,
+            }));
             navigate("/");
           }}
         >

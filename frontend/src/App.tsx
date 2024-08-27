@@ -147,6 +147,7 @@ export function InitUser() {
           if (data && data.userEmail) {
             setCurrentUserState({
               userEmail: data.userEmail,
+              userName: data.userData.username,
               isLoading: false,
               imageUrl: data.imageUrl,
               isVerified: data.userData.verified,
@@ -184,37 +185,40 @@ export function InitUser() {
               navigate("/pricing");
             }
           } else {
-            setCurrentUserState({
+            setCurrentUserState((prev) => ({
+              ...prev,
               userEmail: "",
               isLoading: false,
               imageUrl: "",
-              isVerified: currentUserState.isVerified,
-              myWhy: currentUserState.myWhy,
-              isAdmin: currentUserState.isAdmin,
-            });
+              // isVerified: currentUserState.isVerified,
+              // myWhy: currentUserState.myWhy,
+              // isAdmin: currentUserState.isAdmin,
+            }));
           }
         })
         .catch((error) => {
           console.error("Error while logging in", error);
-          setCurrentUserState({
+          setCurrentUserState((prev) => ({
+            ...prev,
             userEmail: "",
             isLoading: false,
             imageUrl: "",
-            isVerified: currentUserState.isVerified,
-            myWhy: currentUserState.myWhy,
-            isAdmin: currentUserState.isAdmin,
-          });
+            // isVerified: currentUserState.isVerified,
+            // myWhy: currentUserState.myWhy,
+            // isAdmin: currentUserState.isAdmin,
+          }));
           // setLogoutModalOpen(false);
         });
     } else {
-      setCurrentUserState({
+      setCurrentUserState((prev) => ({
+        ...prev,
         userEmail: "",
         isLoading: false,
         imageUrl: "",
-        isVerified: currentUserState.isVerified,
-        myWhy: currentUserState.myWhy,
-        isAdmin: currentUserState.isAdmin,
-      });
+        // isVerified: currentUserState.isVerified,
+        // myWhy: currentUserState.myWhy,
+        // isAdmin: currentUserState.isAdmin,
+      }));
     }
   };
   useEffect(() => {

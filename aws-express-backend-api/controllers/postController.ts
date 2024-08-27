@@ -447,7 +447,7 @@ export const createPost = async (req: AuthenticatedRequest, res: Response) => {
       : { $push: { ["myDrafts"]: post._id } };
     console.log("adminUpdate", adminUpdate, author, isPublished);
     const admin = await AdminModel.findOneAndUpdate(
-      { email: author },
+      { username: author },
       adminUpdate,
       { new: true }
     );

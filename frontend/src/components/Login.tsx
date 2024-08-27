@@ -49,14 +49,23 @@ function Login() {
           if (data.verified) {
             localStorage.setItem("token", data.token);
             console.log("Login successfully", data);
-            setCurrentUserState({
-              userEmail: email as string,
+            // setCurrentUserState({
+            //   userEmail: email as string,
+            //   isLoading: false,
+            //   imageUrl: currentUserState.imageUrl,
+            //   isVerified: currentUserState.isVerified,
+            //   myWhy: currentUserState.myWhy,
+            //   isAdmin: currentUserState.isAdmin,
+            // });
+            setCurrentUserState((prev) => ({
+              ...prev,
+              userEmail: email,
               isLoading: false,
-              imageUrl: currentUserState.imageUrl,
-              isVerified: currentUserState.isVerified,
-              myWhy: currentUserState.myWhy,
-              isAdmin: currentUserState.isAdmin,
-            });
+              // imageUrl: "",
+              // isVerified: currentUserState.isVerified,
+              // myWhy: currentUserState.myWhy,
+              // isAdmin: currentUserState.isAdmin,
+            }));
             if (subscription.isSubscribed) navigate("/dashboard");
             else navigate("/pricing");
           } else {
