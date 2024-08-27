@@ -47,7 +47,7 @@ const HandleCreatePost = ({
   }, []);
 
   return (
-    <div className="flex flex-col h-full items-center justify-center m-20 mb-10">
+    <div className="flex flex-col h-full items-center justify-center m-20 mb-10 text-white">
       <div className="w-full max-w-3xl p-4">
         <div>
           <h2 className="text-3xl">New Discussion</h2>
@@ -56,9 +56,9 @@ const HandleCreatePost = ({
           <label htmlFor="discussion-title" className="block font-semibold">
             Discussion Title
           </label>
-          <motion.input
+          <input
             id="discussion-title"
-            className="w-full mt-1 p-2 border border-gray-300 rounded"
+            className="w-full mt-1 p-2 border border-gray-300 rounded text-black"
             value={title}
             onChange={(e) => setPostTitle(e.target.value)}
           />

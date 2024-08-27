@@ -18,21 +18,13 @@ function renderMarkdownToHTML(markdown) {
 const MarkdownPreview = ({ markdown }) => {
   console.log(markdown);
   return (
-    <div className="ql-snow">
+    <div className="ql-snow text-[#9ca3af]">
       <div
         className="ql-editor"
         dangerouslySetInnerHTML={{ __html: markdown }}
       />
     </div>
   );
-  // var tag_id = document.getElementById("content-div");
-  // if (tag_id) {
-  //   tag_id.innerHTML = "HTML string";
-  // }
-
-  //   console.log(markup);
-  // return <h1 dangerouslySetInnerHTML={{ __html: markup }} />;
 };
-// render(<MarkdownPreview markdown={undefined} />, document.getElementById("root"));
 
 export default MarkdownPreview;

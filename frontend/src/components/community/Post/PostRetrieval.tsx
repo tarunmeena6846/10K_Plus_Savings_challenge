@@ -100,11 +100,25 @@ const Postdetails = () => {
   }
   // console.log(typeof currentPost.content, currentPost.content);
   return (
-    <div className="">
+    <div className="text-white p-10">
       {currentUserState.isLoading ? (
         <Loader />
       ) : (
         <div>
+          <div className="flex my-4">
+            <img
+              className="w-12 h-12 rounded-full mr-2"
+              // src="/user12.svg"
+              src={`${currentPost.userImage}`}
+              alt="Profile"
+            ></img>
+            <div className="flex flex-col justify-start ">
+              <p>{currentPost?.author}</p>
+              <p className="text-[#9ca3af]">
+                {timePassed(new Date(currentPost?.createdAt))}
+              </p>
+            </div>
+          </div>
           <h1
             className="text-3xl font-bold mb-4"
             style={{ overflowWrap: "anywhere" }}
@@ -112,16 +126,6 @@ const Postdetails = () => {
             {currentPost?.title}
           </h1>
 
-          <div className="flex gap-2 items-end">
-            <img
-              className="w-12 h-12 rounded-full mr-2"
-              // src="/user12.svg"
-              src={`${currentPost.userImage}`}
-              alt="Profile"
-            ></img>
-            <p>{currentPost?.author}</p>
-            <p>{timePassed(new Date(currentPost?.createdAt))}</p>
-          </div>
           {/* {text} */}
           {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
           <MarkdownPreview markdown={currentPost.content} />

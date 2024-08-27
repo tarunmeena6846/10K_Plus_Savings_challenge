@@ -46,7 +46,7 @@ const TextFieldWithDropdown = ({ setProp, prop, propValues, placeholder }) => {
     }, 150);
   };
   return (
-    <div className="relative">
+    <div className="relative text-black">
       <input
         type="text"
         value={prop}
@@ -64,7 +64,7 @@ const TextFieldWithDropdown = ({ setProp, prop, propValues, placeholder }) => {
                 <div
                   key={index}
                   onClick={() => handleDropdownClick(option)}
-                  className="cursor-pointer px-4 py-2 text-blue-400 hover:bg-gray-100"
+                  className="cursor-pointer px-4 py-2  hover:bg-gray-100"
                 >
                   {option}
                 </div>

@@ -46,6 +46,7 @@ const TextEditor = ({ height, setHtmlContent, content }) => {
 
   return (
     <div
+      className="text-black"
       style={{
         height,
         background: "white",
@@ -67,4 +68,3 @@ const TextEditor = ({ height, setHtmlContent, content }) => {
 };
 
 export default TextEditor;
-

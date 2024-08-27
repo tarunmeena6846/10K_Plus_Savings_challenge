@@ -345,7 +345,7 @@ const CommentDetails = () => {
   };
   console.log("currentposts sortedCOmments", currentUserState.isLoading);
   return (
-    <div>
+    <div className="text-white">
       {/* {currentUserState.isLoading ? (
         <Loader />
       ) : (

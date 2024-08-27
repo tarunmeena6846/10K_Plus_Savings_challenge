@@ -102,17 +102,19 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
     onSelectTag(tagId);
   };
   return (
-    <div>
-      <div>
-        <Button
+    <div className="text-white">
+      <div className="my-4">
+        <button
+          className="bg-[#6d94ff] p-3 rounded-3xl mb-2"
           onClick={() => {
             navigate("/newpost");
           }}
         >
           + New Post
-        </Button>
+        </button>
       </div>
-      <div>
+      <hr />
+      <div className="my-4">
         <h2 className="text-lg font-bold">Quick Links</h2>
         <div className="">
           {links.map((links, index) => (
@@ -131,14 +133,14 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
           ))}
         </div>
       </div>
-
-      <div>
+      <hr />
+      <div className="my-4">
         <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
         <div className="flex flex-wrap gap-2">
           <motion.button
             whileHover={{ scale: 1.1 }} // Define hover animation
             whileTap={{ scale: 1 }} // Define hover animation
-            className="bg-gray-400 rounded-2xl px-2 "
+            className="bg-[#6d94ff] rounded-2xl px-2 "
             onClick={() => onSelectTag("")}
           >
             All Tags
@@ -151,7 +153,7 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
                 <motion.button
                   whileHover={{ scale: 1.1 }} // Define hover animation
                   whileTap={{ scale: 1 }} // Define hover animation
-                  className="bg-gray-400 rounded-2xl px-2 "
+                  className="bg-[#6d94ff] rounded-2xl px-2 "
                   onClick={() => handleTagClick(tag._id)}
                 >
                   {tag.tag}
@@ -160,29 +162,30 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
               {/* )} */}
             </>
           ))}
-
-          {/*           
-          {currentEvents.map((event, index) => (
-            <div key={index}>
-              <div className="flex justify-between items-center">
-                <h1 className="flex">{event.title}</h1>
-                <h1 className="flex">{event.start}</h1>
-              </div>
-            </div>
-          ))} */}
         </div>
+      </div>
+      <hr className="mt-5" />
+      <div className="my-4">
         <div className="">
           <h1 className="text-lg font-semibold mb-1 mt-3">Events this month</h1>
-          {currentEvents.map((event, index) => (
-            <div key={index}>
-              <div className="flex justify-between items-center">
-                <Tooltip title={event.title}>
-                  {event.title.substring(0, 20)}
-                </Tooltip>
-                <h1 className="">{event.start.split("T")[0]}</h1>
-              </div>
-            </div>
-          ))}
+          {currentEvents.length > 0 ? (
+            <>
+              {currentEvents.map((event, index) => (
+                <div key={index}>
+                  <div className="flex justify-between items-center">
+                    <Tooltip title={event.title}>
+                      {event.title.substring(0, 20)}
+                    </Tooltip>
+                    <h1 className="">{event.start.split("T")[0]}</h1>
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : (
+            <>
+              <h2>*No events this month*</h2>
+            </>
+          )}
         </div>
       </div>
     </div>
