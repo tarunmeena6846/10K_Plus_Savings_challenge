@@ -149,7 +149,7 @@ function Appbar() {
         >
           <img
             src="./10ksc.png"
-            className="w-20 h-20  rounded-3xl"
+            className="w-20 h-20 rounded-3xl"
             alt="10KSC Logo"
           ></img>
           {/* 10K Savings Challenge */}

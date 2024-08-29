@@ -13,6 +13,7 @@ import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
 import Loader from "../Loader";
+import CommentForm from "./CommentForm";
 export const fetchPosts = async (
   postId,
   setCurrentPost,
@@ -49,7 +50,7 @@ const Postdetails = () => {
   console.log("inside postdetails");
   const { postId } = useParams();
   const navigate = useNavigate();
-  const { userEmail } = useRecoilValue(userState);
+  const { userName } = useRecoilValue(userState);
   const [commentContent, setCommentContent] = useState("");
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
   const actions = useRecoilValue(actionsState);
@@ -98,6 +99,20 @@ const Postdetails = () => {
     console.log("post id at click", postId);
     navigate(`/community/post/${postId}`);
   }
+
+  const handleSubmitComment = async () => {
+    console.log("here");
+    await handleComment(
+      commentContent,
+      postId as string,
+      userName,
+      currentUserState.imageUrl,
+      null,
+      setActions,
+      "comment",
+      ""
+    );
+  };
   // console.log(typeof currentPost.content, currentPost.content);
   return (
     <div className="text-white p-10">
@@ -105,18 +120,44 @@ const Postdetails = () => {
         <Loader />
       ) : (
         <div>
-          <div className="flex my-4">
-            <img
-              className="w-12 h-12 rounded-full mr-2"
-              // src="/user12.svg"
-              src={`${currentPost.userImage}`}
-              alt="Profile"
-            ></img>
-            <div className="flex flex-col justify-start ">
-              <p>{currentPost?.author}</p>
-              <p className="text-[#9ca3af]">
-                {timePassed(new Date(currentPost?.createdAt))}
-              </p>
+          <div className="flex justify-between">
+            <div className="flex my-4">
+              <img
+                className="w-12 h-12 rounded-full mr-2"
+                // src="/user12.svg"
+                src={`${currentPost.userImage}`}
+                alt="Profile"
+              ></img>
+              <div className="flex flex-col justify-start ">
+                <p>{currentPost?.author}</p>
+                <p className="text-[#9ca3af]">
+                  {timePassed(new Date(currentPost?.createdAt))}
+                </p>
+              </div>
+            </div>
+            <div>
+              {currentUserState.isAdmin && (
+                <div className="flex gap-3 mt-3">
+                  {(currentPost.status === "approvalPending" ||
+                    currentPost.status === "rejected") && (
+                    <button
+                      className="text-green-600"
+                      onClick={() => approveOrDeclinePost("approved")}
+                    >
+                      Approve
+                    </button>
+                  )}
+                  {(currentPost.status === "approvalPending" ||
+                    currentPost.status === "approved") && (
+                    <button
+                      className="text-red-600"
+                      onClick={() => approveOrDeclinePost("rejected")}
+                    >
+                      Delete Post
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <h1
@@ -130,7 +171,7 @@ const Postdetails = () => {
           {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
           <MarkdownPreview markdown={currentPost.content} />
           <hr />
-          {currentUserState.isAdmin && (
+          {/* {currentUserState.isAdmin && (
             <div className="flex gap-3 mt-3">
               {(currentPost.status === "approvalPending" ||
                 currentPost.status === "rejected") && (
@@ -151,7 +192,7 @@ const Postdetails = () => {
                 </button>
               )}
             </div>
-          )}
+          )} */}
           {currentPost.status === "rejected" && (
             <p className="text-red-500">
               * This post is rejected by the admin.
@@ -159,7 +200,12 @@ const Postdetails = () => {
           )}
           {/* {currentPost.status} */}
           <div className="flex flex-col mt-3">
-            comment as {userEmail}
+            <CommentForm
+              setHtmlContent={setCommentContent}
+              content={commentContent}
+              handleSubmitComment={handleSubmitComment}
+            />
+            {/* comment as {userName}
             <div>
               <TextEditor
                 height="100px"
@@ -174,7 +220,7 @@ const Postdetails = () => {
                   handleComment(
                     commentContent,
                     postId as string,
-                    userEmail,
+                    userName,
                     currentUserState.imageUrl,
                     null,
                     setActions,
@@ -185,7 +231,7 @@ const Postdetails = () => {
               >
                 Comment
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}

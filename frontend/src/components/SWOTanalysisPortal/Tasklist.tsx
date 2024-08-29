@@ -139,7 +139,7 @@ const TaskList = ({ setShowPopup }) => {
               alt="Cancel"
             />
           </motion.button>
-        </div>
+      </div>
         <div className="flex items-center mb-4 mt-4">
           <input
             type="text"

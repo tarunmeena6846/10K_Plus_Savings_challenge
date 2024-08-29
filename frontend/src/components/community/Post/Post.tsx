@@ -54,8 +54,9 @@ const Post: React.FC<PostType> = ({
   title,
   content,
   type,
+  tag,
 }) => {
-  console.log("tarun postid", postId, userProfile, username);
+  console.log("tarun postid", tag);
   const navigate = useNavigate();
   // const excerpt = HtmlParser(content.substring(0, 200)); // Adjust the length as needed
   const currentUserEmail = useRecoilValue(userState);
@@ -148,31 +149,11 @@ const Post: React.FC<PostType> = ({
   console.log("theme", isDarkTheme);
   return (
     <div className="w-full max-w-3xl rounded-2xl dark:bg-gray-800 dark:border-gray-700 relative text-white ">
-      {/* <div className="rounded-t-lg overflow-hidden">
-        <div className="absolute top-0 right-0 p-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 cursor-pointer"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke={isDarkTheme ? "whtte" : "currentColor"} // Set stroke color based on theme
-            onClick={toggleDeleteOption}
-            ref={optionRef}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6a2 2 0 100-4 2 2 0 000 4zm0 8a2 2 0 100-4 2 2 0 000 4zm0 8a2 2 0 100-4 2 2 0 000 4z"
-            />
-          </svg>
-        </div>
-      </div> */}
       <div className="mb-6">
         <div className="flex  justify-between my-[20px]">
           <span className="flex gap-1 bg-[#bfdbfe] items-center p-1 px-3 rounded-xl text-blue-600">
             <img src="./article.svg"></img>
-            <h2 className="text-sm">Article</h2>
+            <h2 className="text-sm">{tag}</h2>
           </span>
           <span className="text-[#9ca3af] font-normal text-sm p-1">
             {timePassed(postTime)}
@@ -214,31 +195,6 @@ const Post: React.FC<PostType> = ({
         </div>
       </div>
       <hr className="mt-3"></hr>
-      {/* {showDeleteOption && (
-        <div className="absolute top-0 right-0 m-2">
-          <div className="bg-white p-2 rounded-lg shadow-md border border-gray-200">
-
-            {(type === "mybookmarks" ||
-              currentUserEmail.userEmail === username) && (
-              <button
-                className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
-            )}
-            <button
-              className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-              onClick={handleSaveBookmark}
-            >
-              Bookmark
-            </button>
-            <button className="block w-full text-left py-1 px-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
-              Report
-            </button>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

@@ -151,8 +151,6 @@ function Login() {
                             onClick={handleRegister}
                           >
                             <Spinner />
-                            {/* {currentUserState.isLoading ? <Spinner /> : Login} */}
-                            {/* Login */}
                           </button>
                         ) : (
                           <button
@@ -160,7 +158,6 @@ function Login() {
                             type="button"
                             onClick={handleRegister}
                           >
-                            {/* {currentUserState.isLoading ? <Spinner /> : Login} */}
                             Login
                           </button>
                         )}
@@ -168,7 +165,6 @@ function Login() {
                       <a
                         className="text-sm text-gray-500"
                         onClick={() => navigate("/request-otp")}
-                        // className="text-[#ef85a5]"
                       >
                         Forgot password?
                       </a>
