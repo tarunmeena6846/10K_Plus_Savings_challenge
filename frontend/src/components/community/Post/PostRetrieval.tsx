@@ -122,12 +122,12 @@ const Postdetails = () => {
         <div>
           <div className="flex justify-between">
             <div className="flex my-4">
-              <img
+              {/* <img
                 className="w-12 h-12 rounded-full mr-2"
                 // src="/user12.svg"
                 src={`${currentPost.userImage}`}
                 alt="Profile"
-              ></img>
+              ></img> */}
               <div className="flex flex-col justify-start ">
                 <p>{currentPost?.author}</p>
                 <p className="text-[#9ca3af]">
@@ -171,28 +171,6 @@ const Postdetails = () => {
           {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
           <MarkdownPreview markdown={currentPost.content} />
           <hr />
-          {/* {currentUserState.isAdmin && (
-            <div className="flex gap-3 mt-3">
-              {(currentPost.status === "approvalPending" ||
-                currentPost.status === "rejected") && (
-                <button
-                  className="text-green-600"
-                  onClick={() => approveOrDeclinePost("approved")}
-                >
-                  Approve
-                </button>
-              )}
-              {(currentPost.status === "approvalPending" ||
-                currentPost.status === "approved") && (
-                <button
-                  className="text-red-600"
-                  onClick={() => approveOrDeclinePost("rejected")}
-                >
-                  Delete Post
-                </button>
-              )}
-            </div>
-          )} */}
           {currentPost.status === "rejected" && (
             <p className="text-red-500">
               * This post is rejected by the admin.
@@ -205,36 +183,10 @@ const Postdetails = () => {
               content={commentContent}
               handleSubmitComment={handleSubmitComment}
             />
-            {/* comment as {userName}
-            <div>
-              <TextEditor
-                height="100px"
-                setHtmlContent={setCommentContent}
-                content={""}
-              ></TextEditor>
-            </div>
-            <div className="mt-7 md:m-0">
-              <Button
-                onClick={() => {
-                  setCommentContent("");
-                  handleComment(
-                    commentContent,
-                    postId as string,
-                    userName,
-                    currentUserState.imageUrl,
-                    null,
-                    setActions,
-                    "comment",
-                    ""
-                  );
-                }}
-              >
-                Comment
-              </Button>
-            </div> */}
           </div>
         </div>
       )}
+      <hr className="" />
     </div>
   );
 };

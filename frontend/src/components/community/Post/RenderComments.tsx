@@ -237,15 +237,18 @@ const CommentDetails = () => {
       .map((comment) => (
         <div
           key={comment._id}
-          style={{
-            marginLeft: `${depth * 20}px`,
-            marginBottom: "10px",
-            borderLeft: depth > 0 ? "1px solid black" : "",
-            borderTop: depth > 0 ? "1px solid black" : "",
-          }}
+          style={
+            {
+              // marginLeft: `${depth * 20}px`,
+              // marginBottom: "10px",
+              // borderLeft: depth > 0 ? "1px solid black" : "",
+              // borderTop: depth > 0 ? "1px solid black" : "",
+            }
+          }
           className="flex flex-col p-2 rounded-2xl"
         >
           <div className="flex flex-row gap-2">
+            {/* user image code */}
             <img
               className="w-12 h-12 rounded-full mr-2"
               src={comment.imageLink}
@@ -351,24 +354,23 @@ const CommentDetails = () => {
       ) : (
         <> */}
       <Postdetails></Postdetails>
-      <br />
-      <hr className="" />
-      <br />
-      <h2>Comments</h2>
-      <div>
+
+      <div className="px-10">
+        <h2>Comments</h2>
         <label>Sort By:</label>
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           <option value="createdAt">Date</option>
           <option value="upvotes">Most Popular</option>
         </select>
-      </div>
-      {sortedComments.length > 0 ? (
-        renderComments(sortedComments)
-      ) : (
-        <p>No comments yet</p>
-      )}
-      {/* </>
+
+        {sortedComments.length > 0 ? (
+          renderComments(sortedComments)
+        ) : (
+          <p>No comments yet</p>
+        )}
+        {/* </>
       )} */}
+      </div>
     </div>
   );
 };
