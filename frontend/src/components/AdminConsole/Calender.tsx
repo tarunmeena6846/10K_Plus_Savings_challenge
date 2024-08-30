@@ -6,6 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useRecoilState } from "recoil";
 import { currentEventsState } from "../store/atoms/events";
+import DrawerForm from "./DrawerForm";
 
 function extractDateTime(dateTimeString: any) {
   const { startStr, endStr } = dateTimeString;
@@ -35,6 +36,8 @@ export default function DemoApp() {
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [currentEvents, setCurrentEvents] = useRecoilState(currentEventsState);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
   const [eventDetails, setEventDetails] = useState({
     _id: "",
     title: "",
@@ -88,9 +91,12 @@ export default function DemoApp() {
   const handleWeekendsToggle = () => setWeekendsVisible(!weekendsVisible);
 
   const handleDateSelect = (selectInfo: any) => {
+    console.log("heher");
+    setDrawerVisible(true);
     const { clientX: x, clientY: y } = selectInfo.jsEvent;
     const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
-    console.log;
+
+    console.log(startTime, endTime);
     setEventDetails({
       _id: "",
       title: "",
@@ -323,30 +329,9 @@ export default function DemoApp() {
     }
   };
 
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let i = 0; i < 24; i++) {
-      const hour = i.toString().padStart(2, "0");
-      times.push(`${hour}:00`, `${hour}:30`);
-    }
-    return times;
-  };
-
-  const generateEndTimeOptions = (startTime) => {
-    const times = generateTimeOptions();
-    if (startTime) {
-      const [startHour, startMinute] = startTime.split(":").map(Number);
-      return times.filter((time) => {
-        const [hour, minute] = time.split(":").map(Number);
-        return hour > startHour || (hour === startHour && minute > startMinute);
-      });
-    }
-    return times;
-  };
-
   const { title, startTime, endTime, date, description } = eventDetails;
-  const timeOptions = generateTimeOptions();
-  const endTimeOptions = generateEndTimeOptions(startTime);
+  // const timeOptions = generateTimeOptions();
+  // const endTimeOptions = generateEndTimeOptions(startTime);
 
   const formattedSelectedDate = date
     ? new Date(date).toLocaleDateString("en-US", {
@@ -357,7 +342,7 @@ export default function DemoApp() {
     : "";
   console.log(currentEvents);
   return (
-    <div className="demo-app">
+    <div className="demo-app text-white">
       <div className="demo-app-main">
         <label>
           <input
@@ -391,9 +376,15 @@ export default function DemoApp() {
             fetchEventsForMonth(dateInfo);
           }}
         />
-        {date && (
+        <DrawerForm
+          drawerVisible={drawerVisible}
+          setDrawerVisible={setDrawerVisible}
+          setEventDetails={setEventDetails}
+          eventDetails={eventDetails}
+        />
+        {/* {date && (
           <form
-            className="flex flex-col bg-cyan-950 p-10 space-y-4 rounded-2xl"
+            className="flex flex-col bg-[#eaeaea] p-10 space-y-4 rounded-2xl "
             style={{
               position: "absolute",
               top: popupPosition.y,
@@ -405,7 +396,7 @@ export default function DemoApp() {
             <input
               type="text"
               placeholder="Add title*"
-              className="w-full rounded"
+              className="w-full rounded bg-[#111f36] "
               required
               value={title}
               style={{ height: "40px", padding: "10px" }}
@@ -414,7 +405,7 @@ export default function DemoApp() {
               }
             />
             <div className="flex flex-row gap-2 items-end">
-              <p className="text-white">{formattedSelectedDate}</p>
+              <p className="text-black">{formattedSelectedDate}</p>
               <select
                 value={startTime}
                 onChange={(e) =>
@@ -423,7 +414,7 @@ export default function DemoApp() {
                     startTime: e.target.value,
                   })
                 }
-                className="rounded p-2"
+                className="rounded p-2 bg-[#111f36]"
               >
                 <option value="">Select start time</option>
                 {timeOptions.map((time) => (
@@ -433,7 +424,7 @@ export default function DemoApp() {
                 ))}
               </select>
               <select
-                className="rounded p-2"
+                className="rounded p-2 bg-[#111f36]"
                 value={endTime}
                 onChange={(e) =>
                   setEventDetails({ ...eventDetails, endTime: e.target.value })
@@ -450,7 +441,7 @@ export default function DemoApp() {
             <input
               type="text"
               placeholder="Description"
-              className="w-full rounded"
+              className="w-full rounded bg-[#111f36]"
               style={{ height: "40px", padding: "10px" }}
               value={description}
               onChange={(e) =>
@@ -484,7 +475,7 @@ export default function DemoApp() {
               Cancel
             </button>
           </form>
-        )}
+        )} */}
       </div>
     </div>
   );
