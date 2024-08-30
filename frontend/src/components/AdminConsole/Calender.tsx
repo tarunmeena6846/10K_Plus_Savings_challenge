@@ -35,8 +35,9 @@ export default function DemoApp() {
   const calendarRef = useRef(null);
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [currentEvents, setCurrentEvents] = useRecoilState(currentEventsState);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  // const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [deletePopup, setDeletePopup] = useState(false);
 
   const [eventDetails, setEventDetails] = useState({
     _id: "",
@@ -46,21 +47,21 @@ export default function DemoApp() {
     description: "",
     date: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
 
-  function addDaysToDate(dateString: any, daysToAdd: any) {
-    // Parse the input date string
-    const date = new Date(dateString);
+  // function addDaysToDate(dateString: any, daysToAdd: any) {
+  //   // Parse the input date string
+  //   const date = new Date(dateString);
 
-    // Add the specified number of days
-    date.setDate(date.getDate() + daysToAdd);
+  //   // Add the specified number of days
+  //   date.setDate(date.getDate() + daysToAdd);
 
-    // Format the date back to 'YYYY-MM-DD'
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so we add 1
+  //   // Format the date back to 'YYYY-MM-DD'
+  //   const year = date.getFullYear();
+  //   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so we add 1
 
-    return { year, month };
-  }
+  //   return { year, month };
+  // }
   // useEffect(() => {
   // Fetch events from the database when the component mounts
   const fetchEventsForMonth = async (dateInfo: any) => {
@@ -93,6 +94,7 @@ export default function DemoApp() {
   const handleDateSelect = (selectInfo: any) => {
     console.log("heher");
     setDrawerVisible(true);
+    setDeletePopup(false);
     const { clientX: x, clientY: y } = selectInfo.jsEvent;
     const { startTime, endTime, selectedDate } = extractDateTime(selectInfo);
 
@@ -106,16 +108,17 @@ export default function DemoApp() {
       date: selectedDate,
     });
 
-    setPopupPosition({
-      x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
-      y: y + 300 > window.innerHeight ? window.innerHeight - 300 : y,
-    });
+    // setPopupPosition({
+    //   x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
+    //   y: y + 300 > window.innerHeight ? window.innerHeight - 300 : y,
+    // });
 
-    setIsEditing(false);
+    // setIsEditing(false);
   };
 
   const handleEventClick = (clickInfo) => {
     const { clientX: x, clientY: y } = clickInfo.jsEvent;
+    setDrawerVisible(true);
 
     const {
       title,
@@ -138,12 +141,12 @@ export default function DemoApp() {
       date: selectedDate,
     });
 
-    setPopupPosition({
-      x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
-      y: y + 400 > window.innerHeight ? window.innerHeight - 400 : y,
-    });
+    // setPopupPosition({
+    //   x: x + 500 > window.innerWidth ? window.innerWidth - 500 : x,
+    //   y: y + 400 > window.innerHeight ? window.innerHeight - 400 : y,
+    // });
 
-    setIsEditing(true);
+    // setIsEditing(true);
   };
 
   const handleEventSave = async (e) => {
@@ -152,7 +155,7 @@ export default function DemoApp() {
 
     if (title && startTime && endTime) {
       const newEvent = {
-        _id: isEditing ? _id : `temp-${Date.now()}`, // Use a temporary ID for new events
+        _id: `temp-${Date.now()}`, // Use a temporary ID for new events
         title,
         start: `${date}T${startTime}:00`,
         end: `${date}T${endTime}:00`,
@@ -161,68 +164,41 @@ export default function DemoApp() {
 
       console.log("New Event:", newEvent);
 
-      if (isEditing) {
-        console.log(currentEvents);
-        const originalEventBeforeUpdate = [...currentEvents];
-        // Update existing event
-        const updatedEvents = currentEvents.map((event) =>
-          event._id === _id ? newEvent : event
-        );
-        console.log(updatedEvents);
-        setCurrentEvents(updatedEvents);
+      // Add new event
+      setCurrentEvents([...currentEvents, newEvent]);
 
-        // Attempt to update in the database
-        try {
-          const success = await updateDb(newEvent);
+      // Attempt to save in the database
+      try {
+        const savedEvent = await saveToDb(newEvent);
+        console.log(savedEvent);
+        if (savedEvent) {
+          console.log(currentEvents);
 
-          if (!success) {
-            console.log("in nonsucces");
-            // // Revert to previous state on failure
-            setCurrentEvents(originalEventBeforeUpdate);
-          }
-        } catch (error) {
-          console.log("in catch block");
-          alert("Error updating event");
-          setCurrentEvents(originalEventBeforeUpdate);
+          setDrawerVisible(false);
+          setCurrentEvents((prevEvents) => {
+            console.log(prevEvents);
+            const updatedEvents = prevEvents.map((event) =>
+              event._id === newEvent._id
+                ? { ...event, _id: savedEvent._id }
+                : event
+            ); // Perform actions based on updatedEvents
+            console.log(updatedEvents, newEvent);
 
-          // Handle error appropriately (e.g., revert state)
-        }
-      } else {
-        // Add new event
-        setCurrentEvents([...currentEvents, newEvent]);
-
-        // Attempt to save in the database
-        try {
-          const savedEvent = await saveToDb(newEvent);
-          console.log(savedEvent);
-          if (savedEvent) {
-            console.log(currentEvents);
-
-            setCurrentEvents((prevEvents) => {
-              console.log(prevEvents);
-              const updatedEvents = prevEvents.map((event) =>
-                event._id === newEvent._id
-                  ? { ...event, _id: savedEvent._id }
-                  : event
-              ); // Perform actions based on updatedEvents
-              console.log(updatedEvents, newEvent);
-
-              return updatedEvents; // Return the updated state
-            });
-          } else {
-            console.log("Failed to save event to database");
-            // Remove temporary event if save fails
-            setCurrentEvents((prevEvents) =>
-              prevEvents.filter((event) => event._id !== newEvent._id)
-            );
-          }
-        } catch (error) {
-          console.log("Error saving event:", error);
-          // Handle error appropriately (e.g., remove temporary event)
+            return updatedEvents; // Return the updated state
+          });
+        } else {
+          console.log("Failed to save event to database");
+          // Remove temporary event if save fails
           setCurrentEvents((prevEvents) =>
             prevEvents.filter((event) => event._id !== newEvent._id)
           );
         }
+      } catch (error) {
+        console.log("Error saving event:", error);
+        // Handle error appropriately (e.g., remove temporary event)
+        setCurrentEvents((prevEvents) =>
+          prevEvents.filter((event) => event._id !== newEvent._id)
+        );
       }
 
       // Reset eventDetails state
@@ -260,8 +236,10 @@ export default function DemoApp() {
 
       if (data.success) {
         console.log("Event successfully deleted from the database");
+        setDrawerVisible(false);
       } else {
         setCurrentEvents(eventBeforeDelete);
+        // setDrawerVisible(false)
         alert("Failed to delete event from the database");
       }
     } catch (error) {
@@ -329,18 +307,18 @@ export default function DemoApp() {
     }
   };
 
-  const { title, startTime, endTime, date, description } = eventDetails;
+  // const { title, startTime, endTime, date, description } = eventDetails;
   // const timeOptions = generateTimeOptions();
   // const endTimeOptions = generateEndTimeOptions(startTime);
 
-  const formattedSelectedDate = date
-    ? new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
-  console.log(currentEvents);
+  // const formattedSelectedDate = date
+  //   ? new Date(date).toLocaleDateString("en-US", {
+  //       year: "numeric",
+  //       month: "long",
+  //       day: "numeric",
+  //     })
+  //   : "";
+  // console.log(currentEvents);
   return (
     <div className="demo-app text-white">
       <div className="demo-app-main">
@@ -382,101 +360,10 @@ export default function DemoApp() {
           setEventDetails={setEventDetails}
           eventDetails={eventDetails}
           handleSave={handleEventSave}
+          handleDeleteEvent={handleDeleteEvent}
+          deletePopup={deletePopup}
+          setDeletePopup={setDeletePopup}
         />
-        {/* {date && (
-          <form
-            className="flex flex-col bg-[#eaeaea] p-10 space-y-4 rounded-2xl "
-            style={{
-              position: "absolute",
-              top: popupPosition.y,
-              left: popupPosition.x,
-              zIndex: 4,
-            }}
-            onSubmit={handleEventSave}
-          >
-            <input
-              type="text"
-              placeholder="Add title*"
-              className="w-full rounded bg-[#111f36] "
-              required
-              value={title}
-              style={{ height: "40px", padding: "10px" }}
-              onChange={(e) =>
-                setEventDetails({ ...eventDetails, title: e.target.value })
-              }
-            />
-            <div className="flex flex-row gap-2 items-end">
-              <p className="text-black">{formattedSelectedDate}</p>
-              <select
-                value={startTime}
-                onChange={(e) =>
-                  setEventDetails({
-                    ...eventDetails,
-                    startTime: e.target.value,
-                  })
-                }
-                className="rounded p-2 bg-[#111f36]"
-              >
-                <option value="">Select start time</option>
-                {timeOptions.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="rounded p-2 bg-[#111f36]"
-                value={endTime}
-                onChange={(e) =>
-                  setEventDetails({ ...eventDetails, endTime: e.target.value })
-                }
-              >
-                <option value="">Select end time</option>
-                {endTimeOptions.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <input
-              type="text"
-              placeholder="Description"
-              className="w-full rounded bg-[#111f36]"
-              style={{ height: "40px", padding: "10px" }}
-              value={description}
-              onChange={(e) =>
-                setEventDetails({
-                  ...eventDetails,
-                  description: e.target.value,
-                })
-              }
-            />
-            <div className="flex gap-1">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white p-2 rounded grow"
-              >
-                {isEditing ? "Update Event" : "Add Event"}
-              </button>
-              {isEditing && (
-                <button
-                  type="button"
-                  className="bg-red-500 text-white p-2 rounded grow"
-                  onClick={handleDeleteEvent}
-                >
-                  Delete Event
-                </button>
-              )}
-            </div>
-            <button
-              className="bg-red-500 text-white p-2 rounded"
-              onClick={() => setEventDetails({ ...eventDetails, date: "" })}
-            >
-              Cancel
-            </button>
-          </form>
-        )} */}
       </div>
     </div>
   );

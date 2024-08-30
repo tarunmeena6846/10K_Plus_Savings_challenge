@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PopupModal from "../DeletePopup";
 
 const DrawerForm = ({
   drawerVisible,
@@ -6,9 +7,13 @@ const DrawerForm = ({
   setEventDetails,
   eventDetails,
   handleSave,
+  handleDeleteEvent,
+  deletePopup,
+  setDeletePopup,
 }) => {
   const { title, startTime, endTime, date, description } = eventDetails;
-
+  console.log(description);
+  // const [deletePopup, setDeletePopup] = useState(false);
   // Function to generate time options
   const generateTimeOptions = () => {
     const times = [];
@@ -61,44 +66,57 @@ const DrawerForm = ({
       }`}
       aria-labelledby="drawer-label"
     >
-      <h5
-        id="drawer-label"
-        className="inline-flex items-center mb-6 text-base font-semibold text-gray-500 uppercase dark:text-gray-400"
-      >
-        <svg
-          className="w-3.5 h-3.5 mr-2.5"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 20 20"
+      <div className="flex justify-between items-center">
+        <h5
+          id="drawer-label"
+          className="flex items-center  text-base font-semibold text-gray-500 uppercase dark:text-gray-400 "
         >
-          <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm14-7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z" />
-        </svg>
-        New event
-      </h5>
-      <button
-        type="button"
-        onClick={toggleDrawer}
-        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
-      >
-        <svg
-          className="w-3 h-3"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 14 14"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-          />
-        </svg>
-        <span className="sr-only">Close menu</span>
-      </button>
-      <form className="mb-6">
+          <svg
+            className="w-3.5 h-3.5 mr-2.5"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm14-7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z" />
+          </svg>
+          New event
+        </h5>
+        <div className="flex flex-row gap-3">
+          {title.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setDeletePopup(true)}
+              className="text-gray-400  hover:bg-gray-200 w-[30px] hover:text-gray-900 rounded-lg "
+            >
+              <img src="./delete.svg"></img>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={toggleDrawer}
+            className="text-gray-400 bg-transparent hover:bg-gray-200  p-3 rounded-3xl  hover:text-gray-900"
+          >
+            <svg
+              className="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            {/* <span className="sr-only">Close menu</span> */}
+          </button>
+        </div>
+      </div>
+      <form className="mb-6 mt-5">
         <div className="mb-6">
           <label
             htmlFor="title"
@@ -109,6 +127,7 @@ const DrawerForm = ({
           <input
             type="text"
             id="title"
+            value={title}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Title"
             required
@@ -126,6 +145,13 @@ const DrawerForm = ({
           </label>
           <textarea
             id="description"
+            value={description}
+            onChange={(e) =>
+              setEventDetails({
+                ...eventDetails,
+                description: e.target.value,
+              })
+            }
             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Write event description..."
           ></textarea>
@@ -196,6 +222,14 @@ const DrawerForm = ({
           Save
         </button>
       </form>
+      {deletePopup && (
+        <PopupModal
+          isModalOpen={setDeletePopup}
+          setIsModalOpen={setDeletePopup}
+          handleDelete={handleDeleteEvent}
+          type={"delete"}
+        ></PopupModal>
+      )}
     </div>
   );
 };
