@@ -307,6 +307,7 @@ const AnalyticsLanding = () => {
           isModalOpen={showDeleteModal}
           setIsModalOpen={setShowDeleteConfirmModal}
           handleDelete={handleDelete}
+          type={"delete"}
         />
       )}
 

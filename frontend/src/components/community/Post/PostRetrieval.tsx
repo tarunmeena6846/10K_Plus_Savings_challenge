@@ -14,6 +14,8 @@ import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
 import Loader from "../Loader";
 import CommentForm from "./CommentForm";
+import PopupModal from "../../DeletePopup";
+import SuccessPopup from "../../SWOTanalysisPortal/SuccessfulPopup";
 export const fetchPosts = async (
   postId,
   setCurrentPost,
@@ -51,12 +53,18 @@ const Postdetails = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
   const { userName } = useRecoilValue(userState);
+  const [showDeleteModal, setShowDeleteConfirmModal] = useState(false);
+
+  const [showApproveModel, setShowApproveModel] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  const [successfulPopup, setSuccessfulPopup] = useState(false);
+
   const actions = useRecoilValue(actionsState);
   const setActions = useSetRecoilState(actionsState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [text, setText] = useState(currentPost.content);
+
   // Fetch comments for the current post from the backend
   console.log("inside  postdetails ", postId);
 
@@ -81,7 +89,10 @@ const Postdetails = () => {
       }
       const data = await response.json();
       console.log("data at post approve", data);
-      alert("Post modified successfully");
+      // if (type == "approved") {
+      setShowApproveModel(false);
+      // }
+      setShowDeleteConfirmModal(false);
     } catch (error) {
       console.error(error);
     }
@@ -135,26 +146,35 @@ const Postdetails = () => {
                 </p>
               </div>
             </div>
-            <div>
+            <div className="">
               {currentUserState.isAdmin && (
                 <div className="flex gap-3 mt-3">
                   {(currentPost.status === "approvalPending" ||
                     currentPost.status === "rejected") && (
-                    <button
-                      className="text-green-600"
-                      onClick={() => approveOrDeclinePost("approved")}
-                    >
-                      Approve
-                    </button>
+                    <div className="">
+                      {/* {"here"} */}
+                      <button
+                        className="flex items-end"
+                        onClick={() => setShowApproveModel(true)}
+                      >
+                        <img src="/approve.svg"></img>
+                        {/* <h2 className="text-red-500">approve</h2> */}
+                      </button>
+                    </div>
                   )}
+                  {/* {currentPost.status} */}
                   {(currentPost.status === "approvalPending" ||
                     currentPost.status === "approved") && (
-                    <button
-                      className="text-red-600"
-                      onClick={() => approveOrDeclinePost("rejected")}
-                    >
-                      Delete Post
-                    </button>
+                    <div className="">
+                      {/* {"here"} */}
+                      <button
+                        className="flex items-end"
+                        onClick={() => setShowDeleteConfirmModal(true)}
+                      >
+                        <img src="/delete.svg"></img>
+                        {/* <h2 className="text-red-500">Delete</h2> */}
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
@@ -185,6 +205,23 @@ const Postdetails = () => {
             />
           </div>
         </div>
+      )}
+      {showDeleteModal && (
+        <PopupModal
+          isModalOpen={showDeleteModal}
+          setIsModalOpen={setShowDeleteConfirmModal}
+          handleDelete={() => approveOrDeclinePost("rejected")}
+          type={"delete"}
+        />
+      )}
+
+      {showApproveModel && (
+        <PopupModal
+          isModalOpen={showApproveModel}
+          setIsModalOpen={setShowApproveModel}
+          handleDelete={() => approveOrDeclinePost("approved")}
+          type={"approve"}
+        />
       )}
       <hr className="" />
     </div>

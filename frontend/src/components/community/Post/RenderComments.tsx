@@ -357,11 +357,11 @@ const CommentDetails = () => {
 
       <div className="px-10">
         <h2>Comments</h2>
-        <label>Sort By:</label>
+        {/* <label>Sort By:</label>
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           <option value="createdAt">Date</option>
           <option value="upvotes">Most Popular</option>
-        </select>
+        </select> */}
 
         {sortedComments.length > 0 ? (
           renderComments(sortedComments)
