@@ -321,6 +321,57 @@ export default function DemoApp() {
   // console.log(currentEvents);
   return (
     <div className="demo-app text-white">
+      <style>
+        {`
+          .fc-more-popover {
+            background-color: #f0f0f0;
+            color: #333;
+          }
+          .fc-popover-close {
+            // display: inline-flex;
+            // align-items: center;
+            // justify-content: center;
+            // width: 24px; /* Adjust size as needed */
+            // height: 24px; /* Adjust size as needed */
+            background-image: url('/cancel.svg'); /* Path to your SVG file */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-color: gray; /* Remove background if needed */
+            // border: none;
+            cursor: pointer;
+          }
+          .fc-icon-chevron-right {
+            // display: inline-flex;
+            // align-items: center;
+            // justify-content: center;
+            // width: 24px; /* Adjust size as needed */
+            // height: 24px; /* Adjust size as needed */
+            background-image: url('/right-arrow.svg'); /* Path to your SVG file */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-color: white; /* Remove background if needed */
+            // border: none;
+            cursor: pointer;
+          }
+
+          .fc-icon-chevron-left {
+            // display: inline-flex;
+            // align-items: center;
+            // justify-content: center;
+            // width: 24px; /* Adjust size as needed */
+            // height: 24px; /* Adjust size as needed */
+            background-image: url('/left-arrow.svg'); /* Path to your SVG file */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-color: white; /* Remove background if needed */
+            // border: none;
+            // padding: 15px;
+            // border-radius: 0px
+            // border-color:black
+            cursor: pointer;
+          }
+        `}
+      </style>
       <div className="demo-app-main">
         <label>
           <input
