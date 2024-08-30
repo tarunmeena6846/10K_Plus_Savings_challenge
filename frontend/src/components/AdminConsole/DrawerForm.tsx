@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const DrawerForm = ({
   drawerVisible,
   setDrawerVisible,
   setEventDetails,
   eventDetails,
+  handleSave,
 }) => {
-  // const [drawerVisible, setDrawerVisible] = useState(false);
   const { title, startTime, endTime, date, description } = eventDetails;
 
-  console.log(startTime);
+  // Function to generate time options
   const generateTimeOptions = () => {
     const times = [];
     for (let i = 0; i < 24; i++) {
@@ -19,9 +19,9 @@ const DrawerForm = ({
     return times;
   };
 
+  // Function to generate end time options based on start time
   const generateEndTimeOptions = (startTime) => {
     const times = generateTimeOptions();
-
     if (startTime) {
       const [startHour, startMinute] = startTime.split(":").map(Number);
       return times.filter((time) => {
@@ -31,9 +31,24 @@ const DrawerForm = ({
     }
     return times;
   };
-  const timeOptions = generateTimeOptions();
-  const endTimeOptions = generateEndTimeOptions(startTime);
-  console.log(endTime);
+
+  // State to store time options for both start and end times
+  const [startTimeOptions, setStartTimeOptions] = useState(
+    generateTimeOptions()
+  );
+  const [endTimeOptions, setEndTimeOptions] = useState(
+    generateEndTimeOptions(startTime)
+  );
+
+  // Update end time options when start time or end time changes
+  useEffect(() => {
+    setEndTimeOptions(generateEndTimeOptions(startTime));
+    if (endTime && !generateEndTimeOptions(startTime).includes(endTime)) {
+      setEventDetails((prev) => ({ ...prev, endTime: "" })); // Clear endTime if it's no longer valid
+    }
+  }, [startTime, endTime]);
+
+  // Toggle drawer visibility
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
@@ -44,7 +59,6 @@ const DrawerForm = ({
       className={`fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform bg-white w-80 dark:bg-gray-800 ${
         drawerVisible ? "translate-x-0" : "-translate-x-full"
       }`}
-      // tabIndex="-1"
       aria-labelledby="drawer-label"
     >
       <h5
@@ -112,103 +126,75 @@ const DrawerForm = ({
           </label>
           <textarea
             id="description"
-            // rows="4"
             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Write event description..."
           ></textarea>
         </div>
-        <div className=" flex flex-row mb-6 justify-between">
+        <div className="flex flex-row mb-6 justify-between">
           <label
-            htmlFor="description"
+            htmlFor="startTime"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
             Event Start Time
           </label>
           <div className="flex items-center gap-1">
-            {/* <div className=" inset-y-0 left-0 flex items-center pl-3 pointer-events-none"> */}
-            <img src="./calender1.svg" />
-            {/* <svg
-                className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                // width={60}
-                // height={50}
-              >
-                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-              </svg> */}
+            <img src="./calender1.svg" alt="calendar" className="w-5 h-5" />
             <select
+              id="startTime"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               value={startTime}
-              onChange={(e) =>
-                setEventDetails({
-                  ...eventDetails,
-                  startTime: e.target.value,
-                })
-              }
-              className="rounded p-2 bg-[#111f36]"
+              onChange={(e) => {
+                const newStartTime = e.target.value;
+                setEventDetails((prev) => ({
+                  ...prev,
+                  startTime: newStartTime,
+                  endTime: "", // Reset endTime when startTime changes
+                }));
+              }}
             >
-              <option value="">Select start time</option>
-              {timeOptions.map((time) => (
-                <option key={time} value={time}>
-                  {time}
+              {startTimeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
                 </option>
               ))}
             </select>
           </div>
         </div>
-
-        <div className="  left-0 flex items-center  pointer-events-none justify-between">
+        <div className="flex flex-row mb-6 justify-between">
           <label
-            htmlFor="description"
+            htmlFor="endTime"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
             Event End Time
           </label>
-
           <div className="flex items-center gap-1">
-            <img src="./calender1.svg" />
-
+            <img src="./calender1.svg" alt="calendar" className="w-5 h-5" />
             <select
-              className="rounded p-2 bg-[#111f36]"
+              id="endTime"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               value={endTime}
               onChange={(e) =>
-                setEventDetails({ ...eventDetails, endTime: e.target.value })
+                setEventDetails((prev) => ({
+                  ...prev,
+                  endTime: e.target.value,
+                }))
               }
             >
-              <option value="">Select end time</option>
-              {endTimeOptions.map((time) => (
-                <option key={time} value={time}>
-                  {time}
+              {endTimeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
                 </option>
               ))}
             </select>
           </div>
         </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="guests"
-            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-          >
-            Invite guests
-          </label>
-          <div className="">
-            {/* <input
-                type="search"
-                id="guests"
-                className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Invite others e.g. sara@example.com"
-                required
-              /> */}
-            <button
-              type="submit"
-              className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Send
-            </button>
-          </div>
-        </div>
+        <button
+          type="submit"
+          className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={handleSave}
+        >
+          Save
+        </button>
       </form>
     </div>
   );

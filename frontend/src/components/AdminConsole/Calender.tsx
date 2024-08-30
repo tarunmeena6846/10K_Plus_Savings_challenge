@@ -381,6 +381,7 @@ export default function DemoApp() {
           setDrawerVisible={setDrawerVisible}
           setEventDetails={setEventDetails}
           eventDetails={eventDetails}
+          handleSave={handleEventSave}
         />
         {/* {date && (
           <form
