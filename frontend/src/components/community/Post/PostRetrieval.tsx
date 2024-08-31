@@ -48,7 +48,7 @@ export const fetchPosts = async (
     console.error(error);
   }
 };
-const Postdetails = () => {
+const Postdetails = ({ commentCount }) => {
   console.log("inside postdetails");
   const { postId } = useParams();
   const navigate = useNavigate();
@@ -186,7 +186,6 @@ const Postdetails = () => {
           >
             {currentPost?.title}
           </h1>
-
           {/* {text} */}
           {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
           <MarkdownPreview markdown={currentPost.content} />
@@ -196,6 +195,7 @@ const Postdetails = () => {
               * This post is rejected by the admin.
             </p>
           )}
+          <h2 className="text-xl mt-10">Discussions ({commentCount})</h2>
           {/* {currentPost.status} */}
           <div className="flex flex-col mt-3">
             <CommentForm
@@ -223,7 +223,7 @@ const Postdetails = () => {
           type={"approve"}
         />
       )}
-      <hr className="" />
+      {/* <hr className="" /> */}
     </div>
   );
 };

@@ -112,10 +112,10 @@ const CommentDetails = () => {
   //       console.error("Error creating post:", error);
   //     });
   // };
-
+  let alreadyUpvoted = false;
   const handleUpvote = debounce(async (comment: CommentType) => {
     setIsProcessing((prev) => ({ ...prev, [comment._id]: true }));
-    const alreadyUpvoted = comment.likes.users?.includes(userEmail);
+    alreadyUpvoted = comment.likes.users?.includes(userEmail);
     console.log("inside upvote", alreadyUpvoted, comment);
 
     // Update the local state first
@@ -245,18 +245,20 @@ const CommentDetails = () => {
               // borderTop: depth > 0 ? "1px solid black" : "",
             }
           }
-          className="flex flex-col p-2 rounded-2xl"
+          className="flex flex-col p-2 rounded-2xl "
         >
           <div className="flex flex-row gap-2">
             {/* user image code */}
             <img
-              className="w-12 h-12 rounded-full mr-2"
+              className="w-8 h-8 rounded-full mr-2"
               src={comment.imageLink}
               // src="target.png"
               alt="Profile"
             />
             <p>{comment.author}</p>
-            <p>{timePassed(new Date(comment.createdAt))}</p>
+            <p className="text-gray-400">
+              {timePassed(new Date(comment.createdAt))}
+            </p>
           </div>
           <div className="">
             <MarkdownPreview markdown={comment.content} />
@@ -318,7 +320,25 @@ const CommentDetails = () => {
             )}
             <div className="flex flex-row p-2 ml-5 gap-2">
               <button onClick={() => handleUpvote(comment)}>
-                Upvotes: {comment.likes.likes}
+                {alreadyUpvoted.toString()}
+                <button
+                  type="button"
+                  className={`text-blue-700 border border-blue-700 hover:bg-blue-700 ${
+                    alreadyUpvoted ? "bg-blue-700" : ""
+                  }hover:text-white  font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center w-8 h-8`}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 18 18"
+                  >
+                    <path d="M3 7H1a1 1 0 0 0-1 1v8a2 2 0 0 0 4 0V8a1 1 0 0 0-1-1Zm12.954 0H12l1.558-4.5a1.778 1.778 0 0 0-3.331-1.06A24.859 24.859 0 0 1 6 6.8v9.586h.114C8.223 16.969 11.015 18 13.6 18c1.4 0 1.592-.526 1.88-1.317l2.354-7A2 2 0 0 0 15.954 7Z" />
+                  </svg>
+                  <span className="sr-only">Icon description</span>
+                </button>
+                : {comment.likes.likes}
               </button>
               {!clickedComments[comment._id] && (
                 <button onClick={() => toggleCommentClicked(comment._id)}>
@@ -353,10 +373,10 @@ const CommentDetails = () => {
         <Loader />
       ) : (
         <> */}
-      <Postdetails></Postdetails>
+      <Postdetails commentCount={sortedComments.length}></Postdetails>
 
       <div className="px-10">
-        <h2>Comments</h2>
+        {/* <h2>Comments</h2> */}
         {/* <label>Sort By:</label>
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           <option value="createdAt">Date</option>
