@@ -5,13 +5,13 @@ const Hero = ({ scrollProjectedDataSection }) => {
   return (
     <div className="flex flex-row justify-center py-20 gap-10">
       <div className="w-1/2 mt-30">
-        <h1 className="mb-4 font-heading text-6xl font-bold">
+        <h1 className="mb-4  text-6xl font-bold">
           Empower Your Financial Journey
         </h1>
         <div
           // ref={ref}
           className="
-          font-heading text-xl text-white flex-wrap"
+           text-xl text-white flex-wrap"
           // transition={{ duration: 0.5 }}
           style={{ marginTop: "60px" }} // Add margin to the second line
         >

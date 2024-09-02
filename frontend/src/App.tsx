@@ -74,6 +74,7 @@ function App() {
     "/analytics",
     "/login",
     "/register",
+    // "/",
   ];
   const shouldRenderAppbar = !hideAppbarRoutes.includes(location.pathname);
   // console.log("tarun inside app.tsx");
