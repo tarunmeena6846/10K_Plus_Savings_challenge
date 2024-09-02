@@ -43,7 +43,7 @@ const ProjectedData = () => {
         <p
           ref={ref}
           className={classNames(
-            "feature-title py-16 font-heading text-7xl  text-center font-bold",
+            "feature-title py-16 text-7xl  text-center font-bold",
             isInView ? "text-gray-800" : "text-gray-300"
           )}
         >
@@ -136,19 +136,17 @@ const ProjectedData = () => {
               flexDirection: "column",
             }}
           >
-            <h1 className="mb-10 text-white font-heading text-5xl">
+            <h1 className="mb-10 text-white  text-5xl">
               You will save $
               {(monthlyIncome - monthlyExpense) * (12 - new Date().getMonth())}
             </h1>
-            <h1 className="mb-4 text-white font-heading text-5xl">
-              Do you know ?
-            </h1>
-            <h1 className="mb-4 text-white font-heading text-3xl">
+            <h1 className="mb-4 text-white  text-5xl">Do you know ?</h1>
+            <h1 className="mb-4 text-white  text-3xl">
               Majority of the 10K Savings Challengers identify $3k in additional
               savings within the first day of joining the challenge. Join the
               10K Challenge for a year-end financial win.
             </h1>
-            <h1 className="mb-10 mt-4 text-white font-heading text-5xl">
+            <h1 className="mb-10 mt-4 text-white  text-5xl">
               Ready to kickstart your ideal life?
             </h1>
             <motion.button
