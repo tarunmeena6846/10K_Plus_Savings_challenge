@@ -4,23 +4,7 @@ import { fetchTags, tagDataType } from "./SideBar";
 const TextFieldWithDropdown = ({ setProp, prop, propValues, placeholder }) => {
   const [inputValue, setInputValue] = useState(prop);
   const [showDropdown, setShowDropdown] = useState(false);
-  // const [popularTags, setPopularTags] = useState<tagDataType[]>([]);
-  // // const options = ["Option 1", "Option 2", "Option 3"];
 
-  // useEffect(() => {
-  //   const fetchTagsFromDB = async () => {
-  //     console.log("here");
-  //     try {
-  //       const response = await fetchTags();
-  //       console.log(response);
-  //       console.log(response);
-  //       setPopularTags(response);
-  //     } catch (error) {
-  //       console.error("Error fetching tags", error);
-  //     }
-  //   };
-  //   fetchTagsFromDB();
-  // }, []);
   const handleInputChange = (e) => {
     setShowDropdown(false);
     console.log(e.target.value);
@@ -46,13 +30,14 @@ const TextFieldWithDropdown = ({ setProp, prop, propValues, placeholder }) => {
     }, 150);
   };
   return (
-    <div className="relative">
+    <div className="relative text-black">
       <input
         type="text"
         value={prop}
         placeholder={placeholder}
         onChange={handleInputChange}
         onFocus={handleInputFocus}
+        maxLength={20}
         onBlur={handleInputBlur}
         className="w-full border border-gray-300 px-4 py-2 my-2 rounded-md focus:outline-none focus:border-blue-500"
       />
@@ -64,7 +49,7 @@ const TextFieldWithDropdown = ({ setProp, prop, propValues, placeholder }) => {
                 <div
                   key={index}
                   onClick={() => handleDropdownClick(option)}
-                  className="cursor-pointer px-4 py-2 text-blue-400 hover:bg-gray-100"
+                  className="cursor-pointer px-4 py-2  hover:bg-gray-100"
                 >
                   {option}
                 </div>

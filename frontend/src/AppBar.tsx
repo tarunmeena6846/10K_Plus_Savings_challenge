@@ -99,14 +99,23 @@ function Appbar() {
   const handleLogoutConfirm = () => {
     setLogoutModalOpen(false);
     localStorage.removeItem("token");
-    setCurrentUserState({
+    // setCurrentUserState({
+    //   userEmail: "",
+    //   isLoading: false,
+    //   imageUrl: currentUserState.imageUrl,
+    //   isVerified: currentUserState.isVerified,
+    //   myWhy: currentUserState.myWhy,
+    //   isAdmin: currentUserState.isAdmin,
+    // });
+    setCurrentUserState((prev) => ({
+      ...prev,
       userEmail: "",
       isLoading: false,
-      imageUrl: currentUserState.imageUrl,
-      isVerified: currentUserState.isVerified,
-      myWhy: currentUserState.myWhy,
-      isAdmin: currentUserState.isAdmin,
-    });
+      // imageUrl: "",
+      // isVerified: currentUserState.isVerified,
+      // myWhy: currentUserState.myWhy,
+      // isAdmin: currentUserState.isAdmin,
+    }));
     setSelectedDate({
       year: selectedDate.year,
       month: new Date().toLocaleString("en-US", { month: "long" }),
@@ -140,7 +149,7 @@ function Appbar() {
         >
           <img
             src="./10ksc.png"
-            className="w-20 h-20  rounded-3xl"
+            className="w-20 h-20 rounded-3xl"
             alt="10KSC Logo"
           ></img>
           {/* 10K Savings Challenge */}

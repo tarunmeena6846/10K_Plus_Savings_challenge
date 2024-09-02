@@ -243,6 +243,155 @@ router.post(
   }
 );
 
+router.delete(
+  "/deleteItem",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const itemIds = req.body.selectedEntry;
+    const { selectedMonth, selectedYear, selectedType, selectedPortal } =
+      req.body;
+    const userId = req.user;
+
+    const type = selectedType.toLowerCase();
+    const portal = selectedPortal.toLowerCase();
+    console.log(selectedMonth, portal, type, selectedYear);
+    try {
+      // Step 1: Find the document and get the current values for calculations
+
+      let monthlyData = await MonthlyDataModel.findOne({
+        userId,
+        "yearlyData.year": selectedYear,
+      });
+
+      if (!monthlyData) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Document not found" });
+      }
+
+      // Find the index of the month within the yearlyData array
+      const yearIndex = monthlyData.yearlyData.findIndex(
+        (data) => data.year === selectedYear
+      );
+      const monthIndex = monthlyData.yearlyData[
+        yearIndex
+      ].monthlyData.findIndex((data) => data.month === selectedMonth);
+
+      // If the month's data exists, update it; otherwise, insert new data
+      if (monthIndex === -1) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Document not found" });
+      }
+      // Update existing month's data
+      const monthData: any =
+        monthlyData.yearlyData[yearIndex].monthlyData[monthIndex];
+
+      // console.log("monthData", monthData);
+
+      const itemsToDelete = monthData[portal].items.filter((item: any) =>
+        itemIds.includes(item._id.toString())
+      );
+
+      if (!itemsToDelete.length) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No items found to delete" });
+      }
+      console.log("itemsToDelete", itemsToDelete);
+      const totalAmountToDecrement = itemsToDelete.reduce(
+        (acc: any, item: any) => acc + item.amount,
+        0
+      );
+
+      console.log("totalAmountToDecrement", totalAmountToDecrement);
+
+      const updateFields: any = {
+        $pull: {
+          [`yearlyData.$[yearData].monthlyData.$[monthData].${portal}.items`]: {
+            _id: { $in: itemIds },
+          },
+        },
+      };
+      if (portal === "current") {
+        if (type === "income") {
+          updateFields.$inc = {
+            [`yearlyData.$[yearData].monthlyData.$[monthData].current.income`]:
+              -totalAmountToDecrement,
+            [`yearlyData.$[yearData].totalCurrentIncome`]:
+              -totalAmountToDecrement,
+          };
+        } else {
+          updateFields.$inc = {
+            [`yearlyData.$[yearData].monthlyData.$[monthData].current.expense`]:
+              -totalAmountToDecrement,
+            [`yearlyData.$[yearData].totalCurrentExpense`]:
+              -totalAmountToDecrement,
+          };
+        }
+      } else if (portal === "target") {
+        if (type === "income") {
+          updateFields.$inc = {
+            [`yearlyData.$[yearData].monthlyData.$[monthData].target.income`]:
+              -totalAmountToDecrement,
+            [`yearlyData.$[yearData].totalTargetIncome`]:
+              -totalAmountToDecrement,
+          };
+        } else {
+          updateFields.$inc = {
+            [`yearlyData.$[yearData].monthlyData.$[monthData].target.expense`]:
+              -totalAmountToDecrement,
+            [`yearlyData.$[yearData].totalTargetExpenses`]:
+              -totalAmountToDecrement,
+          };
+        }
+      } else if (portal === "actual") {
+        if (type === "income") {
+          updateFields.$inc = {
+            [`yearlyData.$[yearData].monthlyData.$[monthData].actual.income`]:
+              -totalAmountToDecrement,
+            [`yearlyData.$[yearData].totalActualIncome`]:
+              -totalAmountToDecrement,
+          };
+        } else {
+          updateFields.$inc = {
+            [`yearlyData.$[yearData].monthlyData.$[monthData].actual.expense`]:
+              -totalAmountToDecrement,
+            [`yearlyData.$[yearData].totalActualExpenses`]:
+              -totalAmountToDecrement,
+          };
+        }
+      }
+      // Perform the deletion and update totals
+      const result = await MonthlyDataModel.findOneAndUpdate(
+        {
+          userId,
+          "yearlyData.year": selectedYear,
+          "yearlyData.monthlyData.month": selectedMonth,
+        },
+        updateFields,
+        {
+          arrayFilters: [
+            { "yearData.year": selectedYear },
+            { "monthData.month": selectedMonth },
+          ],
+          new: true, // Return the updated document
+        }
+      );
+
+      if (result) {
+        console.log("Items deleted and totals updated successfully:", result);
+        res.status(200).json({ success: true });
+      } else {
+        console.log("Item not found or could not be deleted");
+        res.status(404).json({ success: false });
+      }
+    } catch (error) {
+      console.error("Error deleting items and updating totals:", error);
+      res.status(500).json({ success: false });
+    }
+  }
+);
 // Express Route for retrieving income items
 router.get(
   "/get-list/:year/:month/:type",

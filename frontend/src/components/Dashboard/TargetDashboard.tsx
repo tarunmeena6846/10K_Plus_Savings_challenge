@@ -8,14 +8,23 @@ import { fetchData } from "./fetchIncomeAndExpenseData";
 import { actionsState, userState } from "../store/atoms/user";
 import { useRecoilState } from "recoil";
 import Loader from "../community/Loader";
+import { useNavigate } from "react-router-dom";
+import { getIncomeAndExpenseArray } from "../getSortedIncomeAndSpendingArray";
+import { DropDownButton } from "../DropDown/button";
+import IncomeGraph from "../SpendingBarGraph";
+import IncomeVsExpenseGraph from "../IncomeVsExpense";
+import MonthwiseDataGraph from "../LineGraph";
 
 export default function TargetDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
   const [targetItemList, setTargetItemList] = useState([]);
   const [targetIncome, setTargetIncome] = useState(0);
   const [targetExpense, setTargetExpense] = useState(0);
   const [action, setActions] = useRecoilState(actionsState);
+  const [categoryWiseSpendings, setCategoryWiseSpendings] = useState([]);
+  const [categoryWiseIncome, setCategoryWiseIncome] = useState([]);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const openModal = (tab) => {
     setActiveTab(tab);
@@ -37,172 +46,129 @@ export default function TargetDashboard() {
         setTargetIncome(targetData.targetData.income);
         setTargetExpense(targetData.targetData.expense);
         setTargetItemList(targetData.targetData.items);
+
+        if (targetData.targetData.items.length > 0) {
+          await getIncomeAndExpenseArray(
+            targetData.targetData.items,
+            setCategoryWiseIncome,
+            setCategoryWiseSpendings
+          );
+        } else {
+          setCategoryWiseSpendings([]);
+          setCategoryWiseIncome([]);
+        }
       }
       setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
     };
     fetchDataAsync();
   }, [action]); // Run this effect only once when the component mounts
 
-  // const handleAddIncome = () => {
-  //   // Add logic to handle adding income
-  //   console.log("Add income logic here");
-  // };
-
-  // const handleAddExpense = () => {
-  //   // Add logic to handle adding expense
-  //   console.log("Add expense logic here");
-  // };
   return (
-    <div>
+    <div className="min-h-screen bg-[#eaeaea]">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <>
-            <Loader />
+            {/* here */}
+            <Loader></Loader>
           </>
         ) : (
-          <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
-            <div
-              className="p-6 rounded-2xl"
-              style={{
-                background: "#ffcbfb",
-              }}
-            >
-              <h2>Target Income</h2>
-              <h2 className="text-4xl">${targetIncome}</h2>
-            </div>
-            <div
-              className="p-6 rounded-2xl"
-              style={{
-                background: "#b2edff",
-                overflow: "scroll",
-              }}
-            >
-              <h2>Target Expenses</h2>
-              <h2 className="text-4xl">${targetExpense}</h2>
-            </div>
-            <div
-              className="p-6 rounded-2xl"
-              style={{
-                background: "#ceffae",
-                overflowX: "auto",
-              }}
-            >
-              <h2>Target Savings</h2>
-              <h2 className="text-4xl">${targetIncome - targetExpense}</h2>
-            </div>
-            <div className="md:col-span-3 grid grid-cols-4 row-span-2 gap-4">
-              <div
-                className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl "
-                style={{ background: "white", overflow: "hidden" }}
-              >
-                <h2 className="mb-4 text-center">Target Income</h2>
-                <Button
-                  style={{
-                    minWidth: "100px",
-                    color: "green",
-                    border: "2px dotted green",
-                    borderRadius: "20px",
-                    margin: "10px",
-                    textTransform: "none",
+          <>
+            <div className="flex justify-between my-3 ">
+              <h2 className="text-3xl">Target Savings Portal</h2>
+              <div className="flex gap-2">
+                <DropDownButton openModal={openModal} type={"Target"} />
+                <button
+                  className="bg-green-500 px-5 py-2.5 text-sm rounded-3xl text-white hover:bg-green-800"
+                  onClick={() => {
+                    navigate("/analytics", {
+                      state: {
+                        type: "Target",
+                        option: "Income",
+                      },
+                    });
                   }}
-                  variant="outlined"
-                  onClick={() => openModal(0)} // Open modal when button is clicked
                 >
-                  + Add Income
-                </Button>
-                {/* Render the updated items */}
-                {targetItemList.length > 0 ? (
-                  <div
-                    style={{
-                      padding: "10px",
-                      width: "100%",
-                    }}
-                  >
-                    {targetItemList
-                      .filter((item) => item.type === "Income")
-                      .slice(0, 5)
-                      .map((item, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            backgroundColor: "#b6ff8b",
-                            padding: "8px",
-                            margin: "10px",
-                            borderRadius: "10px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <span style={{ flex: 1 }}>{item.title}</span>
-                          <span>
-                            $
-                            {item.amount.toLocaleString("en-US", {
-                              maximumFractionDigits: 2,
-                            })}
-                          </span>
+                  View Analytics
+                </button>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4 ">
+              <div
+                className="p-6  flex items-center flex-col justify-center rounded-2xl bg-gradient-to-r from-orange-500  to-pink-500 text-white"
+                style={{ overflow: "hidden" }}
+              >
+                <h2>Target Savings</h2>
+                <h2 className="text-4xl">${targetIncome - targetExpense}</h2>
+              </div>
+              <div
+                className="p-6 rounded-2xl text-white"
+                style={{ background: "#111f36", overflow: "hidden" }}
+              >
+                <h2>Target Expenses</h2>
+                <h2 className="text-4xl">${targetExpense}</h2>
+              </div>
+              <div
+                style={{ background: "", overflow: "hidden" }}
+                className=" rounded-2xl col-span-1 row-span-2"
+              >
+                {/* {categoryWiseIncome.length === 0 ? (
+                  <>Nothing to show...</> */}
+                {/* ) : ( */}
+                  <IncomeGraph spendingData={categoryWiseIncome} />
+                {/* )} */}
+              </div>
+              <div
+                className="p-6 bg-pink-400 rounded-2xl  text-white w-full"
+                style={{ overflow: "hidden" }}
+              >
+                {/* {categoryWiseSpendings.length === 0 ? (
+                  <>Noting to show...</>
+                ) : ( */}
+                  <div>
+                    <h2>Top Spendings </h2>
+                    <div className="flex flex-col ">
+                      {categoryWiseSpendings.map((item, index) => (
+                        <div key={index} className="flex  py-2 gap-2">
+                          <img
+                            src={item.icon}
+                            alt="Icon"
+                            // className="" // Adjust the size as needed
+                          />
+                          <div>
+                            <h2>{item.category}</h2>
+                            <h2>${item.amount.toLocaleString()}</h2>
+                          </div>
                         </div>
                       ))}
+                    </div>
                   </div>
-                ) : (
-                  <>No records to show</>
-                )}
+                {/* )} */}
+              </div>
+              <div
+                className="p-6 rounded-2xl text-white"
+                style={{ background: "#111f36", overflow: "hidden" }}
+              >
+                <h2>Target Income</h2>
+                <h2 className="text-4xl">${targetIncome}</h2>
               </div>
 
               <div
-                className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
-                style={{ background: "white", overflow: "hidden" }}
+                className=" rounded-2xl col-span-1 row-span-1"
+                style={{ background: "", overflow: "hidden" }}
               >
-                <h2 className="mb-4 text-center">Target Expenses</h2>
-                <Button
-                  style={{
-                    minWidth: "100px",
-                    color: "green",
-                    border: "2px dotted green",
-                    borderRadius: "20px",
-                    margin: "10px",
-                    textTransform: "none",
-                  }}
-                  variant="outlined"
-                  onClick={() => openModal(1)} // Open modal when button is clicked
-                >
-                  + Add Expenses
-                </Button>
-                {/* Render the updated items */}
-                {targetItemList.length > 0 ? (
-                  <div style={{ padding: "10px", width: "100%" }}>
-                    {targetItemList
-                      .filter((item) => item.type === "Expense")
-                      .slice(0, 5)
-                      .map((item, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            backgroundColor: "#b6ff8b",
-                            padding: "8px",
-                            margin: "10px",
-                            borderRadius: "10px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <span style={{ flex: 1 }}>{item.title}</span>
-                          <span>
-                            $
-                            {item.amount.toLocaleString("en-US", {
-                              maximumFractionDigits: 2,
-                            })}
-                          </span>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <>No records to show</>
-                )}
+                <IncomeVsExpenseGraph
+                  income={targetIncome}
+                  expense={targetExpense}
+                />
+              </div>
+              <div
+                className=" rounded-2xl col-span-2 row-span-1"
+                style={{ background: "", overflow: "hidden" }}
+              >
+                <MonthwiseDataGraph expenseAndIncome={targetItemList} />
               </div>
             </div>
-          </div>
+          </>
         )}
       </SidebarLayout>
       <AddTransactionModal

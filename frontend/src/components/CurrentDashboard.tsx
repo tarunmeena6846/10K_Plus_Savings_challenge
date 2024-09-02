@@ -15,30 +15,15 @@ import { DropDownButton } from "./DropDown/button";
 import IncomeGraph from "./SpendingBarGraph";
 import MonthwiseDataGraph from "./LineGraph";
 import IncomeVsExpenseGraph from "./IncomeVsExpense";
-
-function getIconForCategory(category) {
-  // Define your category-to-icon mapping here
-  const icons = {
-    "Health and Fitness": "./health.svg",
-    "Debt Repayment": "./debt.svg",
-    "Savings and Investments": "./saving.svg",
-    Housing: "./houseing.svg",
-    Entertainment: "./entertainment.svg",
-    Food: "./food.svg",
-
-    // Add more categories and their corresponding icons
-  };
-  return icons[category] || "./expense.svg"; // Default icon if the category is not found
-}
+import { useNavigate } from "react-router-dom";
+import { getIncomeAndExpenseArray } from "./getSortedIncomeAndSpendingArray";
 
 export default function CurrentDashboard() {
+  const navigate = useNavigate();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   console.log(currentUserState);
-  // setCurrentUserState((prev) => ({
-  //   ...prev,
-  //   isLoading: false,
-  // }));
   const [activeTab, setActiveTab] = useState(0); // State to track active tab in modal
   const [currentItemList, setCurrentItemList] = useState([]);
   const [currentIncome, setCurrentIncome] = useState(0);
@@ -75,49 +60,11 @@ export default function CurrentDashboard() {
           setCurrentItemList(currentData.currentData.items);
 
           if (currentData.currentData.items.length > 0) {
-            const categorySpendingsArray = currentData.currentData.items
-              .filter((item) => item.type === "Expense")
-              .reduce((acc, item) => {
-                const existingCategory = acc.find(
-                  (category) => category.category === item.category
-                );
-
-                if (existingCategory) {
-                  existingCategory.amount += item.amount || 0;
-                } else {
-                  acc.push({
-                    category: item.category,
-                    amount: item.amount || 0,
-                    icon: getIconForCategory(item.category),
-                  });
-                }
-
-                return acc;
-              }, [])
-              .sort((a, b) => b.amount - a.amount);
-
-            const categoryIncomeArray = currentData.currentData.items
-              .filter((item) => item.type === "Income")
-              .reduce((acc, item) => {
-                const existingCategory = acc.find(
-                  (category) => category.category === item.category
-                );
-
-                if (existingCategory) {
-                  existingCategory.amount += item.amount || 0;
-                } else {
-                  acc.push({
-                    category: item.category,
-                    amount: item.amount || 0,
-                  });
-                }
-
-                return acc;
-              }, [])
-              .sort((a, b) => b.amount - a.amount);
-
-            setCategoryWiseSpendings(categorySpendingsArray);
-            setCategoryWiseIncome(categoryIncomeArray);
+            await getIncomeAndExpenseArray(
+              currentData.currentData.items,
+              setCategoryWiseIncome,
+              setCategoryWiseSpendings
+            );
           } else {
             setCategoryWiseSpendings([]);
             setCategoryWiseIncome([]);
@@ -125,8 +72,6 @@ export default function CurrentDashboard() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        // setCategoryWiseSpendings([]);
-        // setCategoryWiseIncome([]);
       } finally {
         // setLoading(false);
         setCurrentUserState((prev) => ({
@@ -137,12 +82,8 @@ export default function CurrentDashboard() {
     };
     fetchDataAsync();
   }, [action]);
-  // // Render the loader if data is still loading
-  // if (currentUserState.isLoading) {
-  //   return <Loader />;
-  // }
 
-  console.log(currentItemList);
+  console.log(currentIncome);
   return (
     <div className="min-h-screen bg-[#eaeaea]">
       <SidebarLayout>
@@ -155,9 +96,24 @@ export default function CurrentDashboard() {
           <>
             <div className="flex justify-between my-3 ">
               <h2 className="text-3xl">Current Savings Portal</h2>
-              <DropDownButton openModal={openModal} />
+              <div className="flex gap-2">
+                <DropDownButton openModal={openModal} type={"Curent"} />
+                <button
+                  className="bg-green-500 px-5 py-2.5 text-sm rounded-3xl text-white hover:bg-green-800"
+                  onClick={() => {
+                    navigate("/analytics", {
+                      state: {
+                        type: "Current",
+                        option: "Income",
+                      },
+                    });
+                  }}
+                >
+                  View Analytics
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-rows-4 md:grid-cols-3 gap-4 ">
+            <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4 ">
               <div
                 className="p-6  flex items-center flex-col justify-center rounded-2xl bg-gradient-to-r from-orange-500  to-pink-500 text-white"
                 style={{ overflow: "hidden" }}
@@ -235,129 +191,6 @@ export default function CurrentDashboard() {
                 style={{ background: "", overflow: "hidden" }}
               >
                 <MonthwiseDataGraph expenseAndIncome={currentItemList} />
-                {/* <h2>Line graph</h2>
-                <h2 className="text-4xl">${currentIncome}</h2> */}
-              </div>
-              {/* <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4"></div> */}
-              {/* <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#ceffae", overflow: "hidden" }}
-              >
-                <h2>Current Savings</h2>
-                <h2 className="text-4xl">${currentIncome - currentExpense}</h2>
-              </div> */}
-              <div className="md:col-span-3 grid grid-cols-4 row-span-1 gap-4 h-full">
-                <div
-                  className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
-                  style={{ background: "white", overflow: "hidden" }}
-                >
-                  {/* <h2 className="mb-4 text-center">Current Income</h2>
-                  <Button
-                    style={{
-                      minWidth: "100px",
-                      color: "green",
-                      border: "2px dotted green",
-                      borderRadius: "20px",
-                      margin: "10px",
-                      textTransform: "none",
-                    }}
-                    variant="outlined"
-                    onClick={() => openModal(0)} // Open modal when button is clicked
-                  >
-                    + Add Income
-                  </Button> */}
-
-                  {currentItemList.length > 0 ? (
-                    <div style={{ padding: "10px", width: "100%" }}>
-                      {currentItemList
-                        .filter((item) => item.type === "Income")
-                        .slice(0, 5)
-                        .map((item, index) => (
-                          <div
-                            key={index}
-                            style={{
-                              backgroundColor: "#b6ff8b",
-                              padding: "8px",
-                              margin: "10px",
-                              borderRadius: "10px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span style={{ flex: 1 }}>{item.title}</span>
-                            <span>
-                              $
-                              {item.amount.toLocaleString("en-US", {
-                                maximumFractionDigits: 2,
-                              })}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <>No records to show</>
-                  )}
-                </div>
-
-                <div
-                  className="pt-6 md:col-span-2 flex flex-col items-center rounded-2xl"
-                  style={{ background: "white", overflow: "hidden" }}
-                >
-                  {/* <h2 className="mb-4 text-center">Current Expenses</h2>
-                  <Button
-                    style={{
-                      minWidth: "100px",
-                      color: "green",
-                      border: "2px dotted green",
-                      borderRadius: "20px",
-                      margin: "10px",
-                      textTransform: "none",
-                    }}
-                    variant="outlined"
-                    onClick={() => openModal(1)} // Open modal when button is clicked
-                  >
-                    + Add Expenses
-                  </Button> */}
-                  {currentItemList.length > 0 ? (
-                    <div
-                      style={{
-                        padding: "10px",
-                        width: "100%",
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                      }}
-                    >
-                      {currentItemList
-                        .filter((item) => item.type === "Expense")
-                        .slice(0, 5)
-                        .map((item, index) => (
-                          <div
-                            key={index}
-                            style={{
-                              backgroundColor: "#b6ff8b",
-                              padding: "8px",
-                              margin: "10px",
-                              borderRadius: "10px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span style={{ flex: 1 }}>{item.title}</span>
-                            <span>
-                              $
-                              {item.amount.toLocaleString("en-US", {
-                                maximumFractionDigits: 2,
-                              })}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <>No records to show</>
-                  )}
-                </div>
               </div>
             </div>
           </>

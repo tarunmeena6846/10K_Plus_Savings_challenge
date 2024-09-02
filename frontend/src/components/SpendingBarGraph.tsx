@@ -11,13 +11,9 @@ import { Pie } from "react-chartjs-2";
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const IncomeGraph = ({ spendingData }) => {
-  console.log(spendingData);
+  //   console.log(spendingData);
   // Format the data for the Pie chart
-  const formattedData = spendingData.slice(0, 4);
-  //     .map((key) => ({
-  //       category: key,
-  //       amount: spendingData[key],
-  //     }));
+  const formattedData = spendingData.slice(0, 4) || [];
 
   const data = {
     labels: formattedData.map((item) => item.category),
@@ -37,15 +33,10 @@ const IncomeGraph = ({ spendingData }) => {
     plugins: {
       title: {
         display: true,
-        // color: "white",
+
         text: "Top Income Sources",
-        margin: {
-          //   top: 30,
-        },
-        padding: {
-          //   top: 10,
-          // bottom: 50, // Adjust the top padding for the title
-        },
+        margin: {},
+        padding: {},
       },
       tooltip: {
         callbacks: {

@@ -1,38 +1,35 @@
 import { Remarkable } from "remarkable";
 import Dompurify from "isomorphic-dompurify";
-import { render } from "react-dom";
-import { useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // import Quill styles
 
 const md = new Remarkable();
 
+function formatUrls(text) {
+  const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
+  console.log(urlRegex);
+  return text.replace(
+    urlRegex,
+    (url) => `<a href="${url}" target="_blank">${url}</a>`
+  );
+}
+
 function renderMarkdownToHTML(markdown) {
-  // This is ONLY safe because the output HTML
-  // is shown to the same user, and because you
-  // trust this Markdown parser to not have bugs.
-  const renderedHTML = md.render(markdown);
-  return { __html: renderedHTML };
+  console.log(markdown);
+  const formattedMarkdown = formatUrls(markdown); // Format URLs before rendering
+  console.log(formattedMarkdown);
+  // const sanitizedHTML = Dompurify.sanitize(md.render(formattedMarkdown));
+  return { __html: formattedMarkdown };
+  // return { __html: markdown };
 }
 
 const MarkdownPreview = ({ markdown }) => {
-  console.log(markdown);
   return (
-    <div className="ql-snow">
+    <div className="ql-snow text-[#9ca3af]">
       <div
-        className="ql-editor"
-        dangerouslySetInnerHTML={{ __html: markdown }}
+        className="ql-editor pl-0"
+        dangerouslySetInnerHTML={renderMarkdownToHTML(markdown)}
       />
     </div>
   );
-  // var tag_id = document.getElementById("content-div");
-  // if (tag_id) {
-  //   tag_id.innerHTML = "HTML string";
-  // }
-
-  //   console.log(markup);
-  // return <h1 dangerouslySetInnerHTML={{ __html: markup }} />;
 };
-// render(<MarkdownPreview markdown={undefined} />, document.getElementById("root"));
 
 export default MarkdownPreview;

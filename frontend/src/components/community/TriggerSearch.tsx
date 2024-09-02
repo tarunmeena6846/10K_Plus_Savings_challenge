@@ -84,9 +84,15 @@ const DiscussionForum = () => {
       <div className="mt-8 mb-4 flex justify-center">
         <input
           type="text"
-          placeholder="Search"
-          className="w-3/4 p-2 border rounded-2xl"
+          className="w-3/4 p-3 border rounded-2xl pl-10"
+          style={{
+            backgroundImage: `url(./search.svg)`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "right 12px center",
+            // paddingLeft: "20px",
+          }}
           value={searchQuery}
+          placeholder="Search ..."
           onChange={handleSearchInputChange}
         />
       </div>

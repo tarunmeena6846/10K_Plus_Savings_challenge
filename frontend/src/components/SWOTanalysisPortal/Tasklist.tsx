@@ -109,7 +109,7 @@ const TaskList = ({ setShowPopup }) => {
     return "bg-green-800";
   };
   return (
-    <div className="max-w-lg mx-auto mt-8 relative">
+    <div className="max-w-lg mx-auto mt-8 relative ">
       <motion.div
         className="task-list-popup fixed bottom-5 right-2 bg-white border border-gray-300 rounded shadow-lg p-4 overflow-y-auto max-h-80"
         style={{ width: popupWidth, height: popupHeight }}
@@ -133,9 +133,13 @@ const TaskList = ({ setShowPopup }) => {
               setShowPopup(false);
             }}
           >
-            <img className="" src={"cancel.svg"} alt="Cancel" />
+            <img
+              className="bg-black rounded-3xl"
+              src={"cancel.svg"}
+              alt="Cancel"
+            />
           </motion.button>
-        </div>
+      </div>
         <div className="flex items-center mb-4 mt-4">
           <input
             type="text"

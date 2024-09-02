@@ -12,6 +12,7 @@ export interface PostType {
   title: string;
   content: string;
   type: string;
+  tag: string;
 }
 
 const InfinitePostScroll = ({
@@ -88,6 +89,7 @@ const InfinitePostScroll = ({
         postTime: new Date(p.createdAt),
         title: p.title,
         content: p.content,
+        tag: p.tag,
       }));
 
       // Update state only if new posts are fetched
@@ -142,6 +144,7 @@ const InfinitePostScroll = ({
     };
   }, [fetchData]);
 
+  console.log(items);
   return (
     <div className="flex flex-col font-bold items-center justify-center">
       {isLoading && <Loader />}
@@ -156,6 +159,7 @@ const InfinitePostScroll = ({
           title={post.title}
           content={post.content}
           type={type}
+          tag={post.tag}
         />
       ))}
       {hasMore && <div ref={loaderRef}></div>}

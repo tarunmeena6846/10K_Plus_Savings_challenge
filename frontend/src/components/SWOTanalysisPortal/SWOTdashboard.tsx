@@ -12,36 +12,7 @@ const SWOTdashboard = () => {
   const [threats, setThreats] = useState([""]);
   const [showPopup, setShowPopup] = useState(false);
   const [email, setEmail] = useState("");
-  // const handleSubscribeForReminders = () => {
-  //   if (!validateEmail(email)) {
-  //     alert("Invalid email");
-  //     return;
-  //   }
-  //   fetch(`${import.meta.env.VITE_SERVER_URL}/swot/set-reminder`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       authorization: "Bearer " + localStorage.getItem("token"),
-  //     },
-  //     body: JSON.stringify({ email: email }),
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Network response is not ok");
-  //       }
 
-  //       response.json().then((data) => {
-  //         if (data.success) {
-  //           alert("Subscribed to weekly reminders");
-  //         } else {
-  //           alert("No tasks added");
-  //         }
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       alert(error);
-  //     });
-  // };
   const handleStrengthsChange = (index, e) => {
     const newStrengths = [...strengths];
     newStrengths[index] = e.target.value;
@@ -119,10 +90,10 @@ const SWOTdashboard = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8 p-8">
+    <div className="container mx-auto mt-8 p-8 text-white ">
       {/* <TaskList /> */}
       <motion.button
-        className="text-red-700 py-2 px-4 rounded fixed top-1/4 transform -translate-y-1/2 right-4 z-50"
+        className="text-white py-2 px-4 rounded fixed top-1/4 transform -translate-y-1/2 right-4 z-50"
         onClick={togglePopup}
       >
         {!showPopup && (
@@ -168,7 +139,7 @@ const SWOTdashboard = () => {
           <motion.button
             // type="button"
             onClick={handleAddStrength}
-            className="bg-black text-white px-3 py-1 rounded mt-2 rounded-3xl"
+            className="bg-[#6d94ff] text-white px-3 py-1 rounded mt-2 rounded-3xl"
           >
             Add Strength
           </motion.button>
@@ -192,7 +163,7 @@ const SWOTdashboard = () => {
           ))}
           <motion.button
             onClick={handleAddWeakness}
-            className="bg-black text-white px-3 py-1 rounded mt-2 rounded-3xl"
+            className="bg-[#6d94ff] text-white px-3 py-1 rounded mt-2 rounded-3xl"
           >
             Add Weakness
           </motion.button>
@@ -216,7 +187,7 @@ const SWOTdashboard = () => {
           ))}
           <motion.button
             onClick={handleAddOpportunity}
-            className="bg-black text-white px-3 py-1 rounded mt-2 rounded-3xl"
+            className="bg-[#6d94ff] text-white px-3 py-1 rounded mt-2 rounded-3xl"
           >
             Add Opportunity
           </motion.button>
@@ -240,7 +211,7 @@ const SWOTdashboard = () => {
           ))}
           <motion.button
             onClick={handleAddThreat}
-            className="bg-black text-white px-3 py-1 rounded mt-2 rounded-3xl"
+            className="bg-[#6d94ff] text-white px-3 py-1 rounded mt-2 rounded-3xl"
           >
             Add Threat
           </motion.button>

@@ -26,8 +26,8 @@ const Header: React.FC<HeaderProps> = ({ title, description }) => {
 
   return (
     <div className="flex flex-center flex-col items-center justify-center mt-10 p-4">
-      <h2 className="text-4xl">{title}</h2>
-      <p>{description}</p>
+      <h2 className="text-4xl text-white">{title}</h2>
+      <p className="text-white">{description}</p>
       <QueryClientProvider client={queryClient}>
         <TriggerSearch />
       </QueryClientProvider>

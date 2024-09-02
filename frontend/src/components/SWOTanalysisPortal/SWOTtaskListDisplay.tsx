@@ -14,19 +14,19 @@ export default function SWOTtasklist() {
   const [action, setAction] = useRecoilState(actionsState);
   const [selectAllEnabled, setSelectAllEnabled] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  // const [successfulPopup, setSuccessfulPopup] = useState(false);
+
   const handleCheckboxChange = (taskId) => {
-    setIsChecked(true);
     if (selectAllEnabled) {
       setSelectAllEnabled(false);
     }
-    if (completedTasks.includes(taskId)) {
-      // If task is already marked as completed, remove it from the array
-      setCompletedTasks(completedTasks.filter((id) => id !== taskId));
-    } else {
-      // If task is not marked as completed, add it to the array
-      setCompletedTasks([...completedTasks, taskId]);
-    }
+    const updatedCompletedTasks = completedTasks.includes(taskId)
+      ? completedTasks.filter((id) => id !== taskId)
+      : [...completedTasks, taskId];
+
+    setCompletedTasks(updatedCompletedTasks);
+
+    // Update `isChecked` based on whether any tasks are selected
+    setIsChecked(updatedCompletedTasks.length > 0);
   };
   const indexOfLastStock = currentPage * taskPerPage;
   const indexOfFirstStock = indexOfLastStock - taskPerPage;
@@ -184,6 +184,7 @@ export default function SWOTtasklist() {
                     paginate(index + 1);
                     setSelectAllEnabled(false);
                     setIsChecked(false);
+                    setCompletedTasks([]);
                   }}
                 >
                   {index + 1}

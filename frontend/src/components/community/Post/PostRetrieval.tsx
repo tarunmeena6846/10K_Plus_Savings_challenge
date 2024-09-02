@@ -13,6 +13,9 @@ import { currentPostState, postState } from "../../store/atoms/post";
 import { handleComment } from "./postComment";
 import { timePassed } from "./Post";
 import Loader from "../Loader";
+import CommentForm from "./CommentForm";
+import PopupModal from "../../DeletePopup";
+import SuccessPopup from "../../SWOTanalysisPortal/SuccessfulPopup";
 export const fetchPosts = async (
   postId,
   setCurrentPost,
@@ -45,17 +48,23 @@ export const fetchPosts = async (
     console.error(error);
   }
 };
-const Postdetails = () => {
+const Postdetails = ({ commentCount }) => {
   console.log("inside postdetails");
   const { postId } = useParams();
   const navigate = useNavigate();
-  const { userEmail } = useRecoilValue(userState);
+  const { userName } = useRecoilValue(userState);
+  const [showDeleteModal, setShowDeleteConfirmModal] = useState(false);
+
+  const [showApproveModel, setShowApproveModel] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const [currentPost, setCurrentPost] = useRecoilState(currentPostState);
+  const [successfulPopup, setSuccessfulPopup] = useState(false);
+
   const actions = useRecoilValue(actionsState);
   const setActions = useSetRecoilState(actionsState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const [text, setText] = useState(currentPost.content);
+
   // Fetch comments for the current post from the backend
   console.log("inside  postdetails ", postId);
 
@@ -80,7 +89,10 @@ const Postdetails = () => {
       }
       const data = await response.json();
       console.log("data at post approve", data);
-      alert("Post modified successfully");
+      // if (type == "approved") {
+      setShowApproveModel(false);
+      // }
+      setShowDeleteConfirmModal(false);
     } catch (error) {
       console.error(error);
     }
@@ -98,93 +110,120 @@ const Postdetails = () => {
     console.log("post id at click", postId);
     navigate(`/community/post/${postId}`);
   }
+
+  const handleSubmitComment = async () => {
+    console.log("here");
+    await handleComment(
+      commentContent,
+      postId as string,
+      userName,
+      currentUserState.imageUrl,
+      null,
+      setActions,
+      "comment",
+      ""
+    );
+  };
   // console.log(typeof currentPost.content, currentPost.content);
   return (
-    <div className="">
+    <div className="text-white p-10">
       {currentUserState.isLoading ? (
         <Loader />
       ) : (
         <div>
+          <div className="flex justify-between">
+            <div className="flex my-4">
+              {/* <img
+                className="w-12 h-12 rounded-full mr-2"
+                // src="/user12.svg"
+                src={`${currentPost.userImage}`}
+                alt="Profile"
+              ></img> */}
+              <div className="flex flex-col justify-start ">
+                <p>{currentPost?.author}</p>
+                <p className="text-[#9ca3af]">
+                  {timePassed(new Date(currentPost?.createdAt))}
+                </p>
+              </div>
+            </div>
+            <div className="">
+              {currentUserState.isAdmin && (
+                <div className="flex gap-3 mt-3">
+                  {(currentPost.status === "approvalPending" ||
+                    currentPost.status === "rejected") && (
+                    <div className="">
+                      {/* {"here"} */}
+                      <button
+                        className="flex items-end"
+                        onClick={() => setShowApproveModel(true)}
+                      >
+                        <img src="/approve.svg"></img>
+                        {/* <h2 className="text-red-500">approve</h2> */}
+                      </button>
+                    </div>
+                  )}
+                  {/* {currentPost.status} */}
+                  {(currentPost.status === "approvalPending" ||
+                    currentPost.status === "approved") && (
+                    <div className="">
+                      {/* {"here"} */}
+                      <button
+                        className="flex items-end"
+                        onClick={() => setShowDeleteConfirmModal(true)}
+                      >
+                        <img src="/delete.svg"></img>
+                        {/* <h2 className="text-red-500">Delete</h2> */}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
           <h1
             className="text-3xl font-bold mb-4"
             style={{ overflowWrap: "anywhere" }}
           >
             {currentPost?.title}
           </h1>
-
-          <div className="flex gap-2 items-end">
-            <img
-              className="w-12 h-12 rounded-full mr-2"
-              // src="/user12.svg"
-              src={`${currentPost.userImage}`}
-              alt="Profile"
-            ></img>
-            <p>{currentPost?.author}</p>
-            <p>{timePassed(new Date(currentPost?.createdAt))}</p>
-          </div>
           {/* {text} */}
           {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
           <MarkdownPreview markdown={currentPost.content} />
           <hr />
-          {currentUserState.isAdmin && (
-            <div className="flex gap-3 mt-3">
-              {(currentPost.status === "approvalPending" ||
-                currentPost.status === "rejected") && (
-                <button
-                  className="text-green-600"
-                  onClick={() => approveOrDeclinePost("approved")}
-                >
-                  Approve
-                </button>
-              )}
-              {(currentPost.status === "approvalPending" ||
-                currentPost.status === "approved") && (
-                <button
-                  className="text-red-600"
-                  onClick={() => approveOrDeclinePost("rejected")}
-                >
-                  Delete Post
-                </button>
-              )}
-            </div>
-          )}
           {currentPost.status === "rejected" && (
             <p className="text-red-500">
               * This post is rejected by the admin.
             </p>
           )}
+          <h2 className="text-xl mt-10">Discussions ({commentCount})</h2>
           {/* {currentPost.status} */}
           <div className="flex flex-col mt-3">
-            comment as {userEmail}
-            <div>
-              <TextEditor
-                height="100px"
-                setHtmlContent={setCommentContent}
-                content={""}
-              ></TextEditor>
-            </div>
-            <div className="mt-7 md:m-0">
-              <Button
-                onClick={() => {
-                  setCommentContent("");
-                  handleComment(
-                    commentContent,
-                    postId as string,
-                    userEmail,
-                    currentUserState.imageUrl,
-                    null,
-                    setActions,
-                    "comment",
-                    ""
-                  );
-                }}
-              >
-                Comment
-              </Button>
-            </div>
+            <CommentForm
+              setHtmlContent={setCommentContent}
+              content={commentContent}
+              handleSubmitComment={handleSubmitComment}
+            />
           </div>
         </div>
       )}
+      {showDeleteModal && (
+        <PopupModal
+          isModalOpen={showDeleteModal}
+          setIsModalOpen={setShowDeleteConfirmModal}
+          handleDelete={() => approveOrDeclinePost("rejected")}
+          type={"delete"}
+        />
+      )}
+
+      {showApproveModel && (
+        <PopupModal
+          isModalOpen={showApproveModel}
+          setIsModalOpen={setShowApproveModel}
+          handleDelete={() => approveOrDeclinePost("approved")}
+          type={"approve"}
+        />
+      )}
+      {/* <hr className="" /> */}
     </div>
   );
 };

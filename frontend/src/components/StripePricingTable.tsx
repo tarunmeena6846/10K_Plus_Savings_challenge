@@ -66,7 +66,7 @@ const StripePricingTable = () => {
   ];
   console.log("subscription saate ", subscription);
   return (
-    <div className="py-10 md:px-14 p-4 max-w-7xl mx-auto">
+    <div className="py-10 md:px-14 p-4 max-w-7xl mx-auto text-white">
       <div className="text-center">
         <h2 className="md:text-5xl text-7xl mb-2">
           Choose one of the following memberships
@@ -89,7 +89,7 @@ const StripePricingTable = () => {
               subscription.isSubscribed &&
               pkg.yearlyPlanId === subscription.stripePlanId
                 ? "border-green-500"
-                : "border-black"
+                : "border-red-500"
             } py-10 md:px-6 px-4 rounded-lg shadow-4xl`}
           >
             {/* {pkg.planId} */}
@@ -144,7 +144,7 @@ const StripePricingTable = () => {
                 <>
                   {pkg.yearlyPlanId === subscription.stripePlanId ? (
                     <motion.button
-                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
+                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-[#6d94ff] text-white shadow-lg h-10 text-center"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={async () => {
@@ -157,7 +157,7 @@ const StripePricingTable = () => {
                     </motion.button>
                   ) : (
                     <motion.button
-                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-black text-white shadow-lg h-10 text-center"
+                      className="mx-5 flex grow items-center justify-center rounded-3xl bg-[#6d94ff] text-white shadow-lg h-10 text-center"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={async () => {
