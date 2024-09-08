@@ -84,10 +84,10 @@ const ScrollEffectComponent = () => {
   }, [controls, isInView]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-col lg:flex-row">
       {/* Sticky "What We Do" section */}
-      <div className="sticky top-2 h-1/4 w-1/2 ">
-        <motion.div
+      <div className=" w-full lg:w-1/2 my-3 ">
+        {/* <motion.div
           initial={{ opacity: 1, x: 0 }}
           animate={controls}
           variants={{
@@ -95,40 +95,40 @@ const ScrollEffectComponent = () => {
             // hidden: { opacity: 0, x: -100 },
           }}
           transition={{ duration: 0.5 }}
-        >
-          <div>
-            <span className="relative">
-              <div className="flex flex-row">
-                <h1
-                  className={`text-7xl ${
-                    isInView ? "text-white" : "text-gray-800"
-                  }`}
-                >
-                  What We Do
-                </h1>
-                <motion.img
-                  src="./arrow.svg"
-                  className="w-20 ml-4"
-                  animate={{
-                    x: [0, 20, 0], // Moves 20px to the right and then back
-                  }}
-                  transition={{
-                    duration: 2, // Duration of one complete cycle (to-and-fro)
-                    repeat: Infinity, // Infinite repeat
-                    ease: "easeInOut", // Easing function for smooth motion
-                  }}
-                />
-              </div>
-              <img
-                src="./line.svg"
-                className="absolute left-1/2 top-full transform -translate-x-20 mt-2"
+        > */}
+        <div className="sticky top-2">
+          <span className="relative">
+            <div className="flex lg:flex-row">
+              <h1
+                className={`text-3xl lg:text-7xl ${
+                  isInView ? "text-white" : "text-gray-800"
+                }`}
+              >
+                What We Do
+              </h1>
+              <motion.img
+                src="./arrow.svg"
+                className="w-20 ml-4 hidden lg:block"
+                animate={{
+                  x: [0, 20, 0], // Moves 20px to the right and then back
+                }}
+                transition={{
+                  duration: 2, // Duration of one complete cycle (to-and-fro)
+                  repeat: Infinity, // Infinite repeat
+                  ease: "easeInOut", // Easing function for smooth motion
+                }}
               />
-            </span>
-          </div>
-        </motion.div>
+            </div>
+            <img
+              src="./line.svg"
+              className="absolute left-1/2 top-full transform -translate-x-20 mt-2"
+            />
+          </span>
+        </div>
+        {/* </motion.div> */}
       </div>
       {/* Scrollable sub-divs */}
-      <div className="w-1/2 h-1/4 space-y-8" ref={ref}>
+      <div className="w-full lg:w-1/2 h-1/4 space-y-8" ref={ref}>
         <Home />
       </div>
     </div>

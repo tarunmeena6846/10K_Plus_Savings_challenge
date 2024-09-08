@@ -119,7 +119,7 @@ export default function UserAvatar() {
     }
   };
 
-  console.log(currentUserState.imageUrl);
+  // console.log(currentUserState.imageUrl);
   const handleSaveNotification = async () => {
     console.log(selectedNotifications);
 

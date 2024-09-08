@@ -1,12 +1,12 @@
 export const AboutUsSection = () => {
   return (
-    <div className="flex bg-[#eaeaea] ">
-      <div className=" flex w-1/2 my-10 mx-8">
+    <div className="flex flex-col p-8 gap-5 md:flex-row bg-[#eaeaea] ">
+      <div className=" flex w-full w-1/2">
         <img src="./aboutImage.png" className="rounded-3xl" />
       </div>
-      <div className=" flex w-1/2 bg-[#111f36] rounded-2xl flex-col text-white my-10 mr-5 p-4">
+      <div className=" flex w-full w-1/2 bg-[#111f36] rounded-2xl flex-col text-white p-4">
         <div>about us</div>
-        <span className="flex text-7xl items-center flex-wrap">
+        <span className="flex text-4xl items-center flex-wrap">
           Balance Today, Secure Tomorrow, Thrive Always
         </span>
         <p className="flex mt-10 min-h-[300px] justify-end">
