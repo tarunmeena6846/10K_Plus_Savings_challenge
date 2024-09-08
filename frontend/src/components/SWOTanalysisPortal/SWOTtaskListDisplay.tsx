@@ -115,27 +115,30 @@ export default function SWOTtasklist() {
   console.log(completedTasks);
   return (
     <div className="pt-10">
-      {isChecked && (
-        <div className="flex justify-end p-2">
-          <motion.button
-            className={`p-2 ${
-              currentUserState.isLoading ? "bg-green-200" : "bg-green-500"
-            } text-white rounded-md mr-2`}
-            onClick={() => handleBulkUpdate("complete")}
-          >
-            Complete
-          </motion.button>
-          <motion.button
-            className={`p-2 ${
-              currentUserState.isLoading ? "bg-red-200" : "bg-red-500"
-            } text-white rounded-md`}
-            onClick={() => handleBulkUpdate("delete")}
-          >
-            Delete
-          </motion.button>
-        </div>
-      )}
-      <div className="flex flex-col">
+      <div className="flex justify-between items-end px-4">
+        <h2 className=" text-white text-2xl pt-2">Task List</h2>
+        {isChecked && (
+          <div className="">
+            <button
+              className={`p-2 ${
+                currentUserState.isLoading ? "bg-green-200" : "bg-green-500"
+              } text-white rounded-md mr-2`}
+              onClick={() => handleBulkUpdate("complete")}
+            >
+              Complete
+            </button>
+            <motion.button
+              className={`p-2 ${
+                currentUserState.isLoading ? "bg-red-200" : "bg-red-500"
+              } text-white rounded-md`}
+              onClick={() => handleBulkUpdate("delete")}
+            >
+              Delete
+            </motion.button>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col mt-2 px-4">
         <div className="flex flex-row bg-gray-200 p-2">
           <div className="flex-1">
             <input
@@ -144,7 +147,7 @@ export default function SWOTtasklist() {
               onChange={handleSelectAll}
             />
           </div>
-          <div className="flex-1">Title</div>
+          <div className="flex-1">Task Title</div>
           {/* <div className="flex-1">Completed</div> */}
           <div className="flex-1">Due Date</div>
         </div>
@@ -155,7 +158,7 @@ export default function SWOTtasklist() {
             <div
               key={task._id}
               className={`flex flex-row border-t border-gray-300 p-2 ${
-                task.isComplete ? `text-gray-400` : ``
+                task.isComplete ? `text-gray-400` : `text-white`
               }`}
             >
               <div className="flex-1">

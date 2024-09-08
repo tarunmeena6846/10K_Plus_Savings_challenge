@@ -6,6 +6,7 @@ export const secretKey = process.env.JWT_SCERET; // Adjust the type based on you
 export interface AuthenticatedRequest extends Request {
   user?: string; // Define the type of user property based on your user object structure
 }
+
 export function detokenizeAdmin(
   req: AuthenticatedRequest,
   res: Response,

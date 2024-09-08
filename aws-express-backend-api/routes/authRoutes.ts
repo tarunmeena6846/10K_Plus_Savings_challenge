@@ -129,16 +129,19 @@ router.get(
         console.log(" bIsAdminPresent at /me route", bIsAdminPresent);
         if (bIsAdminPresent) {
           res.status(200).send({
-            userEmail: bIsAdminPresent.email,
-            imageUrl: bIsAdminPresent.imageUrl,
+            success: true,
+            // userEmail: bIsAdminPresent.email,
+            // imageUrl: bIsAdminPresent.imageUrl,
             userData: bIsAdminPresent,
             // subscription: bIsAdminPresent.subscriptions,
           });
         } else {
-          res.status(401).send("unauthorised");
+          res
+            .status(404)
+            .send({ success: false, message: "user not present in db" });
         }
       } else {
-        res.status(401).send("Unauthorised");
+        res.status(404).send({ success: false, message: "req.user is null" });
       }
     } catch (error: any) {
       console.error("Error in admin signup:", error);

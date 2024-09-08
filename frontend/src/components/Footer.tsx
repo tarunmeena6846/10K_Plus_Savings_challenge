@@ -8,7 +8,7 @@ import {
 
 const Footer = () => {
   return (
-    <div className="flex  bg-[#111f36] justify-between p-8 min-h-[400px] pt-20">
+    <div className="flex bg-[#111f36] justify-between p-8 min-h-[400px] pt-20 flex-col sm:flex-row">
       <div className=" p-3">
         <div className="flex">
           <img
@@ -60,19 +60,20 @@ const Footer = () => {
           </h1>
         </div>
       </div>
-      <div className="flex p-5 space-x-10 text-white">
-        <div>
-          <h1 className="text-xl">PRODUCTS</h1>
-          <ul className="pt-5">
+      <hr className="sm:hidden"></hr>
+      <div className="flex flex-col lg:flex-row p-5 text-white">
+        <div className="mr-4 my-3">
+          <h1 className="text-xl lg:text-2xl">PRODUCTS</h1>
+          <ul className="pt-2">
             <li>Saving Portals</li>
             <li>Analytics</li>
             <li>SWOT Portal</li>
           </ul>
         </div>
 
-        <div className="mr-4">
-          <h1 className="text-xl">RESOURCES</h1>
-          <ul className="pt-5">
+        <div className="mr-4 my-3">
+          <h1 className="text-xl lg:text-2xl">RESOURCES</h1>
+          <ul className="pt-2">
             <li>
               <a href="/community">Community</a>
             </li>
@@ -80,9 +81,9 @@ const Footer = () => {
           </ul>
         </div>
 
-        <div className="mr-4">
-          <h1 className="text-xl">GET STARTED</h1>
-          <ul className="pt-5">
+        <div className="mr-4 my-3">
+          <h1 className="text-xl lg:text-2xl">GET STARTED</h1>
+          <ul className="pt-2">
             <li>Create a new account</li>
             <li>Log in</li>
           </ul>

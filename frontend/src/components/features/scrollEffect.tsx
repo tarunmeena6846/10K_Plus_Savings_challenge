@@ -84,9 +84,9 @@ const ScrollEffectComponent = () => {
   }, [controls, isInView]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-col lg:flex-row">
       {/* Sticky "What We Do" section */}
-      <div className="sticky top-2 h-1/4 w-1/2 ">
+      <div className=" lg:sticky top-2  w-full lg:w-1/2 my-3 ">
         <motion.div
           initial={{ opacity: 1, x: 0 }}
           animate={controls}
@@ -98,9 +98,9 @@ const ScrollEffectComponent = () => {
         >
           <div>
             <span className="relative">
-              <div className="flex flex-row">
+              <div className="flex lg:flex-row">
                 <h1
-                  className={`text-7xl ${
+                  className={`text-3xl lg:text-7xl ${
                     isInView ? "text-white" : "text-gray-800"
                   }`}
                 >
@@ -108,7 +108,7 @@ const ScrollEffectComponent = () => {
                 </h1>
                 <motion.img
                   src="./arrow.svg"
-                  className="w-20 ml-4"
+                  className="w-20 ml-4 hidden lg:block"
                   animate={{
                     x: [0, 20, 0], // Moves 20px to the right and then back
                   }}
@@ -128,7 +128,7 @@ const ScrollEffectComponent = () => {
         </motion.div>
       </div>
       {/* Scrollable sub-divs */}
-      <div className="w-1/2 h-1/4 space-y-8" ref={ref}>
+      <div className="w-full lg:w-1/2 h-1/4 space-y-8" ref={ref}>
         <Home />
       </div>
     </div>
