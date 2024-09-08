@@ -30,7 +30,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
 
       {/* Right Section */}
       <div className="w-full lg:w-1/2 h-screen lg:h-auto relative px-5 md:px-0">
-        <div className="absolute top-[-50px] left-[10px] w-[120px] md:w-[200px] h-auto">
+        <div className="absolute top-[-50px] left-[10px] w-[120px] sm:w-[200px] lg:top-[0px] lg:left-[0px] h-auto">
           <div className="absolute inset-0 bg-[#e9a0b0] rounded-2xl transform translate-x-2 translate-y-2"></div>
           <div className="absolute inset-0 bg-[#e9a0b0] rounded-2xl transform translate-x-4 translate-y-4"></div>
           <img
@@ -53,7 +53,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
           </div>
         </div>
 
-        <div className="absolute bottom-[130px] left-[30px] w-32 md:w-[200px]  h-auto">
+        <div className="absolute bottom-[60px] left-[0px] w-[120px] sm:w-[200px]  lg:bottom-[0px] lg:left-[0px] h-auto">
           <div className="absolute inset-0 bg-[#75bcda] rounded-2xl transform translate-x-2 translate-y-2"></div>
           <div className="absolute inset-0 bg-[#75bcda] rounded-2xl transform translate-x-4 translate-y-4"></div>
           <img
@@ -65,7 +65,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
           </div> */}
         </div>
 
-        <div className="absolute top-[80px] right-[0px] w-32 md:w-[200px] h-auto">
+        <div className="absolute top-[150px] right-[0px] w-[120px] sm:w-[200px] lg:top-[150px] md:right-[50px] lg:right-[0px] h-auto">
           <div className="absolute inset-0 bg-[#75bcda] rounded-2xl transform translate-x-2 translate-y-2"></div>
           <div className="absolute inset-0 bg-[#f08517] rounded-2xl transform translate-x-4 translate-y-4"></div>
           <img
@@ -102,9 +102,9 @@ const Hero = ({ scrollProjectedDataSection }) => {
           </div>
         </div>
 
-        <div className="absolute bottom-[50px] right-[0px] w-32 md:w-[200px] h-auto">
+        <div className="absolute bottom-[-50px] right-[-10px] w-[120px] sm:w-[200px] h-auto">
           <div className="absolute left-[-50px] bottom-[0px] z-[100] ">
-            <motion.img src="./hero5.svg" className="w-[50px] md:w-[100px]" />
+            <motion.img src="./hero5.svg" className="w-[50px]" />
           </div>
           <img
             src="./Graph.png"
