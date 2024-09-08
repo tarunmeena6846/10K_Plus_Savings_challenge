@@ -25,7 +25,7 @@ function Landing() {
   };
   return (
     <>
-      <div className="mx-auto w-full p-8 text-white">
+      <div className="mx-auto  text-white px-8">
         <Hero scrollProjectedDataSection={scrollToProjectedSection} />
         <ScrollEffectComponent />
       </div>
@@ -34,7 +34,7 @@ function Landing() {
         <ProjectedData />
       </div>
       {/* <div className="w-full"> */}
-        <Footer />
+      <Footer />
       {/* </div> */}
     </>
   );

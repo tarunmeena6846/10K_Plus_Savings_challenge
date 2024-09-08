@@ -9,7 +9,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
   return (
     <div className="flex flex-col lg:flex-row justify-center py-10 lg:py-10 gap-10 lg:h-screen">
       {/* Left Section */}
-      <div className="w-full lg:w-1/2 mt-10 lg:mt-20 2xl:mt-[100px] px-5 md:px-0">
+      <div className="w-full lg:w-1/2 mt-10 lg:mt-20 2xl:mt-[100px] md:px-0">
         <h1 className="mb-4 font-bold md:text-left text-6xl lg:text-6xl xl:text-7xl 2xl:text-7xl 3xl:text-9xl">
           Empower Your <br />
           <span className="text-[#6d94ff]">Financial Journey</span>
