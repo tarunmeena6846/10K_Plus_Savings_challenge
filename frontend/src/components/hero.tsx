@@ -1,13 +1,26 @@
 import React, { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 
 const Hero = ({ scrollProjectedDataSection }) => {
-  const ref = useRef<HTMLParagraphElement>(null);
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["center end", "start start"],
+  });
+  console.log(scrollYProgress);
+  // Create diagonal motion by transforming both x and y axes
+  const xTransform1 = useTransform(scrollYProgress, [0.7, 0], [30, 0]); // Adjust the range as needed
+  const yTransform1 = useTransform(scrollYProgress, [0.7, 0], [30, 0]); // Adjust the range as needed
+  const xTransform = useTransform(scrollYProgress, [0.7, 0], [50, 0]); // Adjust the range as needed
+  const yTransform = useTransform(scrollYProgress, [0.7, 0], [50, 0]); // Adjust the range as needed
 
-  const isInView = useInView(ref);
+  // const marginRight = useTransform(scrollYProgress, [1, 0], ["100px", "100px"]);
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center py-10 lg:py-10 gap-10 lg:h-screen">
+    <div
+      // ref={container}
+      className="flex flex-col lg:flex-row justify-center py-10 lg:py-10 gap-10 lg:h-screen"
+    >
       {/* Left Section */}
       <div className="w-full lg:w-1/2 mt-10 lg:mt-20 2xl:mt-[100px] md:px-0">
         <h1 className="mb-4 font-bold md:text-left text-6xl lg:text-6xl xl:text-7xl 2xl:text-7xl 3xl:text-9xl">
@@ -29,10 +42,33 @@ const Hero = ({ scrollProjectedDataSection }) => {
       </div>
 
       {/* Right Section */}
-      <div className="w-full lg:w-1/2 h-screen lg:h-auto relative px-5 md:px-0">
-        <div className="absolute top-[-50px] left-[10px] w-[120px] sm:w-[200px] lg:top-[0px] lg:left-[0px] h-auto">
-          <div className="absolute inset-0 bg-[#e9a0b0] rounded-2xl transform translate-x-2 translate-y-2"></div>
-          <div className="absolute inset-0 bg-[#e9a0b0] rounded-2xl transform translate-x-4 translate-y-4"></div>
+      <motion.div className="w-full lg:w-1/2 h-screen lg:h-auto relative px-5 md:px-0">
+        <motion.div
+          className="absolute top-[-50px] left-[10px] w-[120px] sm:w-[200px] lg:w-[150px] xl:w-[200px] lg:top-[0px] lg:left-[0px] h-auto"
+          // ref={ref}
+          // style={{ x: xTransform, y: yTransform }} // Apply diagonal movement
+        >
+          <motion.div
+            className="absolute inset-0 bg-[] transform translate-x-[40px] translate-y-[40px]"
+            ref={ref}
+            style={{ x: xTransform, y: yTransform }}
+          >
+            <img
+              src="./landing.png"
+              className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            />
+          </motion.div>
+          <motion.div
+            className="absolute inset-0 bg-[] transform translate-x-[20px] translate-y-[20px]"
+            ref={ref}
+            style={{ x: xTransform1, y: yTransform1 }}
+          >
+            <img
+              src="./landing.png"
+              className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            />
+          </motion.div>
+
           <img
             src="./landing.png"
             className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
@@ -51,23 +87,63 @@ const Hero = ({ scrollProjectedDataSection }) => {
               }}
             />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="absolute bottom-[60px] left-[0px] w-[120px] sm:w-[200px]  lg:bottom-[0px] lg:left-[0px] h-auto">
-          <div className="absolute inset-0 bg-[#75bcda] rounded-2xl transform translate-x-2 translate-y-2"></div>
-          <div className="absolute inset-0 bg-[#75bcda] rounded-2xl transform translate-x-4 translate-y-4"></div>
+        <div
+          className="absolute bottom-[60px] left-[0px] w-[120px] sm:w-[200px] lg:w-[150px] xl:w-[200px] lg:bottom-[0px] lg:left-[0px] h-auto"
+          // ref={ref}
+          // style={{ x: xTransform, y: yTransform }} // Apply diagonal movement
+        >
+          <motion.div
+            className="absolute inset-0 bg-[] transform translate-x-[40px] translate-y-[40px]"
+            ref={ref}
+            style={{ x: xTransform, y: yTransform }}
+          >
+            <img
+              src="./landing1.png"
+              className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            />
+          </motion.div>
+          <motion.div
+            className="absolute inset-0 bg-[] transform translate-x-[20px] translate-y-[20px]"
+            ref={ref}
+            style={{ x: xTransform1, y: yTransform1 }}
+          >
+            <img
+              src="./landing1.png"
+              className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            />
+          </motion.div>
           <img
             src="./landing1.png"
-            className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            className="relative rounded-3xl shadow-lg z-[30] w-full h-auto"
           />
           {/* <div className="absolute bottom-[-100px] right-[-100px] z-[100] md:w-[200px]">
             <motion.img src="./hero5.svg" className="w-8 md:w-10" />
           </div> */}
         </div>
 
-        <div className="absolute top-[150px] right-[0px] w-[120px] sm:w-[200px] lg:top-[150px] md:right-[50px] lg:right-[0px] h-auto">
-          <div className="absolute inset-0 bg-[#75bcda] rounded-2xl transform translate-x-2 translate-y-2"></div>
-          <div className="absolute inset-0 bg-[#f08517] rounded-2xl transform translate-x-4 translate-y-4"></div>
+        <motion.div className="absolute top-[170px] right-[30px] sm:top-[50px] sm:right-[40px] lg:top-[150px] md:right-[50px] lg:right-[30px] w-[120px] sm:w-[200px] lg:w-[150px] xl:w-[200px]  h-auto">
+          <motion.div
+            className="absolute inset-0 bg-[] transform translate-x-[40px] translate-y-[40px]"
+            ref={ref}
+            style={{ x: xTransform, y: yTransform }}
+          >
+            <img
+              src="./landing2.png"
+              className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            />
+          </motion.div>
+          <motion.div
+            className="absolute inset-0 bg-[] transform translate-x-[20px] translate-y-[20px]"
+            ref={ref}
+            style={{ x: xTransform1, y: yTransform1 }}
+          >
+            <img
+              src="./landing2.png"
+              className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
+            />
+          </motion.div>
           <img
             src="./landing2.png"
             className="relative rounded-2xl shadow-lg w-full h-auto"
@@ -100,7 +176,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
               }}
             />
           </div>
-        </div>
+        </motion.div>
 
         <div className="absolute bottom-[-50px] right-[-10px] w-[120px] sm:w-[200px] h-auto">
           <div className="absolute left-[-50px] bottom-[0px] z-[100] ">
@@ -125,7 +201,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
             />
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -41,25 +41,3 @@ function Landing() {
 }
 
 export default Landing;
-
-// function Landing() {
-//   const [progress, setProgress] = useState(0);
-//   console.log("here");
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setProgress((prevProgress) =>
-//         prevProgress < 100 ? prevProgress + 10 : 100
-//       );
-//     }, 1000);
-//     return () => clearInterval(interval);
-//   }, []);
-//   console.log(progress);
-//   return (
-//     <div className=" flex flex-col justify-center items-center mt-[40px] p-[10px]">
-//       <h1 className="text-pink-200">Example progress bar</h1>
-//       <ProgressBar progress={progress} />
-//     </div>
-//   );
-// }
-
-// export default Landing;
