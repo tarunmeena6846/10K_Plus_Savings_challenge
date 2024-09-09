@@ -23,7 +23,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
     >
       {/* Left Section */}
       <div className="w-full lg:w-1/2 mt-10 lg:mt-20 2xl:mt-[100px] md:px-0">
-        <h1 className="mb-4 font-bold md:text-left text-6xl lg:text-6xl xl:text-7xl 2xl:text-7xl 3xl:text-9xl">
+        <h1 className="mb-4 font-bold md:text-left text-6xl lg:text-6xl xl:text-7xl 2xl:text-7xl">
           Empower Your <br />
           <span className="text-[#6d94ff]">Financial Journey</span>
         </h1>
@@ -42,7 +42,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
       </div>
 
       {/* Right Section */}
-      <motion.div className="w-full lg:w-1/2 h-screen sm:h-[30vh] md:h-[60vh] lg:h-screen relative px-5 md:px-0">
+      <motion.div className="w-full lg:w-1/2 h-screen sm:h-screen md:h-screen lg:h-screen relative px-5 md:px-0">
         <motion.div
           className="absolute top-[-50px] left-[10px] w-[120px] sm:w-[200px] lg:w-[150px] xl:w-[200px] lg:top-[0px] lg:left-[0px] h-auto"
           // ref={ref}
@@ -73,7 +73,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
             src="./landing.png"
             className="relative rounded-2xl shadow-lg z-[30] w-full h-auto"
           />
-          <div className="absolute bottom-10 left-0 z-[100]">
+          <div className="absolute bottom-10 left-0 z-[40]">
             <motion.img
               src="./hero1.svg"
               className="w-8 md:w-10"
@@ -90,7 +90,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
         </motion.div>
 
         <div
-          className="absolute bottom-[160px] left-[0px] w-[120px] md:bottom-[60px] sm:right-[40px] lg:left-[0px] sm:w-[200px] lg:w-[150px] xl:w-[200px]  h-auto"
+          className="absolute bottom-[160px] left-[0px] w-[120px] md:bottom-[60px] sm:right-[40px] sm:bottom-[40px] lg:left-[0px]  sm:w-[200px] lg:w-[150px] xl:w-[200px]  h-auto"
           // ref={ref}
           // style={{ x: xTransform, y: yTransform }} // Apply diagonal movement
         >
@@ -148,7 +148,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
             src="./landing2.png"
             className="relative rounded-2xl shadow-lg w-full h-auto"
           />
-          <div className="absolute top-[-10px] left-[-20px] z-[100]">
+          <div className="absolute top-[-10px] left-[-20px] z-[40]">
             <motion.img
               src="./hero2.svg"
               className="w-16 md:w-20"
@@ -162,7 +162,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
               }}
             />
           </div>
-          <div className="absolute bottom-[-20px] right-[-10px] z-[100]">
+          <div className="absolute bottom-[-20px] right-[-10px] z-[40]">
             <motion.img
               src="./hero3.svg"
               className="w-10 md:w-12"
@@ -179,14 +179,14 @@ const Hero = ({ scrollProjectedDataSection }) => {
         </motion.div>
 
         <div className="absolute bottom-[0px] right-[0px] w-[120px] sm:w-[200px] h-auto">
-          <div className="absolute left-[-50px] bottom-[0px] z-[100] ">
+          <div className="absolute left-[-50px] bottom-[0px] z-[40] ">
             <motion.img src="./hero5.svg" className="w-[50px]" />
           </div>
           <img
             src="./Graph.png"
             className="relative rounded-2xl shadow-lg w-full h-auto"
           />
-          <div className="absolute top-[-20px] left-[40px] z-[100]">
+          <div className="absolute top-[-20px] left-[40px] z-[40]">
             <motion.img
               src="./hero4.svg"
               className="w-8 md:w-10"

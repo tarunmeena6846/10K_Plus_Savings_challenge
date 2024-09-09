@@ -172,7 +172,7 @@ export function InitUser() {
       console.log(" data after me route", data);
       if (data.success) {
         setCurrentUserState({
-          userEmail: data?.userData?.userEmail,
+          userEmail: data?.userData?.email,
           userName: data?.userData?.username,
           isLoading: false,
           imageUrl: data?.userData?.imageUrl,
