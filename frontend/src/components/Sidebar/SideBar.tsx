@@ -81,7 +81,7 @@ const SideBar = () => {
   return (
     <div>
       <div
-        className="fixed top-0 left-0 h-screen z-50 flex flex-col justify-between hidden w-[0px] md:w-[300px] md:block bg-[#111f36]"
+        className=" top-0 left-0 h-screen z-50 flex flex-col justify-between hidden  lg:block "
         // style={{
         //   background: isMobile ? "" : "#111f36",
         // }}
@@ -132,18 +132,6 @@ const SideBar = () => {
           <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
         </div>
       </div>
-      {/* <div className="md:hidden flex w-full bg-white fixed rounded-3xl flex-row justify-between top-0 z-[40] p-4 my-2">
-        <div className="text-2xl">
-          <h2>10K Savings Challenge</h2>
-        </div>
-        <div>
-          <HamburgerMenu
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            Items={routes}
-          ></HamburgerMenu>
-        </div>
-      </div> */}
     </div>
   );
 };

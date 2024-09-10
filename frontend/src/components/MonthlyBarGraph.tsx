@@ -28,11 +28,11 @@ ChartJS.register(
 // import { useState, useEffect } from "react";
 
 export const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1023);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 1023);
     };
 
     window.addEventListener("resize", handleResize);
@@ -121,8 +121,8 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
   };
 
   return (
-    <div className="relative h-[50vh] sm:h-[40vh] lg:h-[50vh] rounded-3xl bg-[#eaeaea] md:bg-[#111f36] p-3">
-      <div className="w-full h-full">
+    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3">
+      <div className="w-full h-[50vh] sm:h-[50vh] md:h-[50vh] lg:h-[40vh] ">
         <Bar options={options} data={data} />
       </div>
     </div>

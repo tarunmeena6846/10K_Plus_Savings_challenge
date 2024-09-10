@@ -215,55 +215,9 @@ const Dashboard = () => {
     //             </div>
     //           </div>
     //         )}
-    //         {/* <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4"> */}
-    //         <div className="md:grid-cols-3 md:grid space-y-2 md:space-x-2 md:space-y-0">
-    //           <div
-    //             className="p-6 rounded-2xl"
-    //             style={{ background: "#ffa540", overflow: "hidden" }}
-    //           >
-    //             <h2>Current Annual Savings</h2>
-    //             <h2 className="text-4xl">${annualCurrentSavings}</h2>
-    //           </div>
-    //           <div
-    //             className="p-6 rounded-2xl"
-    //             style={{ background: "#51d9a8", overflow: "hidden" }}
-    //           >
-    //             <h2>Target Annual Savings</h2>
-    //             <h2 className="text-4xl">${annualTargetSavings}</h2>
-    //           </div>
-    //           <div
-    //             className="p-6 rounded-2xl"
-    //             style={{ background: "#96c9dd", overflow: "hidden" }}
-    //           >
-    //             <h2>Actual Annual Savings</h2>
-    //             <h2 className="text-4xl">${annualActualSavings}</h2>
-    //           </div>
-
-    //           <div className="md:col-span-2 md:row-span-2">
-    //             <div
-    //               className=" h-full rounded-2xl"
-    //               // style={{ maxHeight: "200px" }}
-    //             >
-    //               {isMonthlyDataReady && (
-    //                 <MonthlyBarGraph monthlyData={monthlyData} />
-    //               )}
-    //             </div>
-    //           </div>
-    //           <div className="md:col-span-1 md:row-span-2">
-    //             {isMonthlyDataReady && (
-    //               <DoughnutData
-    //                 annualTargetSavings={annualTargetSavings}
-    //                 annualCurrentSavings={annualCurrentSavings}
-    //                 annualActualSavings={annualActualSavings}
-    //               />
-    //             )}
-    //           </div>
-    //         </div>
-    //       </>
-    //     )}
     //   </SidebarLayout>
     // </div>
-    <div className="min-h-screen bg-[#111f36] md:bg-[#eaeaea] p-2 md:p-0">
+    <div className="min-h-screen bg-[#111f36] lg:bg-[#eaeaea] ">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -303,52 +257,65 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div
-                className="p-6 rounded-2xl text-center"
-                style={{ background: "#ffa540" }}
-              >
-                <h2>Current Annual Savings</h2>
-                <h2 className="text-3xl md:text-4xl">
-                  ${annualCurrentSavings}
+            <div className="">
+              <div className="mt-4">
+                <h2 className="text-2xl sm:text-3xl text-white lg:text-gray-700">
+                  Welcome,
+                  <span className="text-3xl sm:text-4xl ml-1 sm:ml-2 lg:text-black break-words w-full">
+                    {currentUserState.userName}
+                  </span>
                 </h2>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4  mt-4  ">
+                <div
+                  className="p-6 rounded-2xl text-center"
+                  style={{ background: "#ffa540" }}
+                >
+                  <h2>Current Annual Savings</h2>
+                  <h2 className="text-3xl md:text-4xl">
+                    ${annualCurrentSavings}
+                  </h2>
+                </div>
 
-              <div
-                className="p-6 rounded-2xl text-center"
-                style={{ background: "#51d9a8" }}
-              >
-                <h2>Target Annual Savings</h2>
-                <h2 className="text-3xl md:text-4xl">${annualTargetSavings}</h2>
-              </div>
+                <div
+                  className="p-6 rounded-2xl text-center"
+                  style={{ background: "#51d9a8" }}
+                >
+                  <h2>Target Annual Savings</h2>
+                  <h2 className="text-3xl md:text-4xl">
+                    ${annualTargetSavings}
+                  </h2>
+                </div>
 
-              <div
-                className="p-6 rounded-2xl text-center"
-                style={{ background: "#96c9dd" }}
-              >
-                <h2>Actual Annual Savings</h2>
-                <h2 className="text-3xl md:text-4xl">${annualActualSavings}</h2>
-              </div>
+                <div
+                  className="p-6 rounded-2xl text-center"
+                  style={{ background: "#96c9dd" }}
+                >
+                  <h2>Actual Annual Savings</h2>
+                  <h2 className="text-3xl md:text-4xl">
+                    ${annualActualSavings}
+                  </h2>
+                </div>
 
-              {/* Monthly Bar Graph */}
-              <div className="md:col-span-2">
-                <div className="rounded-2xl">
+                {/* Monthly Bar Graph */}
+                <div className="md:col-span-2">
+                  {/* <div className="rounded-2xl"> */}
                   {isMonthlyDataReady && (
                     <MonthlyBarGraph monthlyData={monthlyData} />
                   )}
+                  {/* </div> */}
                 </div>
-              </div>
 
-              {/* Doughnut Chart */}
-              <div className="md:col-span-1">
-                {isMonthlyDataReady && (
-                  <DoughnutData
-                    annualTargetSavings={annualTargetSavings}
-                    annualCurrentSavings={annualCurrentSavings}
-                    annualActualSavings={annualActualSavings}
-                  />
-                )}
+                {/* Doughnut Chart */}
+                <div className="md:col-span-1">
+                  {isMonthlyDataReady && (
+                    <DoughnutData
+                      annualTargetSavings={annualTargetSavings}
+                      annualCurrentSavings={annualCurrentSavings}
+                      annualActualSavings={annualActualSavings}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </>

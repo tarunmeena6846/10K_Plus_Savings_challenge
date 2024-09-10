@@ -88,10 +88,10 @@ function Login() {
   }, [msg]);
 
   return (
-    <section className="h-screen bg-[#eaeaea]">
+    <section className="h-screen bg-[#eaeaea] flex justify-center">
       <div className="container py-5 h-full">
-        <div className="flex justify-center items-center h-full">
-          <div className="xl:w-10/12">
+        <div className="flex justify-center items-center  h-full">
+          <div className="w-full md:w-10/12">
             <div className="card rounded-lg shadow-lg overflow-hidden">
               <div className="flex flex-wrap g-0">
                 {/* Image Section */}
