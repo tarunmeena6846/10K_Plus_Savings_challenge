@@ -45,6 +45,7 @@ import AnalyticsLanding from "./AnalyticsDashboard/Landing";
 import RequestOTP from "./components/RequestOTP";
 import ResetPassword from "./components/ResetPassword";
 import LandingConsole from "./components/AdminConsole/ConsoleLanding";
+import { useIsMobile } from "./components/MonthlyBarGraph";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
@@ -64,7 +65,8 @@ if ("serviceWorker" in navigator) {
 
 function App() {
   const location = useLocation();
-
+  const isMobile = useIsMobile();
+  console.log(isMobile);
   // Check if the current location matches any of the routes where Appbar should not be rendered
   const hideAppbarRoutes = [
     "/dashboard",
@@ -76,9 +78,10 @@ function App() {
     "/register",
     // "/",
   ];
-  const shouldRenderAppbar = !hideAppbarRoutes.includes(location.pathname);
+  const shouldRenderAppbar =
+    isMobile || !hideAppbarRoutes.includes(location.pathname);
   // console.log("tarun inside app.tsx");
-
+  console.log(shouldRenderAppbar);
   return (
     // <Router>
     <RecoilRoot>

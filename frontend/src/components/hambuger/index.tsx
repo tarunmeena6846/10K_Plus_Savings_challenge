@@ -128,7 +128,7 @@ export const HamburgerMenu = ({ isOpen, setIsOpen, Items }) => {
             right: 0,
             transformOrigin: "90% 40px", // Defines the origin of the animation on the right side
           }}
-          className=" bg-pink-400 w-full h-[100vh] lg:w-[50%] rounded-3xl"
+          className=" bg-pink-400 w-full h-[100vh] lg:w-[50%]"
         >
           {/* Content inside the menu */}
           <div className="h-screen flex text-4xl gap-5 justify-center ml-[50px] sm:ml-[100px] flex-col">

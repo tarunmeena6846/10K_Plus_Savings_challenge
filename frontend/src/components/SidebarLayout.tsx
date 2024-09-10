@@ -6,11 +6,11 @@ const SidebarLayout = ({ children }) => {
   return (
     <div>
       <div className="flex md:flex-row">
-        <div className="md:w-80">
+        <div className="w-[0px] md:w-80">
           <SideBar />
         </div>
-        <div className="md:w-3/4">
-          <div className="p-10">{children}</div>
+        <div className="w-full md:w-3/4">
+          <div className="p-2 md:p-10">{children}</div>
         </div>
       </div>
     </div>

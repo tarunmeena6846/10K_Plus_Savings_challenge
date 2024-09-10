@@ -55,75 +55,6 @@ const Dashboard = () => {
   const [annualTargetSavings, setAnnualTargetSavings] = useState(0);
   const [annualCurrentSavings, setAnnualCurrentSavings] = useState(0);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  // const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-  // const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
-  // const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
-  // const handleReset = () => {
-  //   setCurrentUserState({
-  //     userEmail: currentUserState.userEmail,
-  //     isLoading: currentUserState.isLoading,
-  //     imageUrl: "",
-  //     isVerified: currentUserState.isVerified,
-  //     myWhy: currentUserState.myWhy,
-  //     isAdmin: currentUserState.isAdmin,
-  //   });
-  // };
-  // const handleOpenSettingsDialog = () => {
-  //   setSettingsDialogOpen(true);
-  // };
-
-  // const handleCloseSettingsDialog = () => {
-  //   setSettingsDialogOpen(false);
-  // };
-
-  // const handleOpenIncomeDialog = () => {
-  //   setIncomeDialogOpen(true);
-  // };
-
-  // const handleCloseIncomeDialog = () => {
-  //   setIncomeDialogOpen(false);
-  // };
-
-  // const handleAddTarget = (targetSavings) => {
-  //   const handleSaveSubmit = async () => {
-  //     await fetch(
-  //       `${import.meta.env.VITE_SERVER_URL}/data/update-projected-savings`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           authorization: "Bearer " + localStorage.getItem("token"),
-  //         },
-  //         body: JSON.stringify({
-  //           projectedYearlySavings: targetSavings,
-  //           // year: currentDate.getFullYear(),
-  //           year: new Date().getFullYear(),
-  //         }),
-  //       }
-  //     )
-  //       .then((resp) => {
-  //         if (!resp.ok) {
-  //           throw new Error("Network response is not ok");
-  //         }
-  //         resp.json().then((responseData) => {
-  //           console.log(
-  //             "response data at update projeted savings",
-  //             responseData
-  //           );
-
-  //           // setCourses(data);
-  //           if (responseData.success == true) {
-  //           } else {
-  //             console.error("Error saving projected data:", responseData.error);
-  //           }
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error saving projected data");
-  //       });
-  //   };
-  // };
-  // console.log("selectedDate at dashboard", selectedDate);
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -191,6 +122,7 @@ const Dashboard = () => {
     }
   };
 
+  /*
   const handleSaveMyWhy = async () => {
     try {
       const response = await fetch(
@@ -231,6 +163,7 @@ const Dashboard = () => {
       currentUserState.userEmail
     );
   };
+  */
   useEffect(() => {
     // Check if the necessary data is available before navigating
     if (currentUserState.userEmail === null && !currentUserState.isLoading) {
@@ -243,7 +176,7 @@ const Dashboard = () => {
     setCurrentUserState,
   ]);
   return (
-    <div className=" h-screen bg-[#eaeaea] ">
+    <div className=" h-full md:h-screen bg-[#111f36] md:bg-[#eaeaea] p-2 md:p-0">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -282,7 +215,8 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4">
+            {/* <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4"> */}
+            <div className=" md:grid-cols-3 md:grid space-y-2">
               <div
                 className="p-6 rounded-2xl"
                 style={{ background: "#ffa540", overflow: "hidden" }}
@@ -304,7 +238,7 @@ const Dashboard = () => {
                 <h2>Actual Annual Savings</h2>
                 <h2 className="text-4xl">${annualActualSavings}</h2>
               </div>
-              <div className="col-span-2 md:row-span-2">
+              <div className="md:col-span-2 md:row-span-2 ">
                 <div
                   className=" h-full rounded-2xl"
                   // style={{ maxHeight: "200px" }}
@@ -314,19 +248,14 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
-              <div className="col-span-1 md:row-span-2">
-                <div
-                  className="h-full rounded-2xl"
-                  // style={{ maxHeight: "200px" }}
-                >
-                  {isMonthlyDataReady && (
-                    <DoughnutData
-                      annualTargetSavings={annualTargetSavings}
-                      annualCurrentSavings={annualCurrentSavings}
-                      annualActualSavings={annualActualSavings}
-                    />
-                  )}
-                </div>
+              <div className="md:col-span-1 md:row-span-2">
+                {isMonthlyDataReady && (
+                  <DoughnutData
+                    annualTargetSavings={annualTargetSavings}
+                    annualCurrentSavings={annualCurrentSavings}
+                    annualActualSavings={annualActualSavings}
+                  />
+                )}
               </div>
               {/* <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
             <MonthlyChart monthlyIncome={500} monthlyExpenses={200} />

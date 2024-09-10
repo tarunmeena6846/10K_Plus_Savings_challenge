@@ -15,7 +15,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
 import { Avatar } from "@mui/material";
 import UserAvatar from "../UserAvatar";
-const routes = [
+import { HamburgerMenu } from "../hambuger";
+export const routes = [
   {
     path: "/dashboard",
     name: "My Savings Dashboard",
@@ -66,63 +67,83 @@ const SideBar = () => {
     show: { opacity: 1, width: "auto", transition: { duration: 0.5 } },
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setWindowWidth(window.innerWidth);
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
-  const isMobile = windowWidth <= 768;
+  // const isMobile = windowWidth <= 768;
 
   return (
-    <div className="fixed top-0 left-0 h-screen bg-[#111f36] z-50 flex flex-col justify-between">
-      <motion.div
-        animate={{
-          overflow: "auto",
-          width: isMobile ? "0px" : "300px",
-          transition: {
-            duration: 0.5,
-            type: "spring",
-            damping: 10,
-          },
-        }}
+    <div>
+      <div
+        className="fixed top-0 left-0 h-screen z-50 flex flex-col justify-between hidden w-[0px] md:w-[300px] md:block bg-[#111f36]"
+        // style={{
+        //   background: isMobile ? "" : "#111f36",
+        // }}
       >
-        <UserAvatar />
-        <section className="routes">
-          {routes.map((route, index) => {
-            return (
-              <NavLink
-                to={route.path}
-                key={index}
-                className="link"
-                // activeClassName="active"
-              >
-                <div className="icon">{route.icon}</div>
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      variants={showAnimation}
-                      initial="hidden"
-                      animate="show"
-                      exit="hidden"
-                      className="link_text"
-                    >
-                      {route.name}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </NavLink>
-            );
-          })}
-        </section>
-      </motion.div>
-      <div className="w-full flex items-center text-white m-3">
-        <img src="./10ksc.png" className="w-[80px] bg-white  rounded-3xl" />
-        <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
+        <motion.div
+          animate={{
+            overflow: "auto",
+            // width: isMobile ? "0px" : "300px",
+
+            transition: {
+              duration: 0.5,
+              type: "spring",
+              damping: 10,
+            },
+          }}
+        >
+          <UserAvatar />
+          <section className="routes">
+            {routes.map((route, index) => {
+              return (
+                <NavLink
+                  to={route.path}
+                  key={index}
+                  className="link"
+                  // activeClassName="active"
+                >
+                  <div className="icon">{route.icon}</div>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        variants={showAnimation}
+                        initial="hidden"
+                        animate="show"
+                        exit="hidden"
+                        className="link_text"
+                      >
+                        {route.name}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </NavLink>
+              );
+            })}
+          </section>
+        </motion.div>
+        <div className=" flex items-center text-white m-3">
+          <img src="./10ksc.png" className="w-[80px] bg-white  rounded-3xl" />
+          <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
+        </div>
       </div>
+      {/* <div className="md:hidden flex w-full bg-white fixed rounded-3xl flex-row justify-between top-0 z-[40] p-4 my-2">
+        <div className="text-2xl">
+          <h2>10K Savings Challenge</h2>
+        </div>
+        <div>
+          <HamburgerMenu
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            Items={routes}
+          ></HamburgerMenu>
+        </div>
+      </div> */}
     </div>
   );
 };

@@ -1,5 +1,4 @@
-// MonthlyBarGraph.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   BarController,
@@ -12,9 +11,11 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { MonthlyDataItem } from "./Dashboard";
+
 interface MonthlyBarGraphProps {
   monthlyData: MonthlyDataItem[];
 }
+
 ChartJS.register(
   BarController,
   CategoryScale,
@@ -24,38 +25,63 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+// import { useState, useEffect } from "react";
+
+export const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+};
 
 const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
   monthlyData.sort();
-  console.log("monthlyData at graph", monthlyData);
-  // if (monthlyData.length <= 0) return;
+  const isMobile = useIsMobile();
+
+  console.log(isMobile);
   const options = {
     plugins: {
       title: {
         display: true,
         text: "Projected Savings Vs Actual Savings Vs Current Savings",
-        color: "white",
+        color: isMobile ? "black" : "white",
         padding: {
           top: 10,
+        },
+        font: {
+          // size: window.innerWidth < 640 ? 12 : 16, // Smaller font for mobile screens
         },
       },
       legend: {
         labels: {
-          color: "white",
+          color: isMobile ? "black" : "white",
+          font: {
+            // size: window.innerWidth < 640 ? 10 : 12, // Smaller font for mobile
+          },
         },
       },
-      backgroundColor: "white",
     },
     responsive: true,
+    maintainAspectRatio: false, // Allow the chart to fill the container
     scales: {
-      // color: "white",
       x: {
-        stacked: false, // Disable stacking for grouped bars
+        stacked: false,
         grid: {
           color: "rgba(255, 255, 255, 0.2)", // Grid lines color
         },
         ticks: {
-          color: "white", // X-axis labels color
+          color: isMobile ? "black" : "white",
+          font: {
+            // size: window.innerWidth < 640 ? 10 : 12, // Smaller font for x-axis on mobile
+          },
         },
       },
       y: {
@@ -64,42 +90,41 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
           color: "rgba(255, 255, 255, 0.2)", // Grid lines color
         },
         ticks: {
-          color: "white", // X-axis labels color
+          color: isMobile ? "black" : "white",
+          font: {
+            // size: window.innerWidth < 640 ? 10 : 12, // Smaller font for y-axis on mobile
+          },
         },
       },
     },
   };
 
-  const data: any = {
+  const data = {
     labels: monthlyData.map((data) => data.month),
     datasets: [
       {
         label: "Target Saving",
         backgroundColor: "#51d9a8",
-        // borderColor: "white",
         data: monthlyData.map((data: any) => data.target),
-        // color: "white",
-        // borderRadius: 10,
       },
       {
         label: "Actual Saving",
         backgroundColor: "#96c9dd",
-        // borderColor: "white",
         data: monthlyData.map((data: any) => data.actual),
       },
       {
         label: "Current Saving",
         backgroundColor: "#ffa540",
-        // borderColor: "white",
         data: monthlyData.map((data: any) => data.current),
-        // borderRadius: 10,
       },
     ],
   };
 
   return (
-    <div className=" rounded-3xl bg-[#111f36] p-3">
-      <Bar options={options} data={data} />
+    <div className="relative h-[50vh] sm:h-[40vh] lg:h-[50vh] rounded-3xl bg-[#eaeaea] md:bg-[#111f36] p-3">
+      <div className="w-full h-full">
+        <Bar options={options} data={data} />
+      </div>
     </div>
   );
 };

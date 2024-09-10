@@ -63,13 +63,11 @@ function Appbar() {
     setIsAdminDropdownOpen(false);
   };
 
-  console.log(currentUserState);
-
   const adminItems = [{ label: "Admin Console", route: "/adminconsole" }];
 
   const swotItems = [{ label: "Tasklist", route: "/swotportal/tasklist" }];
   const navBarItems = [
-    { label: "Home", route: "/" },
+    { label: "Home", route: currentUserState.userEmail ? "/dashboard" : "/" },
     { label: "Pricing", route: "/pricing" },
     { label: "Community", route: "/community" },
     { label: "SWOT Portal", route: "/swotportal" },
@@ -80,6 +78,7 @@ function Appbar() {
         ]
       : [{ label: "Logout", route: "/logout" }]),
   ];
+  console.log(currentUserState);
 
   return (
     <div className="px-4">
