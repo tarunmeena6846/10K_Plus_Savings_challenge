@@ -67,16 +67,25 @@ function Appbar() {
 
   const swotItems = [{ label: "Tasklist", route: "/swotportal/tasklist" }];
   const navBarItems = [
-    { label: "Home", route: currentUserState.userEmail ? "/dashboard" : "/" },
-    { label: "Pricing", route: "/pricing" },
-    { label: "Community", route: "/community" },
-    { label: "SWOT Portal", route: "/swotportal" },
+    { label: "Home", route: "/" },
     ...(currentUserState.userEmail === ""
       ? [
           { label: "Login", route: "/login" },
           { label: "Sign up", route: "/register" },
+          { label: "Pricing", route: "/pricing" },
+          { label: "Community", route: "/community" },
+          { label: "SWOT Portal", route: "/swotportal" },
         ]
-      : [{ label: "Logout", route: "/logout" }]),
+      : [
+          { label: "Savings Portal", route: "/dashboard" },
+          { label: "Current Savings Portal", route: "/currentdashboard" },
+          { label: "Target Savings Portal", route: "/targetdashboard" },
+          { label: "Actual Savings Portal", route: "/actualdashboard" },
+          { label: "Pricing", route: "/pricing" },
+          { label: "Community", route: "/community" },
+          { label: "SWOT Portal", route: "/swotportal" },
+          { label: "Logout", route: "/logout" },
+        ]),
   ];
   console.log(currentUserState);
 

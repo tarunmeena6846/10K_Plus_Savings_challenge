@@ -1,8 +1,13 @@
 import React, { useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { userState } from "./store/atoms/user";
+import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 
 const Hero = ({ scrollProjectedDataSection }) => {
   const ref = useRef(null);
+  const navigate = useNavigate();
+  const [currentUserState, setCurrentUserState] = useRecoilState(userState);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["center end", "start start"],
@@ -35,7 +40,11 @@ const Hero = ({ scrollProjectedDataSection }) => {
           whileHover={{ background: "#b3f5a0" }}
           className="px-6 py-3 text-base lg:text-lg 3xl:text-2xl text-black rounded-3xl mb-10 mt-5 lg:mt-4 mx-auto lg:mx-0"
           style={{ background: "#6d94ff" }}
-          onClick={scrollProjectedDataSection}
+          onClick={() => {
+            currentUserState.userEmail
+              ? navigate("/dashboard")
+              : scrollProjectedDataSection();
+          }}
         >
           Get Started
         </motion.button>

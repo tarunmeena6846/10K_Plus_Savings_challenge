@@ -176,7 +176,94 @@ const Dashboard = () => {
     setCurrentUserState,
   ]);
   return (
-    <div className=" h-full md:h-screen bg-[#111f36] md:bg-[#eaeaea] p-2 md:p-0">
+    // <div className=" h-full md:h-screen bg-[#111f36] md:bg-[#eaeaea] p-2  md:p-0">
+    //   <SidebarLayout>
+    //     {currentUserState.isLoading ? (
+    //       <Loader />
+    //     ) : (
+    //       <>
+    //         {videoModalOpen.dashboardVideoModal && (
+    //           <VideoModal
+    //             isOpen={videoModalOpen.dashboardVideoModal}
+    //             onClose={handleVideoModalClose}
+    //           />
+    //         )}
+    //         {showSecondModal && (
+    //           <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-75">
+    //             <div className="relative bg-white rounded-lg shadow-lg p-4">
+    //               <div className="text-center">
+    //                 <h2 className="text-xl font-semibold mb-4">
+    //                   Disable video popup?
+    //                 </h2>
+
+    //                 <button
+    //                   onClick={handleDisablePopup}
+    //                   className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+    //                 >
+    //                   Yes
+    //                 </button>
+    //                 <button
+    //                   onClick={() => setShowSecondModal(false)}
+    //                   className="bg-green-500 text-white px-4 py-2 rounded"
+    //                 >
+    //                   No
+    //                 </button>
+    //                 <h2 className="text-sm p-3 text-gray-600">
+    //                   You won't be able to enable it again once disabled
+    //                 </h2>
+    //               </div>
+    //             </div>
+    //           </div>
+    //         )}
+    //         {/* <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4"> */}
+    //         <div className="md:grid-cols-3 md:grid space-y-2 md:space-x-2 md:space-y-0">
+    //           <div
+    //             className="p-6 rounded-2xl"
+    //             style={{ background: "#ffa540", overflow: "hidden" }}
+    //           >
+    //             <h2>Current Annual Savings</h2>
+    //             <h2 className="text-4xl">${annualCurrentSavings}</h2>
+    //           </div>
+    //           <div
+    //             className="p-6 rounded-2xl"
+    //             style={{ background: "#51d9a8", overflow: "hidden" }}
+    //           >
+    //             <h2>Target Annual Savings</h2>
+    //             <h2 className="text-4xl">${annualTargetSavings}</h2>
+    //           </div>
+    //           <div
+    //             className="p-6 rounded-2xl"
+    //             style={{ background: "#96c9dd", overflow: "hidden" }}
+    //           >
+    //             <h2>Actual Annual Savings</h2>
+    //             <h2 className="text-4xl">${annualActualSavings}</h2>
+    //           </div>
+
+    //           <div className="md:col-span-2 md:row-span-2">
+    //             <div
+    //               className=" h-full rounded-2xl"
+    //               // style={{ maxHeight: "200px" }}
+    //             >
+    //               {isMonthlyDataReady && (
+    //                 <MonthlyBarGraph monthlyData={monthlyData} />
+    //               )}
+    //             </div>
+    //           </div>
+    //           <div className="md:col-span-1 md:row-span-2">
+    //             {isMonthlyDataReady && (
+    //               <DoughnutData
+    //                 annualTargetSavings={annualTargetSavings}
+    //                 annualCurrentSavings={annualCurrentSavings}
+    //                 annualActualSavings={annualActualSavings}
+    //               />
+    //             )}
+    //           </div>
+    //         </div>
+    //       </>
+    //     )}
+    //   </SidebarLayout>
+    // </div>
+    <div className="min-h-screen bg-[#111f36] md:bg-[#eaeaea] p-2 md:p-0">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -188,6 +275,7 @@ const Dashboard = () => {
                 onClose={handleVideoModalClose}
               />
             )}
+
             {showSecondModal && (
               <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-75">
                 <div className="relative bg-white rounded-lg shadow-lg p-4">
@@ -215,40 +303,45 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-            {/* <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4"> */}
-            <div className=" md:grid-cols-3 md:grid space-y-2">
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#ffa540", overflow: "hidden" }}
+                className="p-6 rounded-2xl text-center"
+                style={{ background: "#ffa540" }}
               >
                 <h2>Current Annual Savings</h2>
-                <h2 className="text-4xl">${annualCurrentSavings}</h2>
+                <h2 className="text-3xl md:text-4xl">
+                  ${annualCurrentSavings}
+                </h2>
               </div>
+
               <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#51d9a8", overflow: "hidden" }}
+                className="p-6 rounded-2xl text-center"
+                style={{ background: "#51d9a8" }}
               >
                 <h2>Target Annual Savings</h2>
-                <h2 className="text-4xl">${annualTargetSavings}</h2>
+                <h2 className="text-3xl md:text-4xl">${annualTargetSavings}</h2>
               </div>
+
               <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#96c9dd", overflow: "hidden" }}
+                className="p-6 rounded-2xl text-center"
+                style={{ background: "#96c9dd" }}
               >
                 <h2>Actual Annual Savings</h2>
-                <h2 className="text-4xl">${annualActualSavings}</h2>
+                <h2 className="text-3xl md:text-4xl">${annualActualSavings}</h2>
               </div>
-              <div className="md:col-span-2 md:row-span-2 ">
-                <div
-                  className=" h-full rounded-2xl"
-                  // style={{ maxHeight: "200px" }}
-                >
+
+              {/* Monthly Bar Graph */}
+              <div className="md:col-span-2">
+                <div className="rounded-2xl">
                   {isMonthlyDataReady && (
                     <MonthlyBarGraph monthlyData={monthlyData} />
                   )}
                 </div>
               </div>
-              <div className="md:col-span-1 md:row-span-2">
+
+              {/* Doughnut Chart */}
+              <div className="md:col-span-1">
                 {isMonthlyDataReady && (
                   <DoughnutData
                     annualTargetSavings={annualTargetSavings}
@@ -257,9 +350,6 @@ const Dashboard = () => {
                   />
                 )}
               </div>
-              {/* <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
-            <MonthlyChart monthlyIncome={500} monthlyExpenses={200} />
-          </div> */}
             </div>
           </>
         )}
