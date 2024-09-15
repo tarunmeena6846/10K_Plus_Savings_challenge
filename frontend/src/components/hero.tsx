@@ -17,7 +17,7 @@ const Hero = ({ scrollProjectedDataSection }) => {
   // Scroll tracking for each image
   const { scrollYProgress } = useScroll({
     target: ref1,
-    offset: ["end end", "end start"], // Adjusting the range for when the animation should trigger
+    offset: ["start end", "end start"], // Adjusting the range for when the animation should trigger
   });
 
   // Transformations for each image
@@ -28,9 +28,9 @@ const Hero = ({ scrollProjectedDataSection }) => {
   const xTransform2 = useTransform(scrollYProgress, [0.7, 0], [0, 0]); // Adjust the range as needed
   const yTransform2 = useTransform(scrollYProgress, [0.7, 0], [0, 0]);
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 py-10  gap-10 min-h-screen">
+    <div className="grid grid-cols-1 lg:grid-cols-12  py-10  gap-10 min-h-screen">
       {/* Left Section */}
-      <div className="col-span-1 lg:col-span-5 flex justify-center lg:justify-start items-center lg:mt-[-70px] text-left">
+      <div className="col-span-1 lg:col-span-5 flex justify-center  items-start lg:mt-[170px] 2xl:mt-[400px] text-left">
         <div>
           <h1 className="mb-4 font-bold text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-6xl 2xl:text-8xl">
             Empower Your <br />
