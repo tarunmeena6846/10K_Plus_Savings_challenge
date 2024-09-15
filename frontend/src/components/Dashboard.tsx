@@ -217,7 +217,7 @@ const Dashboard = () => {
     //         )}
     //   </SidebarLayout>
     // </div>
-    <div className="min-h-screen bg-[#111f36] lg:bg-[#eaeaea] ">
+    <div className="h-screen bg-[#111f36] lg:bg-[#eaeaea] ">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -257,6 +257,7 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
+            
             <div className="">
               <div className="mt-4">
                 <h2 className="text-2xl sm:text-3xl text-white lg:text-gray-700">

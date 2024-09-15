@@ -75,7 +75,7 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
       x: {
         stacked: false,
         grid: {
-          color: "rgba(255, 255, 255, 0.2)", // Grid lines color
+          color: isMobile ? "black" : "rgba(255, 255, 255, 0.2)", // Grid lines color
         },
         ticks: {
           color: isMobile ? "black" : "white",
@@ -87,7 +87,7 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
       y: {
         stacked: false,
         grid: {
-          color: "rgba(255, 255, 255, 0.2)", // Grid lines color
+          color: isMobile ? "black" : "rgba(255, 255, 255, 0.2)", // Grid lines color
         },
         ticks: {
           color: isMobile ? "black" : "white",

@@ -90,9 +90,9 @@ function Appbar() {
   console.log(currentUserState);
 
   return (
-    <div className="px-4">
+    <div className="px-4 ">
       <Toolbar
-        className="mx-auto mt-6 w-full rounded-3xl bg-[#eaeaea] border "
+        className="mx-auto mt-6 w-full rounded-3xl bg-[#eaeaea] border z-[999]"
         style={{
           display: "flex",
           alignItems: "center",
