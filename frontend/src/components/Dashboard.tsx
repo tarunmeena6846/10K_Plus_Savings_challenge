@@ -25,6 +25,8 @@ import SidebarLayout from "./SidebarLayout";
 import { fetchData } from "./Dashboard/fetchIncomeAndExpenseData";
 import Loader from "./community/Loader";
 import DoughnutData from "./DoughnutChart";
+import MonthwiseDataGraph from "./LineGraph";
+import LineChart from "./SavingsLineGraph";
 
 export const monthIncExpInfo = [
   { name: "Rent", amount: 1000, type: "expense" },
@@ -175,6 +177,15 @@ const Dashboard = () => {
     navigate,
     setCurrentUserState,
   ]);
+  const currentHour = new Date().getHours();
+
+  // Determine the appropriate greeting based on the time of day
+  let greeting = "Good Morning";
+  if (currentHour >= 12 && currentHour < 18) {
+    greeting = "Good Afternoon";
+  } else if (currentHour >= 18 || currentHour < 5) {
+    greeting = "Good Evening";
+  }
   return (
     // <div className=" h-full md:h-screen bg-[#111f36] md:bg-[#eaeaea] p-2  md:p-0">
     //   <SidebarLayout>
@@ -217,7 +228,9 @@ const Dashboard = () => {
     //         )}
     //   </SidebarLayout>
     // </div>
-    <div className="h-screen bg-[#111f36] lg:bg-[#eaeaea] ">
+
+    //Toaster can be used for popups
+    <div className="h-full bg-[#111f36] lg:bg-[#eaeaea] ">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -258,67 +271,89 @@ const Dashboard = () => {
               </div>
             )}
 
-            <div className="">
-              <div className="mt-4">
+            <main className="flex flex-col gap-4 pb-16 pt-8">
+              <div className="flex flex-col justify-between gap-4 lg:flex-row">
                 <h2 className="text-2xl sm:text-3xl text-white lg:text-gray-700">
-                  Welcome,
+                  {greeting}
                   <span className="text-3xl sm:text-4xl ml-1 sm:ml-2 lg:text-black break-words w-full">
                     {currentUserState.userName}
                   </span>
                 </h2>
+                {/* <SearchBar /> */}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4  mt-4  ">
-                <div
-                  className="p-6 rounded-2xl text-center"
-                  style={{ background: "#ffa540" }}
-                >
-                  <h2>Current Annual Savings</h2>
-                  <h2 className="text-3xl md:text-4xl">
-                    ${annualCurrentSavings}
-                  </h2>
-                </div>
+              <div className="flex h-full flex-col gap-4 rounded-2xl py-4">
+                <div className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-5 gap-4 mt-4  justify-center h-full">
+                  <div
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
+                    style={{ background: "#ffa540" }}
+                  >
+                    <h2>Current Annual Savings</h2>
+                    <h2 className="text-3xl md:text-4xl">
+                      ${annualCurrentSavings}
+                    </h2>
+                  </div>
 
-                <div
-                  className="p-6 rounded-2xl text-center"
-                  style={{ background: "#51d9a8" }}
-                >
-                  <h2>Target Annual Savings</h2>
-                  <h2 className="text-3xl md:text-4xl">
-                    ${annualTargetSavings}
-                  </h2>
-                </div>
+                  <div
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
+                    style={{ background: "#51d9a8" }}
+                  >
+                    <h2>Target Annual Savings</h2>
+                    <h2 className="text-3xl md:text-4xl">
+                      ${annualTargetSavings}
+                    </h2>
+                  </div>
 
-                <div
-                  className="p-6 rounded-2xl text-center"
-                  style={{ background: "#96c9dd" }}
-                >
-                  <h2>Actual Annual Savings</h2>
-                  <h2 className="text-3xl md:text-4xl">
-                    ${annualActualSavings}
-                  </h2>
-                </div>
+                  <div
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
+                    style={{ background: "#96c9dd" }}
+                  >
+                    <h2>Actual Annual Savings</h2>
+                    <h2 className="text-3xl md:text-4xl">
+                      ${annualActualSavings}
+                    </h2>
+                  </div>
 
-                {/* Monthly Bar Graph */}
-                <div className="md:col-span-2">
-                  {/* <div className="rounded-2xl"> */}
-                  {isMonthlyDataReady && (
-                    <MonthlyBarGraph monthlyData={monthlyData} />
-                  )}
-                  {/* </div> */}
-                </div>
+                  {/* Monthly Bar Graph */}
+                  <div className="md:col-span-4 md:row-span-2">
+                    {/* <div className="rounded-2xl"> */}
+                    {isMonthlyDataReady && (
+                      <MonthlyBarGraph monthlyData={monthlyData} />
+                    )}
+                    {/* </div> */}
+                  </div>
 
-                {/* Doughnut Chart */}
-                <div className="md:col-span-1">
-                  {isMonthlyDataReady && (
-                    <DoughnutData
-                      annualTargetSavings={annualTargetSavings}
-                      annualCurrentSavings={annualCurrentSavings}
-                      annualActualSavings={annualActualSavings}
-                    />
-                  )}
+                  {/* Doughnut Chart */}
+                  <div className="md:col-span-2 md:row-span-2">
+                    {isMonthlyDataReady && (
+                      <DoughnutData
+                        annualTargetSavings={annualTargetSavings}
+                        annualCurrentSavings={annualCurrentSavings}
+                        annualActualSavings={annualActualSavings}
+                      />
+                    )}
+                  </div>
+
+                  {/* Doughnut Chart */}
+                  <div className="md:col-span-2 md:row-span-2">
+                    {isMonthlyDataReady && (
+                      <DoughnutData
+                        annualTargetSavings={annualTargetSavings}
+                        annualCurrentSavings={annualCurrentSavings}
+                        annualActualSavings={annualActualSavings}
+                      />
+                    )}
+                  </div>
+                  {/* Monthly Bar Graph */}
+                  <div className="md:col-span-4 md:row-span-2">
+                    {/* <div className="rounded-2xl"> */}
+                    {isMonthlyDataReady && (
+                      <LineChart expenseAndIncome={monthlyData} />
+                    )}
+                    {/* </div> */}
+                  </div>
                 </div>
               </div>
-            </div>
+            </main>
           </>
         )}
       </SidebarLayout>

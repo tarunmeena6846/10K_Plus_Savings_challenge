@@ -468,6 +468,7 @@ router.get(
           annualCurrentSavings:
             yearlyEntry.totalCurrentIncome - yearlyEntry.totalCurrentExpenses,
           monthWiseData: monthWiseData,
+          SavingsItems: yearlyEntry.monthlyData,
         });
       }
       // Find the monthly entry for the specified month

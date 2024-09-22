@@ -23,7 +23,7 @@ const MonthwiseDataGraph = ({ expenseAndIncome }) => {
   // Process data
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
-
+  console.log(expenseAndIncome);
   // Initialize empty data structure
   const dailyData = Array.from({ length: 31 }, (_, i) => ({
     date: `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(

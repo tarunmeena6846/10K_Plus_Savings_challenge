@@ -61,8 +61,9 @@ function DoughnutData({
   };
 
   return (
-    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3">
-      <div className="w-full h-[50vh] sm:h-[50vh] md:h-[50vh] lg:h-[30vh] ">
+    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3 h-full">
+      {/* <div className="w-full h-[50vh] sm:h-[50vh] md:h-[30vh] lg:h-[40vh] "> */}
+      <div className="w-full h-full">
         <Doughnut data={data} options={options} />
       </div>
     </div>

@@ -1,71 +1,66 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  BarController,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
-  BarElement,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
-import { MonthlyDataItem } from "./Dashboard";
+import { useIsMobile } from "./MonthlyBarGraph";
 
-interface MonthlyBarGraphProps {
-  monthlyData: MonthlyDataItem[];
-}
-
+// Register Chart.js modules
 ChartJS.register(
-  BarController,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
 );
-// import { useState, useEffect } from "react";
 
-export const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1023);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1023);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return isMobile;
-};
-
-const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
-  monthlyData.sort();
+const LineChart = ({ expenseAndIncome }) => {
   const isMobile = useIsMobile();
 
-  console.log(isMobile);
-  const options = {
-    plugins: {
-      title: {
-        display: true,
-        text: "Projected Savings Vs Actual Savings Vs Current Savings",
-        color: isMobile ? "black" : "white",
-        padding: {
-          top: 10,
-        },
-        font: {
-          // size: window.innerWidth < 640 ? 12 : 16, // Smaller font for mobile screens
-        },
+  console.log(expenseAndIncome);
+  const data = {
+    labels: expenseAndIncome.map((month) => month.month),
+    datasets: [
+      {
+        label: "Actual Savings",
+        data: expenseAndIncome.map((data) => data.actual),
+        borderColor: "#96c9dd",
+        backgroundColor: "#96c9dd",
+        borderWidth: 2,
+        tension: 0.4, // Line smoothness
       },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
       legend: {
         labels: {
           color: isMobile ? "black" : "white",
           font: {
             // size: window.innerWidth < 640 ? 10 : 12, // Smaller font for mobile
           },
+        },
+      },
+      title: {
+        display: true,
+        text: "Savings Over Time",
+        color: isMobile ? "black" : "white",
+        padding: {
+          top: 10,
+        },
+        font: {
+          // size: window.innerWidth < 640 ? 12 : 16, // Smaller font for mobile screens
         },
       },
       tooltip: {
@@ -76,7 +71,6 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
         },
       },
     },
-    responsive: true,
     maintainAspectRatio: false, // Allow the chart to fill the container
     scales: {
       x: {
@@ -106,35 +100,14 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     },
   };
 
-  const data = {
-    labels: monthlyData.map((data) => data.month),
-    datasets: [
-      {
-        label: "Target Saving",
-        backgroundColor: "#51d9a8",
-        data: monthlyData.map((data: any) => data.target),
-      },
-      {
-        label: "Actual Saving",
-        backgroundColor: "#96c9dd",
-        data: monthlyData.map((data: any) => data.actual),
-      },
-      {
-        label: "Current Saving",
-        backgroundColor: "#ffa540",
-        data: monthlyData.map((data: any) => data.current),
-      },
-    ],
-  };
-
   return (
     <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3 h-full">
       {/* <div className="w-full h-[50vh] sm:h-[50vh] md:h-[30vh] lg:h-[40vh] "> */}
       <div className="w-full h-full">
-        <Bar options={options} data={data} />
+        <Line data={data} options={options} />
       </div>
     </div>
   );
 };
 
-export default MonthlyBarGraph;
+export default LineChart;
