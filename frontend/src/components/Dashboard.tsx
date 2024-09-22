@@ -27,6 +27,7 @@ import Loader from "./community/Loader";
 import DoughnutData from "./DoughnutChart";
 import MonthwiseDataGraph from "./LineGraph";
 import LineChart from "./SavingsLineGraph";
+import SavingsTrendPrediction from "./SavingsPrediction";
 
 export const monthIncExpInfo = [
   { name: "Rent", amount: 1000, type: "expense" },
@@ -282,7 +283,7 @@ const Dashboard = () => {
                 {/* <SearchBar /> */}
               </div>
               <div className="flex h-full flex-col gap-4 rounded-2xl py-4">
-                <div className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-5 gap-4 mt-4  justify-center h-full">
+                <div className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-7 gap-4 mt-4  justify-center h-full">
                   <div
                     className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
                     style={{ background: "#ffa540" }}
@@ -334,17 +335,18 @@ const Dashboard = () => {
                   </div>
 
                   {/* Doughnut Chart */}
-                  <div className="md:col-span-2 md:row-span-2">
+                  <div className="md:col-span-6 md:row-span-2">
                     {isMonthlyDataReady && (
-                      <DoughnutData
-                        annualTargetSavings={annualTargetSavings}
-                        annualCurrentSavings={annualCurrentSavings}
-                        annualActualSavings={annualActualSavings}
-                      />
+                      // <DoughnutData
+                      //   annualTargetSavings={annualTargetSavings}
+                      //   annualCurrentSavings={annualCurrentSavings}
+                      //   annualActualSavings={annualActualSavings}
+                      // />
+                      <SavingsTrendPrediction expenseAndIncome={monthlyData} />
                     )}
                   </div>
                   {/* Monthly Bar Graph */}
-                  <div className="md:col-span-4 md:row-span-2">
+                  <div className="md:col-span-6 md:row-span-2">
                     {/* <div className="rounded-2xl"> */}
                     {isMonthlyDataReady && (
                       <LineChart expenseAndIncome={monthlyData} />
