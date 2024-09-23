@@ -131,7 +131,7 @@ export const HamburgerMenu = ({ isOpen, setIsOpen, Items }) => {
           className=" bg-pink-400 w-full h-[100vh] lg:w-[50%]"
         >
           {/* Content inside the menu */}
-          <div className="h-screen flex text-3xl gap-5 justify-center ml-[50px] sm:ml-[100px] flex-col ">
+          <div className="h-screen flex text-2xl gap-5 justify-center ml-[50px] sm:ml-[100px] flex-col ">
             {/* <h1 className="text-white text-center">Hello</h1> */}
 
             {Items.map((item, index) => (

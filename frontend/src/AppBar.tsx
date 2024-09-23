@@ -88,6 +88,7 @@ function Appbar() {
             : []),
           { label: "SWOT Portal", route: "/swotportal" },
           { label: "SWOT TaskList", route: "/swotportal/tasklist" },
+          { label: "Analytics", route: "/analytics" },
           { label: "Logout", route: "/logout" },
         ]),
   ];
