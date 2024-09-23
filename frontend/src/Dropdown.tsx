@@ -18,9 +18,9 @@ const Dropdown = ({ items, isOpen, onMouseEnter, onMouseLeave, navigate }) => {
         {items.map((item, index) => (
           <motion.button
             key={index}
-            whileHover={{ scale: 1.3, background: "black", color: "white" }}
+            whileHover={{ scale: 1.1, background: "black", color: "white" }}
             whileTap={{ scale: 1 }}
-            className="rounded-3xl text-black pr-3 p-2 mb-2"
+            className="rounded-3xl text-black pr-2 p-2 mb-2"
             onClick={() => navigate(item.route)}
           >
             {item.label}

@@ -5,7 +5,7 @@ import { BiAnalyse, BiMoney, BiSearch } from "react-icons/bi";
 import { BiCog } from "react-icons/bi";
 import { AiFillHeart, AiTwotoneFileExclamation } from "react-icons/ai";
 import { ImPriceTags } from "react-icons/im";
-import { TbBuildingCommunity } from "react-icons/tb";
+import { TbBuildingCommunity, TbListCheck } from "react-icons/tb";
 import { IoAnalyticsSharp } from "react-icons/io5";
 
 import { MdOutlineSavings } from "react-icons/md";
@@ -51,6 +51,11 @@ export const routes = [
     path: "/swotportal",
     name: "SWOT Portal",
     icon: <AiFillHeart />,
+  },
+  {
+    path: "/swotportal/tasklist",
+    name: "SWOT Task List",
+    icon: <TbListCheck />,
   },
   {
     path: "/analytics",
