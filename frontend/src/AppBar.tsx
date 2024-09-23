@@ -83,7 +83,11 @@ function Appbar() {
           { label: "Actual Savings Portal", route: "/actualdashboard" },
           { label: "Pricing", route: "/pricing" },
           { label: "Community", route: "/community" },
+          ...(currentUserState.isAdmin
+            ? [{ label: "Admin Console", route: "/adminconsole" }]
+            : []),
           { label: "SWOT Portal", route: "/swotportal" },
+          { label: "SWOT TaskList", route: "/swotportal/tasklist" },
           { label: "Logout", route: "/logout" },
         ]),
   ];

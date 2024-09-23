@@ -97,7 +97,7 @@ const SWOTdashboard = () => {
         onClick={togglePopup}
       >
         {!showPopup && (
-          <div>
+          <div className="text-[#6d94ff]">
             +Task list
             <img src="./tasklist.svg" />
           </div>

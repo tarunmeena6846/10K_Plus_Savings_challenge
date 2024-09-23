@@ -42,7 +42,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
   };
 
   return (
-    <div className="fixed top-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg">
+    <div className="fixed bottom-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg">
       <div>{message}</div>
       <div className="w-full bg-green-700 rounded-full h-1.5 mt-2">
         <div

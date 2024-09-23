@@ -5,6 +5,7 @@ import CheckBox from "../Checkbox";
 import { useRecoilState } from "recoil";
 import { userState } from "../store/atoms/user";
 import SuccessPopup from "./SuccessfulPopup";
+import { useIsMobile } from "../MonthlyBarGraph";
 export interface taskDetails {
   title: String;
   isComplete: Boolean;
@@ -16,12 +17,17 @@ const TaskList = ({ setShowPopup }) => {
   const [successfulPopup, setSuccessfulPopup] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  // const isMobile = useIsMobile();
   const [newTask, setNewTask] = useState<taskDetails>({
     title: "",
     isComplete: false,
   });
-  const [popupWidth, setPopupWidth] = useState(500);
-  const [popupHeight, setPopupHeight] = useState(300);
+  const [popupWidth, setPopupWidth] = useState(
+    window.innerWidth <= 768 ? 300 : 500
+  );
+  const [popupHeight, setPopupHeight] = useState(
+    window.innerWidth <= 768 ? 800 : 300
+  );
   const [isChecked, setIsChecked] = useState(false);
   const [onCalendarClick, setOnCalendarClick] = useState(false);
   // const handleCalenderClick = async () => {};
@@ -109,7 +115,7 @@ const TaskList = ({ setShowPopup }) => {
     return "bg-green-800";
   };
   return (
-    <div className="max-w-lg mx-auto mt-8 relative ">
+    <div className="max-w-lg mx-auto mt-8 relative text-black">
       <motion.div
         className="task-list-popup fixed bottom-5 right-2 bg-white border border-gray-300 rounded shadow-lg p-4 overflow-y-auto max-h-80"
         style={{ width: popupWidth, height: popupHeight }}
@@ -121,7 +127,7 @@ const TaskList = ({ setShowPopup }) => {
           bottom: 0,
         }}
         dragElastic={0.1}
-        onResize={handleResize}
+        // onResize={handleResize}
         onClick={(e) => e.stopPropagation()}
         whileHover={{ scale: 1.05 }}
         // whileTap={{ scale: 0.95 }}
@@ -139,11 +145,11 @@ const TaskList = ({ setShowPopup }) => {
               alt="Cancel"
             />
           </motion.button>
-      </div>
+        </div>
         <div className="flex items-center mb-4 mt-4">
           <input
             type="text"
-            className="w-3/4 py-2 px-3 mr-2 border border-gray-300 rounded"
+            className="w-3/4 py-2 px-3 mr-2 border border-gray-300 rounded "
             placeholder="Enter a new task"
             value={newTask?.title as string}
             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
@@ -165,10 +171,10 @@ const TaskList = ({ setShowPopup }) => {
           </motion.button>
         </div>
         {onCalendarClick && (
-          <div>
+          <div className="text-black">
             Due Date:
             <input
-              className="py-2 px-3 border border-gray-300 rounded"
+              className="py-2 px-3 border border-gray-300 rounded "
               type="date"
               value={newTask.dueDate || ""}
               onChange={(e) => {
@@ -186,7 +192,7 @@ const TaskList = ({ setShowPopup }) => {
           {tasks.map((task, index) => (
             <motion.li
               key={index}
-              className="flex items-center justify-between border-b border-gray-300 py-2"
+              className="flex items-center justify-between border-b border-gray-300 py-2 text-black"
               initial={{ opacity: 0, x: -100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
@@ -195,12 +201,16 @@ const TaskList = ({ setShowPopup }) => {
               <div className="flex-1 overflow-hidden">
                 <div className="truncate">{task.title}</div>
               </div>
-              <div className="text-red-600"> {task.dueDate}</div>
+              <div className="text-red-600 m-2"> {task.dueDate}</div>
               <motion.button
                 className="text-red-500 hover:text-red-600"
                 onClick={() => handleRemoveTask(index)}
               >
-                <img className="" src={"cancel.svg"} alt="Cancel" />
+                <img
+                  className="bg-black rounded-3xl"
+                  src={"cancel.svg"}
+                  alt="Cancel"
+                />
               </motion.button>
             </motion.li>
           ))}

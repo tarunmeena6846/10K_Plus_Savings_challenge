@@ -157,7 +157,7 @@ export default function SWOTtasklist() {
           ) : (
             <div
               key={task._id}
-              className={`flex flex-row border-t border-gray-300 p-2 ${
+              className={`flex flex-row  border-t border-gray-300 p-2 ${
                 task.isComplete ? `text-gray-400` : `text-white`
               }`}
             >
@@ -169,7 +169,7 @@ export default function SWOTtasklist() {
                   onChange={() => handleCheckboxChange(task._id)}
                 />
               </div>
-              <div className="flex-1">{task.title}</div>
+              <div className="flex-1 flex wrap">{task.title}</div>
               <div className="flex-1">{task.dueDate ? task.dueDate : "NA"}</div>
             </div>
           )

@@ -13,7 +13,7 @@ const SavingPortalLanding = () => {
     useRecoilState<SubscriptionData>(subscriptionState);
   console.log("subs", subscription);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  const [videoModalOpen, setVideoModalOpen] = useState(true);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [showSecondModal, setShowSecondModal] = useState(false);
 
   const handleVideoModalClose = () => {
