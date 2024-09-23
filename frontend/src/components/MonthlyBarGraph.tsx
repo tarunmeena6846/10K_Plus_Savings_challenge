@@ -46,12 +46,13 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
   monthlyData.sort();
   const isMobile = useIsMobile();
 
+  console.log(monthlyData);
   console.log(isMobile);
   const options = {
     plugins: {
       title: {
         display: true,
-        text: "Projected Savings Vs Actual Savings Vs Current Savings",
+        text: "Variance ( Target Vs Actual )",
         color: isMobile ? "black" : "white",
         padding: {
           top: 10,
@@ -110,19 +111,19 @@ const MonthlyBarGraph: React.FC<MonthlyBarGraphProps> = ({ monthlyData }) => {
     labels: monthlyData.map((data) => data.month),
     datasets: [
       {
-        label: "Target Saving",
-        backgroundColor: "#51d9a8",
-        data: monthlyData.map((data: any) => data.target),
+        label: "Income Variance",
+        backgroundColor: "rgba(75, 192, 192)",
+        data: monthlyData.map((data: any) => data.incomeVariance),
+        borderRadius: 20, // Adding border radius
+        borderSkipped: false,
       },
+
       {
-        label: "Actual Saving",
-        backgroundColor: "#96c9dd",
-        data: monthlyData.map((data: any) => data.actual),
-      },
-      {
-        label: "Current Saving",
-        backgroundColor: "#ffa540",
-        data: monthlyData.map((data: any) => data.current),
+        label: "Expense Variance",
+        backgroundColor: "rgba(255, 99, 132)",
+        data: monthlyData.map((data: any) => data.expenseVariance),
+        borderRadius: 20, // Adding border radius
+        borderSkipped: false,
       },
     ],
   };

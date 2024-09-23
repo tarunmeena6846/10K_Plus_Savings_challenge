@@ -288,7 +288,7 @@ const Dashboard = () => {
                     className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
                     style={{ background: "#ffa540" }}
                   >
-                    <h2>Current Annual Savings</h2>
+                    <h2>Cumulative Current Savings</h2>
                     <h2 className="text-3xl md:text-4xl">
                       ${annualCurrentSavings}
                     </h2>
@@ -298,7 +298,7 @@ const Dashboard = () => {
                     className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
                     style={{ background: "#51d9a8" }}
                   >
-                    <h2>Target Annual Savings</h2>
+                    <h2>Cumulative Target Savings</h2>
                     <h2 className="text-3xl md:text-4xl">
                       ${annualTargetSavings}
                     </h2>
@@ -308,12 +308,22 @@ const Dashboard = () => {
                     className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
                     style={{ background: "#96c9dd" }}
                   >
-                    <h2>Actual Annual Savings</h2>
+                    <h2>Cumulative Actual Savings</h2>
                     <h2 className="text-3xl md:text-4xl">
                       ${annualActualSavings}
                     </h2>
                   </div>
 
+                  <div className="md:col-span-6 md:row-span-2">
+                    {isMonthlyDataReady && (
+                      // <DoughnutData
+                      //   annualTargetSavings={annualTargetSavings}
+                      //   annualCurrentSavings={annualCurrentSavings}
+                      //   annualActualSavings={annualActualSavings}
+                      // />
+                      <SavingsTrendPrediction expenseAndIncome={monthlyData} />
+                    )}
+                  </div>
                   {/* Monthly Bar Graph */}
                   <div className="md:col-span-4 md:row-span-2">
                     {/* <div className="rounded-2xl"> */}
@@ -335,19 +345,9 @@ const Dashboard = () => {
                   </div>
 
                   {/* Doughnut Chart */}
-                  <div className="md:col-span-6 md:row-span-2">
-                    {isMonthlyDataReady && (
-                      // <DoughnutData
-                      //   annualTargetSavings={annualTargetSavings}
-                      //   annualCurrentSavings={annualCurrentSavings}
-                      //   annualActualSavings={annualActualSavings}
-                      // />
-                      <SavingsTrendPrediction expenseAndIncome={monthlyData} />
-                    )}
-                  </div>
+
                   {/* Monthly Bar Graph */}
                   <div className="md:col-span-6 md:row-span-2">
-                    {/* <div className="rounded-2xl"> */}
                     {isMonthlyDataReady && (
                       <LineChart expenseAndIncome={monthlyData} />
                     )}

@@ -5,7 +5,7 @@ const SidebarLayout = ({ children }) => {
   return (
     <div className="flex flex-col md:flex-row h-auto">
       {/* Sidebar for larger screens */}
-      <div className="hidden lg:block md:w-1/4 bg-[#111f36]">
+      <div className="hidden lg:flex justify-between  bg-[#111f36]">
         <SideBar />
       </div>
 

@@ -31,10 +31,18 @@ const LineChart = ({ expenseAndIncome }) => {
     labels: expenseAndIncome.map((month) => month.month),
     datasets: [
       {
-        label: "Actual Savings",
-        data: expenseAndIncome.map((data) => data.actual),
+        label: "Income Growth Rate (%)",
+        data: expenseAndIncome.map((data) => data.incomeGrowthPercent),
         borderColor: "#96c9dd",
         backgroundColor: "#96c9dd",
+        borderWidth: 2,
+        tension: 0.4, // Line smoothness
+      },
+      {
+        label: "Expense Growth Rate (%)",
+        data: expenseAndIncome.map((data) => data.expenseGrowthPercent),
+        borderColor: "rgba(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132)",
         borderWidth: 2,
         tension: 0.4, // Line smoothness
       },

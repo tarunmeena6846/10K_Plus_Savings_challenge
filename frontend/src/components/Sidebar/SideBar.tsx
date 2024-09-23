@@ -79,58 +79,53 @@ const SideBar = () => {
   // const isMobile = windowWidth <= 768;
 
   return (
-    <div>
-      <div
-        className=" top-0 left-0 h-screen z-50 flex flex-col justify-between hidden  lg:block "
-        // style={{
-        //   background: isMobile ? "" : "#111f36",
-        // }}
-      >
-        <motion.div
-          animate={{
-            overflow: "auto",
-            // width: isMobile ? "0px" : "300px",
+    <div className="h-full z-50 flex flex-col justify-between hidden lg:block ">
+      <motion.div
+        className="" // Ensures this section takes up the available height
+        animate={{
+          // overflow: "auto",
+          // width: isMobile ? "0px" : "300px",
 
-            transition: {
-              duration: 0.5,
-              type: "spring",
-              damping: 10,
-            },
-          }}
-        >
-          <UserAvatar />
-          <section className="routes">
-            {routes.map((route, index) => {
-              return (
-                <NavLink
-                  to={route.path}
-                  key={index}
-                  className="link"
-                  // activeClassName="active"
-                >
-                  <div className="icon">{route.icon}</div>
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        variants={showAnimation}
-                        initial="hidden"
-                        animate="show"
-                        exit="hidden"
-                        className="link_text"
-                      >
-                        {route.name}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </NavLink>
-              );
-            })}
-          </section>
-        </motion.div>
-        <div className=" flex items-center text-white m-3">
-          <img src="./10ksc.png" className="w-[80px] bg-white  rounded-3xl" />
-          <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
-        </div>
+          transition: {
+            duration: 0.5,
+            type: "spring",
+            damping: 10,
+          },
+        }}
+      >
+        <UserAvatar />
+        <section className="routes">
+          {routes.map((route, index) => {
+            return (
+              <NavLink
+                to={route.path}
+                key={index}
+                className="link"
+                // activeClassName="active"
+              >
+                <div className="icon">{route.icon}</div>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      variants={showAnimation}
+                      initial="hidden"
+                      animate="show"
+                      exit="hidden"
+                      className="link_text"
+                    >
+                      {route.name}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </NavLink>
+            );
+          })}
+        </section>
+      </motion.div>
+
+      <div className=" flex items-center text-white m-3">
+        <img src="./10ksc.png" className="w-[80px] bg-white  rounded-3xl" />
+        <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
       </div>
     </div>
   );

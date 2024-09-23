@@ -39,10 +39,20 @@ const SavingsTrendPrediction = ({ expenseAndIncome }) => {
         tension: 0.4, // Line smoothness
       },
       {
-        label: "Target Savings",
+        label: "Target Saving",
+        backgroundColor: "#51d9a8",
         data: expenseAndIncome.map((data) => data.target),
-        borderColor: "#ffa540",
+        borderColor: "#51d9a8",
+
+        borderWidth: 2,
+        tension: 0.4, // Line smoothness
+      },
+      {
+        label: "Current Saving",
         backgroundColor: "#ffa540",
+        data: expenseAndIncome.map((data) => data.current),
+        borderColor: "#ffa540",
+
         borderWidth: 2,
         tension: 0.4, // Line smoothness
       },
