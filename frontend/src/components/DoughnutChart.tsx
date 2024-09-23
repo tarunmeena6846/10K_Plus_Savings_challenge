@@ -28,7 +28,6 @@ function DoughnutData({
         backgroundColor: ["#96c9dd", "#ffa540", "#51d9a8"],
         borderWidth: 0, // Removes borders
         borderRadius: 10,
-        borderJoinStyle: "miter",
       },
     ],
   };

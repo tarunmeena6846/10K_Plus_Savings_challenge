@@ -188,48 +188,6 @@ const Dashboard = () => {
     greeting = "Good Evening";
   }
   return (
-    // <div className=" h-full md:h-screen bg-[#111f36] md:bg-[#eaeaea] p-2  md:p-0">
-    //   <SidebarLayout>
-    //     {currentUserState.isLoading ? (
-    //       <Loader />
-    //     ) : (
-    //       <>
-    //         {videoModalOpen.dashboardVideoModal && (
-    //           <VideoModal
-    //             isOpen={videoModalOpen.dashboardVideoModal}
-    //             onClose={handleVideoModalClose}
-    //           />
-    //         )}
-    //         {showSecondModal && (
-    //           <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-75">
-    //             <div className="relative bg-white rounded-lg shadow-lg p-4">
-    //               <div className="text-center">
-    //                 <h2 className="text-xl font-semibold mb-4">
-    //                   Disable video popup?
-    //                 </h2>
-
-    //                 <button
-    //                   onClick={handleDisablePopup}
-    //                   className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-    //                 >
-    //                   Yes
-    //                 </button>
-    //                 <button
-    //                   onClick={() => setShowSecondModal(false)}
-    //                   className="bg-green-500 text-white px-4 py-2 rounded"
-    //                 >
-    //                   No
-    //                 </button>
-    //                 <h2 className="text-sm p-3 text-gray-600">
-    //                   You won't be able to enable it again once disabled
-    //                 </h2>
-    //               </div>
-    //             </div>
-    //           </div>
-    //         )}
-    //   </SidebarLayout>
-    // </div>
-
     //Toaster can be used for popups
     <div className="h-full bg-[#111f36] lg:bg-[#eaeaea] ">
       <SidebarLayout>
@@ -285,8 +243,8 @@ const Dashboard = () => {
               <div className="flex h-full flex-col gap-4 rounded-2xl py-4">
                 <div className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-7 gap-4 mt-4  justify-center h-full">
                   <div
-                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
-                    style={{ background: "#ffa540" }}
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1 bg-gradient-to-r from-orange-500  to-pink-500"
+                    // style={{ background: "#ffa540" }}
                   >
                     <h2>Cumulative Current Savings</h2>
                     <h2 className="text-3xl md:text-4xl">
@@ -295,8 +253,8 @@ const Dashboard = () => {
                   </div>
 
                   <div
-                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
-                    style={{ background: "#51d9a8" }}
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1 bg-gradient-to-r from-[#085078]  to-[#85D8CE]"
+                    // style={{ background: "#51d9a8" }}
                   >
                     <h2>Cumulative Target Savings</h2>
                     <h2 className="text-3xl md:text-4xl">
@@ -305,8 +263,8 @@ const Dashboard = () => {
                   </div>
 
                   <div
-                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1"
-                    style={{ background: "#96c9dd" }}
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1 bg-gradient-to-r from-[#2980B9] to-[#6DD5FA]"
+                    // style={{ background: "#96c9dd" }}
                   >
                     <h2>Cumulative Actual Savings</h2>
                     <h2 className="text-3xl md:text-4xl">

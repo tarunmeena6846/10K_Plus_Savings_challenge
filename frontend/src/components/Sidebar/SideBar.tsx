@@ -79,7 +79,7 @@ const SideBar = () => {
   // const isMobile = windowWidth <= 768;
 
   return (
-    <div className="h-full z-50 flex flex-col justify-between hidden lg:block ">
+    <div className="h-full w-full z-50 lg:flex flex-col justify-between hidden ">
       <motion.div
         className="" // Ensures this section takes up the available height
         animate={{

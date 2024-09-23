@@ -43,7 +43,7 @@ export const AnimatedSidebar = () => {
         variants={sidebarVariants}
       />
       <Navigation /> {/* Your navigation links go here */}
-      <MenuToggle toggle={() => toggleOpen()} />
+      {/* <MenuToggle toggle={() => toggleOpen()} /> */}
     </motion.nav>
   );
 };

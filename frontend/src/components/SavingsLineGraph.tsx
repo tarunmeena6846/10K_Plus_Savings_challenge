@@ -74,7 +74,7 @@ const LineChart = ({ expenseAndIncome }) => {
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            return tooltipItem.label + ": " + "$" + tooltipItem.raw;
+            return tooltipItem.label + ": " + tooltipItem.raw + "%";
           },
         },
       },

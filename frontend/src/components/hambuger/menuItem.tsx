@@ -31,6 +31,6 @@ export const MenuItem = ({ i }) => {
     >
       <div className="icon-placeholder h-[10px] bg-pink-400" />
       <div className="text-placeholder" />
-    </motion.li>x
+    </motion.li>
   );
 };

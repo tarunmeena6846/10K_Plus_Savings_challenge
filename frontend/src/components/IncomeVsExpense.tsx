@@ -7,11 +7,13 @@ import {
   ArcElement, // Required for pie charts
 } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { useIsMobile } from "./MonthlyBarGraph";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const IncomeVsExpenseGraph = ({ income, expense }) => {
   console.log(income, expense);
+  const isMobile = useIsMobile();
   // Format the data for the Pie chart
   //   const formattedData = spendingData.slice(0, 4);
   //   //     .map((key) => ({
@@ -25,7 +27,7 @@ const IncomeVsExpenseGraph = ({ income, expense }) => {
       {
         label: "Spending",
         data: [income, expense],
-        backgroundColor: ["#51d9a8", "#ff6384", "#ff9f40", "#ffcd56"],
+        backgroundColor: ["#ffa540", "#ff6384"],
         borderColor: "#fff",
         borderWidth: 2,
       },
@@ -37,7 +39,7 @@ const IncomeVsExpenseGraph = ({ income, expense }) => {
     plugins: {
       title: {
         display: true,
-        // color: "white",
+        color: isMobile ? "black" : "white",
         text: "Income Vs Expenses",
         margin: {
           //   top: 30,
@@ -45,6 +47,11 @@ const IncomeVsExpenseGraph = ({ income, expense }) => {
         padding: {
           //   top: 10,
           // bottom: 50, // Adjust the top padding for the title
+        },
+      },
+      legend: {
+        labels: {
+          color: isMobile ? "black" : "white",
         },
       },
       tooltip: {
@@ -58,7 +65,7 @@ const IncomeVsExpenseGraph = ({ income, expense }) => {
   };
 
   return (
-    <div className="bg-white h-full w-full p-4  items-center">
+    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3 h-full">
       <Pie data={data} options={options} />
     </div>
   );
