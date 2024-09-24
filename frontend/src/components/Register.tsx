@@ -19,6 +19,11 @@ function Register() {
 
   const navigate = useNavigate();
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleRegister();
+    }
+  };
   const handleRegister = () => {
     if (isChecked && secretePhrase === "") {
       setRegistrationError("Secret phrase cannot be empty");
@@ -115,6 +120,7 @@ function Register() {
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Email address"
                           required={true}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="mb-4">
@@ -128,6 +134,7 @@ function Register() {
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Username"
                           required={true}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="mb-4">
@@ -140,6 +147,7 @@ function Register() {
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Password"
                           required={true}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="flex flex-row">
@@ -216,12 +224,12 @@ function Register() {
                       </div>
                       <p className="mb-5 pb-lg-2 text-gray-600">
                         Already have an account?
-                        <button
+                        <a
                           onClick={() => navigate("/login")}
                           className="text-[#ef85a5] pointer"
                         >
                           Login here
-                        </button>
+                        </a>
                       </p>
                       <a href="#!" className="text-sm text-[#ef85a5]">
                         Terms of use.

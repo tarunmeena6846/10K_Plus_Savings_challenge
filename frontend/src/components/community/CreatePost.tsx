@@ -47,7 +47,7 @@ const HandleCreatePost = ({
   }, []);
 
   return (
-    <div className="flex flex-col h-full items-center justify-center m-20 mb-10 text-white">
+    <div className="flex flex-col h-full items-center justify-center m-2 lg:m-20 mb-10 text-white">
       <div className="w-full max-w-3xl p-4">
         <div>
           <h2 className="text-3xl">New Discussion</h2>

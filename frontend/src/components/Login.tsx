@@ -24,6 +24,11 @@ function Login() {
   const [shakePrompt, setShakePrompt] = useState(false);
 
   console.log(password);
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleRegister();
+    }
+  };
   const handleRegister = () => {
     if (!email || !password) {
       // Display an error message or prevent the registration process
@@ -120,6 +125,7 @@ function Login() {
                           onChange={(e) => setEmail(e.target.value)}
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Email address"
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="mb-4">
@@ -129,6 +135,7 @@ function Login() {
                           id="password"
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Password"
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       {msg && (
@@ -168,15 +175,15 @@ function Login() {
                       >
                         Forgot password?
                       </a>
-                      <p className="mb-5 pb-lg-2 text-gray-600">
+                      <div className="mb-5 pb-lg-2 text-gray-600">
                         Don't have an account?{" "}
-                        <button
+                        <a
                           onClick={() => navigate("/register")}
                           className="text-[#ef85a5]"
                         >
                           Register here
-                        </button>
-                      </p>
+                        </a>
+                      </div>
                       <a href="#!" className="text-sm text-[#ef85a5]">
                         Terms of use.
                       </a>{" "}

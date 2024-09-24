@@ -60,7 +60,7 @@ const variants = {
     },
   },
 };
-export const HamburgerMenu = ({ isOpen, setIsOpen, Items }) => {
+export const HamburgerMenu = ({ isOpen, setIsOpen, Items, type }) => {
   const navigate = useNavigate();
   const [isLogoutModalOpen, setLogoutModalOpen] = React.useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
@@ -110,7 +110,7 @@ export const HamburgerMenu = ({ isOpen, setIsOpen, Items }) => {
   return (
     <div>
       {/* Toggle Button */}
-      <MenuToggle toggle={toggleMenu} isOpen={isOpen} />
+      <MenuToggle toggle={toggleMenu} isOpen={isOpen} type={type} />
 
       {/* Conditionally render the motion div based on `isOpen` */}
       {isOpen && (
@@ -123,7 +123,7 @@ export const HamburgerMenu = ({ isOpen, setIsOpen, Items }) => {
             // width: "100%",
             // height: "100vh",
             position: "fixed",
-            zIndex: "50",
+            zIndex: "999",
             top: 0,
             right: 0,
             transformOrigin: "90% 40px", // Defines the origin of the animation on the right side

@@ -15,7 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
 import { Avatar } from "@mui/material";
 import UserAvatar from "../UserAvatar";
-import { HamburgerMenu } from "../hambuger";
+
 export const routes = [
   {
     path: "/dashboard",

@@ -12,10 +12,16 @@ const Path = (props) => (
   />
 );
 
-export const MenuToggle = ({ toggle, isOpen }) => (
+export const MenuToggle = ({ toggle, isOpen, type }) => (
   <button
     onClick={toggle}
-    className={`${isOpen ? "fixed top-[20px] right-[30px]" : "relative"}`}
+    className={`${
+      isOpen
+        ? `fixed ${
+            type === "communityMenu" ? "bottom-[20px]" : "top-[20px]"
+          } right-[30px]`
+        : "relative"
+    }`}
     style={{
       zIndex: 9999, // Higher z-index for overlapping
       padding: "10px", // Adjust as needed

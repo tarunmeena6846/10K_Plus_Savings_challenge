@@ -14,7 +14,6 @@ import Footer from "./Footer";
 import ScrollEffectComponent from "./features/scrollEffect";
 import { AboutUsSection } from "./AboutUsComponent";
 import { useRef } from "react";
-import { HamburgerMenu } from "./hambuger";
 
 function Landing() {
   const projectedDataRef = useRef(null); // Create a reference

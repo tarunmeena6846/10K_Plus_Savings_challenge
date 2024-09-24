@@ -203,6 +203,7 @@ function Appbar() {
                       isOpen={isOpen}
                       setIsOpen={setIsOpen}
                       Items={navBarItems}
+                      type={"AppbarMenu"}
                     />
                   </div>
                 </>
@@ -212,6 +213,7 @@ function Appbar() {
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
                     Items={navBarItems}
+                    type={"AppbarMenu"}
                   />
                 </div>
               )}
