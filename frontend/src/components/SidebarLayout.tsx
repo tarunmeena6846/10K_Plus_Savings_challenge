@@ -10,7 +10,7 @@ const SidebarLayout = ({ children }) => {
       </div>
 
       {/* Content area */}
-      <div className="w-full lg:w-3/4 xl:flex xl:justify-center">
+      <div className="w-full lg:w-3/4 2xl:flex 2xl:justify-center">
         {/* <div className="hidden lg:block bg-[#111f36]"></div> */}
         <div className="p-5 md:p-10 ">{children}</div>
       </div>

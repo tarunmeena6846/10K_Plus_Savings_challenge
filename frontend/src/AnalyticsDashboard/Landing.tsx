@@ -151,29 +151,29 @@ const AnalyticsLanding = () => {
   }, [selectedMonth, selectedYear, selectedPortal, selectedType, action]);
   console.log(monthlyItems);
   return (
-    <div className="min-h-screen bg-[#eaeaea]">
+    <div className="h-screen bg-[#111f36] lg:bg-[#eaeaea] ">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-rows-1 md:grid-cols-3 gap-4 my-4">
+            <div className="grid grid-cols-1 md:grid-rows-1 md:grid-cols-6 gap-4  text-black ">
               <div
-                className="p-6 rounded-2xl border-4 border-pink-400 bg-white"
+                className="p-6 rounded-2xl border-4 border-pink-400 bg-white md:col-span-2 md:row-span-1"
                 style={{ background: "", overflow: "hidden" }}
               >
                 <h2>{selectedPortal} Income</h2>
                 <h2 className="text-4xl">${formatAmount(monthlyIncome)}</h2>
               </div>
               <div
-                className="p-6 rounded-2xl border-4 border-blue-500 bg-white"
+                className="p-6 rounded-2xl border-4 border-blue-500 bg-white  md:col-span-2 md:row-span-1"
                 style={{ background: "#", overflow: "hidden" }}
               >
                 <h2>{selectedPortal} Expense</h2>
                 <h2 className="text-4xl">${formatAmount(monthlyExpense)}</h2>
               </div>
               <div
-                className="p-6 rounded-2xl border-4 border-green-400 bg-white"
+                className="p-6 rounded-2xl border-4 border-green-400 bg-white  md:col-span-2 md:row-span-1"
                 style={{ background: "", overflow: "hidden" }}
               >
                 <h2>{selectedPortal} Savings</h2>
@@ -182,8 +182,9 @@ const AnalyticsLanding = () => {
                 </h2>
               </div>
             </div>
-            <div className="flex gap-4 mb-3">
-              <div className="flex">
+
+            <div className="flex flex-col md:flex-row gap-3 mt-4">
+              <div className="flex flex-col md:flex-row gap-3">
                 {/* <img src="./calender1.svg" alt="Calendar" /> */}
                 <select
                   onChange={handleChange}
@@ -227,7 +228,7 @@ const AnalyticsLanding = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex">
+              <div className="flex flex-col">
                 {/* <img src="./calender1.svg" alt="Calendar" /> */}
                 <select
                   onChange={(e) => {
@@ -253,7 +254,7 @@ const AnalyticsLanding = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex">
+              <div className="flex flex-col">
                 {/* <img src="./calender1.svg" alt="Calendar" /> */}
                 <select
                   onChange={(e) => {
@@ -291,14 +292,23 @@ const AnalyticsLanding = () => {
                 </div>
               )}
             </div>
-            <hr className="h-0.5 bg-gray-600" />
-            <AnalyticsTable
-              items={monthlyItems.filter((item) => item.type === selectedType)}
-              // type={selectedType}
-              setIsChecked={setIsChecked}
-              selectedEntry={selectedEntry}
-              setSelectedEntry={setSelectedEntry}
-            />
+            <div className="grid grid-cols-1 md:grid-rows-5 md:grid-cols-6 gap-4 ">
+              {/* </div> */}
+              {/* <div className="col-span-1 md:col-span-6 md:row-span-3"> */}
+              {/* <hr className="h-0.5 bg-gray-600" /> */}
+              <div className="row-span-1 col-sapn-1 md:col-span-6 md:row-span-5 ">
+                <div className="overflow-x-auto">
+                  <AnalyticsTable
+                    items={monthlyItems.filter(
+                      (item) => item.type === selectedType
+                    )}
+                    setIsChecked={setIsChecked}
+                    selectedEntry={selectedEntry}
+                    setSelectedEntry={setSelectedEntry}
+                  />
+                </div>
+              </div>
+            </div>
           </>
         )}
       </SidebarLayout>

@@ -114,7 +114,7 @@ export default function SWOTtasklist() {
   };
   console.log(completedTasks);
   return (
-    <div className="pt-10">
+    <div className="pt-10 flex w-full md:w-3/4 flex-col md:justify-center mx-auto">
       <div className="flex justify-between items-end px-4">
         <h2 className=" text-white text-2xl pt-2 mb-2">Task List</h2>
         {isChecked && (
