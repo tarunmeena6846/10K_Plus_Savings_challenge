@@ -146,23 +146,25 @@ export function InitUser() {
   const [subscription, setSubscripton] =
     useRecoilState<SubscriptionData>(subscriptionState);
   const Init = async () => {
-    // setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
-    console.log("inside inti");
+    console.log("inside InitUser");
+    setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     const storedToken = localStorage.getItem("token");
-    // if (!storedToken) {
-    //   setCurrentUserState((prev) => ({
-    //     ...prev,
-    //     userEmail: "",
-    //     isLoading: false,
-    //     imageUrl: "",
-    //     // isVerified: currentUserState.isVerified,
-    //     // myWhy: currentUserState.myWhy,
-    //     // isAdmin: currentUserState.isAdmin,
-    //   }));
-    //   console.log("here");
-    //   navigate("/login");
-    //   return;
-    // }
+    console.log("stored token", storedToken);
+    if (!storedToken) {
+      console.log("no token found");
+      setCurrentUserState((prev) => ({
+        ...prev,
+        userEmail: "",
+        isLoading: false,
+        imageUrl: "",
+        // isVerified: currentUserState.isVerified,
+        // myWhy: currentUserState.myWhy,
+        // isAdmin: currentUserState.isAdmin,
+      }));
+      console.log("here");
+      navigate("/login");
+      return;
+    }
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/auth/me`,
@@ -175,16 +177,16 @@ export function InitUser() {
         }
       );
 
+      console.log("response from me route", response);
       if (response.status === 401) {
-        console.log("herer");
-        console.error("Unauthorized: Token may be expired or invalid.");
+        console.log("Unauthorized: Token may be expired or invalid.");
         localStorage.removeItem("token");
         navigate("/login");
         return;
       }
 
       const data = await response.json();
-      console.log(" data after me route", data);
+      console.log("data after me route", data);
       if (data.success) {
         setCurrentUserState({
           userEmail: data?.userData?.email,
@@ -226,7 +228,7 @@ export function InitUser() {
           navigate("/pricing");
         }
       } else {
-        console.log("here");
+        console.log("here inside else part of inituser");
         setCurrentUserState((prev) => ({
           ...prev,
           userEmail: "",

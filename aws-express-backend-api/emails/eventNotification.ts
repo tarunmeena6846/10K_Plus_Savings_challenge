@@ -10,7 +10,7 @@ export const eventNotificationEmail = (name: []) => {
     <body>
       <p>Hi 10K Savings challenger,</p>
       <p>YOU MIGHT BE INTERESTED IN THIS!</p>
-      <p>Admin just created a new event. <a href="http://localhost:5173/community">Click here</a>to check the event</p>
+      <p>Admin just created a new event. <a href="${process.env.RETURN_CLIENT_URL}/community">Click here</a>to check the event</p>
       <p>Peace, Love and Harmony,</p>
       <p>10KSC Admin Team</p>
     </body>
