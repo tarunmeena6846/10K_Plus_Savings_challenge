@@ -57,11 +57,25 @@ const DrawerForm = ({
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
-
+  // // Handle click outside the drawer to close it
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (
+  //       drawerVisible &&
+  //       event.target.closest("#drawer-form") === null
+  //     ) {
+  //       setDrawerVisible(false);
+  //     }
+  //   };
+  //   document.addEventListener("click", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("click", handleClickOutside);
+  //   };
+  // }, [drawerVisible]);
   return (
     <div
       id="drawer-form"
-      className={`fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform bg-white w-80 dark:bg-gray-800 ${
+      className={` z-[1000] fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform bg-white w-80 dark:bg-gray-800 ${
         drawerVisible ? "translate-x-0" : "-translate-x-full"
       }`}
       aria-labelledby="drawer-label"
