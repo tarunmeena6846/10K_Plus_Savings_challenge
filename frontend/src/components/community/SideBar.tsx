@@ -147,20 +147,16 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
           </motion.button>
 
           {popularTags?.map((tag: tagDataType, index) => (
-            <>
-              {/* {!currentUserState.isLoading && ( */}
-              <div key={index}>
-                <motion.button
-                  whileHover={{ scale: 1.1 }} // Define hover animation
-                  whileTap={{ scale: 1 }} // Define hover animation
-                  className="bg-[#6d94ff] rounded-2xl px-2 "
-                  onClick={() => handleTagClick(tag._id)}
-                >
-                  {tag.tag}
-                </motion.button>
-              </div>
-              {/* )} */}
-            </>
+            <div key={index}>
+              <motion.button
+                whileHover={{ scale: 1.1 }} // Define hover animation
+                whileTap={{ scale: 1 }} // Define hover animation
+                className="bg-[#6d94ff] rounded-2xl px-2 "
+                onClick={() => handleTagClick(tag._id)}
+              >
+                {tag.tag}
+              </motion.button>
+            </div>
           ))}
         </div>
       </div>

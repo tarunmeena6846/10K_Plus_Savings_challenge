@@ -26,10 +26,10 @@ const PostLanding = () => {
           </>
         ) : ( */}
         <div className="flex flex-col-reverse md:flex-row">
-          <div className="md:w-3/4">
+          <div className=" w-full lg:w-3/4">
             <CommentDetails></CommentDetails>
           </div>
-          <div className="md:w-1/4 p-4 m-4">
+          <div className="hidden lg:w-1/4 p-4 m-4 lg:block">
             <SideBar onSelectTag={handleSelectTag}></SideBar>
           </div>
         </div>

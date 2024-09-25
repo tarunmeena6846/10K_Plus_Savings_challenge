@@ -46,15 +46,22 @@ export const approveOrDeclinePost = async (
     const { type } = req.body;
     console.log("isApprovalReqPosts", postId, type);
     // Update the post
-    const updatedFields = {
-      status: type,
-    };
+    if (type === "delete") {
+      const postInDb = await Post.findByIdAndDelete(postId);
+    } else {
+      const updatedFields = {
+        status: type,
+      };
 
-    const options = { new: true };
-    const posts = await Post.findByIdAndUpdate(postId, updatedFields, options);
-    console.log("inside post", posts);
-
-    res.status(200).json({ sucess: true, data: posts });
+      const options = { new: true };
+      const posts = await Post.findByIdAndUpdate(
+        postId,
+        updatedFields,
+        options
+      );
+      // console.log("inside post", posts);
+    }
+    res.status(200).json({ sucess: true });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
