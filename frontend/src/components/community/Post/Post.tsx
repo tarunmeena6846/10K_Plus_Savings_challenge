@@ -148,7 +148,7 @@ const Post: React.FC<PostType> = ({
   }, []);
   console.log("theme", isDarkTheme);
   return (
-    <div className="w-full max-w-3xl rounded-2xl dark:bg-gray-800 dark:border-gray-700 relative text-white ">
+    <div className="w-full max-w-3xl rounded-2xl relative text-white ">
       <div className="mb-6">
         <div className="flex  justify-between my-[20px]">
           <span className="flex gap-1 bg-[#bfdbfe] items-center p-1 px-3 rounded-xl text-blue-600">
