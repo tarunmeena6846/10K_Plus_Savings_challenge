@@ -318,7 +318,7 @@ export default function DemoApp() {
   //       day: "numeric",
   //     })
   //   : "";
-  // console.log(currentEvents);
+
   return (
     <div className="demo-app text-white">
       <style>
