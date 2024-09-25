@@ -1,15 +1,6 @@
-// import { stagger, useAnimate } from "framer-motion";
-// import { FeatureTitle } from "./features/title";
-// import { MusicVisual, OtherVisual } from "./features/visual";
 import Hero from "./hero";
-// import "../index.css";
-// import { useFeatureStore } from "./features/store";
-// import { useEffect } from "react";
-// import { useHidePageOverflow } from "../utils/toggle-page-overflow";
-// import { useEscapePress } from "../utils/use-escape-press";
 import ProjectedData from "./ProjectedData";
 import Footer from "./Footer";
-// import { useRef } from "react";
 
 import ScrollEffectComponent from "./features/scrollEffect";
 import { AboutUsSection } from "./AboutUsComponent";

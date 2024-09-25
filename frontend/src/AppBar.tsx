@@ -26,7 +26,7 @@ import {
 import { dateState } from "./components/store/atoms/date";
 import { motion } from "framer-motion";
 import { Resend } from "resend";
-import WelcomeEmail from "./utils/emails/Welcome";
+
 import { renderToString } from "react-dom/server"; // Import ReactDOMServer
 // import ManageBillingForm from "./stripe/ManageBillingForm";
 import Button from "./components/Button";
