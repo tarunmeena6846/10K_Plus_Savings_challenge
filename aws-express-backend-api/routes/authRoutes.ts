@@ -170,7 +170,7 @@ router.post(
         isUserPresent.resetPasswordToken = token;
         isUserPresent.resetPasswordTokenUsed = false;
         await isUserPresent.save();
-        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        const resetLink = `${process.env.RETURN_CLIENT_URL}/reset-password/${token}`;
         console.log("token", token);
         await sendEmail(
           email,

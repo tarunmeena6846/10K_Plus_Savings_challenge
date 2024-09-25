@@ -49,9 +49,9 @@ export const getSWOTAnalysisTemp = () => {
         <p>So, here is your monthly reminder to complete your SWOT Analysis. This exercise helps you reflect on the past month to reassess your strengths, weaknesses, opportunities, and threats. It’s a valuable process to determine what is and isn’t working for you, and to make adjustments if needed to maximize your chances of success during the challenge. Additionally, it’s a great life skill that translates into other areas of your life.</p>
         <p>You have a few options for completing your monthly SWOT analysis:</p>
         <ul>
-          <li>To DIY, click <a href="http://localhost:5173/swotportal">this link</a> to get started now.</li>
-          <li>To join the next free Monthly Community Savings Strategy Call, click <a href="http://localhost:5173/community">here</a> to check the community dashboard for the date and time.</li>
-          <li>To schedule a 1:1 Savings Strategy Session with one of our savings coaches, please click <a href="http://localhost:5173/swotportal">this link</a></li>
+          <li>To DIY, click <a href="${process.env.RETURN_CLIENT_URL}/swotportal">this link</a> to get started now.</li>
+          <li>To join the next free Monthly Community Savings Strategy Call, click <a href="${process.env.RETURN_CLIENT_URL}/community">here</a> to check the community dashboard for the date and time.</li>
+          <li>To schedule a 1:1 Savings Strategy Session with one of our savings coaches, please click <a href="${process.env.RETURN_CLIENT_URL}/swotportal">this link</a></li>
         </ul>
         <p>If you need assistance, visit the SWOT Task List post under the community dashboard, or schedule a 1:1 Savings Strategy Session with one of our expert savings coaches. Our admins and community members are here to support you. Lean on your 10K Savings Challengers Community—we are here for you!</p>
         <p>Peace, Love, and Harmony,</p>
