@@ -25,6 +25,9 @@ import SidebarLayout from "./SidebarLayout";
 import { fetchData } from "./Dashboard/fetchIncomeAndExpenseData";
 import Loader from "./community/Loader";
 import DoughnutData from "./DoughnutChart";
+import MonthwiseDataGraph from "./LineGraph";
+import LineChart from "./SavingsLineGraph";
+import SavingsTrendPrediction from "./SavingsPrediction";
 
 export const monthIncExpInfo = [
   { name: "Rent", amount: 1000, type: "expense" },
@@ -55,75 +58,6 @@ const Dashboard = () => {
   const [annualTargetSavings, setAnnualTargetSavings] = useState(0);
   const [annualCurrentSavings, setAnnualCurrentSavings] = useState(0);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  // const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-  // const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
-  // const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
-  // const handleReset = () => {
-  //   setCurrentUserState({
-  //     userEmail: currentUserState.userEmail,
-  //     isLoading: currentUserState.isLoading,
-  //     imageUrl: "",
-  //     isVerified: currentUserState.isVerified,
-  //     myWhy: currentUserState.myWhy,
-  //     isAdmin: currentUserState.isAdmin,
-  //   });
-  // };
-  // const handleOpenSettingsDialog = () => {
-  //   setSettingsDialogOpen(true);
-  // };
-
-  // const handleCloseSettingsDialog = () => {
-  //   setSettingsDialogOpen(false);
-  // };
-
-  // const handleOpenIncomeDialog = () => {
-  //   setIncomeDialogOpen(true);
-  // };
-
-  // const handleCloseIncomeDialog = () => {
-  //   setIncomeDialogOpen(false);
-  // };
-
-  // const handleAddTarget = (targetSavings) => {
-  //   const handleSaveSubmit = async () => {
-  //     await fetch(
-  //       `${import.meta.env.VITE_SERVER_URL}/data/update-projected-savings`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           authorization: "Bearer " + localStorage.getItem("token"),
-  //         },
-  //         body: JSON.stringify({
-  //           projectedYearlySavings: targetSavings,
-  //           // year: currentDate.getFullYear(),
-  //           year: new Date().getFullYear(),
-  //         }),
-  //       }
-  //     )
-  //       .then((resp) => {
-  //         if (!resp.ok) {
-  //           throw new Error("Network response is not ok");
-  //         }
-  //         resp.json().then((responseData) => {
-  //           console.log(
-  //             "response data at update projeted savings",
-  //             responseData
-  //           );
-
-  //           // setCourses(data);
-  //           if (responseData.success == true) {
-  //           } else {
-  //             console.error("Error saving projected data:", responseData.error);
-  //           }
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error saving projected data");
-  //       });
-  //   };
-  // };
-  // console.log("selectedDate at dashboard", selectedDate);
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -191,6 +125,7 @@ const Dashboard = () => {
     }
   };
 
+  /*
   const handleSaveMyWhy = async () => {
     try {
       const response = await fetch(
@@ -231,6 +166,7 @@ const Dashboard = () => {
       currentUserState.userEmail
     );
   };
+  */
   useEffect(() => {
     // Check if the necessary data is available before navigating
     if (currentUserState.userEmail === null && !currentUserState.isLoading) {
@@ -242,8 +178,18 @@ const Dashboard = () => {
     navigate,
     setCurrentUserState,
   ]);
+  const currentHour = new Date().getHours();
+
+  // Determine the appropriate greeting based on the time of day
+  let greeting = "Good Morning";
+  if (currentHour >= 12 && currentHour < 18) {
+    greeting = "Good Afternoon";
+  } else if (currentHour >= 18 || currentHour < 5) {
+    greeting = "Good Evening";
+  }
   return (
-    <div className=" h-screen bg-[#eaeaea] ">
+    //Toaster can be used for popups
+    <div className="h-full bg-[#111f36] lg:bg-[#eaeaea] ">
       <SidebarLayout>
         {currentUserState.isLoading ? (
           <Loader />
@@ -255,6 +201,7 @@ const Dashboard = () => {
                 onClose={handleVideoModalClose}
               />
             )}
+
             {showSecondModal && (
               <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-75">
                 <div className="relative bg-white rounded-lg shadow-lg p-4">
@@ -282,56 +229,91 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1  items-center  text-center md:grid-rows-3 md:grid-cols-3 gap-4">
-              <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#ffa540", overflow: "hidden" }}
-              >
-                <h2>Current Annual Savings</h2>
-                <h2 className="text-4xl">${annualCurrentSavings}</h2>
+
+            <main className="flex flex-col gap-4 pb-16 pt-8">
+              <div className="flex flex-col justify-between gap-4 lg:flex-row">
+                <h2 className="text-2xl sm:text-3xl text-white lg:text-gray-700">
+                  {greeting}
+                  <span className="text-3xl sm:text-4xl ml-1 sm:ml-2 lg:text-black break-words w-full">
+                    {currentUserState.userName}
+                  </span>
+                </h2>
+                {/* <SearchBar /> */}
               </div>
-              <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#51d9a8", overflow: "hidden" }}
-              >
-                <h2>Target Annual Savings</h2>
-                <h2 className="text-4xl">${annualTargetSavings}</h2>
-              </div>
-              <div
-                className="p-6 rounded-2xl"
-                style={{ background: "#96c9dd", overflow: "hidden" }}
-              >
-                <h2>Actual Annual Savings</h2>
-                <h2 className="text-4xl">${annualActualSavings}</h2>
-              </div>
-              <div className="col-span-2 md:row-span-2">
-                <div
-                  className=" h-full rounded-2xl"
-                  // style={{ maxHeight: "200px" }}
-                >
-                  {isMonthlyDataReady && (
-                    <MonthlyBarGraph monthlyData={monthlyData} />
-                  )}
+              <div className="flex h-full flex-col gap-4 rounded-2xl py-4">
+                <div className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-7 gap-4 mt-4  justify-center h-full">
+                  <div
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1 bg-gradient-to-r from-orange-500  to-pink-500"
+                    // style={{ background: "#ffa540" }}
+                  >
+                    <h2>Cumulative Current Savings</h2>
+                    <h2 className="text-3xl md:text-4xl">
+                      ${annualCurrentSavings}
+                    </h2>
+                  </div>
+
+                  <div
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1 bg-gradient-to-r from-[#085078]  to-[#85D8CE]"
+                    // style={{ background: "#51d9a8" }}
+                  >
+                    <h2>Cumulative Target Savings</h2>
+                    <h2 className="text-3xl md:text-4xl">
+                      ${annualTargetSavings}
+                    </h2>
+                  </div>
+
+                  <div
+                    className="p-6 rounded-2xl text-center md:col-span-2 md:row-span-1 bg-gradient-to-r from-[#2980B9] to-[#6DD5FA]"
+                    // style={{ background: "#96c9dd" }}
+                  >
+                    <h2>Cumulative Actual Savings</h2>
+                    <h2 className="text-3xl md:text-4xl">
+                      ${annualActualSavings}
+                    </h2>
+                  </div>
+
+                  <div className="md:col-span-6 md:row-span-2">
+                    {isMonthlyDataReady && (
+                      // <DoughnutData
+                      //   annualTargetSavings={annualTargetSavings}
+                      //   annualCurrentSavings={annualCurrentSavings}
+                      //   annualActualSavings={annualActualSavings}
+                      // />
+                      <SavingsTrendPrediction expenseAndIncome={monthlyData} />
+                    )}
+                  </div>
+                  {/* Monthly Bar Graph */}
+                  <div className="md:col-span-4 md:row-span-2">
+                    {/* <div className="rounded-2xl"> */}
+                    {isMonthlyDataReady && (
+                      <MonthlyBarGraph monthlyData={monthlyData} />
+                    )}
+                    {/* </div> */}
+                  </div>
+
+                  {/* Doughnut Chart */}
+                  <div className="md:col-span-2 md:row-span-2">
+                    {isMonthlyDataReady && (
+                      <DoughnutData
+                        annualTargetSavings={annualTargetSavings}
+                        annualCurrentSavings={annualCurrentSavings}
+                        annualActualSavings={annualActualSavings}
+                      />
+                    )}
+                  </div>
+
+                  {/* Doughnut Chart */}
+
+                  {/* Monthly Bar Graph */}
+                  <div className="md:col-span-6 md:row-span-2">
+                    {isMonthlyDataReady && (
+                      <LineChart expenseAndIncome={monthlyData} />
+                    )}
+                    {/* </div> */}
+                  </div>
                 </div>
               </div>
-              <div className="col-span-1 md:row-span-2">
-                <div
-                  className="h-full rounded-2xl"
-                  // style={{ maxHeight: "200px" }}
-                >
-                  {isMonthlyDataReady && (
-                    <DoughnutData
-                      annualTargetSavings={annualTargetSavings}
-                      annualCurrentSavings={annualCurrentSavings}
-                      annualActualSavings={annualActualSavings}
-                    />
-                  )}
-                </div>
-              </div>
-              {/* <div className="p-4 col-span-1 row-span-2 rounded-2xl bg-white">
-            <MonthlyChart monthlyIncome={500} monthlyExpenses={200} />
-          </div> */}
-            </div>
+            </main>
           </>
         )}
       </SidebarLayout>

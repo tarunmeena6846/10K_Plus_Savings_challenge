@@ -429,16 +429,38 @@ router.get(
           actual: Number;
           current: Number;
           target: Number;
+          incomeVariance: Number;
+          expenseVariance: Number;
+          incomeGrowthPercent: Number;
+          expenseGrowthPercent: Number;
         }[] = [];
+        let previousMonthIncome: number = 0;
+        let previousMonthExpense: number = 0;
         yearlyEntry.monthlyData.forEach((monthData) => {
           const monthInfo = {
             month: monthData.month,
             actual: monthData.actual.income - monthData.actual.expense,
             current: monthData.current.income - monthData.current.expense,
             target: monthData.target.income - monthData.target.expense,
+            incomeVariance: monthData.target.income - monthData.actual.income,
+            expenseVariance:
+              monthData.target.expense - monthData.actual.expense,
+            incomeGrowthPercent: previousMonthIncome
+              ? ((monthData.actual.income - previousMonthIncome) /
+                  previousMonthIncome) *
+                100
+              : 0,
+            expenseGrowthPercent: previousMonthExpense
+              ? ((monthData.actual.expense - previousMonthExpense) /
+                  previousMonthExpense) *
+                100
+              : 0,
           };
           console.log("monthInfo", monthInfo);
           monthWiseData.push(monthInfo);
+          // Update previous values for the next iteration
+          previousMonthIncome = monthData.actual.income;
+          previousMonthExpense = monthData.actual.expense;
         });
 
         // Add data for months where data is not present
@@ -452,6 +474,10 @@ router.get(
               actual: 0,
               current: 0,
               target: 0,
+              incomeVariance: 0,
+              expenseVariance: 0,
+              incomeGrowthPercent: 0,
+              expenseGrowthPercent: 0,
             });
           }
         });
@@ -468,6 +494,7 @@ router.get(
           annualCurrentSavings:
             yearlyEntry.totalCurrentIncome - yearlyEntry.totalCurrentExpenses,
           monthWiseData: monthWiseData,
+          // SavingsItems: yearlyEntry.monthlyData,
         });
       }
       // Find the monthly entry for the specified month

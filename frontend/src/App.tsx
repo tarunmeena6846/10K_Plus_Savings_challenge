@@ -45,6 +45,7 @@ import AnalyticsLanding from "./AnalyticsDashboard/Landing";
 import RequestOTP from "./components/RequestOTP";
 import ResetPassword from "./components/ResetPassword";
 import LandingConsole from "./components/AdminConsole/ConsoleLanding";
+import { useIsMobile } from "./components/MonthlyBarGraph";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
@@ -64,7 +65,8 @@ if ("serviceWorker" in navigator) {
 
 function App() {
   const location = useLocation();
-
+  const isMobile = useIsMobile();
+  console.log(isMobile);
   // Check if the current location matches any of the routes where Appbar should not be rendered
   const hideAppbarRoutes = [
     "/dashboard",
@@ -76,21 +78,34 @@ function App() {
     "/register",
     // "/",
   ];
-  const shouldRenderAppbar = !hideAppbarRoutes.includes(location.pathname);
+  const shouldRenderAppbar = (() => {
+    if (isMobile) {
+      // For mobile: Do not render appbar only for login and register
+      return (
+        location.pathname !== "/login" && location.pathname !== "/register"
+      );
+    } else {
+      // For larger screens: Do not render appbar for routes in hideAppbarRoutes
+      return !hideAppbarRoutes.includes(location.pathname);
+    }
+  })();
   // console.log("tarun inside app.tsx");
+  console.log(shouldRenderAppbar, location.pathname);
 
   return (
     // <Router>
     <RecoilRoot>
       <InitUser />
-      {shouldRenderAppbar && <Appbar />} {/* Render the Appbar conditionally */}
+      {shouldRenderAppbar && <Appbar />}
+      {/* Render the Appbar conditionally */}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
         <Route path="/request-otp" element={<RequestOTP />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/currentdashboard" element={<CurrentDashboard />} />
         <Route path="/targetdashboard" element={<TargetDashboard />} />
@@ -98,9 +113,9 @@ function App() {
         <Route path="/analytics" element={<AnalyticsLanding />} />
 
         <Route path="/pricing" element={<StripePricingTable />} />
-        <Route path="/savingportal" element={<SavingPortalLanding />} />
-        <Route path="/incomeportal" element={<IncomePortalLanding />} />
-        <Route path="/projecteddashboard" element={<ProjectedDashboard />} />
+        {/* <Route path="/savingportal" element={<SavingPortalLanding />} /> */}
+        {/* <Route path="/incomeportal" element={<IncomePortalLanding />} /> */}
+        {/* <Route path="/projecteddashboard" element={<ProjectedDashboard />} /> */}
         <Route path="/swotportal" element={<SWOTanalysisPortal />} />
         <Route path="/swotportal/tasklist" element={<SWOTtasklist />} />
         <Route path="/swotportal/schedulesession" element={<BookSession />} />
@@ -172,7 +187,7 @@ export function InitUser() {
       console.log(" data after me route", data);
       if (data.success) {
         setCurrentUserState({
-          userEmail: data?.userData?.userEmail,
+          userEmail: data?.userData?.email,
           userName: data?.userData?.username,
           isLoading: false,
           imageUrl: data?.userData?.imageUrl,

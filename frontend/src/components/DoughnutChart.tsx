@@ -1,6 +1,7 @@
 import React from "react";
 import { Chart, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { useIsMobile } from "./MonthlyBarGraph";
 
 Chart.register(ArcElement, Tooltip, Legend, Title);
 Chart.defaults.plugins.tooltip.backgroundColor = "black";
@@ -11,42 +12,37 @@ function DoughnutData({
   annualCurrentSavings,
   annualActualSavings,
 }) {
-  console.log(annualActualSavings, annualTargetSavings);
   const actualPercentage = (annualActualSavings / annualTargetSavings) * 100;
   const currentPercentage = (annualCurrentSavings / annualTargetSavings) * 100;
+  const isMobile = useIsMobile();
 
-  //TODO make the border lines overlap
   const data = {
     labels: ["Actual Savings", "Current Savings", "Remaining Target"],
-    color: "white",
     datasets: [
       {
         data: [
           annualTargetSavings,
           annualCurrentSavings,
-          //   100 - actualPercentage - currentPercentage,
           annualActualSavings - annualCurrentSavings,
         ],
         backgroundColor: ["#96c9dd", "#ffa540", "#51d9a8"],
-        // hoverBackgroundColor: ["#45A049", "#FFBC43", "#FF4365"],
         borderWidth: 0, // Removes borders
         borderRadius: 10,
-        // lineJoin: 10,
-        // borderAlign: "inner", // Aligns the border to overlap the segments
       },
     ],
   };
 
   const options = {
     cutout: "70%", // Creates the donut hole effect
+    responsive: true,
+    maintainAspectRatio: false, // Allow the chart to adjust to its container's size
     plugins: {
       title: {
         display: true,
-        color: "white",
+        color: isMobile ? "black" : "white",
         text: "Savings Progress: Target vs. Actual",
         padding: {
           top: 10,
-          // bottom: 50, // Adjust the top padding for the title
         },
       },
       tooltip: {
@@ -58,16 +54,18 @@ function DoughnutData({
       },
       legend: {
         labels: {
-          color: "white", // Label text color
-          //   bord
+          color: isMobile ? "black" : "white",
         },
       },
     },
   };
 
   return (
-    <div className="flex flex-col items-center bg-[#111f36] rounded-3xl py-3">
-      <Doughnut data={data} options={options} />
+    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3 h-full">
+      {/* <div className="w-full h-[50vh] sm:h-[50vh] md:h-[30vh] lg:h-[40vh] "> */}
+      <div className="w-full h-full">
+        <Doughnut data={data} options={options} />
+      </div>
     </div>
   );
 }

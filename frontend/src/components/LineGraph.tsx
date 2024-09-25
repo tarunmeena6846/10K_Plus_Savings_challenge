@@ -9,6 +9,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { useIsMobile } from "./MonthlyBarGraph";
 
 ChartJS.register(
   Title,
@@ -23,7 +24,7 @@ const MonthwiseDataGraph = ({ expenseAndIncome }) => {
   // Process data
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
-
+  console.log(expenseAndIncome);
   // Initialize empty data structure
   const dailyData = Array.from({ length: 31 }, (_, i) => ({
     date: `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(
@@ -48,7 +49,7 @@ const MonthwiseDataGraph = ({ expenseAndIncome }) => {
   const labels = dailyData.map((data) => data.date.substring(5)); // Extract day from date
   const incomeData = dailyData.map((data) => data.income);
   const expenseData = dailyData.map((data) => data.expense);
-
+  const isMobile = useIsMobile();
   const data = {
     labels,
     datasets: [
@@ -70,43 +71,52 @@ const MonthwiseDataGraph = ({ expenseAndIncome }) => {
       title: {
         display: true,
         text: `Income and Expenses by Day (${currentYear})`,
-        color: "white",
+        color: isMobile ? "black" : "white",
         padding: {
           top: 10,
         },
       },
       legend: {
         labels: {
-          color: "white",
+          color: isMobile ? "black" : "white",
         },
       },
     },
     responsive: true,
+    maintainAspectRatio: false, // Allow the chart to fill the container
     scales: {
       x: {
         stacked: false,
         grid: {
-          color: "rgba(255, 255, 255, 0.2)",
+          color: isMobile ? "black" : "rgba(255, 255, 255, 0.2)", // Grid lines color
         },
         ticks: {
-          color: "white",
+          color: isMobile ? "black" : "white",
+          font: {
+            // size: window.innerWidth < 640 ? 10 : 12, // Smaller font for y-axis on mobile
+          },
         },
       },
       y: {
         stacked: false,
         grid: {
-          color: "rgba(255, 255, 255, 0.2)",
+          color: isMobile ? "black" : "rgba(255, 255, 255, 0.2)", // Grid lines color
         },
         ticks: {
-          color: "white",
+          color: isMobile ? "black" : "white",
+          font: {
+            // size: window.innerWidth < 640 ? 10 : 12, // Smaller font for y-axis on mobile
+          },
         },
       },
     },
   };
 
   return (
-    <div className="rounded-3xl p-2 bg-[#111f36] h-full w-full ">
+    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3 h-full">
+      {/* <div className="w-full h-full"> */}
       <Bar options={options} data={data} />
+      {/* </div> */}
     </div>
   );
 };

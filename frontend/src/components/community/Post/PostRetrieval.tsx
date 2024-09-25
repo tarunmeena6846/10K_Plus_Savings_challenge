@@ -69,7 +69,7 @@ const Postdetails = ({ commentCount }) => {
   console.log("inside  postdetails ", postId);
 
   const approveOrDeclinePost = async (type: string) => {
-    console.log(postId);
+    console.log("tarun type is ", type);
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/post/approvePost/${postId}`,
@@ -93,7 +93,9 @@ const Postdetails = ({ commentCount }) => {
       setShowApproveModel(false);
       // }
       setShowDeleteConfirmModal(false);
+      navigate("/community");
     } catch (error) {
+      alert("Error modifying Post");
       console.error(error);
     }
   };
@@ -124,9 +126,9 @@ const Postdetails = ({ commentCount }) => {
       ""
     );
   };
-  // console.log(typeof currentPost.content, currentPost.content);
+  console.log("tarun current", currentPost.author, currentUserState.userName);
   return (
-    <div className="text-white p-10">
+    <div className="text-white p-1 lg:p-10">
       {currentUserState.isLoading ? (
         <Loader />
       ) : (
@@ -146,9 +148,9 @@ const Postdetails = ({ commentCount }) => {
                 </p>
               </div>
             </div>
-            <div className="">
+            <div className="flex">
               {currentUserState.isAdmin && (
-                <div className="flex gap-3 mt-3">
+                <div className="flex gap-3">
                   {(currentPost.status === "approvalPending" ||
                     currentPost.status === "rejected") && (
                     <div className="">
@@ -158,26 +160,39 @@ const Postdetails = ({ commentCount }) => {
                         onClick={() => setShowApproveModel(true)}
                       >
                         <img src="/approve.svg"></img>
-                        {/* <h2 className="text-red-500">approve</h2> */}
-                      </button>
-                    </div>
-                  )}
-                  {/* {currentPost.status} */}
-                  {(currentPost.status === "approvalPending" ||
-                    currentPost.status === "approved") && (
-                    <div className="">
-                      {/* {"here"} */}
-                      <button
-                        className="flex items-end"
-                        onClick={() => setShowDeleteConfirmModal(true)}
-                      >
-                        <img src="/delete.svg"></img>
-                        {/* <h2 className="text-red-500">Delete</h2> */}
                       </button>
                     </div>
                   )}
                 </div>
               )}
+              {/* {currentPost.status} */}
+              {(currentPost.author === currentUserState.userName ||
+                (currentUserState.isAdmin &&
+                  (currentPost.status === "approvalPending" ||
+                    currentPost.status === "approved"))) && (
+                <div className="">
+                  {/* {"here"} */}
+                  <button
+                    className="flex items-end"
+                    onClick={() => setShowDeleteConfirmModal(true)}
+                  >
+                    <img src="/delete.svg"></img>
+                    {/* <h2 className="text-red-500">Delete</h2> */}
+                  </button>
+                </div>
+              )}
+
+              {/* {currentPost.author === currentUserState.userName &&
+                !currentUserState.isAdmin && (
+                  <div>
+                    <button
+                      className="flex items-end"
+                      onClick={() => setShowDeleteConfirmModal(true)}
+                    >
+                      <img src="/delete.svg"></img>
+                    </button>
+                  </div>
+                )} */}
             </div>
           </div>
           <h1
@@ -210,7 +225,16 @@ const Postdetails = ({ commentCount }) => {
         <PopupModal
           isModalOpen={showDeleteModal}
           setIsModalOpen={setShowDeleteConfirmModal}
-          handleDelete={() => approveOrDeclinePost("rejected")}
+          handleDelete={() => {
+            if (currentUserState.isAdmin) {
+              approveOrDeclinePost("rejected");
+            } else if (
+              // currentPost.status === "rejected" &&
+              currentPost.author === currentUserState.userName
+            ) {
+              approveOrDeclinePost("delete");
+            }
+          }}
           type={"delete"}
         />
       )}

@@ -375,7 +375,7 @@ const CommentDetails = () => {
         <> */}
       <Postdetails commentCount={sortedComments.length}></Postdetails>
 
-      <div className="px-10">
+      <div className="px-1 lg:px-10">
         {/* <h2>Comments</h2> */}
         {/* <label>Sort By:</label>
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>

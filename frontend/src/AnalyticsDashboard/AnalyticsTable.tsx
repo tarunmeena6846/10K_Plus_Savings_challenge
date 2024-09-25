@@ -58,9 +58,9 @@ const AnalyticsTable: React.FC<any> = ({
 
   console.log(selectedEntry);
   return (
-    <div className="mt-4 ">
-      <table className="table-auto w-full">
-        <thead className="bg-[#111f36] text-white">
+    <div className=" mt-4 ">
+      <table className="table-auto min-w-[60px] w-full">
+        <thead className="bg-white lg:bg-[#111f36] text-black lg:text-white">
           <tr>
             <th className="px-4 py-2 text-left">
               <input
@@ -85,7 +85,10 @@ const AnalyticsTable: React.FC<any> = ({
           {currentItems
             // .filter((item: any) => item.type === type)
             .map((item: any, index: any) => (
-              <tr key={index} className="bg-white border-b border-gray-200">
+              <tr
+                key={index}
+                className="lg:bg-white bg-[#111f36] border-b border-gray-200 text-white lg:text-black"
+              >
                 <td className="py-2 px-4">
                   <input
                     type="checkbox"

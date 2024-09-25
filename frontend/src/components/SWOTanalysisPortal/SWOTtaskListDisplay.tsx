@@ -114,11 +114,11 @@ export default function SWOTtasklist() {
   };
   console.log(completedTasks);
   return (
-    <div className="pt-10">
+    <div className="pt-10 flex w-full md:w-3/4 flex-col md:justify-center mx-auto">
       <div className="flex justify-between items-end px-4">
-        <h2 className=" text-white text-2xl pt-2">Task List</h2>
+        <h2 className=" text-white text-2xl pt-2 mb-2">Task List</h2>
         {isChecked && (
-          <div className="">
+          <div className="mb-2 px-4">
             <button
               className={`p-2 ${
                 currentUserState.isLoading ? "bg-green-200" : "bg-green-500"
@@ -138,42 +138,53 @@ export default function SWOTtasklist() {
           </div>
         )}
       </div>
-      <div className="flex flex-col mt-2 px-4">
-        <div className="flex flex-row bg-gray-200 p-2">
-          <div className="flex-1">
-            <input
-              type="checkbox"
-              checked={selectAllEnabled}
-              onChange={handleSelectAll}
-            />
-          </div>
-          <div className="flex-1">Task Title</div>
-          {/* <div className="flex-1">Completed</div> */}
-          <div className="flex-1">Due Date</div>
-        </div>
-        {currentTasks?.map((task: any) =>
-          currentUserState.isLoading ? (
-            <Loader key={task._id} />
-          ) : (
-            <div
-              key={task._id}
-              className={`flex flex-row border-t border-gray-300 p-2 ${
-                task.isComplete ? `text-gray-400` : `text-white`
-              }`}
-            >
-              <div className="flex-1">
+      <div className="w-full">
+        <table className="w-full">
+          <thead className="text-black bg-white">
+            <tr>
+              <th className="px-4 py-2 text-left">
                 <input
                   type="checkbox"
-                  id={`task-${task._id}`}
-                  checked={completedTasks.includes(task._id)}
-                  onChange={() => handleCheckboxChange(task._id)}
+                  checked={selectAllEnabled}
+                  onChange={handleSelectAll}
                 />
-              </div>
-              <div className="flex-1">{task.title}</div>
-              <div className="flex-1">{task.dueDate ? task.dueDate : "NA"}</div>
-            </div>
-          )
-        )}
+              </th>
+              <th className="px-4 py-2 text-left font-semibold">Task Title</th>
+              <th className="px-4 py-2 text-left font-semibold">Due Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentTasks?.map((task: any) =>
+              currentUserState.isLoading ? (
+                <tr key={task._id}>
+                  <td colSpan={3} className="text-center">
+                    <Loader />
+                  </td>
+                </tr>
+              ) : (
+                <tr
+                  key={task._id}
+                  className={`border-t border-gray-300 p-2 ${
+                    task.isComplete ? `text-gray-400` : `text-white`
+                  }`}
+                >
+                  <td className="px-4 py-2">
+                    <input
+                      type="checkbox"
+                      id={`task-${task._id}`}
+                      checked={completedTasks.includes(task._id)}
+                      onChange={() => handleCheckboxChange(task._id)}
+                    />
+                  </td>
+                  <td className="px-4 py-2">{task.title}</td>
+                  <td className="px-4 py-2">
+                    {task.dueDate ? task.dueDate : "NA"}
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
       </div>
       <div className="flex justify-center items-center mt-4 space-x-2">
         {taskList && (

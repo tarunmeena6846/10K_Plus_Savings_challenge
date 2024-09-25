@@ -26,7 +26,7 @@ import {
 import { dateState } from "./components/store/atoms/date";
 import { motion } from "framer-motion";
 import { Resend } from "resend";
-import WelcomeEmail from "./utils/emails/Welcome";
+
 import { renderToString } from "react-dom/server"; // Import ReactDOMServer
 // import ManageBillingForm from "./stripe/ManageBillingForm";
 import Button from "./components/Button";
@@ -35,31 +35,15 @@ import countAtom from "./components/store/atoms/quickLinkCount";
 import Dropdown from "./Dropdown";
 import Loader from "./components/community/Loader";
 import { Spinner } from "./components/Loader/Spinner";
+import { HamburgerMenu } from "./components/hambuger";
 // import { handleSubscription } from "./stripe/subscription";
 // import { getUserSubscriptionPlan } from "./stripe/subscription";
 
 function Appbar() {
   const navigate = useNavigate();
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useRecoilState(dateState);
-  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
-  // const [videoModalOpen, setVideoModalOpen] = useRecoilState(videoModalState);
-
-  const adminItems = [{ label: "Admin Console", route: "/adminconsole" }];
-
-  const swotItems = [{ label: "Tasklist", route: "/swotportal/tasklist" }];
-  // const [userPostCount, setUserPostCount] = useRecoilState(countAtom);
-  // const subscriptionPlan = await getUserSubscriptionPlan();
-  // const [subscription, setSubscripton] =
-  //   useRecoilState<SubscriptionData>(subscriptionState);
-  console.log(
-    "import.meta.env.VITE_SERVER_URL",
-    import.meta.env.VITE_SERVER_URL
-  );
-
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [isOpen, setIsOpen] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleMouseEnter = () => {
@@ -79,63 +63,41 @@ function Appbar() {
     setIsAdminDropdownOpen(false);
   };
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const adminItems = [{ label: "Admin Console", route: "/adminconsole" }];
 
-  const handleMenuItemClick = (route) => {
-    setAnchorEl(null);
-    navigate(route);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    setLogoutModalOpen(true);
-  };
-
-  const handleLogoutConfirm = () => {
-    setLogoutModalOpen(false);
-    localStorage.removeItem("token");
-    // setCurrentUserState({
-    //   userEmail: "",
-    //   isLoading: false,
-    //   imageUrl: currentUserState.imageUrl,
-    //   isVerified: currentUserState.isVerified,
-    //   myWhy: currentUserState.myWhy,
-    //   isAdmin: currentUserState.isAdmin,
-    // });
-    setCurrentUserState((prev) => ({
-      ...prev,
-      userEmail: "",
-      isLoading: false,
-      // imageUrl: "",
-      // isVerified: currentUserState.isVerified,
-      // myWhy: currentUserState.myWhy,
-      // isAdmin: currentUserState.isAdmin,
-    }));
-    setSelectedDate({
-      year: selectedDate.year,
-      month: new Date().toLocaleString("en-US", { month: "long" }),
-    });
-
-    navigate("/");
-  };
-
-  const handleLogoutCancel = () => {
-    setLogoutModalOpen(false);
-  };
-  const manageSubscription = async () => {
-    setLogoutModalOpen(false);
-  };
-
+  const swotItems = [{ label: "Tasklist", route: "/swotportal/tasklist" }];
+  const navBarItems = [
+    { label: "Home", route: "/" },
+    ...(currentUserState.userEmail === ""
+      ? [
+          { label: "Login", route: "/login" },
+          { label: "Sign up", route: "/register" },
+          { label: "Pricing", route: "/pricing" },
+          { label: "Community", route: "/community" },
+          { label: "SWOT Portal", route: "/swotportal" },
+        ]
+      : [
+          { label: "Savings Portal", route: "/dashboard" },
+          { label: "Current Savings Portal", route: "/currentdashboard" },
+          { label: "Target Savings Portal", route: "/targetdashboard" },
+          { label: "Actual Savings Portal", route: "/actualdashboard" },
+          { label: "Pricing", route: "/pricing" },
+          { label: "Community", route: "/community" },
+          ...(currentUserState.isAdmin
+            ? [{ label: "Admin Console", route: "/adminconsole" }]
+            : []),
+          { label: "SWOT Portal", route: "/swotportal" },
+          { label: "SWOT TaskList", route: "/swotportal/tasklist" },
+          { label: "Analytics", route: "/analytics" },
+          { label: "Logout", route: "/logout" },
+        ]),
+  ];
   console.log(currentUserState);
+
   return (
-    <div className="px-4">
+    <div className="px-4 ">
       <Toolbar
-        className="mx-auto mt-6 w-full rounded-3xl bg-[#eaeaea] border "
+        className="mx-auto mt-6 w-full rounded-3xl bg-[#eaeaea] border z-[999]"
         style={{
           display: "flex",
           alignItems: "center",
@@ -221,97 +183,44 @@ function Appbar() {
           ) : (
             <div>
               {currentUserState.userEmail === "" ? (
-                <div className="hidden md:flex space-x-4">
-                  <motion.button
-                    className="login-button rounded-3xl  text-black  w-20 h-10"
-                    whileHover={{
-                      scale: 1.3,
-                      background: "black",
-                      color: "white",
-                    }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => navigate("/login")}
-                  >
-                    Login
-                  </motion.button>
-                </div>
-              ) : (
                 <>
-                  <IconButton aria-label="menu" onClick={handleLogout}>
-                    <MenuIcon className="text-white" />
-                  </IconButton>
+                  <div className="hidden md:flex space-x-4">
+                    <motion.button
+                      className="login-button rounded-3xl text-black w-20 h-10"
+                      whileHover={{
+                        scale: 1.3,
+                        background: "black",
+                        color: "white",
+                      }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => navigate("/login")}
+                    >
+                      Login
+                    </motion.button>
+                  </div>
+                  <div className="md:hidden">
+                    <HamburgerMenu
+                      isOpen={isOpen}
+                      setIsOpen={setIsOpen}
+                      Items={navBarItems}
+                      type={"AppbarMenu"}
+                    />
+                  </div>
                 </>
+              ) : (
+                <div className="md:w-1/2">
+                  <HamburgerMenu
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                    Items={navBarItems}
+                    type={"AppbarMenu"}
+                  />
+                </div>
               )}
             </div>
           )}
         </div>
-        <div className="md:hidden md:flex">
-          <IconButton aria-label="menu" onClick={handleMenuClick}>
-            <MenuIcon className="text-white" />
-          </IconButton>
-        </div>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          className="md:hidden"
-        >
-          <MenuItem onClick={() => handleMenuItemClick("/pricing")}>
-            Pricing
-          </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("/incomes")}>
-            Incomes
-          </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("/expenses")}>
-            Expenses
-          </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("/community")}>
-            Community
-          </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("/login")}>
-            Login
-          </MenuItem>
-        </Menu>
       </Toolbar>
-      {currentUserState.userEmail && (
-        <Modal
-          open={isLogoutModalOpen}
-          onClose={handleLogoutCancel}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              bgcolor: "background.paper",
-              p: 4,
-              borderRadius: "10px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar
-              alt="User Avatar"
-              src={currentUserState.imageUrl}
-              style={{
-                width: "90px",
-                height: "90px",
-                marginBottom: "16px",
-              }}
-            />
-            {currentUserState.userEmail}
-            <br />
-            <br />
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button onClick={handleLogoutConfirm}>Logout</Button>
-              <Button onClick={handleLogoutCancel}>Cancel</Button>
-            </Box>
-          </Box>
-        </Modal>
-      )}
     </div>
   );
 }

@@ -19,6 +19,11 @@ function Register() {
 
   const navigate = useNavigate();
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleRegister();
+    }
+  };
   const handleRegister = () => {
     if (isChecked && secretePhrase === "") {
       setRegistrationError("Secret phrase cannot be empty");
@@ -79,10 +84,10 @@ function Register() {
   }, [verifyEmailPrompt, registrationError]);
 
   return (
-    <section className="h-screen bg-[#eaeaea]">
-      <div className="container">
-        <div className="flex justify-center items-center h-full">
-          <div className="xl:w-10/12">
+    <section className="h-screen bg-[#eaeaea] flex justify-center">
+      <div className="container py-5 h-full">
+        <div className="flex justify-center items-center  h-full">
+          <div className="w-full md:w-10/12">
             <div className="card rounded-lg shadow-lg overflow-hidden">
               <div className="flex flex-wrap g-0">
                 {/* Image Section */}
@@ -90,7 +95,7 @@ function Register() {
                   <img
                     src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
                     alt="login form"
-                    className="h-screen rounded-l-lg"
+                    className=" h-screen rounded-l-lg"
                   />
                 </div>
 
@@ -115,6 +120,7 @@ function Register() {
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Email address"
                           required={true}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="mb-4">
@@ -128,6 +134,7 @@ function Register() {
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Username"
                           required={true}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="mb-4">
@@ -140,6 +147,7 @@ function Register() {
                           className="form-input w-full rounded-lg p-3"
                           placeholder="Password"
                           required={true}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                       <div className="flex flex-row">
@@ -216,12 +224,12 @@ function Register() {
                       </div>
                       <p className="mb-5 pb-lg-2 text-gray-600">
                         Already have an account?
-                        <button
+                        <a
                           onClick={() => navigate("/login")}
                           className="text-[#ef85a5] pointer"
                         >
                           Login here
-                        </button>
+                        </a>
                       </p>
                       <a href="#!" className="text-sm text-[#ef85a5]">
                         Terms of use.

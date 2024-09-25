@@ -5,7 +5,7 @@ import { BiAnalyse, BiMoney, BiSearch } from "react-icons/bi";
 import { BiCog } from "react-icons/bi";
 import { AiFillHeart, AiTwotoneFileExclamation } from "react-icons/ai";
 import { ImPriceTags } from "react-icons/im";
-import { TbBuildingCommunity } from "react-icons/tb";
+import { TbBuildingCommunity, TbListCheck } from "react-icons/tb";
 import { IoAnalyticsSharp } from "react-icons/io5";
 
 import { MdOutlineSavings } from "react-icons/md";
@@ -15,7 +15,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
 import { Avatar } from "@mui/material";
 import UserAvatar from "../UserAvatar";
-const routes = [
+
+export const routes = [
   {
     path: "/dashboard",
     name: "My Savings Dashboard",
@@ -52,6 +53,11 @@ const routes = [
     icon: <AiFillHeart />,
   },
   {
+    path: "/swotportal/tasklist",
+    name: "SWOT Task List",
+    icon: <TbListCheck />,
+  },
+  {
     path: "/analytics",
     name: "Analytics",
     icon: <IoAnalyticsSharp />,
@@ -66,23 +72,25 @@ const SideBar = () => {
     show: { opacity: 1, width: "auto", transition: { duration: 0.5 } },
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setWindowWidth(window.innerWidth);
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
-  const isMobile = windowWidth <= 768;
+  // const isMobile = windowWidth <= 768;
 
   return (
-    <div className="fixed top-0 left-0 h-screen bg-[#111f36] z-50 flex flex-col justify-between">
+    <div className="h-full w-full z-50 lg:flex flex-col justify-between hidden ">
       <motion.div
+        className="" // Ensures this section takes up the available height
         animate={{
-          overflow: "auto",
-          width: isMobile ? "0px" : "300px",
+          // overflow: "auto",
+          // width: isMobile ? "0px" : "300px",
+
           transition: {
             duration: 0.5,
             type: "spring",
@@ -119,7 +127,8 @@ const SideBar = () => {
           })}
         </section>
       </motion.div>
-      <div className="w-full flex items-center text-white m-3">
+
+      <div className=" flex items-center text-white m-3">
         <img src="./10ksc.png" className="w-[80px] bg-white  rounded-3xl" />
         <h2 className="pl-3 text-xl">10K Savings Challenge</h2>
       </div>

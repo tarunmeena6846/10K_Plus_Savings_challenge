@@ -152,7 +152,7 @@ const Post: React.FC<PostType> = ({
       <div className="mb-6">
         <div className="flex  justify-between my-[20px]">
           <span className="flex gap-1 bg-[#bfdbfe] items-center p-1 px-3 rounded-xl text-blue-600">
-            <img src="./article.svg"></img>
+            <img src="/article.svg"></img>
             <h2 className="text-sm">{tag}</h2>
           </span>
           <span className="text-[#9ca3af] font-normal text-sm p-1">
@@ -190,7 +190,7 @@ const Post: React.FC<PostType> = ({
             >
               Read more
             </button>
-            <img src="./RightPointedArrow.svg"></img>
+            <img src={"/RightPointedArrow.svg"}></img>
           </div>
         </div>
       </div>

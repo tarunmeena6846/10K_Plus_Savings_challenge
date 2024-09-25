@@ -7,6 +7,7 @@ import {
   ArcElement, // Required for pie charts
 } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { useIsMobile } from "./MonthlyBarGraph";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
@@ -14,7 +15,7 @@ const IncomeGraph = ({ spendingData }) => {
   //   console.log(spendingData);
   // Format the data for the Pie chart
   const formattedData = spendingData.slice(0, 4) || [];
-
+  const isMobile = useIsMobile();
   const data = {
     labels: formattedData.map((item) => item.category),
     datasets: [
@@ -35,8 +36,14 @@ const IncomeGraph = ({ spendingData }) => {
         display: true,
 
         text: "Top Income Sources",
+        color: isMobile ? "black" : "white",
         margin: {},
         padding: {},
+      },
+      legend: {
+        labels: {
+          color: isMobile ? "black" : "white",
+        },
       },
       tooltip: {
         callbacks: {
@@ -49,7 +56,7 @@ const IncomeGraph = ({ spendingData }) => {
   };
 
   return (
-    <div className="bg-white h-full w-full p-4 flex items-center">
+    <div className="flex flex-col items-center bg-[#eaeaea] lg:bg-[#111f36] rounded-3xl p-3 h-full">
       <Pie data={data} options={options} />
     </div>
   );
