@@ -5,7 +5,7 @@ import mongoose, { ObjectId } from "mongoose";
 import { Response } from "express";
 import { TagModel } from "../models/tagSchema";
 import { AdminModel } from "../models/admin";
-import { sendAdminPostNotification } from "../routes/reminders";
+// import { sendAdminPostNotification } from "../routes/reminders";
 
 /**
  * Controller to get all posts.
@@ -416,68 +416,68 @@ export const editOrPublishPost = async (
  * @param req Request object containing username and postID, title,content, author, isPublished, tag, and imageURL.
  * @param resp Response object to send the result.
  */
-export const createPost = async (req: AuthenticatedRequest, res: Response) => {
-  console.log("inside creatapost");
-  const { title, content, author, isPublished, tag, imageUrl } = req.body;
-  console.log(title, content, author, tag);
+// export const createPost = async (req: AuthenticatedRequest, res: Response) => {
+//   console.log("inside creatapost");
+//   const { title, content, author, isPublished, tag, imageUrl } = req.body;
+//   console.log(title, content, author, tag);
 
-  try {
-    const post = new Post({
-      title,
-      content,
-      author: author,
-      createdAt: new Date(),
-      comments: [],
-      isPublished: isPublished,
-      tag: tag,
-      userImage: imageUrl,
-    });
-    await post.save();
-    if (tag != "") {
-      let tagmodel = await TagModel.findOne({ tag: tag });
+//   try {
+//     const post = new Post({
+//       title,
+//       content,
+//       author: author,
+//       createdAt: new Date(),
+//       comments: [],
+//       isPublished: isPublished,
+//       tag: tag,
+//       userImage: imageUrl,
+//     });
+//     await post.save();
+//     if (tag != "") {
+//       let tagmodel = await TagModel.findOne({ tag: tag });
 
-      if (!tagmodel) {
-        tagmodel = new TagModel({
-          tag: tag,
-          posts: [],
-        });
-      }
-      console.log("post_id in create", post._id);
-      tagmodel.posts.push(post._id as mongoose.Types.ObjectId);
+//       if (!tagmodel) {
+//         tagmodel = new TagModel({
+//           tag: tag,
+//           posts: [],
+//         });
+//       }
+//       console.log("post_id in create", post._id);
+//       tagmodel.posts.push(post._id as mongoose.Types.ObjectId);
 
-      await tagmodel?.save();
-      console.log("tagid", tagmodel);
-    }
-    // Update Admin schema with the new post
-    const adminUpdate = isPublished
-      ? { $push: { ["myPosts"]: post._id } }
-      : { $push: { ["myDrafts"]: post._id } };
-    console.log("adminUpdate", adminUpdate, author, isPublished);
-    const admin = await AdminModel.findOneAndUpdate(
-      { username: author },
-      adminUpdate,
-      { new: true }
-    );
-    await admin?.save();
-    console.log("new admin after update", admin);
-    if (admin) {
-      const emailNotifcationResponse = await sendAdminPostNotification(
-        post._id,
-        admin.username,
-        post.title,
-        admin.isAdmin
-      );
+//       await tagmodel?.save();
+//       console.log("tagid", tagmodel);
+//     }
+//     // Update Admin schema with the new post
+//     const adminUpdate = isPublished
+//       ? { $push: { ["myPosts"]: post._id } }
+//       : { $push: { ["myDrafts"]: post._id } };
+//     console.log("adminUpdate", adminUpdate, author, isPublished);
+//     const admin = await AdminModel.findOneAndUpdate(
+//       { username: author },
+//       adminUpdate,
+//       { new: true }
+//     );
+//     await admin?.save();
+//     console.log("new admin after update", admin);
+//     if (admin) {
+//       const emailNotifcationResponse = await sendAdminPostNotification(
+//         post._id,
+//         admin.username,
+//         post.title,
+//         admin.isAdmin
+//       );
 
-      console.log("postnotifcation ", emailNotifcationResponse);
+//       console.log("postnotifcation ", emailNotifcationResponse);
 
-      res.status(201).json({ success: true, data: post });
-    } else {
-      return res.status(400).json({ success: false, data: null });
-    }
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
-  }
-};
+//       res.status(201).json({ success: true, data: post });
+//     } else {
+//       return res.status(400).json({ success: false, data: null });
+//     }
+//   } catch (error: any) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
 /**
  * Controller to add comment to a post.
  * @param req Request object containing username and , title,content, author, isPublished, tag, and imageURL.

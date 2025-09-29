@@ -162,8 +162,8 @@ export function InitUser() {
         // isAdmin: currentUserState.isAdmin,
       }));
       console.log("here");
-      navigate("/login");
-      return;
+      // navigate("/login");
+      // return;
     }
     try {
       const response = await fetch(

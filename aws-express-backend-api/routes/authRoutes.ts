@@ -1,18 +1,13 @@
 import express, { Router, Request, Response } from "express";
-// import AdminModel from "../models/admin.model";
-import { AdminModel, Admin } from "../models/admin";
+import { UserModel, User } from "../models/dynamodb/User";
 import { detokenizeAdmin, secretKey } from "../middleware/index";
 import jwt, { JwtPayload } from "jsonwebtoken";
-// const secretKey: string | undefined = process.env.JWT_SCERET; // Adjust the type based on your actual environment variable type
-// import express,  from 'express';
-// import { secretKey } from "../index";
-// console.log("at authroutes", process.env.JWT_SCERET);
 const router: Router = express.Router();
 import { AuthenticatedRequest } from "../middleware/index";
 import { sendEmail } from "../emails";
 import { getWelcomeEmail } from "../emails/welcomeEmail";
-import Post from "../models/postSchema";
-import Comment from "../models/commentSchema";
+import { PostModel } from "../models/dynamodb/Post";
+import { CommentModel } from "../models/dynamodb/Comment";
 import { resetPassword } from "../emails/ResetPassword";
 import bcrypt from "bcrypt";
 import corn from "node-cron";
@@ -31,55 +26,54 @@ router.post("/signup", async (req: Request, res: Response) => {
         isAdmin = true;
       }
     }
-    const bIsAdminPresent: Admin | null = await AdminModel.findOne({
-      $or: [{ email: email }, { username: username }],
-    });
-    console.log("bIsAdminPresent" + bIsAdminPresent);
-    if (!bIsAdminPresent) {
-      // const obj = { username: req.body.username, password: req.body.password };
-      // console.log(obj);
+    // Check if user already exists by email or username
+    const existingUserByEmail = await UserModel.findByEmail(email);
+    const existingUserByUsername = await UserModel.findByUsername(username);
 
-      // currentUserId = newAdmin.username;
-      console.log(secretKey);
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      if (secretKey) {
-        let token = jwt.sign(
-          {
-            email: email,
-            role: isAdmin === true ? "admin" : "user",
-          },
-          secretKey,
-          { expiresIn: "1h" }
-        );
-        const newAdmin: Admin = new AdminModel({
-          username: username,
-          email: email,
-          password: hashedPassword,
-          verificationToken: token,
-          isAdmin: isAdmin ? true : false,
-        });
-        newAdmin.save();
-        console.log(newAdmin._id);
-        console.log("token", token);
-        // await corn.schedule("", async (params: any) => {});
-        await sendEmail(email, "Email Verification", getWelcomeEmail(token));
-        res.status(201).send({
-          message: "An Email sent to your account please verify",
-          success: true,
-        });
-      } else {
-        console.error(
-          "JWT_SECRET environment variable is not set. Unable to sign JWT."
-        );
-        res
-          .status(500)
-          .json({ error: "Internal server error", success: false });
-      }
-    } else {
+    if (existingUserByEmail || existingUserByUsername) {
       res
         .status(200)
-        .send({ content: "Admin already registered", success: false });
+        .send({ content: "User already registered", success: false });
+      return;
+    }
+
+    console.log(secretKey);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    if (secretKey) {
+      let token = jwt.sign(
+        {
+          email: email,
+          role: isAdmin === true ? "admin" : "user",
+        },
+        secretKey,
+        { expiresIn: "1h" }
+      );
+
+      const newUser = await UserModel.create({
+        username: username,
+        email: email,
+        password: hashedPassword,
+        verificationToken: token,
+        isAdmin: isAdmin,
+        verified: false,
+      });
+
+      console.log("New user created:", newUser.PK);
+      console.log("token", token);
+
+      await sendEmail(email, "Email Verification", getWelcomeEmail(token));
+      res.status(201).send({
+        message: "An Email sent to your account please verify",
+        success: true,
+      });
+    } else {
+      console.error(
+        "JWT_SECRET environment variable is not set. Unable to sign JWT."
+      );
+      res
+        .status(500)
+        .json({ error: "Internal server error", success: false });
     }
   } catch (error: any) {
     console.error("Error in admin signup:", error);
@@ -88,30 +82,28 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 router.get("/verify-email/:token", async (req: Request, res: Response) => {
-  // const authHeader = req.params.token;
   console.log("key", req.params.token);
   try {
     if (secretKey) {
       const userInfo = jwt.verify(req.params.token, secretKey) as JwtPayload;
-      console.log("tarun id", userInfo);
+      console.log("user info", userInfo);
       if (!userInfo) return res.status(400).send({ message: "Invalid token" });
-      const user = await AdminModel.findOne({ email: userInfo.email });
+
+      const user = await UserModel.findByEmail(userInfo.email);
       if (!user) return res.status(400).send({ message: "Invalid link" });
       console.log("user ", user);
 
-      if (user.verificationToken != "") {
-        // if (secretKey) {
-        user.verified = true;
-        user.verificationToken = "";
-        await user.save();
+      if (user.verificationToken && user.verificationToken !== "") {
+        await UserModel.update(user.PK, {
+          verified: true,
+          verificationToken: "",
+        });
 
         res.status(200).send({ message: "Email verified successfully" });
-        // return res.redirect("http://localhost:5173/login");
       } else {
         res.status(400).send({ message: "Invalid link" });
       }
     }
-    // res.status(200).send({ message: "Email verified successfully" });
   } catch (e) {
     res.status(400).send("error");
   }
@@ -123,17 +115,12 @@ router.get(
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       if (req.user) {
-        const bIsAdminPresent = await AdminModel.findOne({
-          email: req.user,
-        });
-        console.log(" bIsAdminPresent at /me route", bIsAdminPresent);
-        if (bIsAdminPresent) {
+        const user = await UserModel.findByEmail(req.user);
+        console.log(" user at /me route", user);
+        if (user) {
           res.status(200).send({
             success: true,
-            // userEmail: bIsAdminPresent.email,
-            // imageUrl: bIsAdminPresent.imageUrl,
-            userData: bIsAdminPresent,
-            // subscription: bIsAdminPresent.subscriptions,
+            userData: user,
           });
         } else {
           res
@@ -144,7 +131,7 @@ router.get(
         res.status(404).send({ success: false, message: "req.user is null" });
       }
     } catch (error: any) {
-      console.error("Error in admin signup:", error);
+      console.error("Error in /me route:", error);
       res.status(500).json({ error: "Internal server error", success: false });
     }
   }
@@ -155,21 +142,24 @@ router.post(
     const { email } = req.body;
     console.log(email);
     try {
-      const isUserPresent = await AdminModel.findOne({ username: email });
+      const user = await UserModel.findByEmail(email);
 
-      if (!isUserPresent) {
+      if (!user) {
         return resp
           .status(400)
-          .send({ mesage: "User not found", success: false });
+          .send({ message: "User not found", success: false });
       }
 
       if (secretKey) {
         const token = jwt.sign({ email: email }, secretKey, {
           expiresIn: 300,
         });
-        isUserPresent.resetPasswordToken = token;
-        isUserPresent.resetPasswordTokenUsed = false;
-        await isUserPresent.save();
+
+        await UserModel.update(user.PK, {
+          resetPasswordToken: token,
+          resetPasswordTokenUsed: false,
+        });
+
         const resetLink = `${process.env.RETURN_CLIENT_URL}/reset-password/${token}`;
         console.log("token", token);
         await sendEmail(
@@ -208,12 +198,12 @@ router.post(
         if (isValidtoken) {
           const email = isValidtoken.email;
 
-          const User = await AdminModel.findOne({ username: email });
+          const user = await UserModel.findByEmail(email);
 
           if (
-            !User ||
-            User.resetPasswordToken !== token ||
-            User.resetPasswordTokenUsed
+            !user ||
+            user.resetPasswordToken !== token ||
+            user.resetPasswordTokenUsed
           ) {
             return resp
               .status(404)
@@ -221,11 +211,12 @@ router.post(
           }
 
           // Hash the new password before saving it
-          // const hashedPassword = await bcrypt.hash(newPassword, 10);
-          User.password = newPassword;
-          User.resetPasswordToken = "";
-          User.resetPasswordTokenUsed = true;
-          await User.save();
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
+          await UserModel.update(user.PK, {
+            password: hashedPassword,
+            resetPasswordToken: "",
+            resetPasswordTokenUsed: true,
+          });
 
           return resp
             .status(200)
@@ -246,23 +237,21 @@ router.post(
     }
   }
 );
-// TODO add the below logic to a common place for the autentcation
 router.post("/login", async (req: Request, res: Response) => {
-  console.log("tarun email and pas", req.headers.email, req.headers.password);
+  console.log("email and password", req.headers.email, req.headers.password);
   const { email, password } = req.headers;
-  const bIsAdminPresent = await AdminModel.findOne({
-    email: email,
-  });
+  const user = await UserModel.findByEmail(email as string);
 
-  if (!bIsAdminPresent) {
+  if (!user) {
     res
       .status(400)
       .json({ error: "Invalid username or password", success: false });
     return;
   }
+
   const isMatch = await bcrypt.compare(
     password as string,
-    bIsAdminPresent.password
+    user.password
   );
   console.log("is match ", isMatch);
   if (!isMatch) {
@@ -271,16 +260,18 @@ router.post("/login", async (req: Request, res: Response) => {
       .json({ error: "Invalid username or password", success: false });
     return;
   }
+
   if (secretKey) {
     const token = jwt.sign(
       {
         email: req.headers.email,
-        role: bIsAdminPresent.isAdmin ? "admin" : "user",
+        role: user.isAdmin ? "admin" : "user",
       },
       secretKey,
       { expiresIn: "1h" }
     );
-    if (bIsAdminPresent.verified) {
+
+    if (user.verified) {
       res.status(200).send({
         content: "Login successfully",
         token,
@@ -289,21 +280,11 @@ router.post("/login", async (req: Request, res: Response) => {
       });
     } else {
       sendEmail(
-        bIsAdminPresent.email,
+        user.email,
         "Email Verification",
         getWelcomeEmail(token)
       );
 
-      // const resend = new Resend(process.env.RESEND_KEY);
-      // // // awaitcons handleSubscriptionCreated(session, subscription);
-      // console.log("before resend call");
-      // resend.emails.send({
-      //   from: "delivered@resend.dev",
-      //   // to: session.customer_email as string,
-      //   to: bIsAdminPresent.username as string,
-      //   subject: "Email Verification",
-      //   html: `<p>Please click <a href="http://localhost:5173/verify-email/${token}">here</a> to verify your email.</p>`,
-      // });
       res.status(201).send({
         message: "An Email sent to your account please verify",
         success: true,
@@ -325,11 +306,10 @@ router.post(
     const { data } = req.body;
     console.log("data at set my data", data);
     try {
-      const user = await AdminModel.findOne({ email: req.user });
+      const user = await UserModel.findByEmail(req.user!);
       console.log("user at set my data", user);
       if (user) {
-        user.myWhy = data;
-        await user.save();
+        await UserModel.update(user.PK, { myWhy: data });
         resp.status(200).send({ success: true });
       }
     } catch (error) {
@@ -344,21 +324,21 @@ router.post(
     const { newPassword } = req.body;
     console.log("at change user details", req?.user, newPassword);
     try {
-      // Find admin by username
-      const bIsAdminPresent = await AdminModel.findOne({ email: req?.user });
+      // Find user by email
+      const user = await UserModel.findByEmail(req?.user!);
 
-      if (!bIsAdminPresent) {
-        return res.status(404).json({ error: "Admin not found" });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
       }
 
       if (newPassword) {
-        bIsAdminPresent.password = newPassword;
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await UserModel.update(user.PK, { password: hashedPassword });
       }
-      // Save the updated admin
-      await bIsAdminPresent.save();
+
       return res
         .status(200)
-        .json({ message: "User Deatils changed successfully", success: true });
+        .json({ message: "User Details changed successfully", success: true });
     } catch (error) {
       console.error("Error changing details:", error);
       return res

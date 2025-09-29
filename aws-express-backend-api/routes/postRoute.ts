@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import {
   getAllPosts,
   getPost,
-  createPost,
+  // createPost,
   addComment,
   deleteComment,
   editComment,
@@ -31,7 +31,7 @@ router.get("/tags/:tagId", detokenizeAdmin, getPostByTag);
 router.get("/:id", detokenizeAdmin, getPost);
 router.post("/:id/upvote", detokenizeAdmin, upvoteComment);
 router.post("/bookmarkPost", detokenizeAdmin, bookmarkedPosts);
-router.post("/", detokenizeAdmin, createPost);
+// router.post("/", detokenizeAdmin, createPost);
 router.post("/approvePost/:id", isAdmin, approveOrDeclinePost);
 router.post("/:id/comments", detokenizeAdmin, addComment);
 router.post("/:id", detokenizeAdmin, editComment);

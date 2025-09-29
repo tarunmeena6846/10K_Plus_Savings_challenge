@@ -4,7 +4,14 @@
   "description": "",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/handler.js"
+    "start": "node dist/handler.js",
+    "dev": "serverless offline",
+    "deploy": "serverless deploy",
+    "create-tables": "ts-node scripts/create-tables.ts",
+    "seed-data": "ts-node scripts/seed-test-data.ts",
+    "setup": "npm run create-tables && npm run seed-data",
+    "setup:local": "ts-node scripts/setup-dynamodb.ts",
+    "dev:local": "npm run setup:local && npm run dev"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.622.0",
@@ -33,6 +40,9 @@
     "@types/multer-s3": "^3.0.3",
     "@types/nodemailer": "^6.4.15",
     "graceful-fs": "^4.2.6",
-    "serverless-plugin-optimize": "^4.2.1-rc.1"
+    "serverless-plugin-optimize": "^4.2.1-rc.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0",
+    "dynamodb-local": "^0.0.9"
   }
 }
