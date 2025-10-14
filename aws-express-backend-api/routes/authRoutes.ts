@@ -27,9 +27,13 @@ router.post("/signup", async (req: Request, res: Response) => {
       }
     }
     // Check if user already exists by email or username
+    console.time("findByEmail");
     const existingUserByEmail = await UserModel.findByEmail(email);
+    console.timeEnd("findByEmail");
+    console.time("findByUsername");
     const existingUserByUsername = await UserModel.findByUsername(username);
-
+    console.timeEnd("findByUsername");
+    console.log("existingUserByEmail", existingUserByEmail, existingUserByUsername);
     if (existingUserByEmail || existingUserByUsername) {
       res
         .status(200)
@@ -49,7 +53,6 @@ router.post("/signup", async (req: Request, res: Response) => {
         secretKey,
         { expiresIn: "1h" }
       );
-
       const newUser = await UserModel.create({
         username: username,
         email: email,
@@ -93,7 +96,7 @@ router.get("/verify-email/:token", async (req: Request, res: Response) => {
       if (!user) return res.status(400).send({ message: "Invalid link" });
       console.log("user ", user);
 
-      if (user.verificationToken && user.verificationToken !== "") {
+      if (user?.verificationToken && user?.verificationToken !== "") {
         await UserModel.update(user.PK, {
           verified: true,
           verificationToken: "",

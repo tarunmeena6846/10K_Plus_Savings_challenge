@@ -8,7 +8,7 @@ import swotRoute from "./routes/swotRoute";
 import serverless from "serverless-http";
 import dotenv from "dotenv";
 import eventRoute from "./routes/eventRoute";
-// import reminder from "./routes/reminders";
+import reminder from "./routes/reminders";
 import { createTables } from "./config/dynamodb";
 dotenv.config();
 
@@ -46,12 +46,12 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/auth", authRoutes);
-// app.use("/data", dataRoute);
+app.use("/data", dataRoute);
 // app.use("/stripe", stripeRoutes);
 // app.use("/post", postRoute);
 // app.use("/swot", swotRoute);
 // app.use("/event", eventRoute);
-// app.use("/notification", reminder);
+app.use("/notification", reminder);
 
 app.get("/", (req, res) => {
   return res.status(200).json({

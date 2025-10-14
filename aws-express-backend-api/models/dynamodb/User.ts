@@ -64,7 +64,7 @@ export class UserModel {
             createdAt: now,
             updatedAt: now,
         };
-
+        console.log("user at create", user);
         await dynamodb.put({
             TableName: 'users',
             Item: user,
@@ -76,13 +76,14 @@ export class UserModel {
     static async findById(userId: string): Promise<User | null> {
         const result = await dynamodb.get({
             TableName: 'users',
-            Key: { PK: userId, SK: 'USER' },
+            Key: { PK: userId },
         }).promise();
 
         return result.Item as User || null;
     }
 
     static async findByEmail(email: string): Promise<User | null> {
+        console.log("email at findByEmail", email);
         const result = await dynamodb.query({
             TableName: 'users',
             IndexName: 'EmailIndex',
@@ -109,6 +110,7 @@ export class UserModel {
     }
 
     static async update(userId: string, updateData: Partial<User>): Promise<User | null> {
+        console.log("updateData at update", userId, updateData);
         const updateExpressions: string[] = [];
         const expressionAttributeNames: { [key: string]: string } = {};
         const expressionAttributeValues: { [key: string]: any } = {};
@@ -128,35 +130,42 @@ export class UserModel {
             return null;
         }
 
-        const result = await dynamodb.update({
-            TableName: 'users',
-            Key: { PK: userId, SK: 'USER' },
-            UpdateExpression: `SET ${updateExpressions.join(', ')}`,
-            ExpressionAttributeNames: expressionAttributeNames,
-            ExpressionAttributeValues: expressionAttributeValues,
-            ReturnValues: 'ALL_NEW',
-        }).promise();
+        console.log("updateExpressions at update", updateExpressions);
+        console.log("expressionAttributeNames at update", expressionAttributeNames);
+        console.log("expressionAttributeValues at update", expressionAttributeValues);
+        console.log("userId at update", userId);
 
-        return result.Attributes as User;
+        try {
+            const result = await dynamodb.update({
+                TableName: 'users',
+                Key: { PK: userId },
+                UpdateExpression: `SET ${updateExpressions.join(', ')}`,
+                ExpressionAttributeNames: expressionAttributeNames,
+                ExpressionAttributeValues: expressionAttributeValues,
+                ReturnValues: 'ALL_NEW',
+            }).promise();
+            console.log("result at update", result);
+            return result.Attributes as User;
+        } catch (error) {
+            console.error("Error updating user:", error);
+            throw error;
+        }
     }
 
     static async delete(userId: string): Promise<void> {
         await dynamodb.delete({
             TableName: 'users',
-            Key: { PK: userId, SK: 'USER' },
+            Key: { PK: userId },
         }).promise();
     }
 
     static async findAll(limit: number = 100): Promise<User[]> {
         const result = await dynamodb.scan({
             TableName: 'users',
-            FilterExpression: 'SK = :sk',
-            ExpressionAttributeValues: {
-                ':sk': 'USER',
-            },
             Limit: limit,
         }).promise();
 
         return result.Items as User[] || [];
     }
+
 }

@@ -1,24 +1,25 @@
-// import express, { Response, Router, Request } from "express";
-// import { AuthenticatedRequest, detokenizeAdmin, isAdmin } from "../middleware";
-// import EventModal from "../models/eventSchema";
-// import { sendEmail } from "../emails";
-// import { AdminModel, NotificationModel } from "../models/admin";
-// import { eventNotificationEmail } from "../emails/eventNotification";
-// import cron from "node-cron";
-// import { weeklyPortalReminder } from "../emails/weeklyPortalUpdateReminder";
-// import mongoose from "mongoose";
-// import { getAdminPostNotificationTemp } from "../emails/adminPost";
-// import { getUserPostNotificationTemp } from "../emails/userPost";
-// import { getSWOTAnalysisTemp } from "../emails/swotAnalysis";
-// import multer from "multer";
-// import { S3Client } from "@aws-sdk/client-s3";
-// import path from "path";
-// import multerS3 from "multer-s3";
-// const router: Router = express.Router();
+import express, { Response, Router, Request } from "express";
+import { AuthenticatedRequest, detokenizeAdmin, isAdmin } from "../middleware";
+import EventModal from "../models/eventSchema";
+import { sendEmail } from "../emails";
+import { NotificationModel } from "../models/admin";
+import { eventNotificationEmail } from "../emails/eventNotification";
+import cron from "node-cron";
+import { weeklyPortalReminder } from "../emails/weeklyPortalUpdateReminder";
+import mongoose from "mongoose";
+import { getAdminPostNotificationTemp } from "../emails/adminPost";
+import { getUserPostNotificationTemp } from "../emails/userPost";
+import { getSWOTAnalysisTemp } from "../emails/swotAnalysis";
+import multer from "multer";
+import { S3Client } from "@aws-sdk/client-s3";
+import path from "path";
+import multerS3 from "multer-s3";
+const router: Router = express.Router();
 
-// import dotenv from "dotenv";
-// import Post from "../models/postSchema";
-// import Comment from "../models/commentSchema";
+import dotenv from "dotenv";
+import Post from "../models/postSchema";
+import Comment from "../models/commentSchema";
+import { UserModel } from "../models/dynamodb/User";
 // import { connectDB } from "../handler";
 // dotenv.config();
 // // console.log("aws access key", process.env.AWS_ACCESS_KEY);
@@ -81,105 +82,109 @@
 //     }
 //   }
 // );
-// router.post(
-//   "/disabledashboardVideoPopup",
-//   detokenizeAdmin,
-//   async (req: AuthenticatedRequest, res: Response) => {
-//     try {
-//       const userFromDB = await AdminModel.findOneAndUpdate(
-//         { email: req.user },
-//         {
-//           videoModalSettings: { dashboardVideoModal: false },
-//         }
-//       );
+router.post(
+  "/disabledashboardVideoPopup",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const user = await UserModel.findByEmail(req.user ?? "");
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+      const userFromDB = await UserModel.update(
+        user.PK,
+        {
+          videoModalSettings: { dashboardVideoModal: false },
+        }
+      );
 
-//       if (userFromDB) {
-//         return res.status(200).json({ success: true });
-//       }
+      if (userFromDB) {
+        return res.status(200).json({ success: true });
+      }
 
-//       res.status(400).json({ success: false });
-//     } catch (error) {
-//       res.status(500).json({ success: false });
-//     }
-//   }
-// );
-// router.post(
-//   "/updateNotification",
-//   detokenizeAdmin,
-//   async (req: AuthenticatedRequest, res: Response) => {
-//     console.log("inside notification", req.body.selectedNotifications);
-//     const { adminPost, groupPost, taskListReminder, monthlySwot } =
-//       req.body.selectedNotifications;
+      res.status(400).json({ success: false });
+    } catch (error) {
+      res.status(500).json({ success: false });
+    }
+  }
+);
+router.post(
+  "/updateNotification",
+  detokenizeAdmin,
+  async (req: AuthenticatedRequest, res: Response) => {
+    console.log("inside notification", req.body.selectedNotifications);
+    const { adminPost, groupPost, taskListReminder, monthlySwot } =
+      req.body.selectedNotifications;
 
-//     console.log(adminPost, groupPost, taskListReminder, monthlySwot);
-//     try {
-//       const notificationInDb = await NotificationModel.findOneAndUpdate(
-//         { userEmail: req.user },
-//         {
-//           type: {
-//             taskListReminder: taskListReminder,
-//             adminPost: adminPost,
-//             groupPost: groupPost,
-//             monthlySwot: monthlySwot,
-//           },
-//         },
-//         { new: true, upsert: true }
-//       );
+    console.log(adminPost, groupPost, taskListReminder, monthlySwot);
+    try {
+      const notificationInDb = await NotificationModel.findOneAndUpdate(
+        { userEmail: req.user },
+        {
+          type: {
+            taskListReminder: taskListReminder,
+            adminPost: adminPost,
+            groupPost: groupPost,
+            monthlySwot: monthlySwot,
+          },
+        },
+        { new: true, upsert: true }
+      );
 
-//       console.log("notificationInDb", notificationInDb);
-//       res.status(200).json({ success: true });
-//     } catch (error) {
-//       console.error("Error updating notifications", error);
-//       res
-//         .status(500)
-//         .json({ success: false, message: "Internal server error." });
-//     }
-//   }
-// );
+      console.log("notificationInDb", notificationInDb);
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error updating notifications", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error." });
+    }
+  }
+);
 
-// export const sendAdminPostNotification = async (
-//   postId: string | mongoose.Types.ObjectId,
-//   name: string,
-//   title: string,
-//   isAdmin: Boolean
-// ) => {
-//   const postIdString = postId.toString();
+export const sendAdminPostNotification = async (
+  postId: string | mongoose.Types.ObjectId,
+  name: string,
+  title: string,
+  isAdmin: Boolean
+) => {
+  const postIdString = postId.toString();
 
-//   console.log("inside send admin post ", postIdString, name, title);
+  console.log("inside send admin post ", postIdString, name, title);
 
-//   const subscribedUserArray = await NotificationModel.aggregate([
-//     {
-//       $match: isAdmin ? { "type.adminPost": true } : { "type.groupPost": true }, // Match documents where weeklyReminder is true
-//     },
-//     {
-//       $group: {
-//         _id: null,
-//         emails: { $addToSet: "$userEmail" },
-//       },
-//     },
-//     {
-//       $project: {
-//         _id: 0, // Exclude the _id field from the output
-//         emails: 1, // Include the emails field in the output
-//       },
-//     },
-//   ]);
+  const subscribedUserArray = await NotificationModel.aggregate([
+    {
+      $match: isAdmin ? { "type.adminPost": true } : { "type.groupPost": true }, // Match documents where weeklyReminder is true
+    },
+    {
+      $group: {
+        _id: null,
+        emails: { $addToSet: "$userEmail" },
+      },
+    },
+    {
+      $project: {
+        _id: 0, // Exclude the _id field from the output
+        emails: 1, // Include the emails field in the output
+      },
+    },
+  ]);
 
-//   console.log("subscribedUserArray", subscribedUserArray);
+  console.log("subscribedUserArray", subscribedUserArray);
 
-//   await sendEmail(
-//     subscribedUserArray[0].emails,
-//     `10K SAVINGS CHALLENGE: Notification of Community ${
-//       isAdmin ? "Admin" : "Group"
-//     } Post`,
-//     isAdmin
-//       ? getAdminPostNotificationTemp(name, title, postIdString)
-//       : getUserPostNotificationTemp(name, title, postIdString)
-//   );
-// };
+  await sendEmail(
+    subscribedUserArray[0].emails,
+    `10K SAVINGS CHALLENGE: Notification of Community ${
+      isAdmin ? "Admin" : "Group"
+    } Post`,
+    isAdmin
+      ? getAdminPostNotificationTemp(name, title, postIdString)
+      : getUserPostNotificationTemp(name, title, postIdString)
+  );
+};
 
-// // const scheduleWeeklyReminderEmail = async () => {
-// console.log("cron schedular called");
+// const scheduleWeeklyReminderEmail = async () => {
+console.log("cron schedular called");
 // const weeklyReminderTask = cron.schedule("0 0 * * 0", async (params: any) => {
 //   console.log("here at weekly scheduler");
 //   try {
@@ -265,4 +270,4 @@
 // monthlySwotTask.start();
 // weeklyReminderTask.start();
 
-// export default router;
+export default router;

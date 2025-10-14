@@ -23,7 +23,7 @@ function Login() {
     useRecoilState<SubscriptionData>(subscriptionState);
   const [shakePrompt, setShakePrompt] = useState(false);
 
-  console.log(password);
+  // console.log(password);
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       handleRegister();
@@ -41,6 +41,7 @@ function Login() {
     const headers = new Headers();
     headers.append("email", email);
     headers.append("Password", password);
+    console.log("email at login", email);
     fetch(`${import.meta.env.VITE_SERVER_URL}/auth/login`, {
       method: "POST",
       headers: headers,

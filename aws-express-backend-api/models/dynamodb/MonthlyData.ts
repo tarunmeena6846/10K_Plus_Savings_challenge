@@ -231,4 +231,52 @@ export class MonthlyDataModel {
             },
         }).promise();
     }
+
+    // Helper method to create or get monthly data record
+    static async createOrGet(userId: string, year: number, month: string): Promise<MonthlyDataRecord> {
+        let record = await this.findByUserIdAndMonth(userId, year, month);
+
+        if (!record) {
+            const monthlyData: MonthlyData = {
+                month,
+                actual: { income: 0, expense: 0, items: [] },
+                current: { income: 0, expense: 0, items: [] },
+                target: { income: 0, expense: 0, items: [] }
+            };
+
+            record = await this.create({
+                userId,
+                year,
+                month,
+                monthlyData
+            });
+        }
+
+        return record;
+    }
+
+    // Helper method to delete multiple items by IDs
+    static async deleteItems(userId: string, year: number, month: string, itemIds: string[], type: 'actual' | 'current' | 'target'): Promise<MonthlyDataRecord | null> {
+        const record = await this.findByUserIdAndMonth(userId, year, month);
+        if (!record) return null;
+
+        const updatedMonthlyData = { ...record.monthlyData };
+        updatedMonthlyData[type].items = updatedMonthlyData[type].items.filter(item => !itemIds.includes(item.itemId));
+
+        // Recalculate totals
+        updatedMonthlyData[type].income = updatedMonthlyData[type].items
+            .filter(i => i.type === 'Income')
+            .reduce((sum, i) => sum + i.amount, 0);
+
+        updatedMonthlyData[type].expense = updatedMonthlyData[type].items
+            .filter(i => i.type === 'Expense')
+            .reduce((sum, i) => sum + i.amount, 0);
+
+        return await this.update(userId, year, month, { monthlyData: updatedMonthlyData });
+    }
+
+    // Helper method to get all data for a user (for dashboard calculations)
+    static async getAllUserData(userId: string): Promise<MonthlyDataRecord[]> {
+        return await this.findByUserId(userId, 1000); // Large limit to get all data
+    }
 }
