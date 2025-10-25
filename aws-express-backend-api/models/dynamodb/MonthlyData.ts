@@ -83,7 +83,7 @@ export class MonthlyDataModel {
                 SK: `${year}#${month}`
             },
         }).promise();
-
+console.log("result", result);
         return result.Item as MonthlyDataRecord || null;
     }
 
@@ -165,14 +165,14 @@ export class MonthlyDataModel {
 
         const updatedMonthlyData = { ...record.monthlyData };
         updatedMonthlyData[type].items.push(newItem);
-
+console.log("updatedMonthlyData", updatedMonthlyData);
         // Recalculate totals
         updatedMonthlyData[type].income = updatedMonthlyData[type].items
-            .filter(i => i.type === 'income')
+            .filter(i => i.type === 'Income')
             .reduce((sum, i) => sum + i.amount, 0);
 
         updatedMonthlyData[type].expense = updatedMonthlyData[type].items
-            .filter(i => i.type === 'expense')
+            .filter(i => i.type === 'Expense')
             .reduce((sum, i) => sum + i.amount, 0);
 
         return await this.update(userId, year, month, { monthlyData: updatedMonthlyData });
@@ -193,11 +193,11 @@ export class MonthlyDataModel {
 
         // Recalculate totals
         updatedMonthlyData[type].income = items
-            .filter(i => i.type === 'income')
+            .filter(i => i.type === 'Income')
             .reduce((sum, i) => sum + i.amount, 0);
 
         updatedMonthlyData[type].expense = items
-            .filter(i => i.type === 'expense')
+            .filter(i => i.type === 'Expense')
             .reduce((sum, i) => sum + i.amount, 0);
 
         return await this.update(userId, year, month, { monthlyData: updatedMonthlyData });
@@ -212,11 +212,11 @@ export class MonthlyDataModel {
 
         // Recalculate totals
         updatedMonthlyData[type].income = updatedMonthlyData[type].items
-            .filter(i => i.type === 'income')
+            .filter(i => i.type === 'Income')
             .reduce((sum, i) => sum + i.amount, 0);
 
         updatedMonthlyData[type].expense = updatedMonthlyData[type].items
-            .filter(i => i.type === 'expense')
+            .filter(i => i.type === 'Expense')
             .reduce((sum, i) => sum + i.amount, 0);
 
         return await this.update(userId, year, month, { monthlyData: updatedMonthlyData });

@@ -117,6 +117,19 @@ export class PostModel {
 
         return result.Items as Post[] || [];
     }
+    static async findByIds(postIds: string[]): Promise<Post[]> {
+        const result = await dynamodb.scan({
+            TableName: 'posts',
+            FilterExpression: 'PK IN (:postIds)',
+            ExpressionAttributeValues: {
+                ':postIds': postIds,
+            },
+        }).promise();
+        return result.Items as Post[] || [];
+    } catch (error: any) {
+        console.error(error);
+        throw error;
+    }
 
     static async update(postId: string, updateData: Partial<Post>): Promise<Post | null> {
         const updateExpressions: string[] = [];

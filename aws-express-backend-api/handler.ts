@@ -48,8 +48,8 @@ app.use(async (req, res, next) => {
 app.use("/auth", authRoutes);
 app.use("/data", dataRoute);
 // app.use("/stripe", stripeRoutes);
-// app.use("/post", postRoute);
-// app.use("/swot", swotRoute);
+app.use("/post", postRoute);
+app.use("/swot", swotRoute);
 // app.use("/event", eventRoute);
 app.use("/notification", reminder);
 

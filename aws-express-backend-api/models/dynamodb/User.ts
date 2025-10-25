@@ -21,7 +21,7 @@ export interface User {
     myWhy: string;
     swotSessionTime?: string;
     bookmarkedPosts: string[];
-    swotTasksDetails?: string;
+    // swotTasksDetails?: string;
     myPosts: string[];
     myDrafts: string[];
     videoModalSettings: {
@@ -57,14 +57,14 @@ export class UserModel {
             myWhy: userData.myWhy || '',
             swotSessionTime: userData.swotSessionTime,
             bookmarkedPosts: userData.bookmarkedPosts || [],
-            swotTasksDetails: userData.swotTasksDetails,
+            // swotTasksDetails: userData.swotTasksDetails || null,
             myPosts: userData.myPosts || [],
             myDrafts: userData.myDrafts || [],
             videoModalSettings: userData.videoModalSettings || { dashboardVideoModal: true },
             createdAt: now,
             updatedAt: now,
         };
-        console.log("user at create", user);
+        // console.log("user at create", user);
         await dynamodb.put({
             TableName: 'users',
             Item: user,
@@ -83,7 +83,7 @@ export class UserModel {
     }
 
     static async findByEmail(email: string): Promise<User | null> {
-        console.log("email at findByEmail", email);
+        // console.log("email at findByEmail", email);
         const result = await dynamodb.query({
             TableName: 'users',
             IndexName: 'EmailIndex',
@@ -110,7 +110,7 @@ export class UserModel {
     }
 
     static async update(userId: string, updateData: Partial<User>): Promise<User | null> {
-        console.log("updateData at update", userId, updateData);
+        // console.log("updateData at update", userId, updateData);
         const updateExpressions: string[] = [];
         const expressionAttributeNames: { [key: string]: string } = {};
         const expressionAttributeValues: { [key: string]: any } = {};
@@ -130,10 +130,10 @@ export class UserModel {
             return null;
         }
 
-        console.log("updateExpressions at update", updateExpressions);
-        console.log("expressionAttributeNames at update", expressionAttributeNames);
-        console.log("expressionAttributeValues at update", expressionAttributeValues);
-        console.log("userId at update", userId);
+        // console.log("updateExpressions at update", updateExpressions);
+        // console.log("expressionAttributeNames at update", expressionAttributeNames);
+        // console.log("expressionAttributeValues at update", expressionAttributeValues);
+        // console.log("userId at update", userId);
 
         try {
             const result = await dynamodb.update({

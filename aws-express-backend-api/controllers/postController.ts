@@ -1,10 +1,9 @@
 import { AuthenticatedRequest } from "../middleware";
-import Post from "../models/postSchema";
-import Comment from "../models/commentSchema";
-import mongoose, { ObjectId } from "mongoose";
 import { Response } from "express";
-import { TagModel } from "../models/tagSchema";
-import { AdminModel } from "../models/admin";
+import { Post, PostModel } from "../models/dynamodb/Post";
+import { UserModel } from "../models/dynamodb/User";
+import { TagModel } from "../models/dynamodb/Tag";
+import { CommentModel } from "../models/dynamodb/Comment";
 // import { sendAdminPostNotification } from "../routes/reminders";
 
 /**
@@ -21,13 +20,7 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
     const isApprovalReqPost = req.query.isApprovalReqPost;
     console.log("isApprovalReqPosts", isApprovalReqPost);
-    const posts = await Post.find({
-      isPublished: true,
-      status: isApprovalReqPost,
-    })
-      .sort({ createdAt: -1 })
-      .skip(offset) // Skip the specified number of posts
-      .limit(limit); // Limit the number of posts returned
+    const posts = await PostModel.findAll(limit);
     console.log("inside post", posts);
 
     res.status(200).json({ sucess: true, data: posts });
@@ -47,18 +40,9 @@ export const approveOrDeclinePost = async (
     console.log("isApprovalReqPosts", postId, type);
     // Update the post
     if (type === "delete") {
-      const postInDb = await Post.findByIdAndDelete(postId);
+      await PostModel.delete(postId);
     } else {
-      const updatedFields = {
-        status: type,
-      };
-
-      const options = { new: true };
-      const posts = await Post.findByIdAndUpdate(
-        postId,
-        updatedFields,
-        options
-      );
+      await PostModel.update(postId, { status: type as "approved" | "rejected" });
       // console.log("inside post", posts);
     }
     res.status(200).json({ sucess: true });
@@ -76,54 +60,17 @@ export const getUserPosts = async (
   resp: Response
 ) => {
   try {
-    const offset = parseInt(req.query.offset as string) || 0;
+    // const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
     const user = req.user;
     const isPublished = req.query.isPublished;
     console.log("user at getuserpost", user, isPublished);
-    const adminInfo = await AdminModel.aggregate([
-      { $match: { email: user } },
-      {
-        $project: {
-          myPosts: { $cond: [{ $eq: [isPublished, "true"] }, "$myPosts", []] },
-          myDrafts: {
-            $cond: [{ $eq: [isPublished, "false"] }, "$myDrafts", []],
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: "posts",
-          localField: "myPosts",
-          foreignField: "_id",
-          as: "publishedPosts",
-        },
-      },
-      {
-        $lookup: {
-          from: "posts",
-          localField: "myDrafts",
-          foreignField: "_id",
-          as: "draftPosts",
-        },
-      },
-      { $project: { publishedPosts: 1, draftPosts: 1 } },
-      { $skip: offset },
-      { $limit: limit },
-    ]);
-
-    console.log("adminInfo at get", adminInfo);
-    if (adminInfo.length > 0) {
-      resp.status(200).json({
-        success: true,
-        data:
-          isPublished === "true"
-            ? adminInfo[0].publishedPosts
-            : adminInfo[0].draftPosts,
-      });
-    } else {
-      resp.status(400).json({ success: false, data: null });
+    const adminInfo = await UserModel.findByEmail(user!);
+    if (!adminInfo) {
+      return resp.status(404).json({ success: false, data: "User not found" });
     }
+    const posts = await PostModel.findByAuthor(adminInfo.email, limit);
+    resp.status(200).json({ success: true, data: posts });
   } catch (error: any) {
     resp.status(500).json({ message: error.message });
   }
@@ -153,40 +100,18 @@ export const deletePostFromDbOrAdmin = async (
         : "myPosts";
 
     // Perform the update and delete operations concurrently
-    const updatePromise = AdminModel.findOneAndUpdate(
-      { email: username },
-      { $pull: { [pullField]: postId } },
-      { new: true } // Return the updated document
-    );
-    console.log("updatePromise", updatePromise);
-    let deletePromise: Promise<mongoose.Document | null> | undefined;
-    if (type === "myposts" || type === "allposts") {
-      deletePromise = Post.findByIdAndDelete(postId);
+    const userInfo = await UserModel.findByEmail(username!);
+    if (!userInfo) {
+      return resp.status(404).json({ success: false, data: "User not found" });
     }
-
-    const [deletedPostFromAdmin, deletePostInDB] = await Promise.all([
-      updatePromise,
-      deletePromise,
-    ]);
-
-    if (!deletedPostFromAdmin) {
-      return resp
-        .status(404)
-        .json({ success: false, data: "Admin or Post not found" });
-    }
-
-    console.log("deletedPostFromAdmin", deletedPostFromAdmin);
-    if (deletePostInDB) {
-      console.log("deletePostInDB", deletePostInDB);
-    }
-
-    resp.status(200).json({ success: true, data: deletedPostFromAdmin });
-  } catch (error) {
-    console.error("Error deleting post:", error);
-    resp.status(500).json({ success: false, data: "Post delete failed" });
+    
+    await UserModel.update(userInfo.PK, { [pullField]: [...userInfo[pullField], postId] });
+    await PostModel.delete(postId);
+    resp.status(200).json({ success: true });
+  } catch (error: any) {
+    resp.status(500).json({ message: error.message });
   }
 };
-
 /**
  * Controller to get bookmarked post for the user.
  * @param req Request object containing query parameters like offset and limit.
@@ -200,36 +125,12 @@ export const getBookmarkPosts = async (
   const limit = parseInt(req.query.limit as string) || 10;
 
   try {
-    const bookmarkedPostsForUser = await AdminModel.aggregate([
-      { $match: { email: req?.user } },
-      {
-        $lookup: {
-          from: "posts",
-          localField: "bookmarkedPosts",
-          foreignField: "_id",
-          as: "bookmarkedPosts",
-        },
-      },
-      {
-        $project: {
-          bookmarkedPosts: { $slice: ["$bookmarkedPosts", offset, limit] },
-        },
-      },
-    ]);
-
-    console.log(
-      "bookmarkedPostsForUser",
-      bookmarkedPostsForUser[0]?.bookmarkedPosts || []
-    );
-
-    if (bookmarkedPostsForUser.length > 0) {
-      resp.status(200).json({
-        success: true,
-        data: bookmarkedPostsForUser[0].bookmarkedPosts,
-      });
-    } else {
-      resp.status(400).json({ success: false, data: null });
+    const bookmarkedPostsForUser = await UserModel.findByEmail(req?.user!);
+    if (!bookmarkedPostsForUser) {
+      return resp.status(404).json({ success: false, data: "User not found" });
     }
+    const bookmarkedPosts = await PostModel.findByIds(bookmarkedPostsForUser.bookmarkedPosts);
+    resp.status(200).json({ success: true, data: bookmarkedPosts });
   } catch (error) {
     console.error(error);
     resp.status(500).json(error);
@@ -248,25 +149,12 @@ export const bookmarkedPosts = async (
   const { postId } = req.body;
   const username = req.user;
   try {
-    const updateResult = await AdminModel.findOneAndUpdate(
-      { email: username },
-      { $addToSet: { bookmarkedPosts: postId } }, // Use $addToSet to add postId only if it doesn't already exist
-      { new: true, upsert: false }
-    );
-
-    if (updateResult) {
-      if (updateResult.bookmarkedPosts.includes(postId)) {
-        return resp
-          .status(200)
-          .json({ success: true, data: "Post bookmarked successfully" });
-      } else {
-        return resp
-          .status(200)
-          .json({ success: false, data: "Failed to bookmark post" });
-      }
-    } else {
-      return resp.status(400).json({ success: false, data: "Admin not found" });
+    const userInfo = await UserModel.findByEmail(username!);
+    if (!userInfo) {
+      return resp.status(404).json({ success: false, data: "User not found" });
     }
+    await UserModel.update(userInfo.PK, { bookmarkedPosts: [...userInfo.bookmarkedPosts, postId] });
+    resp.status(200).json({ success: true });
   } catch (error) {
     return resp.status(500).json(error);
   }
@@ -279,17 +167,10 @@ export const bookmarkedPosts = async (
  */
 export const getTags = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const tags = await TagModel.find({}, { tag: 1 }); // Exclude _id field
-    // const tags = { tag: "tagone" };
-    console.log("tags in db", tags);
-    // const endtime = performance.now();
-
-    // console.log("query execution in tag", endtime - startTime);
-
+    const tags = await TagModel.findAll(100); // Exclude _id field
     res.status(200).json({ success: true, data: tags });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json(error);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -307,20 +188,12 @@ export const getPostByTag = async (
     console.log("tagId", tagId);
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-    const posts = await TagModel.findById({ _id: tagId })
-      .populate({
-        path: "posts",
-        match: { isPublished: true }, // Filter based on isPublished field
-      })
-      .skip(offset) // Skip the specified number of posts
-      .limit(limit); // Limit the number of posts returned;
-
-    console.log("posts in get id by post", posts?.posts);
-    if (posts) {
-      resp.status(200).json({ success: true, data: posts.posts });
-    } else {
-      resp.status(500).json({ success: false, data: null });
-    }
+    const tagPosts = await TagModel.findByTag(tagId)
+    if (!tagPosts) {
+        return resp.status(404).json({ success: false, data: "Tag not found" });
+      }
+      const posts = await PostModel.findByIds(tagPosts.posts);
+      resp.status(200).json({ success: true, data: posts });
   } catch (error) {
     resp.status(400).json({ error });
   }
@@ -333,9 +206,7 @@ export const getPostByTag = async (
 export const getPost = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside getpost", req.params.id);
   try {
-    const post = await Post.findById(req.params.id).populate({
-      path: "comments",
-    });
+    const post = await PostModel.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
     res.json(post);
@@ -375,39 +246,12 @@ export const editOrPublishPost = async (
 
     const options = { new: true };
 
-    const updatedPost = await Post.findByIdAndUpdate(
-      postId,
-      updatedFields,
-      options
-    );
-
-    if (!updatedPost) {
-      return resp
-        .status(404)
-        .json({ success: false, message: "Post not found" });
-    }
-
-    // If the post is published, update the admin's records
-    if (isPublished) {
-      const updatedAdminForDraft = await AdminModel.findOneAndUpdate(
-        { email: author },
-        {
-          $pull: { myDrafts: postId },
-          $addToSet: { myPosts: postId }, // Use $addToSet to prevent duplicate entries
-        },
-        options
-      );
-
-      if (!updatedAdminForDraft) {
-        return resp
-          .status(404)
-          .json({ success: false, message: "Admin not found" });
-      }
-    }
+    const updatedPost = await PostModel.update(postId, updatedFields as unknown as Partial<Post>);
+    const updatedUser = await UserModel.update(author, { myPosts: [...(await UserModel.findByEmail(author))?.myPosts || [], postId] });
     resp.status(200).json({ success: true, data: updatedPost });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in editOrPublishPost:", error);
-    resp.status(500).json({ success: false, message: "Internal server error" });
+    resp.status(500).json({ message: error.message });
   }
 };
 
@@ -488,25 +332,14 @@ export const addComment = async (req: AuthenticatedRequest, res: Response) => {
   console.log("inside creatapost", authorId, parentId, userprofile, content);
   try {
     // const post = await Post.findByIdAndUpdate(req.params.id);
-    const comment = new Comment({
+    const comment = await CommentModel.create({
       content,
       author: authorId,
       post: req.params.id,
       parentId: parentId,
       imageLink: userprofile,
     });
-    console.log("commen before save", comment);
-    await comment.save();
-    console.log("commen after save");
-
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, {
-      $push: { comments: comment._id },
-    });
-
-    if (!updatedPost)
-      return res.status(404).json({ message: "Post not found" });
-
-    console.log("update post and new comment", comment, updatedPost);
+    console.log("update post and new comment", comment);
 
     res.status(201).json(comment);
   } catch (error: any) {
@@ -527,30 +360,9 @@ export const deleteComment = async (
 
   console.log("commentid", commentId, postId, req.user);
   try {
-    const post = await Post.findOneAndUpdate(
-      { _id: postId, isPublished: true }, // TODO check this query its not updating the usage of index in mongoDB
-      {
-        $pull: { comments: commentId }, // Remove the comment from the comments array
-      },
-      { new: true } // Return the updated document after the operation
-    );
-    if (post === null) {
-      return resp
-        .status(404)
-        .json({ success: false, message: "Post is not found" });
-    }
-    console.log("post", post);
-    const deletedComment = await Comment.findByIdAndDelete(commentId);
-
-    if (!deletedComment) {
-      return resp
-        .status(404)
-        .json({ success: false, message: "Comment not found" });
-    }
-
-    resp
-      .status(200)
-      .json({ success: true, message: "Comment deleted successfully" });
+    await PostModel.update(postId, { comments: (await PostModel.findById(postId))?.comments.filter(comment => comment !== commentId) });
+    await CommentModel.delete(commentId as string);
+    resp.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
     resp.status(500).json({ success: false, message: "Server error" });
@@ -572,7 +384,7 @@ export const upvoteComment = async (
   console.log(user);
 
   try {
-    const comment = await Comment.findById(commentId);
+    const comment = await CommentModel.findById(commentId);
 
     if (!comment) {
       return resp.status(404).json({
@@ -582,30 +394,10 @@ export const upvoteComment = async (
     }
 
     const hasUpvoted = comment.likes.users.includes(user as string);
-    const update = hasUpvoted
-      ? { $inc: { "likes.likes": -1 }, $pull: { "likes.users": user } }
-      : { $inc: { "likes.likes": 1 }, $push: { "likes.users": user } };
-
-    const updatedComment = await Comment.findByIdAndUpdate(commentId, update, {
-      new: true,
-    });
-
-    const message = hasUpvoted
-      ? "Removed upvote successfully"
-      : "Upvoted successfully";
-
-    resp.status(200).json({
-      success: true,
-      message,
-      comment: updatedComment,
-    });
-    console.log("updated comment", updatedComment);
-  } catch (error) {
-    console.error(error);
-    resp.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    const updatedComment = await CommentModel.update(commentId, { likes: { users: hasUpvoted ? comment.likes.users.filter(user => user !== user) : [...comment.likes.users, user as string], likes: hasUpvoted ? comment.likes.likes - 1 : comment.likes.likes + 1 } });
+    resp.status(200).json({ success: true, data: updatedComment });
+  } catch (error: any) {
+    resp.status(500).json({ message: error.message });
   }
 };
 
@@ -623,16 +415,10 @@ export const editComment = async (
   console.log("commentid in editcomment", commentId, req.body.content);
   try {
     // Update content
-    const updatedComment = await Comment.findByIdAndUpdate(
-      commentId,
-      { content: req.body.content },
-      { new: true }
+    const updatedComment = await CommentModel.update(
+      commentId as string,
+      { content: req.body.content }
     );
-
-    console.log("updatedComment", updatedComment);
-    if (!updatedComment) {
-      return resp.status(404).json({ message: "Comment not found" });
-    }
 
     resp.status(200).json({ message: "Comment editied successfully" });
   } catch (error) {
@@ -645,33 +431,10 @@ export const searchPost = async (req: AuthenticatedRequest, resp: Response) => {
   const query = req.query.query;
   console.log("search query ", query);
   try {
-    const posts = await Post.aggregate([
-      {
-        $match: {
-          $and: [
-            {
-              $or: [
-                { title: { $regex: query, $options: "i" } },
-                { content: { $regex: query, $options: "i" } },
-              ],
-            },
-            { status: "approved" },
-          ],
-        },
-      },
-      {
-        $project: {
-          _id: 1, // Exclude _id field, set to 1 if you want to include it
-          title: 1, // Include title field
-          author: 1, // Include author field
-        },
-      },
-      // { status: "approved" },
-    ]);
+    const posts = await PostModel.findAll(100);
     console.log(posts);
-    resp.status(200).json({ success: true, post: posts });
-  } catch (error) {
-    console.error(error);
-    resp.status(500).json({ message: "Server error" });
+    resp.status(200).json({ success: true, data: posts });
+  } catch (error: any) {
+    resp.status(500).json({ message: error.message });
   }
 };

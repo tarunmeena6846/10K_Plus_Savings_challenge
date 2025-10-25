@@ -297,7 +297,7 @@ router.get(
         parseInt(year),
         month
       );
-
+console.log("monthlyDataRecord", monthlyDataRecord);
       if (!monthlyDataRecord) {
         return res.status(200).json({
           success: true,

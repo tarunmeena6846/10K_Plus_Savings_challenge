@@ -115,11 +115,11 @@ const SWOTdashboard = () => {
       )}
 
       <h2 className="text-2xl font-bold mb-4">SWOT Analysis</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 ">
         <div>
           <label className="block mb-2">Strengths:</label>
           {strengths.map((strength, index) => (
-            <div key={index} className="flex space-x-2 items-center">
+            <div key={index} className="flex space-x-2 items-center text-black">
               <textarea
                 value={strength}
                 onChange={(e) => handleStrengthsChange(index, e)}
@@ -147,7 +147,7 @@ const SWOTdashboard = () => {
         <div>
           <label className="block mb-2">Weaknesses:</label>
           {weaknesses.map((weakness, index) => (
-            <div key={index} className="flex space-x-2 items-center">
+            <div key={index} className="flex space-x-2 items-center text-black">
               <textarea
                 value={weakness}
                 onChange={(e) => handleWeaknessesChange(index, e)}
@@ -171,7 +171,7 @@ const SWOTdashboard = () => {
         <div>
           <label className="block mb-2">Opportunities:</label>
           {opportunities.map((opportunity, index) => (
-            <div key={index} className="flex space-x-2 items-center">
+            <div key={index} className="flex space-x-2 items-center text-black">
               <textarea
                 value={opportunity}
                 onChange={(e) => handleOpportunitiesChange(index, e)}
@@ -195,7 +195,7 @@ const SWOTdashboard = () => {
         <div>
           <label className="block mb-2">Threats:</label>
           {threats.map((threat, index) => (
-            <div key={index} className="flex space-x-2 items-center">
+            <div key={index} className="flex space-x-2 items-center text-black">
               <textarea
                 value={threat}
                 onChange={(e) => handleThreatsChange(index, e)}

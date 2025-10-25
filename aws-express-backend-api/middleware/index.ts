@@ -17,14 +17,14 @@ export function detokenizeAdmin(
     const token = authHeader.split(" ")[1];
     if (secretKey) {
       let detokenizedUser = jwt.verify(token, secretKey) as JwtPayload;
-      console.log("detokenizedUser", detokenizedUser);
+      // console.log("detokenizedUser", detokenizedUser);
       if (detokenizedUser.role === "user") {
-        console.log(" username after detoken" + detokenizedUser.email);
+        // console.log(" username after detoken" + detokenizedUser.email);
         req.user = detokenizedUser.email;
         //   currentUserId = user.username;
         next();
       } else if (detokenizedUser.role === "admin") {
-        console.log(" username after detoken" + detokenizedUser.email);
+        // console.log(" username after detoken" + detokenizedUser.email);
         req.user = detokenizedUser.email;
         next();
       } else {

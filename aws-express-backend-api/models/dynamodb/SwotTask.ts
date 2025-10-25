@@ -1,4 +1,5 @@
 import { dynamodb } from '../../config/dynamodb';
+import { UserModel } from './User';
 
 export interface Task {
     taskId: string;
@@ -11,7 +12,6 @@ export interface Task {
 
 export interface SwotTask {
     PK: string; // userId
-    SK: string; // SWOT_TASK
     userId: string;
     tasks: Task[];
     isReminderSet: boolean;
@@ -25,7 +25,6 @@ export class SwotTaskModel {
 
         const swotTask: SwotTask = {
             PK: swotData.userId!,
-            SK: 'SWOT_TASK',
             userId: swotData.userId!,
             tasks: swotData.tasks || [],
             isReminderSet: swotData.isReminderSet || false,
@@ -37,14 +36,13 @@ export class SwotTaskModel {
             TableName: 'swot_tasks',
             Item: swotTask,
         }).promise();
-
         return swotTask;
     }
 
     static async findByUserId(userId: string): Promise<SwotTask | null> {
         const result = await dynamodb.get({
             TableName: 'swot_tasks',
-            Key: { PK: userId, SK: 'SWOT_TASK' },
+            Key: { PK: userId},
         }).promise();
 
         return result.Item as SwotTask || null;
@@ -53,7 +51,7 @@ export class SwotTaskModel {
     static async updateTasks(userId: string, tasks: Task[]): Promise<SwotTask | null> {
         const result = await dynamodb.update({
             TableName: 'swot_tasks',
-            Key: { PK: userId, SK: 'SWOT_TASK' },
+            Key: { PK: userId},
             UpdateExpression: 'SET tasks = :tasks, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
                 ':tasks': tasks,
@@ -65,28 +63,28 @@ export class SwotTaskModel {
         return result.Attributes as SwotTask;
     }
 
-    static async addTask(userId: string, task: Omit<Task, 'taskId' | 'createdAt' | 'updatedAt'>): Promise<SwotTask | null> {
-        const now = new Date().toISOString();
-        const newTask: Task = {
-            taskId: `TASK#${Date.now()}`,
-            ...task,
-            createdAt: now,
-            updatedAt: now,
-        };
+    // static async addTask(userId: string, task: Omit<Task, 'taskId' | 'createdAt' | 'updatedAt'>): Promise<SwotTask | null> {
+    //     const now = new Date().toISOString();
+    //     const newTask: Task = {
+    //         taskId: `TASK#${Date.now()}`,
+    //         ...task,
+    //         createdAt: now,
+    //         updatedAt: now,
+    //     };
 
-        const result = await dynamodb.update({
-            TableName: 'swot_tasks',
-            Key: { PK: userId, SK: 'SWOT_TASK' },
-            UpdateExpression: 'SET tasks = list_append(tasks, :task), updatedAt = :updatedAt',
-            ExpressionAttributeValues: {
-                ':task': [newTask],
-                ':updatedAt': now,
-            },
-            ReturnValues: 'ALL_NEW',
-        }).promise();
+    //     const result = await dynamodb.update({
+    //         TableName: 'swot_tasks',
+    //         Key: { PK: userId},
+    //         UpdateExpression: 'SET tasks = list_append(tasks, :task), updatedAt = :updatedAt',
+    //         ExpressionAttributeValues: {
+    //             ':task': [newTask],
+    //             ':updatedAt': now,
+    //         },
+    //         ReturnValues: 'ALL_NEW',
+    //     }).promise();
 
-        return result.Attributes as SwotTask;
-    }
+    //     return result.Attributes as SwotTask;
+    // }
 
     static async updateTask(userId: string, taskId: string, updateData: Partial<Task>): Promise<SwotTask | null> {
         const swotTask = await this.findByUserId(userId);
@@ -112,7 +110,7 @@ export class SwotTaskModel {
     static async updateReminderStatus(userId: string, isReminderSet: boolean): Promise<SwotTask | null> {
         const result = await dynamodb.update({
             TableName: 'swot_tasks',
-            Key: { PK: userId, SK: 'SWOT_TASK' },
+            Key: { PK: userId},
             UpdateExpression: 'SET isReminderSet = :isReminderSet, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
                 ':isReminderSet': isReminderSet,
@@ -127,10 +125,6 @@ export class SwotTaskModel {
     static async findAll(limit: number = 100): Promise<SwotTask[]> {
         const result = await dynamodb.scan({
             TableName: 'swot_tasks',
-            FilterExpression: 'SK = :sk',
-            ExpressionAttributeValues: {
-                ':sk': 'SWOT_TASK',
-            },
             Limit: limit,
         }).promise();
 
@@ -140,7 +134,7 @@ export class SwotTaskModel {
     static async delete(userId: string): Promise<void> {
         await dynamodb.delete({
             TableName: 'swot_tasks',
-            Key: { PK: userId, SK: 'SWOT_TASK' },
+            Key: { PK: userId},
         }).promise();
     }
 }

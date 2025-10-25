@@ -7,33 +7,35 @@ import Loader from "../community/Loader";
 import SuccessPopup from "./SuccessfulPopup";
 export default function SWOTtasklist() {
   const [taskList, setTaskList] = useState<taskDetails[]>();
-  const [isChecked, setIsChecked] = useState(false);
-  const [completedTasks, setCompletedTasks] = useState([]);
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+  // const [isChecked, setIsChecked] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [taskPerPage] = useState(10);
   const [action, setAction] = useRecoilState(actionsState);
   const [selectAllEnabled, setSelectAllEnabled] = useState(false);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
 
-  const handleCheckboxChange = (taskId) => {
-    if (selectAllEnabled) {
+  const handleCheckboxChange = (taskId:string) => {
+    console.log("taskId", taskId);
+    const updatedSelectedTasks = selectedTasks.includes(taskId)
+      ? selectedTasks.filter((id) => id !== taskId)
+      : [...selectedTasks, taskId];
+console.log(updatedSelectedTasks);
+    setSelectedTasks(updatedSelectedTasks);
+    if(updatedSelectedTasks.length === currentTasks?.length){
+      setSelectAllEnabled(true);
+    }else{
       setSelectAllEnabled(false);
     }
-    const updatedCompletedTasks = completedTasks.includes(taskId)
-      ? completedTasks.filter((id) => id !== taskId)
-      : [...completedTasks, taskId];
-
-    setCompletedTasks(updatedCompletedTasks);
 
     // Update `isChecked` based on whether any tasks are selected
-    setIsChecked(updatedCompletedTasks.length > 0);
   };
   const indexOfLastStock = currentPage * taskPerPage;
   const indexOfFirstStock = indexOfLastStock - taskPerPage;
 
   const handleBulkUpdate = (type: string) => {
-    console.log(completedTasks, type);
-    setIsChecked(false);
+    // console.log(completedTasks, type);
+    // setIsChecked(false);
     setCurrentUserState((prev) => ({ ...prev, isLoading: true }));
     // setSelectAllEnabled(false);
     // Send a request to your backend server to update tasks in bulk
@@ -43,7 +45,7 @@ export default function SWOTtasklist() {
         "Content-Type": "application/json",
         authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({ taskIds: completedTasks, type: type }),
+      body: JSON.stringify({ taskIds: selectedTasks, type: type }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -55,7 +57,7 @@ export default function SWOTtasklist() {
             setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
             // setSuccessfulPopup(true);
             setAction((prev) => prev + 1);
-            setCompletedTasks([]);
+            setSelectedTasks([]);
             setSelectAllEnabled(false);
           }
         });
@@ -83,7 +85,7 @@ export default function SWOTtasklist() {
           if (data.success) {
             console.log(data.data);
             setCurrentUserState((prev) => ({ ...prev, isLoading: false }));
-            setTaskList(data.data.tasks);
+            setTaskList(data.data);
           } else {
             console.error("TaskList empty");
           }
@@ -99,25 +101,25 @@ export default function SWOTtasklist() {
   const handleSelectAll = (e) => {
     const isChecked = e.target.checked;
     console.log(currentPage, isChecked);
-    setIsChecked(isChecked);
+    // setIsChecked(isChecked);
     setSelectAllEnabled(!selectAllEnabled);
     if (isChecked) {
       const allTaskIds = currentTasks
         // .filter((task) => task.isComplete === false)
-        .map((task: any) => task._id);
+        .map((task: any) => task.taskId);
 
       console.log(allTaskIds);
-      setCompletedTasks(allTaskIds);
+      setSelectedTasks(allTaskIds);
     } else {
-      setCompletedTasks([]);
+      setSelectedTasks([]);
     }
   };
-  console.log(completedTasks);
+  console.log(selectedTasks);
   return (
     <div className="pt-10 flex w-full md:w-3/4 flex-col md:justify-center mx-auto">
       <div className="flex justify-between items-end px-4">
         <h2 className=" text-white text-2xl pt-2 mb-2">Task List</h2>
-        {isChecked && (
+        {selectedTasks.length > 0 && (
           <div className="mb-2 px-4">
             <button
               className={`p-2 ${
@@ -156,14 +158,14 @@ export default function SWOTtasklist() {
           <tbody>
             {currentTasks?.map((task: any) =>
               currentUserState.isLoading ? (
-                <tr key={task._id}>
+                <tr key={task.taskId}>
                   <td colSpan={3} className="text-center">
                     <Loader />
                   </td>
                 </tr>
               ) : (
                 <tr
-                  key={task._id}
+                  key={task.taskId}
                   className={`border-t border-gray-300 p-2 ${
                     task.isComplete ? `text-gray-400` : `text-white`
                   }`}
@@ -171,9 +173,9 @@ export default function SWOTtasklist() {
                   <td className="px-4 py-2">
                     <input
                       type="checkbox"
-                      id={`task-${task._id}`}
-                      checked={completedTasks.includes(task._id)}
-                      onChange={() => handleCheckboxChange(task._id)}
+                      id={`task-${task.taskId}`}
+                      checked={selectedTasks?.includes(task.taskId) || false}
+                      onChange={() => handleCheckboxChange(task.taskId)}
                     />
                   </td>
                   <td className="px-4 py-2">{task.title}</td>
@@ -187,7 +189,7 @@ export default function SWOTtasklist() {
         </table>
       </div>
       <div className="flex justify-center items-center mt-4 space-x-2">
-        {taskList && (
+        {taskList ? (
           <div>
             {[...Array(Math.ceil(taskList.length / taskPerPage))].map(
               (_, index) => (
@@ -197,8 +199,7 @@ export default function SWOTtasklist() {
                   onClick={() => {
                     paginate(index + 1);
                     setSelectAllEnabled(false);
-                    setIsChecked(false);
-                    setCompletedTasks([]);
+                    setSelectedTasks([]);
                   }}
                 >
                   {index + 1}
@@ -206,7 +207,7 @@ export default function SWOTtasklist() {
               )
             )}
           </div>
-        )}
+        ):null}
       </div>
       {/* {successfulPopup && (
         <SuccessPopup

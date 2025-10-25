@@ -15,7 +15,7 @@ import corn from "node-cron";
 router.post("/signup", async (req: Request, res: Response) => {
   try {
     const { username, password, email, secretePhrase } = req.body;
-    console.log(email, username);
+    // console.log(email, username);
     let isAdmin = false;
     if (!username || !password || !email) {
       res.status(400).json({ error: "Bad request", success: false });
@@ -33,7 +33,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     console.time("findByUsername");
     const existingUserByUsername = await UserModel.findByUsername(username);
     console.timeEnd("findByUsername");
-    console.log("existingUserByEmail", existingUserByEmail, existingUserByUsername);
+    // console.log("existingUserByEmail", existingUserByEmail, existingUserByUsername);
     if (existingUserByEmail || existingUserByUsername) {
       res
         .status(200)
@@ -41,7 +41,7 @@ router.post("/signup", async (req: Request, res: Response) => {
       return;
     }
 
-    console.log(secretKey);
+    // console.log(secretKey);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     if (secretKey) {
@@ -62,8 +62,8 @@ router.post("/signup", async (req: Request, res: Response) => {
         verified: false,
       });
 
-      console.log("New user created:", newUser.PK);
-      console.log("token", token);
+      // console.log("New user created:", newUser.PK);
+      // console.log("token", token);
 
       await sendEmail(email, "Email Verification", getWelcomeEmail(token));
       res.status(201).send({
@@ -85,16 +85,16 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 router.get("/verify-email/:token", async (req: Request, res: Response) => {
-  console.log("key", req.params.token);
+  // console.log("key", req.params.token);
   try {
     if (secretKey) {
       const userInfo = jwt.verify(req.params.token, secretKey) as JwtPayload;
-      console.log("user info", userInfo);
+      // console.log("user info", userInfo);
       if (!userInfo) return res.status(400).send({ message: "Invalid token" });
 
       const user = await UserModel.findByEmail(userInfo.email);
       if (!user) return res.status(400).send({ message: "Invalid link" });
-      console.log("user ", user);
+      // console.log("user ", user);
 
       if (user?.verificationToken && user?.verificationToken !== "") {
         await UserModel.update(user.PK, {
@@ -119,7 +119,7 @@ router.get(
     try {
       if (req.user) {
         const user = await UserModel.findByEmail(req.user);
-        console.log(" user at /me route", user);
+        // console.log(" user at /me route", user);
         if (user) {
           res.status(200).send({
             success: true,
@@ -143,7 +143,7 @@ router.post(
   "/request-reset-password",
   async (req: AuthenticatedRequest, resp: Response) => {
     const { email } = req.body;
-    console.log(email);
+    // console.log(email);
     try {
       const user = await UserModel.findByEmail(email);
 
@@ -164,7 +164,7 @@ router.post(
         });
 
         const resetLink = `${process.env.RETURN_CLIENT_URL}/reset-password/${token}`;
-        console.log("token", token);
+        // console.log("token", token);
         await sendEmail(
           email,
           "Reset password link",
@@ -241,7 +241,7 @@ router.post(
   }
 );
 router.post("/login", async (req: Request, res: Response) => {
-  console.log("email and password", req.headers.email, req.headers.password);
+  // console.log("email and password", req.headers.email, req.headers.password);
   const { email, password } = req.headers;
   const user = await UserModel.findByEmail(email as string);
 
@@ -256,7 +256,7 @@ router.post("/login", async (req: Request, res: Response) => {
     password as string,
     user.password
   );
-  console.log("is match ", isMatch);
+  // console.log("is match ", isMatch);
   if (!isMatch) {
     res
       .status(400)
@@ -307,10 +307,10 @@ router.post(
   detokenizeAdmin,
   async (req: AuthenticatedRequest, resp: Response) => {
     const { data } = req.body;
-    console.log("data at set my data", data);
+    // console.log("data at set my data", data);
     try {
       const user = await UserModel.findByEmail(req.user!);
-      console.log("user at set my data", user);
+      // console.log("user at set my data", user);
       if (user) {
         await UserModel.update(user.PK, { myWhy: data });
         resp.status(200).send({ success: true });
@@ -325,7 +325,7 @@ router.post(
   detokenizeAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     const { newPassword } = req.body;
-    console.log("at change user details", req?.user, newPassword);
+    // console.log("at change user details", req?.user, newPassword);
     try {
       // Find user by email
       const user = await UserModel.findByEmail(req?.user!);
