@@ -29,10 +29,10 @@ const CommunityLanding = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Render popular tags
   const handleSelectTag = (tagId: string) => {
-    console.log("selectedtag");
+    console.log("selectedtag", tagId);
     setSelectedTagId(tagId);
   };
-  console.log("selectedTag navigation after ", currentUserState);
+  // console.log("selectedTag navigation after ", currentUserState);
 
   // console.log("posts at infinity", posts);
   return (

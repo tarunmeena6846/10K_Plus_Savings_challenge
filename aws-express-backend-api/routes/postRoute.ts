@@ -16,6 +16,8 @@ import {
   deletePostFromDbOrAdmin,
   approveOrDeclinePost,
   searchPost,
+  createPost,
+  getCommentsByPostId,
 } from "../controllers/postController";
 
 import { detokenizeAdmin, isAdmin } from "../middleware";
@@ -23,6 +25,7 @@ const router: Router = express.Router();
 // scheduleWeeklyReminderEmail();
 // Routes for posts
 router.get("/", detokenizeAdmin, getAllPosts);
+router.post("/createpost", detokenizeAdmin, createPost);
 router.get("/userPosts", detokenizeAdmin, getUserPosts);
 router.get("/tags", detokenizeAdmin, getTags);
 router.get("/getBookmarkPosts", detokenizeAdmin, getBookmarkPosts);
@@ -35,6 +38,7 @@ router.post("/bookmarkPost", detokenizeAdmin, bookmarkedPosts);
 router.post("/approvePost/:id", isAdmin, approveOrDeclinePost);
 router.post("/:id/comments", detokenizeAdmin, addComment);
 router.post("/:id", detokenizeAdmin, editComment);
+router.get("/:id/comments", detokenizeAdmin, getCommentsByPostId);
 router.post("/editPost/:id", detokenizeAdmin, editOrPublishPost);
 router.delete(
   "/deletepost/:id/:type",

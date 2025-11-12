@@ -18,9 +18,9 @@ export const getAllPosts = async (req: AuthenticatedRequest, res: Response) => {
 
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-    const isApprovalReqPost = req.query.isApprovalReqPost;
-    console.log("isApprovalReqPosts", isApprovalReqPost);
-    const posts = await PostModel.findAll(limit);
+    const isApprovalReqPost = req.query.isApprovalReqPost as string | undefined;
+    console.log("isApprovalReqPosts", isApprovalReqPost, "offset", offset, "limit", limit);
+    const posts = await PostModel.findAll(limit, offset, isApprovalReqPost);
     console.log("inside post", posts);
 
     res.status(200).json({ sucess: true, data: posts });
@@ -60,17 +60,31 @@ export const getUserPosts = async (
   resp: Response
 ) => {
   try {
-    // const offset = parseInt(req.query.offset as string) || 0;
+    const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
     const user = req.user;
     const isPublished = req.query.isPublished;
-    console.log("user at getuserpost", user, isPublished);
+    console.log("user at getuserpost", user, isPublished, "offset", offset, "limit", limit);
     const adminInfo = await UserModel.findByEmail(user!);
     if (!adminInfo) {
       return resp.status(404).json({ success: false, data: "User not found" });
     }
-    const posts = await PostModel.findByAuthor(adminInfo.email, limit);
-    resp.status(200).json({ success: true, data: posts });
+    // Fetch posts - if filtering is needed, fetch more to account for filtered items
+    // We fetch a reasonable batch size to ensure we have enough after filtering
+    const fetchLimit = isPublished !== undefined
+      ? Math.max(100, (offset + limit) * 3) // Fetch 3x to account for filtering
+      : offset + limit;
+    const allPosts = await PostModel.findByAuthor(adminInfo.email, fetchLimit, 0);
+
+    // Filter by isPublished if needed
+    const filteredPosts = isPublished !== undefined
+      ? allPosts.filter(post => post.isPublished === (isPublished === 'true'))
+      : allPosts;
+
+    // Apply pagination after filtering
+    const paginatedPosts = filteredPosts.slice(offset, offset + limit);
+
+    resp.status(200).json({ success: true, data: paginatedPosts });
   } catch (error: any) {
     resp.status(500).json({ message: error.message });
   }
@@ -96,15 +110,15 @@ export const deletePostFromDbOrAdmin = async (
       type === "mydrafts"
         ? "myDrafts"
         : type === "mybookmarks"
-        ? "bookmarkedPosts"
-        : "myPosts";
+          ? "bookmarkedPosts"
+          : "myPosts";
 
     // Perform the update and delete operations concurrently
     const userInfo = await UserModel.findByEmail(username!);
     if (!userInfo) {
       return resp.status(404).json({ success: false, data: "User not found" });
     }
-    
+
     await UserModel.update(userInfo.PK, { [pullField]: [...userInfo[pullField], postId] });
     await PostModel.delete(postId);
     resp.status(200).json({ success: true });
@@ -129,7 +143,7 @@ export const getBookmarkPosts = async (
     if (!bookmarkedPostsForUser) {
       return resp.status(404).json({ success: false, data: "User not found" });
     }
-    const bookmarkedPosts = await PostModel.findByIds(bookmarkedPostsForUser.bookmarkedPosts);
+    const bookmarkedPosts = await PostModel.findByIds(bookmarkedPostsForUser.bookmarkedPosts, limit, offset);
     resp.status(200).json({ success: true, data: bookmarkedPosts });
   } catch (error) {
     console.error(error);
@@ -188,12 +202,14 @@ export const getPostByTag = async (
     console.log("tagId", tagId);
     const offset = parseInt(req.query.offset as string) || 0;
     const limit = parseInt(req.query.limit as string) || 10;
-    const tagPosts = await TagModel.findByTag(tagId)
-    if (!tagPosts) {
-        return resp.status(404).json({ success: false, data: "Tag not found" });
-      }
-      const posts = await PostModel.findByIds(tagPosts.posts);
-      resp.status(200).json({ success: true, data: posts });
+    const tag = await TagModel.findByTagId(tagId)
+    console.log("tag at getPostByTag", tag, limit, offset);
+    if (!tag) {
+      return resp.status(404).json({ success: false, data: "Tag not found" });
+    }
+    const posts = await PostModel.findByIds(tag?.posts, limit, offset);
+    console.log("posts", posts);
+    resp.status(200).json({ success: true, data: posts });
   } catch (error) {
     resp.status(400).json({ error });
   }
@@ -360,7 +376,7 @@ export const deleteComment = async (
 
   console.log("commentid", commentId, postId, req.user);
   try {
-    await PostModel.update(postId, { comments: (await PostModel.findById(postId))?.comments.filter(comment => comment !== commentId) });
+    // await PostModel.update(postId, { comments: (await PostModel.findById(postId))?.comments.filter(comment => comment !== commentId) });
     await CommentModel.delete(commentId as string);
     resp.status(200).json({ success: true });
   } catch (error) {
@@ -394,8 +410,14 @@ export const upvoteComment = async (
     }
 
     const hasUpvoted = comment.likes.users.includes(user as string);
-    const updatedComment = await CommentModel.update(commentId, { likes: { users: hasUpvoted ? comment.likes.users.filter(user => user !== user) : [...comment.likes.users, user as string], likes: hasUpvoted ? comment.likes.likes - 1 : comment.likes.likes + 1 } });
-    resp.status(200).json({ success: true, data: updatedComment });
+    console.log("hasUpvoted", hasUpvoted);
+    if (hasUpvoted) {
+      await CommentModel.removeLike(commentId, user as string);
+    } else {
+      await CommentModel.addLike(commentId, user as string);
+    }
+    // const updatedComment = await CommentModel.update(commentId, { likes: { users: hasUpvoted ? comment.likes.users.filter(user => user !== user) : [...comment.likes.users, user as string], likes: hasUpvoted ? comment.likes.likes - 1 : comment.likes.likes + 1 } });
+    resp.status(200).json({ success: true });
   } catch (error: any) {
     resp.status(500).json({ message: error.message });
   }
@@ -434,6 +456,30 @@ export const searchPost = async (req: AuthenticatedRequest, resp: Response) => {
     const posts = await PostModel.findAll(100);
     console.log(posts);
     resp.status(200).json({ success: true, data: posts });
+  } catch (error: any) {
+    resp.status(500).json({ message: error.message });
+  }
+};
+
+export const createPost = async (req: AuthenticatedRequest, resp: Response) => {
+  const { title, content, author, isPublished, tag, imageUrl } = req.body;
+  console.log("inside createpost", title, content, author, isPublished, tag, imageUrl);
+  try {
+    const post = await PostModel.create({ title, content, author, isPublished, tag, userImage: imageUrl });
+    console.log("post created", post);
+    await TagModel.addPost(tag, post.id);
+    console.log("tag added", tag, post.id);
+    resp.status(200).json({ success: true, data: post });
+  } catch (error: any) {
+    resp.status(500).json({ message: error.message });
+  }
+};
+export const getCommentsByPostId = async (req: AuthenticatedRequest, resp: Response) => {
+  const postId = req.params.id;
+  console.log("inside getcommentsbypostid", postId);
+  try {
+    const comments = await CommentModel.findByPost(postId);
+    resp.status(200).json({ success: true, data: comments });
   } catch (error: any) {
     resp.status(500).json({ message: error.message });
   }

@@ -34,7 +34,7 @@ router.post(
         swotDetails = await SwotTaskModel.create({
           userId: user,
           tasks: tasks.map((task) => ({
-            taskId: `TASK#${randomUUID()}`,
+            taskId: randomUUID(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             title: task.title,
@@ -47,7 +47,7 @@ router.post(
       } else {
         console.log(tasks);
         swotDetails.tasks = [...swotDetails.tasks, ...tasks.map((task) => ({
-          taskId: `TASK#${randomUUID()}`,
+          taskId: randomUUID(),
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           title: task.title,

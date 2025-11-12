@@ -19,13 +19,13 @@ const InfinitePostScroll = ({
   type,
   tag,
 }: // hasMore,
-// setHasMore,
-{
-  type: string;
-  tag: string | null;
-  // hasMore: string;
-  // setHasMore: SetterOrUpdater;
-}) => {
+  // setHasMore,
+  {
+    type: string;
+    tag: string | null;
+    // hasMore: string;
+    // setHasMore: SetterOrUpdater;
+  }) => {
   console.log("start of infinite scroll", type);
   const [items, setItems] = useState<PostType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +33,7 @@ const InfinitePostScroll = ({
   const [index, setIndex] = useState(0); // Start index from 1
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevTag = useRef<string | null>(null); // Use useRef to store the previous tag
+  const prevType = useRef<string | null>(null); // Use useRef to store the previous type
   console.log(tag, hasMore);
   const fetchData = useCallback(async () => {
     if (isLoading || !hasMore) return;
@@ -43,28 +44,23 @@ const InfinitePostScroll = ({
 
     // Construct URL based on conditions
     if (tag != "") {
-      url = `${import.meta.env.VITE_SERVER_URL}/post/tags/${tag}?offset=${
-        index * 10
-      }&limit=10`;
+      console.log("tag at fetchData", tag, index);
+      url = `${import.meta.env.VITE_SERVER_URL}/post/tags/${tag}?offset=${index * 10
+        }&limit=10`;
     } else {
       if (type === "allposts") {
-        url = `${
-          import.meta.env.VITE_SERVER_URL
-        }/post?isApprovalReqPost=${"approved"}&offset=${index * 10}&limit=10`;
+        url = `${import.meta.env.VITE_SERVER_URL
+          }/post?isApprovalReqPost=${"approved"}&offset=${index * 10}&limit=10`;
       } else if (type === "myposts" || type === "mydrafts") {
-        url = `${import.meta.env.VITE_SERVER_URL}/post/userPosts?isPublished=${
-          type === "myposts"
-        }&offset=${index * 10}&limit=10`;
+        url = `${import.meta.env.VITE_SERVER_URL}/post/userPosts?isPublished=${type === "myposts"
+          }&offset=${index * 10}&limit=10`;
       } else if (type === "mybookmarks") {
-        url = `${
-          import.meta.env.VITE_SERVER_URL
-        }/post/getBookmarkPosts?offset=${index * 10}&limit=10`;
+        url = `${import.meta.env.VITE_SERVER_URL
+          }/post/getBookmarkPosts?offset=${index * 10}&limit=10`;
       } else if (type === "approvalReqPosts") {
-        url = `${
-          import.meta.env.VITE_SERVER_URL
-        }/post?isApprovalReqPost=${"approvalPending"}&offset=${
-          index * 10
-        }&limit=10`;
+        url = `${import.meta.env.VITE_SERVER_URL
+          }/post?isApprovalReqPost=${"approvalPending"}&offset=${index * 10
+          }&limit=10`;
       }
     }
     console.log(url);
@@ -83,19 +79,23 @@ const InfinitePostScroll = ({
       const data = await response.json();
       console.log("data", data);
       const tenPosts: PostType[] = data.data.map((p: any) => ({
-        postId: p._id,
-        userProfile: p.userImage || "",
-        username: p.author,
-        postTime: new Date(p.createdAt),
-        title: p.title,
-        content: p.content,
-        tag: p.tag,
+        postId: p?.id,
+        userProfile: p?.userImage || "",
+        username: p?.author,
+        postTime: new Date(p?.createdAt),
+        title: p?.title,
+        content: p?.content,
+        tag: p?.tag,
       }));
 
       // Update state only if new posts are fetched
       if (tenPosts.length > 0) {
         setItems((prevItems: PostType[]) => [...prevItems, ...tenPosts]);
         setIndex((prevIndex) => prevIndex + 1);
+        // If we got fewer posts than requested, there are no more posts
+        if (tenPosts.length < 10) {
+          setHasMore(false);
+        }
       } else {
         console.log(hasMore);
         // No more posts to fetch
@@ -111,19 +111,23 @@ const InfinitePostScroll = ({
   }, [isLoading, index, type, tag, hasMore]);
 
   useEffect(() => {
-    // Check if tag has changed
-    console.log(prevTag.current, tag);
-    if (prevTag.current !== tag) {
-      // Reset state when tag changes
-      console.log("pointer at 95");
+    // Check if tag or type has changed
+    const tagChanged = prevTag.current !== tag;
+    const typeChanged = prevType.current !== type;
+
+    if (tagChanged || typeChanged) {
+      // Reset state when tag or type changes
+      console.log("Resetting state - tag changed:", tagChanged, "type changed:", typeChanged);
       setItems([]);
       setIndex(0);
       setHasMore(true);
       prevTag.current = tag;
-      // Fetch data
+      prevType.current = type;
+      // Fetch initial data after reset
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       fetchData();
     }
-  }, [tag]);
+  }, [tag, type]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -144,7 +148,7 @@ const InfinitePostScroll = ({
     };
   }, [fetchData]);
 
-  console.log(items);
+  console.log("items", items);
   return (
     <div className="flex flex-col font-bold items-center justify-center">
       {isLoading && <Loader />}

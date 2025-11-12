@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../../Button";
 import { useParams } from "react-router-dom";
 import SideBar from "../SideBar";
@@ -12,10 +12,12 @@ import Loader from "../Loader";
 const PostLanding = () => {
   const [selectedTagId, setSelectedTagId] = useRecoilState(selectedTagIdState);
   const [currentUserState, setCurrentUserState] = useRecoilState(userState);
+  const { postId } = useParams();
   // Render popular tags
   const handleSelectTag = (tagId: string) => {
     setSelectedTagId(tagId);
   };
+
   //   const params = useParams();
   return (
     <div>

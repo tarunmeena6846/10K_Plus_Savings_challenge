@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 
 export interface tagDataType {
-  _id: string;
+  id: string;
   tag: string;
 }
 import { motion } from "framer-motion";
@@ -152,7 +152,7 @@ const SideBar = ({ onSelectTag }: { onSelectTag: (tagId: string) => void }) => {
                 whileHover={{ scale: 1.1 }} // Define hover animation
                 whileTap={{ scale: 1 }} // Define hover animation
                 className="bg-[#6d94ff] rounded-2xl px-2 "
-                onClick={() => handleTagClick(tag._id)}
+                onClick={() => handleTagClick(tag?.id)}
               >
                 {tag.tag}
               </motion.button>

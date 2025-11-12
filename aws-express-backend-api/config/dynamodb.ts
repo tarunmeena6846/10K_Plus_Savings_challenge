@@ -178,6 +178,16 @@ export const TABLE_CONFIGS = {
         ],
         AttributeDefinitions: [
             { AttributeName: 'PK', AttributeType: 'S' },
+            { AttributeName: 'GSI1PK', AttributeType: 'S' }, // tagId
+        ],
+        GlobalSecondaryIndexes: [
+            {
+                IndexName: 'TagIdIndex',
+                KeySchema: [
+                    { AttributeName: 'GSI1PK', KeyType: 'HASH' },
+                ],
+                Projection: { ProjectionType: 'ALL' },
+            },
         ],
         BillingMode: 'PAY_PER_REQUEST',
     },

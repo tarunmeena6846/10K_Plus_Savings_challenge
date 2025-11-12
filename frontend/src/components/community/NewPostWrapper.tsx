@@ -23,7 +23,7 @@ export const NewPostWrapper = () => {
     console.log("postcontent", postContent, currentUserState);
     // headers.append("Username", email);
     // headers.append("Password", password);
-    fetch(`${import.meta.env.VITE_SERVER_URL}/post`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/post/createpost`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

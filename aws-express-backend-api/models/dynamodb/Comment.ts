@@ -1,5 +1,5 @@
 import { dynamodb } from '../../config/dynamodb';
-
+import { randomUUID } from 'crypto';
 export interface Likes {
     users: string[];
     likes: number;
@@ -7,7 +7,7 @@ export interface Likes {
 
 export interface Comment {
     PK: string; // commentId
-    SK: string; // COMMENT
+    id:string;
     GSI1PK: string; // postId
     GSI1SK: string; // createdAt
     GSI2PK: string; // author
@@ -23,12 +23,12 @@ export interface Comment {
 
 export class CommentModel {
     static async create(commentData: Partial<Comment>): Promise<Comment> {
-        const commentId = `COMMENT#${Date.now()}`;
+        const commentId = randomUUID();
         const now = new Date().toISOString();
 
         const comment: Comment = {
             PK: commentId,
-            SK: 'COMMENT',
+            id: commentId,
             GSI1PK: commentData.post!,
             GSI1SK: now,
             GSI2PK: commentData.author!,
@@ -53,7 +53,7 @@ export class CommentModel {
     static async findById(commentId: string): Promise<Comment | null> {
         const result = await dynamodb.get({
             TableName: 'comments',
-            Key: { PK: commentId, SK: 'COMMENT' },
+            Key: { PK: commentId },
         }).promise();
 
         return result.Item as Comment || null;
@@ -89,18 +89,18 @@ export class CommentModel {
         return result.Items as Comment[] || [];
     }
 
-    static async findAll(limit: number = 100): Promise<Comment[]> {
-        const result = await dynamodb.scan({
-            TableName: 'comments',
-            FilterExpression: 'SK = :sk',
-            ExpressionAttributeValues: {
-                ':sk': 'COMMENT',
-            },
-            Limit: limit,
-        }).promise();
+    // static async findAll(limit: number = 100): Promise<Comment[]> {
+    //     const result = await dynamodb.scan({
+    //         TableName: 'comments',
+    //         FilterExpression: 'id = :id',
+    //         ExpressionAttributeValues: {
+    //             ':id': commentId,
+    //         },
+    //         Limit: limit,
+    //     }).promise();
 
-        return result.Items as Comment[] || [];
-    }
+    //     return result.Items as Comment[] || [];
+    // }
 
     static async update(commentId: string, updateData: Partial<Comment>): Promise<Comment | null> {
         const updateExpressions: string[] = [];
@@ -111,7 +111,7 @@ export class CommentModel {
         updateData.updatedAt = new Date().toISOString();
 
         Object.keys(updateData).forEach((key, index) => {
-            if (key !== 'PK' && key !== 'SK' && key !== 'GSI1PK' && key !== 'GSI1SK' &&
+            if (key !== 'PK' && key !== 'GSI1PK' && key !== 'GSI1SK' &&
                 key !== 'GSI2PK' && updateData[key as keyof Comment] !== undefined) {
                 updateExpressions.push(`#${key} = :val${index}`);
                 expressionAttributeNames[`#${key}`] = key;
@@ -125,7 +125,7 @@ export class CommentModel {
 
         const result = await dynamodb.update({
             TableName: 'comments',
-            Key: { PK: commentId, SK: 'COMMENT' },
+            Key: { id: commentId },
             UpdateExpression: `SET ${updateExpressions.join(', ')}`,
             ExpressionAttributeNames: expressionAttributeNames,
             ExpressionAttributeValues: expressionAttributeValues,
@@ -138,7 +138,7 @@ export class CommentModel {
     static async delete(commentId: string): Promise<void> {
         await dynamodb.delete({
             TableName: 'comments',
-            Key: { PK: commentId, SK: 'COMMENT' },
+            Key: { PK: commentId },
         }).promise();
     }
 
@@ -152,7 +152,7 @@ export class CommentModel {
 
             await dynamodb.update({
                 TableName: 'comments',
-                Key: { PK: commentId, SK: 'COMMENT' },
+                Key: { PK: commentId },
                 UpdateExpression: 'SET likes = :likes, updatedAt = :updatedAt',
                 ExpressionAttributeValues: {
                     ':likes': updatedLikes,
@@ -172,7 +172,7 @@ export class CommentModel {
 
             await dynamodb.update({
                 TableName: 'comments',
-                Key: { PK: commentId, SK: 'COMMENT' },
+                Key: { PK: commentId },
                 UpdateExpression: 'SET likes = :likes, updatedAt = :updatedAt',
                 ExpressionAttributeValues: {
                     ':likes': updatedLikes,
